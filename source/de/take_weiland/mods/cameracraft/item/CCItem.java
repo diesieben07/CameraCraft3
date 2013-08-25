@@ -7,6 +7,7 @@ import net.minecraft.item.Item;
 public class CCItem extends Item {
 
 	public static ItemBattery battery;
+	public static ItemCamera camera;
 	
 	public CCItem(String name, int defaultId) {
 		super(getId(name, defaultId));
@@ -17,6 +18,7 @@ public class CCItem extends Item {
 	
 	public static final void createItems() {
 		battery = new ItemBattery(9876);
+		camera = new ItemCamera(9877);
 	}
 
 	private static int getId(String name, int defaultId) {

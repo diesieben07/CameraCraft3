@@ -52,7 +52,7 @@ public class BlockCCOre extends CCBlock implements Typed<OreType> {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister register) {
-		icons = Items.registerIcons(this, "cameracraft:ore_", register);
+		icons = Blocks.registerIcons(this, register);
 	}
 
 }

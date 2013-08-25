@@ -15,9 +15,11 @@ import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.item.CCItem;
+import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.networks.CCPackets;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
 import de.take_weiland.mods.commons.network.ModPacketHandler;
+import de.take_weiland.mods.commons.util.Items;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
@@ -41,7 +43,7 @@ public final class CameraCraft {
 
 		@Override
 		public ItemStack getIconItemStack() {
-			return new ItemStack(CCItem.appleGold);
+			return Items.getStack(CCItem.camera, CameraType.FILM);
 		}
 		
 	};
