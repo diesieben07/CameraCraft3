@@ -4,7 +4,6 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.item.ItemCCBlock;
 import de.take_weiland.mods.commons.util.Blocks;
 
 public class CCBlock extends Block {
@@ -28,7 +27,7 @@ public class CCBlock extends Block {
 	protected CCBlock(String name, int defaultId, Material material) {
 		super(getId(name, defaultId), material);
 		
-		Blocks.init(this, name, ItemCCBlock.class);
+		Blocks.init(this, name);
 		setCreativeTab(CameraCraft.tab);
 	}
 
