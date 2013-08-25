@@ -1,4 +1,4 @@
-package de.take_weiland.mods.cameracraft.client;
+package de.take_weiland.mods.cameracraft.client.gui;
 
 import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.gui.ContainerPhotoProcessor;

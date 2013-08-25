@@ -3,6 +3,7 @@ package de.take_weiland.mods.cameracraft.blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
+import net.minecraftforge.oredict.OreDictionary;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.commons.util.Blocks;
 
@@ -14,6 +15,9 @@ public class CCBlock extends Block {
 	public static final void createBlocks() {
 		ores = new BlockCCOre(3078);
 		machines = new BlockCCMachine(3079);
+		
+		OreDictionary.registerOre("oreTin", Blocks.getStack(ores, OreType.TIN));
+		OreDictionary.registerOre("oreAlkaline", Blocks.getStack(ores, OreType.ALKALINE));
 	}
 	
 	public String getUnlocalizedName(ItemStack stack) {

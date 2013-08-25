@@ -3,11 +3,13 @@ package de.take_weiland.mods.cameracraft.item;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.commons.util.Items;
 import net.minecraft.item.Item;
+import net.minecraftforge.oredict.OreDictionary;
 
 public class CCItem extends Item {
 
 	public static ItemBattery battery;
 	public static ItemCamera camera;
+	public static ItemIngotsDusts ingotsDusts;
 	
 	public CCItem(String name, int defaultId) {
 		super(getId(name, defaultId));
@@ -19,6 +21,9 @@ public class CCItem extends Item {
 	public static final void createItems() {
 		battery = new ItemBattery(9876);
 		camera = new ItemCamera(9877);
+		ingotsDusts = new ItemIngotsDusts(9878);
+		
+		OreDictionary.registerOre("ingotTin", Items.getStack(ingotsDusts, IngotDustType.TIN_INGOT));
 	}
 
 	private static int getId(String name, int defaultId) {

@@ -1,7 +1,7 @@
 package de.take_weiland.mods.cameracraft;
 
 import cpw.mods.fml.common.network.IGuiHandler;
-import de.take_weiland.mods.cameracraft.client.GuiPhotoProcessor;
+import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoProcessor;
 import de.take_weiland.mods.cameracraft.gui.ContainerPhotoProcessor;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
 import de.take_weiland.mods.commons.util.CommonUtils;
