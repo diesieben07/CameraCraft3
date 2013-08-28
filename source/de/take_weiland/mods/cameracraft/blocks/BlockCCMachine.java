@@ -4,11 +4,9 @@ import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
-import de.take_weiland.mods.cameracraft.CCGuis;
-import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.Items;
+import de.take_weiland.mods.commons.util.Multitypes;
 
-public class BlockCCMachine extends CCBlock implements Typed<MachineType> {
+public class BlockCCMachine extends CCMultitypeBlock<MachineType> {
 
 	public BlockCCMachine(int defaultId) {
 		super("machines", defaultId, Material.iron);
@@ -16,12 +14,12 @@ public class BlockCCMachine extends CCBlock implements Typed<MachineType> {
 
 	@Override
 	public boolean hasTileEntity(int meta) {
-		return true;
+		return Multitypes.getType(this, meta).hasTileEntity();
 	}
 
 	@Override
 	public TileEntity createTileEntity(World world, int meta) {
-		return Items.getType(this, meta).createTileEntity();
+		return Multitypes.getType(this, meta).createTileEntity();
 	}
 
 	@Override
@@ -30,13 +28,8 @@ public class BlockCCMachine extends CCBlock implements Typed<MachineType> {
 	}
 
 	@Override
-	public MachineType getDefault() {
-		return MachineType.PHOTO_PROCESSOR;
-	}
-
-	@Override
-	public boolean onBlockActivated(World par1World, int par2, int par3, int par4, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9) {
-		CCGuis.PHOTO_PROCESSOR.open(par5EntityPlayer, par2, par3, par4);
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+		Multitypes.getType(this, world.getBlockMetadata(x, y, z)).openGui(player, x, y, z);
 		return true;
 	}
 

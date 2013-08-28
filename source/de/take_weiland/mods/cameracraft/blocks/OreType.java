@@ -4,7 +4,8 @@ import de.take_weiland.mods.commons.templates.Type;
 
 public enum OreType implements Type {
 	TIN("tin"),
-	ALKALINE("alkaline");
+	ALKALINE("alkaline"),
+	BLOCK_TIN("blockTin");
 
 	private final String name;
 	

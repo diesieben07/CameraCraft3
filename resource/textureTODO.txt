@@ -1,0 +1,40 @@
+== ITEMS ==
+Cameras [Digital & Film]
+Films [Black and White & colored]
+Processed Film Strips [Black and white & Colored] [http://t2.ftcdn.net/jpg/00/05/74/49/400_F_5744949_qTx7JPzEbPM0iLtGiYQtiMoglDfmSba9.jpg]
+Memory Card
+Photo (icon for printed photos in the inventory)
+Poster (icon for printed hangable photos in the inventory)
+Batteries (Already done!)
+PhotoAlbum (book to collect photos in)
+Alkaline Dust (dropped from alkaline ore)
+Tin Ingot (smelted Tin ore)
+Alkaline Bucket
+Photographic lenses (For Sepia, B&W, Red, Green, Blue color effects, also Clear lens which does nothing but is the base for the other lenses)
+Photonic dust (dropped by Photonic netherrack)
+Photoelectric dust (Photonic dust + redstone)
+Photoelectric Diode (Base for the Photoelectric sensor, made from Photoelectric dust & some redstone components (torches, repeaters))
+Photoelectric Sensor (Image sensor for digital camera, made from Photoelectric diodes)
+Charged Enderpearl (used to teleport to the place a photo was taken)
+
+== BLOCKS ==
+Ores (Alkaline, Tin, maybe more to come, depends on the recipes i decide on)
+NetherOres (Photonic Netherrack (with yellow glowing particles? Drops Photonic Dust))
+OreBlocks (Alkaline, Tin & Photonic [slightly glowing])
+LiquidAlkaline (fluid used to process films)
+PhotoPrinter (prints photos from a memory card)
+FilmProcessor (uses liquid alkaline to turn films into processed film strips [negative images])
+FilmScanner (scans a film negative [processed film] onto a memory card)
+PhotoSharer (name is WIP, used to share images from a memory card into the "PhotoNet" (name WIP) so other people on the server [and possibly from the real internet, too] can access them)
+EnderPearlCharger (charges enderpearls into Charged enderpearls with energy)
+ItemTransmuter (allows you to e.g. convert IC2 tin to Buildcraft tin)
+
+== GUIS ==
+FilmCamera (2 Slots, one for film & one for Photographic lens)
+DigitalCamera (3 slots, battery, memory card, photographic lens, small image preview for already taken images with 2 buttons for selecting the image)
+PhotoPrinter (one slot for paper, One slot for 4 inks (cyan, magenta, yellow, black), One slot for memory card, button which opens another GUI for selecting which photos to print (with preview area), which size (up to 4x4) and amount)
+FilmProcessor (3 slots, one for alkaline buckes, one for empty bucket return [like in railcraft liquid loaders], one for the film to be processed, "Tank window" to show the fluid amount in the processor, see attached example)
+FilmScanner (2 slots one for processed film one for memory card)
+PhotoSharer (To be decided. No need to do this yet)
+EnderPearlCharger (just one slot for now. not sure how this thing will work)
+ItemTransmuter (2 slots input and output, scroll list to select what result you want)

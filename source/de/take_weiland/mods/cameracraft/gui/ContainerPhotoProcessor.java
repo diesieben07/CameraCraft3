@@ -5,10 +5,15 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.ICrafting;
 import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
+
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
 import de.take_weiland.mods.commons.gui.AbstractContainer;
 import de.take_weiland.mods.commons.gui.AdvancedSlot;
@@ -21,8 +26,8 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 	public int lastFluidId;
 	public int lastFluidAmount;
 	
-	public ContainerPhotoProcessor(TilePhotoProcessor tile, EntityPlayer player) {
-		super(tile, player);
+	public ContainerPhotoProcessor(World world, int x, int y, int z, EntityPlayer player) {
+		super(world, x, y, z, player);
 	}
 	
 	@Override
@@ -36,6 +41,33 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 		return inventory.isUseableByPlayer(player);
 	}
 	
+	@Override
+	protected boolean enableSyncing() {
+		return true;
+	}
+
+	@Override
+	public boolean prepareSyncData() {
+		FluidStack fluid = inventory.tank.getFluid();
+		int newFluidId = fluid == null ? 0 : fluid.fluidID;
+		int newFluidAmount = fluid == null ? 0 : fluid.amount;
+		boolean needsSync = newFluidId != lastFluidId || newFluidAmount != lastFluidAmount;
+		lastFluidAmount = newFluidAmount;
+		lastFluidId = newFluidId;
+		return needsSync;
+	}
+
+	@Override
+	public void writeSyncData(ByteArrayDataOutput out, boolean all) {
+//		if (all)
+	}
+
+	@Override
+	public void readSyncData(ByteArrayDataInput in) {
+		// TODO Auto-generated method stub
+		super.readSyncData(in);
+	}
+
 	@Override
 	public void addCraftingToCrafters(ICrafting crafter) {
 		super.addCraftingToCrafters(crafter);

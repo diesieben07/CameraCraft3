@@ -7,7 +7,7 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.CommonUtils;
+import de.take_weiland.mods.commons.util.CollectionUtils;
 import de.take_weiland.mods.commons.util.Items;
 
 public class ItemIngotsDusts extends CCItem implements Typed<IngotDustType> {
@@ -40,7 +40,7 @@ public class ItemIngotsDusts extends CCItem implements Typed<IngotDustType> {
 
 	@Override
 	public Icon getIconFromDamage(int meta) {
-		return CommonUtils.safeArrayAccess(icons, meta);
+		return CollectionUtils.safeArrayAccess(icons, meta);
 	}
 
 	@Override

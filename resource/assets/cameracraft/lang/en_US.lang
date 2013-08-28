@@ -1,6 +1,7 @@
 itemGroup.cameracraft=CameraCraft
 
 tile.CameraCraft.ores.tin.name=Tin Ore
+tile.CameraCraft.ores.blockTin.name=Block of Tin
 tile.CameraCraft.ores.alkaline.name=Alkaline Ore
 
 item.CameraCraft.camera.film.name=Film Camera

@@ -12,6 +12,7 @@ import net.minecraftforge.fluids.IFluidHandler;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
+import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Sides;
 
@@ -35,7 +36,7 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 
 	@Override
 	protected String getDefaultName() {
-		return CCBlock.machines.getUnlocalizedName(MachineType.PHOTO_PROCESSOR.getMeta());
+		return Blocks.getUnlocalizedName(CCBlock.machines, MachineType.PHOTO_PROCESSOR);
 	}
 
 	@Override

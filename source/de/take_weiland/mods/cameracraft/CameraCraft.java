@@ -2,12 +2,13 @@ package de.take_weiland.mods.cameracraft;
 
 import java.util.logging.Logger;
 
-import com.google.common.base.Throwables;
-
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
+
+import com.google.common.base.Throwables;
+
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -19,13 +20,12 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApiHandler;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.networks.CCPackets;
-import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.config.ConfigInjector;
 import de.take_weiland.mods.commons.config.GetProperty;
@@ -85,8 +85,6 @@ public final class CameraCraft {
 		
 		NetworkRegistry.instance().registerGuiHandler(this, new CCGuis.Handler());
 		
-		GameRegistry.registerTileEntity(TilePhotoProcessor.class, "cameracraft.processor");
-		
 		CCRecipes.addRecipes();
 		
 		api = new ApiImpl();
@@ -94,6 +92,11 @@ public final class CameraCraft {
 		if (config.hasChanged()) {
 			config.save();
 		}
+	}
+	
+	@EventHandler
+	public void init(FMLInitializationEvent event) {
+		
 	}
 	
 	@EventHandler
@@ -119,11 +122,6 @@ public final class CameraCraft {
 				}
 			}
 		}
-	}
-	
-	@EventHandler
-	public void init(FMLInitializationEvent event) {
-		
 	}
 	
 	@EventHandler
