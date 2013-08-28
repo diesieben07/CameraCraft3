@@ -52,7 +52,7 @@ public class TileItemMutator extends TileEntityInventory implements ISidedInvent
 	
 	private void transmute() {
 		if (hasSourceItem()) {
-			ItemStack result = getTransmutingResult(storage[0]);
+			ItemStack result = getTransmutingResult();
 			if (result != null && ItemStacks.canMergeFully(result, storage[1])) {
 				decrStackSize(0, 1);
 				storage[1] = ItemStacks.merge(result.copy(), storage[1], true);
@@ -73,14 +73,18 @@ public class TileItemMutator extends TileEntityInventory implements ISidedInvent
 			}
 		}
 	}
+	
+	public ItemStack getTransmutingResult() {
+		return getTransmutingResult(storage[0]);
+	}
 
 	private boolean hasSourceItem() {
 		return storage[0] != null;
 	}
 	
-	public boolean canTransmute() {
+	private boolean canTransmute() {
 		ItemStack result;
-		return hasSourceItem() && (result = getTransmutingResult(storage[0])) != null && ItemStacks.canMergeFully(result, storage[1]);
+		return hasSourceItem() && (result = getTransmutingResult()) != null && ItemStacks.canMergeFully(result, storage[1]);
 	}
 
 	@Override
