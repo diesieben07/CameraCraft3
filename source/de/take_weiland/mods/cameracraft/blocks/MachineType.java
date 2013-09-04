@@ -1,8 +1,8 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;

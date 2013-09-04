@@ -18,6 +18,7 @@ public class TileItemMutator extends TileEntityInventory implements ISidedInvent
 
 	private short transmuteTime = 0;
 	private boolean enabled = true;
+	private int selectedResult = 0;
 	
 	@Override
 	public int getSizeInventory() {
@@ -35,7 +36,7 @@ public class TileItemMutator extends TileEntityInventory implements ISidedInvent
 			transmuteTime--;
 		}
 		if (Sides.logical(this).isServer()) {
-			if (transmuteTime == -1 && enabled && canTransmute()) {
+			if (transmuteTime == -1 && canTransmute()) {
 				startTransmuting();
 			} else if (transmuteTime == 0) {
 				transmute();
@@ -51,30 +52,27 @@ public class TileItemMutator extends TileEntityInventory implements ISidedInvent
 	}
 	
 	private void transmute() {
-		if (hasSourceItem()) {
-			ItemStack result = getTransmutingResult();
-			if (result != null && ItemStacks.canMergeFully(result, storage[1])) {
+		if (hasSelectedResult() && hasSourceItem()) {
+			List<ItemStack> result = getTransmutingResult();
+			ItemStack selected;
+			if (result != null && ItemStacks.canMergeFully((selected = result.get(selectedResult)), storage[1])) {
 				decrStackSize(0, 1);
-				storage[1] = ItemStacks.merge(result.copy(), storage[1], true);
+				storage[1] = ItemStacks.merge(selected.copy(), storage[1], true);
 			}
 		}
 	}
 
-	private static ItemStack getTransmutingResult(ItemStack item) {
+	private static List<ItemStack> getTransmutingResult(ItemStack item) {
 		int oreId = OreDictionary.getOreID(item);
 		if (oreId < 0) {
 			return null;
 		} else {
 			List<ItemStack> similarOres = OreDictionary.getOres(Integer.valueOf(oreId));
-			if (similarOres.isEmpty()) {
-				return null;
-			} else {
-				return similarOres.get(0);
-			}
+			return similarOres.isEmpty() ? null : similarOres;
 		}
 	}
 	
-	public ItemStack getTransmutingResult() {
+	public List<ItemStack> getTransmutingResult() {
 		return getTransmutingResult(storage[0]);
 	}
 
@@ -82,9 +80,13 @@ public class TileItemMutator extends TileEntityInventory implements ISidedInvent
 		return storage[0] != null;
 	}
 	
+	private boolean hasSelectedResult() {
+		return selectedResult >= 0;
+	}
+	
 	private boolean canTransmute() {
-		ItemStack result;
-		return hasSourceItem() && (result = getTransmutingResult()) != null && ItemStacks.canMergeFully(result, storage[1]);
+		List<ItemStack> temp;
+		return hasSelectedResult() && hasSourceItem() && (temp = getTransmutingResult()) != null && ItemStacks.canMergeFully(temp.get(selectedResult), storage[1]);
 	}
 
 	@Override

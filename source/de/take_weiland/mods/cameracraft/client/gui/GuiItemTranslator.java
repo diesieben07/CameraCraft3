@@ -1,6 +1,5 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.gui.ContainerItemTranslator;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
@@ -17,25 +16,31 @@ public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, Con
 	}
 
 	@Override
+	public void initGui() {
+		xSize = 256;
+		super.initGui();
+	}
+
+	@Override
 	protected ResourceLocation provideTexture() {
 		return new ResourceLocation("cameracraft", "textures/gui/oreDictionary.png");
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		fontRenderer.drawSplitString(oreText, 100, 10, 50, 0x000000);
+		fontRenderer.drawString(oreText, 100, 10, 0x000000);
 		fontRenderer.drawString("" + container.inventory().getTransmuteTime(), 30, 10, 0x000000);
 	}
 
 	@Override
 	public void onInventoryChanged(AdvancedInventory inventory) {
 		TileItemMutator tile = container.inventory();
-		ItemStack result = tile.getTransmutingResult();
-		if (result != null) {
-			oreText = result.getDisplayName();
-		} else {
-			oreText = "";
-		}
+//		ItemStack result = tile.getTransmutingResult();
+//		if (result != null) {
+//			oreText = result.getDisplayName();
+//		} else {
+//			oreText = "";
+//		}
 	}
 
 	@Override

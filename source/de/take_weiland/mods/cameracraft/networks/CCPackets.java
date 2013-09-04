@@ -2,8 +2,8 @@ package de.take_weiland.mods.cameracraft.networks;
 
 import com.google.common.primitives.UnsignedBytes;
 
-import de.take_weiland.mods.commons.network.StreamPacket;
 import de.take_weiland.mods.commons.network.PacketType;
+import de.take_weiland.mods.commons.network.StreamPacket;
 
 public enum CCPackets implements PacketType {
 	

@@ -1,9 +1,9 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.commons.util.Items;
 import net.minecraft.item.Item;
 import net.minecraftforge.oredict.OreDictionary;
+import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.commons.util.Items;
 
 public class CCItem extends Item {
 
