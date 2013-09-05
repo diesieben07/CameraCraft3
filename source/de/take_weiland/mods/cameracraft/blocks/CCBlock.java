@@ -1,10 +1,12 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.tileentity.TileEntityCable;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.Inventories;
 
@@ -12,12 +14,15 @@ public class CCBlock extends Block {
 
 	public static BlockCCOre ores;
 	public static BlockCCMachine machines;
+	public static BlockCable cable;
 
 	public static final void createBlocks() {
 		ores = new BlockCCOre(3078);
 		machines = new BlockCCMachine(3079);
+		cable = new BlockCable(3080);
 		
 		MachineType.registerTileEntities();
+		GameRegistry.registerTileEntity(TileEntityCable.class, "cameracraft.cable");
 		
 		OreDictionary.registerOre("oreTin", Blocks.getStack(ores, OreType.TIN));
 		OreDictionary.registerOre("oreAlkaline", Blocks.getStack(ores, OreType.ALKALINE));

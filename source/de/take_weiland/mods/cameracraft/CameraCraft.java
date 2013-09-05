@@ -39,14 +39,14 @@ public final class CameraCraft {
 	static final String MOD_ID = "CameraCraft";
 	static final String MOD_NAME = "CameraCraft";
 	static final String VERSION = "3.0b";
-	private static final String CLIENT_HANDLER = "de.take_weiland.mods.cameracraft.client.ClientHandler";
-	private static final String SERVER_HANDLER = "de.take_weiland.mods.cameracraft.server.ServerHandler";
+	private static final String CLIENT_ENV = "de.take_weiland.mods.cameracraft.client.EnvironmentClient";
+	private static final String SERVER_ENV = "de.take_weiland.mods.cameracraft.server.EnvironmentServer";
 	
 	@Instance
 	public static CameraCraft instance;
 	
-	@SidedProxy(clientSide = CLIENT_HANDLER, serverSide = SERVER_HANDLER)
-	public static CCSidedHandler proxy;
+	@SidedProxy(clientSide = CLIENT_ENV, serverSide = SERVER_ENV)
+	public static Environment env;
 	
 	public static Configuration config;
 	
@@ -92,6 +92,8 @@ public final class CameraCraft {
 		if (config.hasChanged()) {
 			config.save();
 		}
+		
+		env.setup();
 	}
 	
 	@EventHandler

@@ -11,12 +11,13 @@ import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
+import de.take_weiland.mods.commons.templates.NameableTileEntity;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Sides;
 
-public class TilePhotoProcessor extends TileEntityInventory implements IFluidHandler {
+public class TilePhotoProcessor extends TileEntityInventory implements IFluidHandler, NameableTileEntity {
 
 	public static final int TANK_CAPACITY = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	

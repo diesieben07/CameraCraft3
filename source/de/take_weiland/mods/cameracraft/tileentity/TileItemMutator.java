@@ -10,12 +10,13 @@ import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
+import de.take_weiland.mods.commons.templates.NameableTileEntity;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Sides;
 
-public class TileItemMutator extends TileEntityInventory implements ISidedInventory {
+public class TileItemMutator extends TileEntityInventory implements ISidedInventory, NameableTileEntity {
 
 	private static final int TRANSMUTE_DURATION = 200;
 	
