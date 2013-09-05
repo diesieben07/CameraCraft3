@@ -68,8 +68,8 @@ public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, Con
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		if (scrollbarY >= 0) {
-			int dWheel = MathHelper.floor_float(-Mouse.getDWheel() / 20f);
-			scrollbarY = MathHelper.clamp_int(scrollbarY + dWheel, 0, SCROLLBAR_MAX);
+			int dWheel = -Integer.signum(Mouse.getDWheel());
+			scrollbarY = MathHelper.clamp_int(scrollbarY + dWheel * (SCROLLBAR_MAX / (ores.size() - ORE_SELECT_ITEM_COUNT)), 0, SCROLLBAR_MAX);
 		}
 		
 		
@@ -87,7 +87,7 @@ public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, Con
 			boolean isSelected = tile.getSelectedResult() == index + listOffset;
 			
 			if (isMouseOver || isSelected) {
-				drawRect(ORE_SELECT_X_TEXT - 1, y + 2, ORE_SELECT_X_TEXT + 1 + mostWideText, y + 5 + fontRenderer.FONT_HEIGHT, isMouseOver ? 0xffaaaaaa : 0xff4444ff);
+				drawRect(ORE_SELECT_X_TEXT - 1, y + 2, ORE_SELECT_X_TEXT + 1 + mostWideText, y + 5 + fontRenderer.FONT_HEIGHT, isSelected ? 0xff4444ff : 0xffaaaaaa);
 			}
 			
 			fontRenderer.drawString(ore.getDisplayName(), ORE_SELECT_X_TEXT, y + 4, 0x000000);
