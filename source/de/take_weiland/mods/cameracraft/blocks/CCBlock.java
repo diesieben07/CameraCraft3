@@ -21,6 +21,11 @@ public class CCBlock extends Block {
 		
 		OreDictionary.registerOre("oreTin", Blocks.getStack(ores, OreType.TIN));
 		OreDictionary.registerOre("oreAlkaline", Blocks.getStack(ores, OreType.ALKALINE));
+		OreDictionary.registerOre("oreGold", Block.stone);
+		OreDictionary.registerOre("oreGold", Block.stoneBrick);
+		OreDictionary.registerOre("oreGold", Block.stoneButton);
+		OreDictionary.registerOre("oreGold", Block.whiteStone);
+		OreDictionary.registerOre("oreGold", Block.waterlily);
 	}
 	
 	private static final int getId(String name, int defaultId) {
