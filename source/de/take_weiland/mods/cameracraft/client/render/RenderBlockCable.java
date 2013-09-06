@@ -50,11 +50,11 @@ public final class RenderBlockCable implements ISimpleBlockRenderingHandler {
 		return true;
 	}
 	
-	private static float min(int dirOffset) {
+	public static float min(int dirOffset) {
 		return dirOffset == 1 ? 0.6875f : dirOffset == -1 ? 0 : 0.3125f;
 	}
 	
-	private static float max(int dirOffset) {
+	public static float max(int dirOffset) {
 		return dirOffset == 1 ? 1 : dirOffset == -1 ? 0.3125f : 0.6875f;
 	}
 

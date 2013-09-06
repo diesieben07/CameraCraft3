@@ -1,19 +1,23 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
-import static de.take_weiland.mods.commons.util.Blocks.BLOCK_UPDATE;
-import static de.take_weiland.mods.commons.util.Blocks.UPDATE_CLIENTS;
-import static net.minecraftforge.common.ForgeDirection.VALID_DIRECTIONS;
-import de.take_weiland.mods.cameracraft.tileentity.TileEntityCable;
+import static net.minecraftforge.common.ForgeDirection.*;
 import net.minecraft.block.StepSound;
 import net.minecraft.block.material.Material;
+import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Icon;
+import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import de.take_weiland.mods.cameracraft.tileentity.TileEntityCable;
+import de.take_weiland.mods.commons.util.Blocks;
 
 public class BlockCable extends CCBlock {
 
 	private int renderId;
+	private Icon iconIdle;
+	private Icon iconBare;
 	
 	protected BlockCable(int defaultId) {
 		super("cable", defaultId, Material.cloth);
@@ -58,23 +62,8 @@ public class BlockCable extends CCBlock {
 	}
 	
 	@Override
-	public boolean canPlaceBlockAt(World world, int x, int y, int z) {
-		return true || canBlockStay(world, x, y, z);
-	}
-
-	@Override
-	public boolean canBlockStay(World world, int x, int y, int z) {
-		return world.isBlockSolidOnSide(x, y - 1, z, ForgeDirection.UP);
-	}
-
-	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, int neighbourBlockId) {
-		if (!canBlockStay(world, x, y, z)) {
-//			dropBlockAsItem(world, x, y, z, world.getBlockMetadata(x, y, z), 0);
-//			world.setBlockToAir(x, y, z);
-		} else {
-			((TileEntityCable)world.getBlockTileEntity(x, y, z)).updateConnections();
-		}
+		((TileEntityCable)world.getBlockTileEntity(x, y, z)).updateConnections();
 	}
 
 	public void injectRenderId(int renderId) {
@@ -87,11 +76,6 @@ public class BlockCable extends CCBlock {
 	}
 
 	@Override
-	public void setBlockBoundsForItemRender() {
-		setBlockBounds(0, 0, 0, 1, 0.25f, 1);
-	}
-
-	@Override
 	public boolean hasTileEntity(int metadata) {
 		return true;
 	}
@@ -99,6 +83,39 @@ public class BlockCable extends CCBlock {
 	@Override
 	public TileEntity createTileEntity(World world, int metadata) {
 		return new TileEntityCable();
+	}
+
+	@Override
+	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
+		boolean hasOneConnection = false;
+		boolean[] tempSideExistsCheck = new boolean[6];
+		
+		for (int i = 0; i < 6; i++) {
+			ForgeDirection dir = VALID_DIRECTIONS[i];
+			boolean conn = existsAt(world, x, y, z, dir);
+			tempSideExistsCheck[i] = conn;
+			if (hasOneConnection && conn) {
+				return iconBare; // we have two connections
+			}
+			hasOneConnection |= conn;
+		}
+		
+		if (hasOneConnection) {
+			ForgeDirection sideDir = ForgeDirection.getOrientation(side);
+			return tempSideExistsCheck[sideDir.ordinal()] || tempSideExistsCheck[sideDir.getOpposite().ordinal()] ? iconIdle : iconBare;
+		} else {
+			return iconIdle;
+		}
+	}
+	
+	private boolean existsAt(IBlockAccess world, int origX, int origY, int origZ, ForgeDirection dir) {
+		return world.getBlockId(dir.offsetX + origX, origY + dir.offsetY, dir.offsetZ + origZ) == blockID;
+	}
+
+	@Override
+	public void registerIcons(IconRegister register) {
+		iconIdle = Blocks.registerIcon(this, register, "idle");
+		iconBare = Blocks.registerIcon(this, register, "bare");
 	}
 
 }
