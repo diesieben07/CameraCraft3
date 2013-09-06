@@ -1,14 +1,15 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import de.take_weiland.mods.cameracraft.api.cable.CableType;
 import de.take_weiland.mods.commons.templates.Type;
 
-public enum CableType implements Type {
+public enum CableTypeInt implements Type {
 	POWER("power"),
 	DATA("data");
 
 	private final String name;
 	
-	private CableType(String name) {
+	private CableTypeInt(String name) {
 		this.name = name;
 	}
 	
@@ -22,11 +23,11 @@ public enum CableType implements Type {
 		return ordinal();
 	}
 	
-	public de.take_weiland.mods.cameracraft.api.cable.CableType toApiForm() {
-		return de.take_weiland.mods.cameracraft.api.cable.CableType.values()[ordinal()];
+	public CableType toApiForm() {
+		return CableType.values()[ordinal()];
 	}
 	
-	public static CableType fromApi(de.take_weiland.mods.cameracraft.api.cable.CableType apiForm) {
+	public static CableTypeInt fromApi(CableType apiForm) {
 		return values()[apiForm.ordinal()];
 	}
 

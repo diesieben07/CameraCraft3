@@ -13,12 +13,12 @@ import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.take_weiland.mods.cameracraft.api.cable.CableConnector;
+import de.take_weiland.mods.cameracraft.api.cable.CableType;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.CollectionUtils;
-
 import static de.take_weiland.mods.commons.util.Multitypes.getType;
 
-public class BlockCable extends CCMultitypeBlock<CableType> implements CableConnector {
+public class BlockCable extends CCMultitypeBlock<CableTypeInt> implements CableConnector {
 
 	private int renderId;
 	private Icon[] bareIcons;
@@ -121,13 +121,13 @@ public class BlockCable extends CCMultitypeBlock<CableType> implements CableConn
 	}
 
 	@Override
-	public boolean canConnect(IBlockAccess world, int x, int y, int z, ForgeDirection side, de.take_weiland.mods.cameracraft.api.cable.CableType type) {
+	public boolean canConnect(IBlockAccess world, int x, int y, int z, ForgeDirection side, CableType type) {
 		return getType(this, world.getBlockMetadata(x, y, z)).toApiForm() == type;
 	}
 
 	@Override
-	public CableType[] getTypes() {
-		return CableType.values();
+	public CableTypeInt[] getTypes() {
+		return CableTypeInt.values();
 	}
 
 }

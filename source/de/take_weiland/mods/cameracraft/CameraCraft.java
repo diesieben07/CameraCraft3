@@ -36,13 +36,13 @@ import de.take_weiland.mods.commons.util.Items;
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
 public final class CameraCraft {
 
-	static final String MOD_ID = "CameraCraft";
+	static final String MOD_ID = CameraCraftApiHandler.CAMERACRAFT_MODID;
 	static final String MOD_NAME = "CameraCraft";
 	static final String VERSION = "3.0b";
 	private static final String CLIENT_ENV = "de.take_weiland.mods.cameracraft.client.EnvironmentClient";
 	private static final String SERVER_ENV = "de.take_weiland.mods.cameracraft.server.EnvironmentServer";
 	
-	@Instance
+	@Instance(MOD_ID)
 	public static CameraCraft instance;
 	
 	@SidedProxy(clientSide = CLIENT_ENV, serverSide = SERVER_ENV)
@@ -104,7 +104,7 @@ public final class CameraCraft {
 	@EventHandler
 	public void handleModComms(IMCEvent event) {
 		for (IMCMessage message : event.getMessages()) {
-			if (message.key.equals("RequestApi")) {
+			if (message.key.equals(CameraCraftApiHandler.IMC_REQUEST_KEY)) {
 				try {
 					if (message.isStringMessage()) {
 						Class<?> handlerClass = Class.forName(message.getStringValue());

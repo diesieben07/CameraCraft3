@@ -1,5 +1,13 @@
 package de.take_weiland.mods.cameracraft.api;
 
-public interface CameraCraftApi {
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType;
+import de.take_weiland.mods.cameracraft.api.cable.CableType;
 
+public interface CameraCraftApi {
+	
+	CableType getCableType(IBlockAccess world, int x, int y, int z);
+	
+	EventType getTinMinableType();
+	
 }
