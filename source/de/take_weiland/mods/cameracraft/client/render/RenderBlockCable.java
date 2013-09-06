@@ -4,9 +4,11 @@ import static net.minecraftforge.common.ForgeDirection.VALID_DIRECTIONS;
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import de.take_weiland.mods.cameracraft.blocks.BlockCable;
 
 public final class RenderBlockCable implements ISimpleBlockRenderingHandler {
 
@@ -16,20 +18,20 @@ public final class RenderBlockCable implements ISimpleBlockRenderingHandler {
 		
 		t.startDrawingQuads();
 		
-		t.disableColor();
-		
 		setRenderBoundsForCenter(renderer);
 		
-		renderer.renderFaceXNeg(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, metadata, 0));
-		renderer.renderFaceXPos(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, metadata, 0));
-		renderer.renderFaceZNeg(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, metadata, 0));
-		renderer.renderFaceZPos(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, metadata, 0));
-		renderer.renderFaceYNeg(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, metadata, 0));
-		renderer.renderFaceYPos(block, 0, 0, 0, renderer.getBlockIconFromSideAndMetadata(block, metadata, 0));
+		Icon icon = renderer.getBlockIcon(block);
+		
+		renderer.renderFaceXNeg(block, 0, 0, 0, icon);
+		renderer.renderFaceXPos(block, 0, 0, 0, icon);
+		renderer.renderFaceZNeg(block, 0, 0, 0, icon);
+		renderer.renderFaceZPos(block, 0, 0, 0, icon);
+		renderer.renderFaceYNeg(block, 0, 0, 0, icon);
+		renderer.renderFaceYPos(block, 0, 0, 0, icon);
 		
 		t.draw();
 	}
-
+	
 	private static void setRenderBoundsForCenter(RenderBlocks renderer) {
 		renderer.setRenderBounds(0.3125f, 0.3125f, 0.3125f, 0.6875f, 0.6875f, 0.6875f);
 	}
@@ -41,7 +43,7 @@ public final class RenderBlockCable implements ISimpleBlockRenderingHandler {
 		
 		for (int i = 0; i < VALID_DIRECTIONS.length; ++i) {
 			ForgeDirection dir = VALID_DIRECTIONS[i];
-			if (world.getBlockId(x + dir.offsetX, y + dir.offsetY, z + dir.offsetZ) == block.blockID) {
+			if (BlockCable.connectsTo(world, x, y, z, dir)) {
 				renderer.setRenderBounds(min(dir.offsetX), min(dir.offsetY), min(dir.offsetZ), max(dir.offsetX), max(dir.offsetY), max(dir.offsetZ));
 				renderer.renderStandardBlock(block, x, y, z);
 			}
