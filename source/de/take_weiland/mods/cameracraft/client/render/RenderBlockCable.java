@@ -20,7 +20,7 @@ public final class RenderBlockCable implements ISimpleBlockRenderingHandler {
 		
 		setRenderBoundsForCenter(renderer);
 		
-		Icon icon = renderer.getBlockIcon(block);
+		Icon icon = renderer.getBlockIconFromSideAndMetadata(block, 0, metadata);
 		
 		renderer.renderFaceXNeg(block, 0, 0, 0, icon);
 		renderer.renderFaceXPos(block, 0, 0, 0, icon);

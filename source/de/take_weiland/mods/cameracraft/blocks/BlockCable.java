@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
 import static net.minecraftforge.common.ForgeDirection.VALID_DIRECTIONS;
+import net.minecraft.block.Block;
 import net.minecraft.block.StepSound;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -9,12 +10,18 @@ import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.common.ForgeDirection;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import de.take_weiland.mods.cameracraft.api.cable.CableConnector;
 import de.take_weiland.mods.commons.util.Blocks;
+import de.take_weiland.mods.commons.util.CollectionUtils;
 
-public class BlockCable extends CCBlock {
+import static de.take_weiland.mods.commons.util.Multitypes.getType;
+
+public class BlockCable extends CCMultitypeBlock<CableType> implements CableConnector {
 
 	private int renderId;
-	private Icon iconBare;
+	private Icon[] bareIcons;
 	
 	protected BlockCable(int defaultId) {
 		super("cable", defaultId, Material.cloth);
@@ -69,32 +76,58 @@ public class BlockCable extends CCBlock {
 		boolean hasOneConnection = false;
 		boolean[] tempSideExistsCheck = new boolean[6];
 		
+		int meta = world.getBlockMetadata(x, y, z);
+		
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = VALID_DIRECTIONS[i];
 			boolean conn = connectsTo(world, x, y, z, dir);
 			tempSideExistsCheck[i] = conn;
 			if (hasOneConnection && conn) {
-				return iconBare; // we have two connections
+				return getBareIcon(meta); // we have at least two connections so return the "bare" texture
 			}
 			hasOneConnection |= conn;
 		}
 		
 		if (hasOneConnection) {
 			ForgeDirection sideDir = ForgeDirection.getOrientation(side);
-			return tempSideExistsCheck[sideDir.ordinal()] || tempSideExistsCheck[sideDir.getOpposite().ordinal()] ? blockIcon : iconBare;
+			return tempSideExistsCheck[sideDir.ordinal()] || tempSideExistsCheck[sideDir.getOpposite().ordinal()] ? getIcon(side, meta) : getBareIcon(meta);
 		} else {
-			return blockIcon;
+			return getIcon(side, meta);
 		}
 	}
 	
-	public static boolean connectsTo(IBlockAccess world, int origX, int origY, int origZ, ForgeDirection dir) {
-		return world.getBlockId(dir.offsetX + origX, origY + dir.offsetY, dir.offsetZ + origZ) == CCBlock.cable.blockID;
+	private Icon getBareIcon(int meta) {
+		return CollectionUtils.safeArrayAccess(bareIcons, meta);
+	}
+	
+	public static boolean connectsTo(IBlockAccess world, int x, int y, int z, ForgeDirection dir) {
+		int otherX = x + dir.offsetX;
+		int otherY = y + dir.offsetY;
+		int otherZ = z + dir.offsetZ;
+		int blockId = world.getBlockId(otherX, otherY, otherZ);
+		if (blockId == 0) {
+			return false;
+		} else {
+			Block block = blocksList[blockId];
+			return block instanceof CableConnector && ((CableConnector)block).canConnect(world, otherX, otherY, otherZ, dir.getOpposite(), getType(cable, world.getBlockMetadata(x, y, z)).toApiForm());
+		}
 	}
 
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister register) {
-		blockIcon = Blocks.registerIcon(this, register, "idle");
-		iconBare = Blocks.registerIcon(this, register, "bare");
+		icons = Blocks.registerIcons(this, "active", register);
+		bareIcons = Blocks.registerIcons(this, "bare", register);
+	}
+
+	@Override
+	public boolean canConnect(IBlockAccess world, int x, int y, int z, ForgeDirection side, de.take_weiland.mods.cameracraft.api.cable.CableType type) {
+		return getType(this, world.getBlockMetadata(x, y, z)).toApiForm() == type;
+	}
+
+	@Override
+	public CableType[] getTypes() {
+		return CableType.values();
 	}
 
 }

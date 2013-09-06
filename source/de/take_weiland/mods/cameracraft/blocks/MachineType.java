@@ -2,7 +2,9 @@ package de.take_weiland.mods.cameracraft.blocks;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
+import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
+import de.take_weiland.mods.cameracraft.api.cable.CableType;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
@@ -61,6 +63,10 @@ public enum MachineType implements Type {
 				GameRegistry.registerTileEntity(type.teClass, "cameracraft." + type.name);
 			}
 		}
+	}
+
+	public boolean canCableConnect(ForgeDirection side, CableType type) {
+		return type == CableType.POWER;
 	}
 
 }
