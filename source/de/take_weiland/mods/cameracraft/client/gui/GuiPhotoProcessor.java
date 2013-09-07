@@ -4,7 +4,7 @@ import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.gui.ContainerPhotoProcessor;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
-import de.take_weiland.mods.commons.client.GuiRendering;
+import de.take_weiland.mods.commons.client.Rendering;
 
 public class GuiPhotoProcessor extends AbstractGuiContainer<TilePhotoProcessor, ContainerPhotoProcessor> {
 
@@ -14,7 +14,7 @@ public class GuiPhotoProcessor extends AbstractGuiContainer<TilePhotoProcessor, 
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		GuiRendering.drawFluidStack(container.inventory().tank, 152, 9, 16, 59, this);
+		Rendering.drawFluidStack(container.inventory().tank, 152, 9, 16, 59, this);
 	}
 
 	@Override
