@@ -13,27 +13,32 @@ public final class RenderBlockCable implements ISimpleBlockRenderingHandler {
 
 	@Override
 	public void renderInventoryBlock(Block block, int metadata, int modelID, RenderBlocks renderer) {
-		setRenderBoundsForCenter(renderer);
-		
+		setRenderBoundsForCenter(block);
+		renderer.setRenderBoundsFromBlock(block);
 		Rendering.drawInventoryBlock(block, renderer, metadata);
+		block.setBlockBoundsForItemRender();
 	}
 
-	private static void setRenderBoundsForCenter(RenderBlocks renderer) {
-		renderer.setRenderBounds(0.3125f, 0.3125f, 0.3125f, 0.6875f, 0.6875f, 0.6875f);
+	private static void setRenderBoundsForCenter(Block block) {
+		block.setBlockBounds(0.3125f, 0.3125f, 0.3125f, 0.6875f, 0.6875f, 0.6875f);
 	}
 	
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, Block block, int modelId, RenderBlocks renderer) {
-		setRenderBoundsForCenter(renderer);
+		setRenderBoundsForCenter(block);
+		renderer.setRenderBoundsFromBlock(block);
 		renderer.renderStandardBlock(block, x, y, z);
 		
 		for (int i = 0; i < VALID_DIRECTIONS.length; ++i) {
 			ForgeDirection dir = VALID_DIRECTIONS[i];
 			if (BlockCable.connectsTo(world, x, y, z, dir)) {
-				renderer.setRenderBounds(min(dir.offsetX), min(dir.offsetY), min(dir.offsetZ), max(dir.offsetX), max(dir.offsetY), max(dir.offsetZ));
+				block.setBlockBounds(min(dir.offsetX), min(dir.offsetY), min(dir.offsetZ), max(dir.offsetX), max(dir.offsetY), max(dir.offsetZ));
+				renderer.setRenderBoundsFromBlock(block);
 				renderer.renderStandardBlock(block, x, y, z);
 			}
 		}
+		
+		block.setBlockBoundsForItemRender();
 		
 		return true;
 	}

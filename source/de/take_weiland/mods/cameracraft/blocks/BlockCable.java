@@ -38,9 +38,17 @@ public class BlockCable extends CCMultitypeBlock<CableTypeInt> implements CableC
 			}
 			
 		});
-		
+		setBlockBoundsForItemRender();
+	}
+	
+	
+
+	@Override
+	public void setBlockBoundsForItemRender() {
 		setBlockBounds(0.2f, 0.2f, 0.2f, 0.8f, 0.8f, 0.8f);
 	}
+
+
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
@@ -105,14 +113,10 @@ public class BlockCable extends CCMultitypeBlock<CableTypeInt> implements CableC
 		int otherY = y + dir.offsetY;
 		int otherZ = z + dir.offsetZ;
 		int blockId = world.getBlockId(otherX, otherY, otherZ);
-		if (blockId == 0) {
-			return false;
-		} else {
-			Block block = blocksList[blockId];
-			return block instanceof CableConnector && ((CableConnector)block).canConnect(world, otherX, otherY, otherZ, dir.getOpposite(), getType(cable, world.getBlockMetadata(x, y, z)).toApiForm());
-		}
+		Block block = blocksList[blockId];
+		return block instanceof CableConnector && ((CableConnector)block).canConnect(world, otherX, otherY, otherZ, dir.getOpposite(), getType(cable, world.getBlockMetadata(x, y, z)).toApiForm());
 	}
-
+	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister register) {
