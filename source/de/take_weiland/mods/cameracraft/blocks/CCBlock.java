@@ -1,16 +1,18 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
+import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
+import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.tileentity.TileEntityCable;
+import de.take_weiland.mods.commons.templates.AdvancedBlock;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.Inventories;
 
-public class CCBlock extends Block {
+public class CCBlock extends Block implements AdvancedBlock {
 
 	public static BlockCCOre ores;
 	public static BlockCCMachine machines;
@@ -24,8 +26,8 @@ public class CCBlock extends Block {
 		MachineType.registerTileEntities();
 		GameRegistry.registerTileEntity(TileEntityCable.class, "cameracraft.cable");
 		
-		OreDictionary.registerOre("oreTin", Blocks.getStack(ores, OreType.TIN));
-		OreDictionary.registerOre("oreAlkaline", Blocks.getStack(ores, OreType.ALKALINE));
+		OreDictionary.registerOre("oreTin", OreType.TIN.stack());
+		OreDictionary.registerOre("oreAlkaline", OreType.ALKALINE.stack());
 		OreDictionary.registerOre("oreGold", Block.stone);
 		OreDictionary.registerOre("oreGold", Block.stoneBrick);
 		OreDictionary.registerOre("oreGold", Block.stoneButton);
@@ -50,6 +52,21 @@ public class CCBlock extends Block {
 			Inventories.spillIfInventory(world.getBlockTileEntity(x, y, z));
 		}
 		super.breakBlock(world, x, y, z, blockId, metadata);
+	}
+
+	@Override
+	public ItemStack stack() {
+		return stack(1, 0);
+	}
+
+	@Override
+	public ItemStack stack(int quantity) {
+		return stack(quantity, 0);
+	}
+
+	@Override
+	public ItemStack stack(int quantity, int meta) {
+		return new ItemStack(this, quantity, meta);
 	}
 
 }

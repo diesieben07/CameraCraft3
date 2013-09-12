@@ -1,5 +1,6 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import static de.take_weiland.mods.commons.util.Multitypes.getType;
 import static net.minecraftforge.common.ForgeDirection.VALID_DIRECTIONS;
 import net.minecraft.block.Block;
 import net.minecraft.block.StepSound;
@@ -16,11 +17,10 @@ import de.take_weiland.mods.cameracraft.api.cable.CableConnector;
 import de.take_weiland.mods.cameracraft.api.cable.CableType;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.CollectionUtils;
-import static de.take_weiland.mods.commons.util.Multitypes.getType;
 
 public class BlockCable extends CCMultitypeBlock<CableTypeInt> implements CableConnector {
 
-	private int renderId;
+	private int renderId = -1;
 	private Icon[] bareIcons;
 	
 	protected BlockCable(int defaultId) {
@@ -79,10 +79,12 @@ public class BlockCable extends CCMultitypeBlock<CableTypeInt> implements CableC
 		return renderId;
 	}
 
+	private final boolean[] sideExistCheck = new boolean[6];
+	
 	@Override
 	public Icon getBlockTexture(IBlockAccess world, int x, int y, int z, int side) {
 		boolean hasOneConnection = false;
-		boolean[] tempSideExistsCheck = new boolean[6];
+		boolean[] tempSideExistsCheck = sideExistCheck;
 		
 		int meta = world.getBlockMetadata(x, y, z);
 		

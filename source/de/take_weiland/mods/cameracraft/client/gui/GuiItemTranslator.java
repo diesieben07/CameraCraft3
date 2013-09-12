@@ -160,7 +160,9 @@ public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, Con
 	@Override
 	protected void mouseMovedOrUp(int mouseX, int mouseY, int button) {
 		super.mouseMovedOrUp(mouseX, mouseY, button);
-		scrollbarClickOffset = -1;
+		if (button != -1) {
+			scrollbarClickOffset = -1;
+		}
 	}
 
 	@Override

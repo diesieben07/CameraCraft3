@@ -15,7 +15,6 @@ import de.take_weiland.mods.commons.util.CollectionUtils;
 
 public class ItemBattery extends CCItem {
 
-	@SideOnly(Side.CLIENT)
 	private Icon[] icons = new Icon[7];
 	
 	private final List<ItemStack> subItems;

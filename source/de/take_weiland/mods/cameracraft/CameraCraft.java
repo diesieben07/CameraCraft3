@@ -30,7 +30,6 @@ import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.config.ConfigInjector;
 import de.take_weiland.mods.commons.config.GetProperty;
 import de.take_weiland.mods.commons.network.ModPacketHandler;
-import de.take_weiland.mods.commons.util.Items;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
@@ -58,7 +57,7 @@ public final class CameraCraft {
 
 		@Override
 		public ItemStack getIconItemStack() {
-			return Items.getStack(CCItem.camera, CameraType.FILM);
+			return CameraType.FILM.stack();
 		}
 		
 	};

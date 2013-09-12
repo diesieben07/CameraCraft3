@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -67,6 +68,21 @@ public enum MachineType implements Type {
 
 	public boolean canCableConnect(ForgeDirection side, CableType type) {
 		return type == CableType.POWER;
+	}
+
+	@Override
+	public ItemStack stack() {
+		return stack(1);
+	}
+
+	@Override
+	public ItemStack stack(int quantity) {
+		return CCBlock.cable.stack(quantity, ordinal());
+	}
+
+	@Override
+	public ItemStack stack(int quantity, int meta) {
+		throw new IllegalArgumentException();
 	}
 
 }

@@ -1,12 +1,11 @@
 package de.take_weiland.mods.cameracraft;
 
-import static de.take_weiland.mods.cameracraft.blocks.CCBlock.*;
-import static de.take_weiland.mods.cameracraft.item.CCItem.*;
-import static de.take_weiland.mods.commons.util.Blocks.getStack;
-import static de.take_weiland.mods.commons.util.Items.getStack;
-import static de.take_weiland.mods.cameracraft.item.IngotDustType.*;
-import static de.take_weiland.mods.cameracraft.blocks.CableTypeInt.*;
-import static de.take_weiland.mods.commons.util.Constants.*;
+import static de.take_weiland.mods.cameracraft.blocks.CCBlock.ores;
+import static de.take_weiland.mods.cameracraft.blocks.CableTypeInt.DATA;
+import static de.take_weiland.mods.cameracraft.blocks.CableTypeInt.POWER;
+import static de.take_weiland.mods.cameracraft.item.IngotDustType.TIN_INGOT;
+import static de.take_weiland.mods.commons.util.Constants.CLOTH_BLACK;
+import static de.take_weiland.mods.commons.util.Constants.CLOTH_GRAY;
 import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
@@ -22,9 +21,9 @@ public final class CCRecipes {
 	@SuppressWarnings("boxing")
 	static void addRecipes() {
 		FurnaceRecipes f = FurnaceRecipes.smelting();
-		f.addSmelting(ores.blockID, OreType.TIN.getMeta(), getStack(ingotsDusts, TIN_INGOT), 0.7f);
+		f.addSmelting(ores.blockID, OreType.TIN.getMeta(), TIN_INGOT.stack(), 0.7f);
 		
-		ItemStack blockTin = getStack(ores, OreType.BLOCK_TIN);
+		ItemStack blockTin = OreType.BLOCK_TIN.stack();
 		
 		GameRegistry.addRecipe(new ShapedOreRecipe(blockTin, 
 				"III",
@@ -32,9 +31,9 @@ public final class CCRecipes {
 				"III",
 				'I', "ingotTin"));
 		
-		GameRegistry.addRecipe(new ShapelessOreRecipe(getStack(ingotsDusts, TIN_INGOT, 9), blockTin));
+		GameRegistry.addRecipe(new ShapelessOreRecipe(TIN_INGOT.stack(9), blockTin));
 		
-		GameRegistry.addRecipe(getStack(cable, POWER, 8), 
+		GameRegistry.addRecipe(POWER.stack(8), 
 				"WWW",
 				"WRW",
 				"WWW",
@@ -42,7 +41,7 @@ public final class CCRecipes {
 				'R', Block.blockRedstone
 			);
 		
-		GameRegistry.addRecipe(getStack(cable, DATA, 8), 
+		GameRegistry.addRecipe(DATA.stack(8), 
 				"WWW",
 				"WLW",
 				"WWW",

@@ -1,12 +1,12 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
+import static net.minecraftforge.common.ForgeDirection.VALID_DIRECTIONS;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.network.INetworkManager;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet132TileEntityData;
 import net.minecraftforge.common.ForgeDirection;
 import de.take_weiland.mods.commons.templates.TileEntityAbstract;
-import static net.minecraftforge.common.ForgeDirection.VALID_DIRECTIONS;
 
 public class TileEntityCable extends TileEntityAbstract {
 
