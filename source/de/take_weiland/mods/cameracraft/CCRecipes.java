@@ -21,7 +21,7 @@ public final class CCRecipes {
 	@SuppressWarnings("boxing")
 	static void addRecipes() {
 		FurnaceRecipes f = FurnaceRecipes.smelting();
-		f.addSmelting(ores.blockID, OreType.TIN.getMeta(), TIN_INGOT.stack(), 0.7f);
+		f.addSmelting(ores.blockID, OreType.TIN.ordinal(), TIN_INGOT.stack(), 0.7f);
 		
 		ItemStack blockTin = OreType.BLOCK_TIN.stack();
 		

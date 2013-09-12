@@ -12,8 +12,8 @@ import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.commons.templates.NameableTileEntity;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
-import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.ItemStacks;
+import de.take_weiland.mods.commons.util.Names;
 import de.take_weiland.mods.commons.util.Sides;
 
 public class TileItemMutator extends TileEntityInventory implements ISidedInventory, NameableTileEntity {
@@ -30,7 +30,7 @@ public class TileItemMutator extends TileEntityInventory implements ISidedInvent
 
 	@Override
 	protected String getDefaultName() {
-		return Blocks.getUnlocalizedName(CCBlock.machines, MachineType.ITEM_MUTATOR);
+		return Names.combine(CCBlock.machines, MachineType.ITEM_MUTATOR);
 	}
 	
 	@Override

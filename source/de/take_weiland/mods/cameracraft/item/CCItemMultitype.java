@@ -11,17 +11,23 @@ import de.take_weiland.mods.commons.templates.Typed;
 import de.take_weiland.mods.commons.util.CollectionUtils;
 import de.take_weiland.mods.commons.util.Items;
 import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.util.Names;
 
-public abstract class CCItemMultitype<T extends Type> extends CCItem implements Typed<T> {
+public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implements Typed<T> {
 
 	private Icon[] icons;
-	private final List<ItemStack> subtypes;
+	private List<ItemStack> subtypes;
 	
 	public CCItemMultitype(String name, int defaultId) {
 		super(name, defaultId);
-		subtypes = provideSubtypes();
 	}
 	
+	@Override
+	protected void lateInit() {
+		super.lateInit();
+		subtypes = provideSubtypes();
+	}
+
 	protected List<ItemStack> provideSubtypes() {
 		return Multitypes.allStacks(this);
 	}
@@ -39,7 +45,7 @@ public abstract class CCItemMultitype<T extends Type> extends CCItem implements 
 
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return Items.getUnlocalizedName(this, stack);
+		return Names.combine(this, Multitypes.getType(this, stack));
 	}
 
 	@Override

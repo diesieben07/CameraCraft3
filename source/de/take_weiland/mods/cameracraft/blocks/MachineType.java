@@ -10,8 +10,10 @@ import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
 import de.take_weiland.mods.commons.templates.Type;
+import de.take_weiland.mods.commons.templates.Typed;
+import de.take_weiland.mods.commons.util.Multitypes;
 
-public enum MachineType implements Type {
+public enum MachineType implements Type<MachineType> {
 	
 	PHOTO_PROCESSOR("processor", TilePhotoProcessor.class, CCGuis.PHOTO_PROCESSOR),
 	ITEM_MUTATOR("oreDictionary", TileItemMutator.class, CCGuis.ORE_DICTIONARY);
@@ -30,22 +32,37 @@ public enum MachineType implements Type {
 		this.gui = gui;
 	}
 	
+	@Override
+	public String unlocalizedName() {
+		return name;
+	}
+
+	@Override
+	public Typed<MachineType> getTyped() {
+		return CCBlock.machines;
+	}
+	
+	@Override
+	public ItemStack stack() {
+		return stack(1);
+	}
+
+	@Override
+	public ItemStack stack(int quantity) {
+		return Multitypes.stack(this, quantity);
+	}
+
+	@Override
+	public ItemStack stack(int quantity, int meta) {
+		throw new IllegalArgumentException();
+	}
+	
 	public void openGui(EntityPlayer player, int x, int y, int z) {
 		if (gui != null) {
 			gui.open(player, x, y, z);
 		}
 	}
-	
-	@Override
-	public String getName() {
-		return name;
-	}
 
-	@Override
-	public int getMeta() {
-		return ordinal();
-	}
-	
 	public boolean hasTileEntity() {
 		return teClass != null;
 	}
@@ -68,21 +85,6 @@ public enum MachineType implements Type {
 
 	public boolean canCableConnect(ForgeDirection side, CableType type) {
 		return type == CableType.POWER;
-	}
-
-	@Override
-	public ItemStack stack() {
-		return stack(1);
-	}
-
-	@Override
-	public ItemStack stack(int quantity) {
-		return CCBlock.cable.stack(quantity, ordinal());
-	}
-
-	@Override
-	public ItemStack stack(int quantity, int meta) {
-		throw new IllegalArgumentException();
 	}
 
 }

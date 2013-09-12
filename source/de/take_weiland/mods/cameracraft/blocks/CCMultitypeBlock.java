@@ -15,16 +15,21 @@ import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.CollectionUtils;
 import de.take_weiland.mods.commons.util.Multitypes;
 
-public abstract class CCMultitypeBlock<E extends Type> extends CCBlock implements Typed<E> {
+public abstract class CCMultitypeBlock<E extends Type<E>> extends CCBlock implements Typed<E> {
 
 	protected Icon[] icons;
-	private final List<ItemStack> subtypes;
+	private List<ItemStack> subtypes;
 	
 	public CCMultitypeBlock(String name, int defaultId, Material material) {
 		super(name, defaultId, material);
-		subtypes = provideSubtypes();
 	}
 	
+	@Override
+	protected void lateInit() {
+		super.lateInit();
+		subtypes = provideSubtypes();
+	}
+
 	protected List<ItemStack> provideSubtypes() {
 		return Multitypes.allStacks(this);
 	}
@@ -52,4 +57,5 @@ public abstract class CCMultitypeBlock<E extends Type> extends CCBlock implement
 	public void registerIcons(IconRegister register) {
 		icons = Blocks.registerIcons(this, register);
 	}
+
 }

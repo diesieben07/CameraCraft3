@@ -2,8 +2,10 @@ package de.take_weiland.mods.cameracraft.item;
 
 import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.commons.templates.Type;
+import de.take_weiland.mods.commons.templates.Typed;
+import de.take_weiland.mods.commons.util.Multitypes;
 
-public enum CameraType implements Type {
+public enum CameraType implements Type<CameraType> {
 
 	FILM("film"),
 	DIGITAL("digital");
@@ -15,13 +17,13 @@ public enum CameraType implements Type {
 	}
 	
 	@Override
-	public String getName() {
+	public String unlocalizedName() {
 		return name;
 	}
 
 	@Override
-	public int getMeta() {
-		return ordinal();
+	public Typed<CameraType> getTyped() {
+		return CCItem.camera;
 	}
 
 	@Override
@@ -31,12 +33,12 @@ public enum CameraType implements Type {
 
 	@Override
 	public ItemStack stack(int quantity) {
-		return CCItem.camera.stack(quantity, ordinal());
+		return Multitypes.stack(this, quantity);
 	}
 
 	@Override
 	public ItemStack stack(int quantity, int meta) {
 		throw new IllegalArgumentException();
 	}
-	
+
 }

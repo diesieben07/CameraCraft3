@@ -18,7 +18,7 @@ public class CCWorldGen {
 
 	public static final EventType TIN_EVENT_TYPE = EnumHelper.addEnum(EventType.class, "CAMERACRAFT_TIN", new Class[0], new Object[0]);
 	
-	private final WorldGenerator tinGenerator = new WorldGenMinable(CCBlock.ores.blockID, OreType.TIN.getMeta(), 5, Block.stone.blockID);
+	private final WorldGenerator tinGenerator = new WorldGenMinable(CCBlock.ores.blockID, OreType.TIN.ordinal(), 5, Block.stone.blockID);
 	
 	@ForgeSubscribe
 	public void generate(OreGenEvent.Post event) {

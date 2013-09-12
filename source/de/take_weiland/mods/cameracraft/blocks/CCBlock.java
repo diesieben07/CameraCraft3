@@ -19,9 +19,9 @@ public class CCBlock extends Block implements AdvancedBlock {
 	public static BlockCable cable;
 
 	public static final void createBlocks() {
-		ores = new BlockCCOre(3078);
-		machines = new BlockCCMachine(3079);
-		cable = new BlockCable(3080);
+		(ores = new BlockCCOre(3078)).lateInit();
+		(machines = new BlockCCMachine(3079)).lateInit();
+		(cable = new BlockCable(3080)).lateInit();
 		
 		MachineType.registerTileEntities();
 		GameRegistry.registerTileEntity(TileEntityCable.class, "cameracraft.cable");
@@ -39,10 +39,15 @@ public class CCBlock extends Block implements AdvancedBlock {
 		return CameraCraft.config.getBlock(name, defaultId).getInt();
 	}
 	
+	private final String baseName;
+	
 	protected CCBlock(String name, int defaultId, Material material) {
 		super(getId(name, defaultId), material);
-		
-		Blocks.init(this, name);
+		this.baseName = name;
+	}
+	
+	protected void lateInit() {
+		Blocks.init(this, baseName);
 		setCreativeTab(CameraCraft.tab);
 	}
 
@@ -67,6 +72,11 @@ public class CCBlock extends Block implements AdvancedBlock {
 	@Override
 	public ItemStack stack(int quantity, int meta) {
 		return new ItemStack(this, quantity, meta);
+	}
+
+	@Override
+	public String unlocalizedName() {
+		return getUnlocalizedName();
 	}
 
 }

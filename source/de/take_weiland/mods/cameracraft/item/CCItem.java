@@ -13,17 +13,23 @@ public abstract class CCItem extends Item implements AdvancedItem {
 	public static ItemCamera camera;
 	public static ItemIngotsDusts ingotsDusts;
 	
+	private final String baseName;
+	
 	public CCItem(String name, int defaultId) {
 		super(getId(name, defaultId));
-		Items.init(this, name);
+		this.baseName = name;
+	}
+	
+	protected void lateInit() {
+		Items.init(this, baseName);
 		
 		setCreativeTab(CameraCraft.tab);
 	}
 	
 	public static final void createItems() {
-		battery = new ItemBattery(9876);
-		camera = new ItemCamera(9877);
-		ingotsDusts = new ItemIngotsDusts(9878);
+		(battery = new ItemBattery(9876)).lateInit();
+		(camera = new ItemCamera(9877)).lateInit();
+		(ingotsDusts = new ItemIngotsDusts(9878)).lateInit();
 		
 		OreDictionary.registerOre("ingotTin", IngotDustType.TIN_INGOT.stack());
 	}
@@ -45,6 +51,11 @@ public abstract class CCItem extends Item implements AdvancedItem {
 	@Override
 	public ItemStack stack(int quantity, int meta) {
 		return new ItemStack(this, quantity, meta);
+	}
+	
+	@Override
+	public String unlocalizedName() {
+		return getUnlocalizedName();
 	}
 
 	@Override

@@ -2,8 +2,10 @@ package de.take_weiland.mods.cameracraft.item;
 
 import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.commons.templates.Type;
+import de.take_weiland.mods.commons.templates.Typed;
+import de.take_weiland.mods.commons.util.Multitypes;
 
-public enum IngotDustType implements Type {
+public enum IngotDustType implements Type<IngotDustType> {
 
 	TIN_INGOT("ingotTin");
 
@@ -14,15 +16,15 @@ public enum IngotDustType implements Type {
 	}
 	
 	@Override
-	public String getName() {
+	public String unlocalizedName() {
 		return name;
 	}
 
 	@Override
-	public int getMeta() {
-		return ordinal();
+	public Typed<IngotDustType> getTyped() {
+		return CCItem.ingotsDusts;
 	}
-
+	
 	@Override
 	public ItemStack stack() {
 		return stack(1);
@@ -30,13 +32,12 @@ public enum IngotDustType implements Type {
 
 	@Override
 	public ItemStack stack(int quantity) {
-		return CCItem.ingotsDusts.stack(quantity, ordinal());
+		return Multitypes.stack(this, quantity);
 	}
 
 	@Override
 	public ItemStack stack(int quantity, int meta) {
 		throw new IllegalArgumentException();
 	}
-	
-	
+
 }
