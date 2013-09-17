@@ -14,4 +14,9 @@ public class EnvironmentClient implements Environment {
 		CCBlock.cable.injectRenderId(renderId);
 	}
 
+	@Override
+	public void executePhoto() {
+		System.out.println("taking photo");
+	}
+
 }

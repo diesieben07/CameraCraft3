@@ -9,12 +9,11 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
-import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.commons.templates.NameableTileEntity;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Names;
+import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 
 public class TilePhotoProcessor extends TileEntityInventory implements IFluidHandler, NameableTileEntity {
@@ -37,7 +36,7 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 
 	@Override
 	protected String getDefaultName() {
-		return Names.combine(CCBlock.machines, MachineType.PHOTO_PROCESSOR);
+		return Multitypes.name(MachineType.PHOTO_PROCESSOR);
 	}
 
 	@Override

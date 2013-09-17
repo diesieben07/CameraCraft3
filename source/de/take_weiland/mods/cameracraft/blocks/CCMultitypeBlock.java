@@ -58,4 +58,9 @@ public abstract class CCMultitypeBlock<E extends Type<E>> extends CCBlock implem
 		icons = Blocks.registerIcons(this, register);
 	}
 
+	@Override
+	public String subtypeName(E subtype) {
+		return getUnlocalizedName() + "." + subtype.unlocalizedName() + ".name";
+	}
+
 }

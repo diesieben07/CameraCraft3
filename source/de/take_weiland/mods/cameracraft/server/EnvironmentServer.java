@@ -7,4 +7,7 @@ public class EnvironmentServer implements Environment {
 	@Override
 	public void setup() { }
 
+	@Override
+	public void executePhoto() { }
+
 }

@@ -25,11 +25,12 @@ import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
-import de.take_weiland.mods.cameracraft.networks.CCPackets;
+import de.take_weiland.mods.cameracraft.network.CCPackets;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.config.ConfigInjector;
 import de.take_weiland.mods.commons.config.GetProperty;
-import de.take_weiland.mods.commons.network.ModPacketHandler;
+import de.take_weiland.mods.commons.network.PacketTransport;
+import de.take_weiland.mods.commons.network.PacketTransports;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
@@ -53,6 +54,8 @@ public final class CameraCraft {
 	
 	public static ApiImpl api;
 	
+	public static PacketTransport packetTransport;
+	
 	public static CreativeTabs tab = new CreativeTabs("cameracraft") {
 
 		@Override
@@ -74,7 +77,8 @@ public final class CameraCraft {
 		
 		ConfigInjector.inject(config, CameraCraft.class, false, false);
 		
-		ModPacketHandler.setupNetworking(this, CCPackets.values());
+		packetTransport = PacketTransports.withPacket131(this, CCPackets.values());
+		
 		CCItem.createItems();
 		CCBlock.createBlocks();
 		

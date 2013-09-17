@@ -39,5 +39,5 @@ public enum IngotDustType implements Type<IngotDustType> {
 	public ItemStack stack(int quantity, int meta) {
 		throw new IllegalArgumentException();
 	}
-
+	
 }

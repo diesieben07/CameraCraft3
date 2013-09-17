@@ -6,12 +6,12 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
+import de.take_weiland.mods.commons.templates.Named;
 import de.take_weiland.mods.commons.templates.Type;
 import de.take_weiland.mods.commons.templates.Typed;
 import de.take_weiland.mods.commons.util.CollectionUtils;
 import de.take_weiland.mods.commons.util.Items;
 import de.take_weiland.mods.commons.util.Multitypes;
-import de.take_weiland.mods.commons.util.Names;
 
 public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implements Typed<T> {
 
@@ -44,11 +44,6 @@ public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implemen
 	}
 
 	@Override
-	public String getUnlocalizedName(ItemStack stack) {
-		return Names.combine(this, Multitypes.getType(this, stack));
-	}
-
-	@Override
 	public Icon getIconFromDamage(int meta) {
 		return CollectionUtils.safeArrayAccess(icons, meta);
 	}
@@ -56,6 +51,20 @@ public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implemen
 	@Override
 	public void registerIcons(IconRegister register) {
 		icons = Items.registerIcons(this, register);
+	}
+	
+	@Override
+	public String getUnlocalizedName(ItemStack stack) {
+		return subtypeNameInternal(Multitypes.getType(stack), "");
+	}
+	
+	private String subtypeNameInternal(Named named, String suffix) {
+		return getUnlocalizedName() + "." + named.unlocalizedName() + suffix;
+	}
+
+	@Override
+	public String subtypeName(T subtype) {
+		return subtypeNameInternal(subtype, ".name");
 	}
 
 }
