@@ -1,5 +1,7 @@
 package de.take_weiland.mods.cameracraft;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
 import net.minecraft.creativetab.CreativeTabs;
@@ -8,6 +10,7 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.google.common.base.Throwables;
+import com.google.common.collect.ObjectArrays;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -31,6 +34,7 @@ import de.take_weiland.mods.commons.config.ConfigInjector;
 import de.take_weiland.mods.commons.config.GetProperty;
 import de.take_weiland.mods.commons.network.PacketTransport;
 import de.take_weiland.mods.commons.network.PacketTransports;
+import de.take_weiland.mods.commons.network.PacketType;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
@@ -56,6 +60,8 @@ public final class CameraCraft {
 	
 	public static PacketTransport packetTransport;
 	
+	public static ExecutorService executor;
+	
 	public static CreativeTabs tab = new CreativeTabs("cameracraft") {
 
 		@Override
@@ -68,6 +74,9 @@ public final class CameraCraft {
 	@GetProperty
 	public static boolean enableOreGeneration;
 	
+	@GetProperty(comment = "How many Threads CameraCraft should use for Performance optimizations")
+	public static int maxThreadCount = 3;
+	
 	@EventHandler
 	public void preInit(FMLPreInitializationEvent event) {
 		config = new Configuration(event.getSuggestedConfigurationFile());
@@ -77,7 +86,9 @@ public final class CameraCraft {
 		
 		ConfigInjector.inject(config, CameraCraft.class, false, false);
 		
-		packetTransport = PacketTransports.withPacket131(this, CCPackets.values());
+		executor = Executors.newFixedThreadPool(maxThreadCount);
+		
+		packetTransport = PacketTransports.withPacket131(this, ObjectArrays.concat(CCPackets.values(), CCPackets.MultiPackets.values(), PacketType.class));
 		
 		CCItem.createItems();
 		CCBlock.createBlocks();

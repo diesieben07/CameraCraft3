@@ -10,14 +10,13 @@ import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.commons.gui.AbstractContainer;
 import de.take_weiland.mods.commons.gui.AdvancedSlot;
-import de.take_weiland.mods.commons.syncing.Synced;
 
-public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> implements Synced {
+public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> /* implements Synced */ {
 	
-	@Sync
+//	@Sync
 	private short transmuteTime = -2; // -1 is taken
 	
-	@Sync
+//	@Sync
 	private short selectedResult = -1;
 	
 	protected ContainerItemTranslator(World world, int x, int y, int z, EntityPlayer player) {
@@ -35,17 +34,17 @@ public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> 
 		return OreDictionary.getOreID(stack) >= 0 ? 0 : -1;
 	}
 
-	@Override
-	public void downloadSyncedFields() {
-		transmuteTime = inventory.getTransmuteTime();
-		selectedResult = inventory.getSelectedResult();
-	}
-
-	@Override
-	public void uploadSyncedFields() {
-		inventory.setTransmuteTime(transmuteTime);
-		inventory.rawSelectResult(selectedResult);
-	}
+//	@Override
+//	public void downloadSyncedFields() {
+//		transmuteTime = inventory.getTransmuteTime();
+//		selectedResult = inventory.getSelectedResult();
+//	}
+//
+//	@Override
+//	public void uploadSyncedFields() {
+//		inventory.setTransmuteTime(transmuteTime);
+//		inventory.rawSelectResult(selectedResult);
+//	}
 
 	@Override
 	public void clickButton(Side side, EntityPlayer player, int buttonId) {

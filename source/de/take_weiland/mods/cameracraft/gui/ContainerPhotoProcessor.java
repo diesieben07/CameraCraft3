@@ -8,11 +8,10 @@ import net.minecraftforge.fluids.FluidStack;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
 import de.take_weiland.mods.commons.gui.AbstractContainer;
 import de.take_weiland.mods.commons.gui.AdvancedSlot;
-import de.take_weiland.mods.commons.syncing.Synced;
 
-public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcessor> implements Synced {
+public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcessor> /*implements Synced */{
 
-	@Sync
+//	@Sync
 	private FluidStack fluid;
 	
 	public ContainerPhotoProcessor(World world, int x, int y, int z, EntityPlayer player) {
@@ -30,16 +29,16 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 		return inventory.isUseableByPlayer(player);
 	}
 	
-	@Override
-	public void downloadSyncedFields() {
-		FluidStack fluid = inventory.tank.getFluid();
-		this.fluid = fluid == null ? null : fluid.copy();
-	}
+//	@Override
+//	public void downloadSyncedFields() {
+//		FluidStack fluid = inventory.tank.getFluid();
+//		this.fluid = fluid == null ? null : fluid.copy();
+//	}
 	
-	@Override
-	public void uploadSyncedFields() {
-		inventory.tank.setFluid(fluid);
-	}
+//	@Override
+//	public void uploadSyncedFields() {
+//		inventory.tank.setFluid(fluid);
+//	}
 	
 	@Override
 	public int getMergeTargetSlot(ItemStack stack) {
