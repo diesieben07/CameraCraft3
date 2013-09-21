@@ -7,6 +7,7 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.Environment;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
 import de.take_weiland.mods.cameracraft.client.render.RenderBlockCable;
 
 public class EnvironmentClient implements Environment {
@@ -24,7 +25,9 @@ public class EnvironmentClient implements Environment {
 	@Override
 	public void executePhoto() {
 		byte[] rawImage = ClientUtil.rawScreenshot(mc);
-		CameraCraft.executor.execute(new ScreenshotPostProcess(mc.displayWidth, mc.displayHeight, rawImage));
+		ScreenshotPostProcess postProcess = new ScreenshotPostProcess(mc.displayWidth, mc.displayHeight, rawImage);
+		CameraCraft.executor.execute(postProcess);
+		mc.displayGuiScreen(new GuiPhotoName(postProcess));
 	}
 
 	@Override

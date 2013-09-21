@@ -1,9 +1,12 @@
 package de.take_weiland.mods.cameracraft.client;
 
 import java.awt.image.BufferedImage;
+import java.util.concurrent.CountDownLatch;
+
+import com.google.common.base.Throwables;
 
 import de.take_weiland.mods.cameracraft.img.ImageUtil;
-import de.take_weiland.mods.cameracraft.network.PacketPhotoData;
+import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
 
 public final class ScreenshotPostProcess implements Runnable {
 
@@ -12,6 +15,10 @@ public final class ScreenshotPostProcess implements Runnable {
 	private byte[] data;
 	private final int width;
 	private final int height;
+	
+	private volatile String photoName;
+	
+	private final CountDownLatch latch = new CountDownLatch(1);
 	
 	public ScreenshotPostProcess(int width, int height, byte[] data) {
 		this.data = data;
@@ -28,7 +35,23 @@ public final class ScreenshotPostProcess implements Runnable {
 		
 		image = ImageUtil.scaledCenteredSquareAndRotate(image, SIZE);
 		
-		new PacketPhotoData(image).sendToServer();
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			Throwables.propagate(e);
+		}
+		
+		if (photoName != null) {
+			new PacketTakenPhoto(image, photoName).sendToServer();
+			System.out.println("sending");
+		} else {
+			System.out.println("discarding");
+		}
+	}
+	
+	public void setPhotoName(String photoName) {
+		this.photoName = photoName;
+		latch.countDown();
 	}
 
 }

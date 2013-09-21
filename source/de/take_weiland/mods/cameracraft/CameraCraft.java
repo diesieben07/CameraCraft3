@@ -101,6 +101,8 @@ public final class CameraCraft {
 		
 		CCRecipes.addRecipes();
 		
+		MinecraftForge.EVENT_BUS.register(new CCEventHandler());
+		
 		api = new ApiImpl();
 		
 		if (config.hasChanged()) {

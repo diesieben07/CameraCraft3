@@ -38,7 +38,7 @@ public enum CCPackets implements PacketType {
 	
 	public static enum MultiPackets implements MultipartPacketType {
 		
-		PHOTODATA(PacketPhotoData.class);
+		TAKEN_PHOTO(PacketTakenPhoto.class);
 		
 		private static final int CCPACKETS_LENGTH = CCPackets.values().length;
 
