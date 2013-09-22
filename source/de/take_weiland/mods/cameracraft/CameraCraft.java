@@ -10,7 +10,6 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.google.common.base.Throwables;
-import com.google.common.collect.ObjectArrays;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -34,7 +33,6 @@ import de.take_weiland.mods.commons.config.ConfigInjector;
 import de.take_weiland.mods.commons.config.GetProperty;
 import de.take_weiland.mods.commons.network.PacketTransport;
 import de.take_weiland.mods.commons.network.PacketTransports;
-import de.take_weiland.mods.commons.network.PacketType;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
@@ -88,7 +86,7 @@ public final class CameraCraft {
 		
 		executor = Executors.newFixedThreadPool(maxThreadCount);
 		
-		packetTransport = PacketTransports.withPacket131(this, ObjectArrays.concat(CCPackets.values(), CCPackets.MultiPackets.values(), PacketType.class));
+		packetTransport = PacketTransports.withPacket131(this, CCPackets.class);
 		
 		CCItem.createItems();
 		CCBlock.createBlocks();

@@ -19,6 +19,7 @@ import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CCUtil;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.commons.network.MultipartDataPacket;
+import de.take_weiland.mods.commons.network.PacketType;
 
 public class PacketTakenPhoto extends MultipartDataPacket {
 
@@ -67,8 +68,8 @@ public class PacketTakenPhoto extends MultipartDataPacket {
 	}
 	
 	@Override
-	public MultipartPacketType type() {
-		return CCPackets.MultiPackets.TAKEN_PHOTO;
+	public PacketType type() {
+		return CCPackets.TAKEN_PHOTO;
 	}
 	
 	@Override
