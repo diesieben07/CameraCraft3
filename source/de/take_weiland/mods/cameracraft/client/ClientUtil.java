@@ -16,7 +16,7 @@ public final class ClientUtil {
 
 	public static byte[] rawScreenshot(Minecraft mc) {
 		GL11.glPixelStorei(GL11.GL_PACK_ALIGNMENT, 1);
-		// GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
+		GL11.glPixelStorei(GL11.GL_UNPACK_ALIGNMENT, 1);
 
 		int width = mc.displayWidth;
 		int height = mc.displayHeight;
@@ -36,7 +36,6 @@ public final class ClientUtil {
 		ssBuffer.get(bytes);
 		
 		return bytes;
-		
 	}
 
 }

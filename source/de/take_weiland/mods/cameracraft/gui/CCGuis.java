@@ -8,15 +8,16 @@ import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.GuiCamera;
 import de.take_weiland.mods.cameracraft.client.gui.GuiItemTranslator;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoProcessor;
-import de.take_weiland.mods.cameracraft.item.CameraType;
-import de.take_weiland.mods.commons.util.CollectionUtils;
-import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.cameracraft.item.CCItem;
+import de.take_weiland.mods.commons.util.JavaUtils;
 
 public enum CCGuis {
 
 	PHOTO_PROCESSOR,
 	ORE_DICTIONARY,
 	CAMERA;
+	
+	static final CCGuis[] VALUES = values(); // don't create a new array each time we switch
 	
 	public void open(EntityPlayer player) {
 		open(player, 0, 0, 0);
@@ -34,7 +35,7 @@ public enum CCGuis {
 		
 		@Override
 		public Container getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-			CCGuis gui = CollectionUtils.safeArrayAccess(values(), id);
+			CCGuis gui = JavaUtils.safeArrayAccess(VALUES, id);
 			if (gui == null) {
 				return null;
 			}
@@ -44,7 +45,7 @@ public enum CCGuis {
 			case ORE_DICTIONARY:
 				return new ContainerItemTranslator(world, x, y, z, player);
 			case CAMERA:
-				return new ContainerCamera(Multitypes.<CameraType>getType(player.getCurrentEquippedItem()).newInventory(player), player);
+				return new ContainerCamera(CCItem.camera.newInventory(player, player.getCurrentEquippedItem()), player);
 			default:
 				throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}
@@ -56,7 +57,7 @@ public enum CCGuis {
 			if (c == null) {
 				return null;
 			}
-			CCGuis gui = CollectionUtils.safeArrayAccess(values(), id);
+			CCGuis gui = JavaUtils.safeArrayAccess(values(), id);
 			if (gui == null) {
 				return null;
 			}

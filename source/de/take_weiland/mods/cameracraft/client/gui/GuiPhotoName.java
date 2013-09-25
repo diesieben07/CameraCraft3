@@ -1,26 +1,28 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
-import org.lwjgl.input.Keyboard;
-
-import com.google.common.base.Strings;
-
-import de.take_weiland.mods.cameracraft.client.ScreenshotPostProcess;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.resources.I18n;
 
+import org.lwjgl.input.Keyboard;
+
+import de.take_weiland.mods.commons.client.Guis;
+import de.take_weiland.mods.commons.util.Consumer;
+
 public class GuiPhotoName extends GuiScreen {
 
 	private static final int BUTTON_DONE = 0;
 	
-	private final ScreenshotPostProcess screenshotProccessor;	
+	private final String oldName;
+	private final Consumer<String> newNameHandler;
 
 	private GuiTextField nameField;
 	private GuiButton buttonDone;
 	
-	public GuiPhotoName(ScreenshotPostProcess screenshotProccessor) {
-		this.screenshotProccessor = screenshotProccessor;
+	public GuiPhotoName(String oldName, Consumer<String> newNameHandler) {
+		this.oldName = oldName;
+		this.newNameHandler = newNameHandler;
 	}
 
 	@Override
@@ -40,26 +42,30 @@ public class GuiPhotoName extends GuiScreen {
 	}
 	
 	private void done() {
-		done(nameField.getText().trim());
-	}
-
-	private void done(String name) {
-		screenshotProccessor.setPhotoName(Strings.emptyToNull(name));
-		mc.displayGuiScreen(null);
+		newNameHandler.apply(nameField.getText().trim());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
-		buttonList.add((buttonDone = new GuiButton(BUTTON_DONE, width / 2 - 50, height - 30, 100, 20, I18n.getString("gui.done"))));
-		nameField = new GuiTextField(fontRenderer, width / 2 - 100, 50, 200, 20);
+		buttonList.add((buttonDone = new GuiButton(BUTTON_DONE, width / 2 - 75, height - 30, 150, 20, I18n.getString("gui.done"))));
+		
+		GuiTextField newNameField = new GuiTextField(fontRenderer, width / 2 - 100, 50, 200, 20);
+		if (nameField != null) {
+			Guis.copyState(nameField, newNameField);
+		} else {
+			newNameField.setFocused(true);
+		}
+		
+		nameField = newNameField;
+		
 		updateButtonState();
 	}
 
 	@Override
 	protected void keyTyped(char c, int keyCode) {
 		if (keyCode == Keyboard.KEY_ESCAPE) {
-			done(null);
+			Guis.close();
 		}
 		if (nameField.isFocused()) {
 			nameField.textboxKeyTyped(c, keyCode);

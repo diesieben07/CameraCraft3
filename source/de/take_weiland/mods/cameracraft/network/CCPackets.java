@@ -7,8 +7,9 @@ import de.take_weiland.mods.commons.network.PacketType;
 
 public enum CCPackets implements PacketType {
 	
-	TAKE_PHOTO(PacketTakePhoto.class),
-	TAKEN_PHOTO(PacketTakenPhoto.class);
+	CLIENT_ACTION(PacketClientAction.class),
+	TAKEN_PHOTO(PacketTakenPhoto.class),
+	PHOTO_NAME(PacketPhotoName.class);
 
 	private final Class<? extends ModPacket> clazz;
 	

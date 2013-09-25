@@ -107,7 +107,7 @@ public final class CameraCraft {
 			config.save();
 		}
 		
-		env.setup();
+		env.preInit();
 	}
 	
 	@EventHandler

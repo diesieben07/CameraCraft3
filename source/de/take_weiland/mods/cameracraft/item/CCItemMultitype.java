@@ -9,8 +9,8 @@ import net.minecraft.util.Icon;
 import de.take_weiland.mods.commons.templates.Named;
 import de.take_weiland.mods.commons.templates.Type;
 import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.CollectionUtils;
 import de.take_weiland.mods.commons.util.Items;
+import de.take_weiland.mods.commons.util.JavaUtils;
 import de.take_weiland.mods.commons.util.Multitypes;
 
 public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implements Typed<T> {
@@ -45,7 +45,7 @@ public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implemen
 
 	@Override
 	public Icon getIconFromDamage(int meta) {
-		return CollectionUtils.safeArrayAccess(icons, meta);
+		return JavaUtils.safeArrayAccess(icons, meta);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implemen
 	
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return subtypeNameInternal(Multitypes.getType(stack), "");
+		return subtypeNameInternal(Multitypes.getType(this, stack), "");
 	}
 	
 	private String subtypeNameInternal(Named named, String suffix) {

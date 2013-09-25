@@ -5,7 +5,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
-import de.take_weiland.mods.cameracraft.api.cable.CableType;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
@@ -83,7 +82,7 @@ public enum MachineType implements Type<MachineType> {
 		}
 	}
 
-	public boolean canCableConnect(ForgeDirection side, CableType type) {
+	public boolean canCableConnect(ForgeDirection side, de.take_weiland.mods.cameracraft.api.cable.CableType type) {
 		return type == CableType.POWER;
 	}
 

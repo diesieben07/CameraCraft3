@@ -12,7 +12,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import de.take_weiland.mods.commons.templates.Type;
 import de.take_weiland.mods.commons.templates.Typed;
 import de.take_weiland.mods.commons.util.Blocks;
-import de.take_weiland.mods.commons.util.CollectionUtils;
+import de.take_weiland.mods.commons.util.JavaUtils;
 import de.take_weiland.mods.commons.util.Multitypes;
 
 public abstract class CCMultitypeBlock<E extends Type<E>> extends CCBlock implements Typed<E> {
@@ -49,7 +49,7 @@ public abstract class CCMultitypeBlock<E extends Type<E>> extends CCBlock implem
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int meta) {
-		return CollectionUtils.safeArrayAccess(icons, meta);
+		return JavaUtils.safeArrayAccess(icons, meta);
 	}
 
 	@Override

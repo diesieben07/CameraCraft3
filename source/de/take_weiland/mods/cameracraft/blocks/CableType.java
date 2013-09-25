@@ -1,36 +1,27 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
 import net.minecraft.item.ItemStack;
-import de.take_weiland.mods.cameracraft.api.cable.CableType;
 import de.take_weiland.mods.commons.templates.Type;
 import de.take_weiland.mods.commons.templates.Typed;
 
-public enum CableTypeInt implements Type<CableTypeInt> {
+public enum CableType implements Type<CableType>, de.take_weiland.mods.cameracraft.api.cable.CableType {
 	POWER("power"),
 	DATA("data");
 
 	private final String name;
 	
-	private CableTypeInt(String name) {
+	private CableType(String name) {
 		this.name = name;
 	}
 	
 	@Override
-	public Typed<CableTypeInt> getTyped() {
+	public Typed<CableType> getTyped() {
 		return CCBlock.cable;
 	}
 	
 	@Override
 	public String unlocalizedName() {
 		return name;
-	}
-
-	public CableType toApiForm() {
-		return CableType.values()[ordinal()];
-	}
-	
-	public static CableTypeInt fromApi(CableType apiForm) {
-		return values()[apiForm.ordinal()];
 	}
 
 	@Override
@@ -46,6 +37,21 @@ public enum CableTypeInt implements Type<CableTypeInt> {
 	@Override
 	public ItemStack stack(int quantity, int meta) {
 		throw new IllegalArgumentException();
+	}
+
+	@Override
+	public boolean isData() {
+		return this == DATA;
+	}
+
+	@Override
+	public boolean isPower() {
+		return this == POWER;
+	}
+
+	@Override
+	public boolean is(de.take_weiland.mods.cameracraft.api.cable.CableType other) {
+		return other == this;
 	}
 
 }

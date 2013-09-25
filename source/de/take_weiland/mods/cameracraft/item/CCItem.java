@@ -12,6 +12,7 @@ public abstract class CCItem extends Item implements AdvancedItem {
 	public static ItemBattery battery;
 	public static ItemCamera camera;
 	public static ItemIngotsDusts ingotsDusts;
+	public static ItemPhotoStorages photoStorage;
 	
 	private final String baseName;
 	
@@ -30,6 +31,7 @@ public abstract class CCItem extends Item implements AdvancedItem {
 		(battery = new ItemBattery(9876)).lateInit();
 		(camera = new ItemCamera(9877)).lateInit();
 		(ingotsDusts = new ItemIngotsDusts(9878)).lateInit();
+		(photoStorage = new ItemPhotoStorages(9879)).lateInit();
 		
 		OreDictionary.registerOre("ingotTin", IngotDustType.TIN_INGOT.stack());
 	}
@@ -62,4 +64,5 @@ public abstract class CCItem extends Item implements AdvancedItem {
 	public String getUnlocalizedNameInefficiently(ItemStack item) {
 		return getUnlocalizedName(item); // some optimization
 	}
+	
 }

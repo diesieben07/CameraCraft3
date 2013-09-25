@@ -1,8 +1,8 @@
 package de.take_weiland.mods.cameracraft;
 
 import static de.take_weiland.mods.cameracraft.blocks.CCBlock.ores;
-import static de.take_weiland.mods.cameracraft.blocks.CableTypeInt.DATA;
-import static de.take_weiland.mods.cameracraft.blocks.CableTypeInt.POWER;
+import static de.take_weiland.mods.cameracraft.blocks.CableType.DATA;
+import static de.take_weiland.mods.cameracraft.blocks.CableType.POWER;
 import static de.take_weiland.mods.cameracraft.item.IngotDustType.TIN_INGOT;
 import static de.take_weiland.mods.commons.util.Constants.CLOTH_BLACK;
 import static de.take_weiland.mods.commons.util.Constants.CLOTH_GRAY;

@@ -7,7 +7,7 @@ import de.take_weiland.mods.commons.templates.Type;
 import de.take_weiland.mods.commons.templates.Typed;
 import de.take_weiland.mods.commons.util.Multitypes;
 
-public enum CameraType implements Type<CameraType> {
+public enum CameraType implements Type<CameraType>, de.take_weiland.mods.cameracraft.api.camera.CameraType {
 
 	FILM("film", 2),
 	DIGITAL("digital", 3);
@@ -57,7 +57,7 @@ public enum CameraType implements Type<CameraType> {
 
 		@Override
 		public int getSizeInventory() {
-			return CameraType.this.slotCount;
+			return slotCount;
 		}
 
 		@Override
@@ -65,6 +65,27 @@ public enum CameraType implements Type<CameraType> {
 			return CameraType.this;
 		}
 		
+	}
+
+	// API interface
+	@Override
+	public int getSlots() {
+		return slotCount;
+	}
+
+	@Override
+	public boolean is(de.take_weiland.mods.cameracraft.api.camera.CameraType other) {
+		return other == this;
+	}
+
+	@Override
+	public boolean isDigital() {
+		return this == DIGITAL;
+	}
+
+	@Override
+	public boolean isFilm() {
+		return this == FILM;
 	}
 
 }

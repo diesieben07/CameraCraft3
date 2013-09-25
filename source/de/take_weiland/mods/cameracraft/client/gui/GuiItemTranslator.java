@@ -18,7 +18,7 @@ import de.take_weiland.mods.cameracraft.gui.ContainerItemTranslator;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.templates.AdvancedInventory;
-import de.take_weiland.mods.commons.util.CollectionUtils;
+import de.take_weiland.mods.commons.util.JavaUtils;
 
 public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, ContainerItemTranslator> implements AdvancedInventory.Listener {
 
@@ -167,7 +167,7 @@ public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, Con
 
 	@Override
 	public void onInventoryChanged(AdvancedInventory inventory) {
-		ores = CollectionUtils.nullToEmpty(container.inventory().getTransmutingResult());
+		ores = JavaUtils.nullToEmpty(container.inventory().getTransmutingResult());
 		int mostWideText = 0;
 		for (String displayName : Iterables.transform(ores, DISPLAY_NAME_FUNC)) {
 			int width = fontRenderer.getStringWidth(displayName);

@@ -11,7 +11,7 @@ import com.google.common.collect.ImmutableList;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import de.take_weiland.mods.commons.util.CollectionUtils;
+import de.take_weiland.mods.commons.util.JavaUtils;
 
 public class ItemBattery extends CCItem {
 
@@ -33,7 +33,7 @@ public class ItemBattery extends CCItem {
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIconFromDamage(int meta) {
-		return CollectionUtils.safeArrayAccess(icons, meta);
+		return JavaUtils.safeArrayAccess(icons, meta);
 	}
 
 	@Override

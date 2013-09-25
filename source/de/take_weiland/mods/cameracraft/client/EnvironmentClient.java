@@ -3,37 +3,63 @@ package de.take_weiland.mods.cameracraft.client;
 import java.awt.image.BufferedImage;
 
 import net.minecraft.client.Minecraft;
+import net.minecraftforge.client.event.sound.SoundLoadEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeSubscribe;
 import cpw.mods.fml.client.registry.RenderingRegistry;
-import de.take_weiland.mods.cameracraft.CameraCraft;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.Environment;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
 import de.take_weiland.mods.cameracraft.client.render.RenderBlockCable;
+import de.take_weiland.mods.commons.util.Consumer;
 
 public class EnvironmentClient implements Environment {
 
 	private Minecraft mc;
+	private RenderTickHandler rth;
 	
 	@Override
-	public void setup() {
+	public void preInit() {
 		mc = Minecraft.getMinecraft();
+		
+		rth = new RenderTickHandler(mc);
+		TickRegistry.registerTickHandler(rth, Side.CLIENT);
+		
 		int renderId = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(renderId, new RenderBlockCable());
 		CCBlock.cable.injectRenderId(renderId);
+		
+		MinecraftForge.EVENT_BUS.register(this);
 	}
 
 	@Override
 	public void executePhoto() {
-		byte[] rawImage = ClientUtil.rawScreenshot(mc);
-		ScreenshotPostProcess postProcess = new ScreenshotPostProcess(mc.displayWidth, mc.displayHeight, rawImage);
-		CameraCraft.executor.execute(postProcess);
-		mc.displayGuiScreen(new GuiPhotoName(postProcess));
+		rth.schedulePhoto();
 	}
 
 	@Override
 	public void handleClientPhotoData(BufferedImage data) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@ForgeSubscribe
+	public void onSoundLoad(SoundLoadEvent event) {
+		event.manager.addSound("cameracraft:cameraclick.ogg");
+	}
+
+	@Override
+	public void displayNamePhotoGui(String oldName) {
+		mc.displayGuiScreen(new GuiPhotoName(oldName, new Consumer<String>() {
+			
+			@Override
+			public void apply(String input) {
+				// TODO Auto-generated method stub
+				
+			}
+		}));
 	}
 
 }
