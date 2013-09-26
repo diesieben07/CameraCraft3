@@ -13,6 +13,7 @@ public abstract class CCItem extends Item implements AdvancedItem {
 	public static ItemCamera camera;
 	public static ItemIngotsDusts ingotsDusts;
 	public static ItemPhotoStorages photoStorage;
+	public static ItemPhoto photo;
 	
 	private final String baseName;
 	

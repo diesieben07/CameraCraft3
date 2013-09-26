@@ -7,7 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
-import de.take_weiland.mods.cameracraft.api.camera.PhotoStorage;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 
 public abstract class AbstractPhotoStorage implements PhotoStorage {
 

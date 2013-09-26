@@ -1,4 +1,4 @@
-package de.take_weiland.mods.cameracraft.api.camera;
+package de.take_weiland.mods.cameracraft.api.photo;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;

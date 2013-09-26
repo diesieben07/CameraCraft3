@@ -1,5 +1,8 @@
 package de.take_weiland.mods.cameracraft.gui;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.IOException;
 import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
@@ -11,13 +14,7 @@ import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.commons.gui.AbstractContainer;
 import de.take_weiland.mods.commons.gui.AdvancedSlot;
 
-public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> /* implements Synced */ {
-	
-//	@Sync
-	private short transmuteTime = -2; // -1 is taken
-	
-//	@Sync
-	private short selectedResult = -1;
+public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> {
 	
 	protected ContainerItemTranslator(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player, 48, 84);
@@ -34,17 +31,22 @@ public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> 
 		return OreDictionary.getOreID(stack) >= 0 ? 0 : -1;
 	}
 
-//	@Override
-//	public void downloadSyncedFields() {
-//		transmuteTime = inventory.getTransmuteTime();
-//		selectedResult = inventory.getSelectedResult();
-//	}
-//
-//	@Override
-//	public void uploadSyncedFields() {
-//		inventory.setTransmuteTime(transmuteTime);
-//		inventory.rawSelectResult(selectedResult);
-//	}
+	@Override
+	public boolean isSynced() {
+		return true;
+	}
+
+	@Override
+	public void writeSyncData(DataOutputStream out) throws IOException {
+		out.writeShort(inventory.getTransmuteTime());
+		out.writeShort(inventory.getSelectedResult());
+	}
+
+	@Override
+	public void readSyncData(DataInputStream in) throws IOException {
+		inventory.setTransmuteTime(in.readShort());
+		inventory.rawSelectResult(in.readShort());
+	}
 
 	@Override
 	public void clickButton(Side side, EntityPlayer player, int buttonId) {

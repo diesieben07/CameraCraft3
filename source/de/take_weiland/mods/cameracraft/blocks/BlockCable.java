@@ -39,15 +39,11 @@ public class BlockCable extends CCMultitypeBlock<CableType> implements CableConn
 		});
 		setBlockBoundsForItemRender();
 	}
-	
-	
 
 	@Override
 	public void setBlockBoundsForItemRender() {
 		setBlockBounds(0.2f, 0.2f, 0.2f, 0.8f, 0.8f, 0.8f);
 	}
-
-
 
 	@Override
 	public AxisAlignedBB getCollisionBoundingBoxFromPool(World world, int x, int y, int z) {
@@ -90,10 +86,10 @@ public class BlockCable extends CCMultitypeBlock<CableType> implements CableConn
 		for (int i = 0; i < 6; i++) {
 			ForgeDirection dir = VALID_DIRECTIONS[i];
 			boolean conn = connectsTo(world, x, y, z, dir);
-			tempSideExistsCheck[i] = conn;
 			if (hasOneConnection && conn) {
 				return getBareIcon(meta); // we have at least two connections so return the "bare" texture
 			}
+			tempSideExistsCheck[i] = conn;
 			hasOneConnection |= conn;
 		}
 		
@@ -113,8 +109,7 @@ public class BlockCable extends CCMultitypeBlock<CableType> implements CableConn
 		int otherX = x + dir.offsetX;
 		int otherY = y + dir.offsetY;
 		int otherZ = z + dir.offsetZ;
-		int blockId = world.getBlockId(otherX, otherY, otherZ);
-		Block block = blocksList[blockId];
+		Block block = blocksList[world.getBlockId(otherX, otherY, otherZ)];
 		return block instanceof CableConnector && ((CableConnector)block).canConnect(world, otherX, otherY, otherZ, dir.getOpposite(), getType(cable, world.getBlockMetadata(x, y, z)));
 	}
 	

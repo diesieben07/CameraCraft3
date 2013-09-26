@@ -1,8 +1,8 @@
 package de.take_weiland.mods.cameracraft.api.cable;
 
-import de.take_weiland.mods.cameracraft.api.ItemType;
+import de.take_weiland.mods.cameracraft.api.BlockType;
 
-public interface CableType extends ItemType<CableType> {
+public interface CableType extends BlockType<CableType> {
 
 	boolean isData();
 	

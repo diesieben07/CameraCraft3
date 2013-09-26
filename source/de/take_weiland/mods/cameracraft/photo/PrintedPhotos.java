@@ -7,7 +7,7 @@ import com.google.common.base.Strings;
 
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import de.take_weiland.mods.cameracraft.api.camera.PrintedPhoto;
+import de.take_weiland.mods.cameracraft.api.photo.PrintedPhoto;
 import de.take_weiland.mods.commons.util.ItemStacks;
 
 public final class PrintedPhotos {

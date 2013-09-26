@@ -5,8 +5,11 @@ tile.CameraCraft.ores.blockTin.name=Block of Tin
 tile.CameraCraft.ores.alkaline.name=Alkaline Ore
 tile.CameraCraft.cable.power.name=Power Cable
 tile.CameraCraft.cable.data.name=Data Cable
+tile.CameraCraft.machines.processor.name=Photo Processor
 
 item.CameraCraft.camera.film.name=Film Camera
 item.CameraCraft.camera.digital.name=Digital Camera
 item.CameraCraft.battery.name=Battery
 item.CameraCraft.ingotsDusts.ingotTin.name=Tin Ingot
+
+fluid.cameracraft.alkaline=Alkaline

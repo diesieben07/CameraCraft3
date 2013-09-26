@@ -3,7 +3,7 @@ package de.take_weiland.mods.cameracraft.photo;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
-import de.take_weiland.mods.cameracraft.api.camera.PhotoStorage;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.NBT;
 

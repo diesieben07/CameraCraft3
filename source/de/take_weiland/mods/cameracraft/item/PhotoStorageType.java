@@ -1,7 +1,7 @@
 package de.take_weiland.mods.cameracraft.item;
 
 import net.minecraft.item.ItemStack;
-import de.take_weiland.mods.cameracraft.api.camera.PhotoStorage;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.photo.PhotoStorages;
 import de.take_weiland.mods.commons.templates.Type;
 import de.take_weiland.mods.commons.templates.Typed;

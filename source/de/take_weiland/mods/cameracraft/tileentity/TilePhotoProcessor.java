@@ -18,7 +18,7 @@ import de.take_weiland.mods.commons.util.Sides;
 
 public class TilePhotoProcessor extends TileEntityInventory implements IFluidHandler, NameableTileEntity {
 
-	public static final int TANK_CAPACITY = FluidContainerRegistry.BUCKET_VOLUME * 4;
+	private static final int TANK_CAPACITY = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	
 	private static final int CHECKING_SCHEDULED = -1;
 	private static final int INVALID_ITEM = -2;
@@ -76,9 +76,9 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 	}
 
 	@Override
-	public void onInventoryChanged() {
+	public void onChange() {
 		fillCountdown = CHECKING_SCHEDULED;
-		super.onInventoryChanged();
+		super.onChange();
 	}
 
 	@Override

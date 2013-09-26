@@ -2,8 +2,8 @@ package de.take_weiland.mods.cameracraft.photo;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import de.take_weiland.mods.cameracraft.api.camera.PrintedPhoto;
-import de.take_weiland.mods.cameracraft.api.camera.TimeType;
+import de.take_weiland.mods.cameracraft.api.photo.PrintedPhoto;
+import de.take_weiland.mods.cameracraft.api.photo.TimeType;
 
 public abstract class AbstractPrintedPhoto implements PrintedPhoto {
 

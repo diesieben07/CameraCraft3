@@ -15,8 +15,8 @@ import net.minecraftforge.common.DimensionManager;
 
 import org.apache.commons.io.IOUtils;
 
-import de.take_weiland.mods.cameracraft.api.camera.Photo;
-import de.take_weiland.mods.cameracraft.api.camera.TimeType;
+import de.take_weiland.mods.cameracraft.api.photo.Photo;
+import de.take_weiland.mods.cameracraft.api.photo.TimeType;
 
 public class PhotoData implements Photo {
 	

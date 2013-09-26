@@ -4,6 +4,8 @@ import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.CameraCraft;
@@ -14,14 +16,21 @@ import de.take_weiland.mods.commons.util.Inventories;
 
 public class CCBlock extends Block implements AdvancedBlock {
 
+	public static Fluid alkalineFluid;
+	
 	public static BlockCCOre ores;
 	public static BlockCCMachine machines;
 	public static BlockCable cable;
-
+	public static BlockAlkaline alkaline;
+	
 	public static final void createBlocks() {
+		alkalineFluid = new Fluid("cameracraft.alkaline").setLuminosity(7);
+		FluidRegistry.registerFluid(alkalineFluid);
+		
 		(ores = new BlockCCOre(3078)).lateInit();
 		(machines = new BlockCCMachine(3079)).lateInit();
 		(cable = new BlockCable(3080)).lateInit();
+		(alkaline = new BlockAlkaline(3081)).lateInit();
 		
 		MachineType.registerTileEntities();
 		GameRegistry.registerTileEntity(TileEntityCable.class, "cameracraft.cable");
@@ -35,7 +44,7 @@ public class CCBlock extends Block implements AdvancedBlock {
 		OreDictionary.registerOre("oreGold", Block.waterlily);
 	}
 	
-	private static final int getId(String name, int defaultId) {
+	static final int getId(String name, int defaultId) {
 		return CameraCraft.config.getBlock(name, defaultId).getInt();
 	}
 	
@@ -47,8 +56,12 @@ public class CCBlock extends Block implements AdvancedBlock {
 	}
 	
 	protected void lateInit() {
-		Blocks.init(this, baseName);
-		setCreativeTab(CameraCraft.tab);
+		lateInitBlock(this, baseName);
+	}
+
+	static void lateInitBlock(Block block, String baseName) {
+		Blocks.init(block, baseName);
+		block.setCreativeTab(CameraCraft.tab);
 	}
 
 	@Override
