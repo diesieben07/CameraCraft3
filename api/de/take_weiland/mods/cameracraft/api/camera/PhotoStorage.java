@@ -40,27 +40,14 @@ public interface PhotoStorage {
 	
 	boolean isSealed();
 	
+	void addListener(Listener l);
 	
-//	
-//	/**
-//	 * stores the given photo in this PhotoStorage
-//	 * @param photo
-//	 * @return if the photo was stored successfully (might fail if this storage is full)
-//	 */
-//	boolean store(Photo photo);
-//	
-//	/**
-//	 * get a list of photoIds this storage contains<br>
-//	 * this is an immutable view
-//	 * @return
-//	 */
-//	List<String> getPhotosRaw();
+	void removeListener(Listener l);
 	
-//	/**
-//	 * gets a list of the photos this storage contains<br>
-//	 * this is an immutable view
-//	 * @return
-//	 */
-//	List<Photo> getPhotos();
+	public static interface Listener {
+		
+		void onChange(PhotoStorage storage);
+		
+	}
 	
 }

@@ -52,8 +52,8 @@ public enum MachineType implements Type<MachineType> {
 	}
 
 	@Override
-	public ItemStack stack(int quantity, int meta) {
-		throw new IllegalArgumentException();
+	public boolean isThis(ItemStack stack) {
+		return stack != null && getTyped().isThis(stack) && stack.getItemDamage() == ordinal();
 	}
 	
 	public void openGui(EntityPlayer player, int x, int y, int z) {

@@ -11,14 +11,23 @@ import java.nio.channels.FileChannel;
 
 import javax.imageio.ImageIO;
 
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ChatMessageComponent;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ReportedException;
 
 import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CCUtil;
+import de.take_weiland.mods.cameracraft.CCWorldData;
+import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
+import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.commons.network.AbstractMultipartPacket;
 import de.take_weiland.mods.commons.network.PacketType;
+import de.take_weiland.mods.commons.util.Scheduler;
 
 public class PacketTakenPhoto extends AbstractMultipartPacket {
 
@@ -39,21 +48,62 @@ public class PacketTakenPhoto extends AbstractMultipartPacket {
 	}
 
 	@Override
-	public void read(EntityPlayer player, Side side, InputStream in) throws IOException {
-		File file = CCUtil.getNextPhotoFile(player);
+	public void read(EntityPlayer player, Side side, final InputStream in) throws IOException {
+		final String photoId = CCWorldData.get(player.worldObj).nextId();
+		final File file = CCUtil.getImageFile(photoId);
 		
-		@SuppressWarnings("resource") // damn you eclipse!
-		FileChannel fileChannel = new FileOutputStream(file).getChannel();
-		
-		ByteStreams.copy(Channels.newChannel(in), fileChannel);
-		
-		fileChannel.close();
+		InventoryCamera inv = CCItem.camera.newInventory(player);
+		if (inv.hasStorageItem()) {
+			int idx = inv.getPhotoStorage().store(photoId);
+			if (idx < 0) {
+				warnHack(player);
+			} else {
+				CameraCraft.executor.execute(new ImageDataSaver(photoId, in, file));
+			}
+		} else {
+			warnHack(player);
+		}
+	}
+
+	private static void warnHack(EntityPlayer player) {
+		player.sendChatToPlayer(ChatMessageComponent.createFromText("Hey you! Don't hack!").setColor(EnumChatFormatting.DARK_RED));
+	}
+	
+	private static final class ImageDataSaver implements Runnable {
+		final String photoId;
+		private final InputStream in;
+		private final File file;
+
+		ImageDataSaver(String photoId, InputStream in, File file) {
+			this.photoId = photoId;
+			this.in = in;
+			this.file = file;
+		}
+
+		@Override
+		public void run() {
+			try {
+				@SuppressWarnings("resource") // damn you eclipse!
+				FileChannel fileChannel = new FileOutputStream(file).getChannel();
+			
+				ByteStreams.copy(Channels.newChannel(in), fileChannel);
+			
+				fileChannel.close();
+			} catch (final IOException e) {
+				Scheduler.server().schedule(new Runnable() {
+					@Override
+					public void run() {
+						CrashReport cr = CrashReport.makeCrashReport(e, "Saving CameraCraft Image file");
+						cr.makeCategory("Photo being saved").addCrashSection("PhotoId", photoId);
+						throw new ReportedException(cr);
+					}
+				});
+			}
+		}
 	}
 
 	@Override
-	public void execute(EntityPlayer player, Side side) {
-//		new PacketClientAction(Action.NAME_PHOTO).sendTo(player);
-	}
+	public void execute(EntityPlayer player, Side side) { }
 	
 	@Override
 	public PacketType type() {

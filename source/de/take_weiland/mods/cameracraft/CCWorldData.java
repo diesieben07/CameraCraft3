@@ -29,7 +29,6 @@ public class CCWorldData extends WorldSavedData {
 		
 	};
 	
-	
 	private final LoadingCache<String, PhotoData> photoDataCache = CACHE_BUILDER.build(new CacheLoader<String, PhotoData>() {
 
 		@Override
@@ -55,10 +54,21 @@ public class CCWorldData extends WorldSavedData {
 		return data;
 	}
 	
+	private int nextId = 0;
+	
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) { }
+	public void readFromNBT(NBTTagCompound nbt) {
+		nextId = nbt.getInteger("nextId");
+	}
 
 	@Override
-	public void writeToNBT(NBTTagCompound nbt) { }
+	public void writeToNBT(NBTTagCompound nbt) {
+		nbt.setInteger("photoId", nextId);
+	}
+	
+	public String nextId() {
+		markDirty();
+		return "photo_" + nextId++;
+	}
 
 }

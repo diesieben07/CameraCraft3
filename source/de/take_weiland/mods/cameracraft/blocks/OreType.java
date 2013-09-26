@@ -38,8 +38,8 @@ public enum OreType implements Type<OreType> {
 	}
 
 	@Override
-	public ItemStack stack(int quantity, int meta) {
-		throw new IllegalArgumentException();
+	public boolean isThis(ItemStack stack) {
+		return stack != null && getTyped().isThis(stack) && stack.getItemDamage() == ordinal();
 	}
 
 }

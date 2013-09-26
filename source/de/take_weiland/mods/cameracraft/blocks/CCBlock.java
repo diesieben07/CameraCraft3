@@ -61,17 +61,17 @@ public class CCBlock extends Block implements AdvancedBlock {
 
 	@Override
 	public ItemStack stack() {
-		return stack(1, 0);
+		return stack(1);
 	}
 
 	@Override
 	public ItemStack stack(int quantity) {
-		return stack(quantity, 0);
+		return new ItemStack(this, quantity);
 	}
 
 	@Override
-	public ItemStack stack(int quantity, int meta) {
-		return new ItemStack(this, quantity, meta);
+	public boolean isThis(ItemStack stack) {
+		return stack != null && stack.itemID == blockID;
 	}
 
 	@Override

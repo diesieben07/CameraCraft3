@@ -3,6 +3,7 @@ package de.take_weiland.mods.cameracraft.blocks;
 import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.commons.templates.Type;
 import de.take_weiland.mods.commons.templates.Typed;
+import de.take_weiland.mods.commons.util.Multitypes;
 
 public enum CableType implements Type<CableType>, de.take_weiland.mods.cameracraft.api.cable.CableType {
 	POWER("power"),
@@ -31,12 +32,12 @@ public enum CableType implements Type<CableType>, de.take_weiland.mods.cameracra
 
 	@Override
 	public ItemStack stack(int quantity) {
-		return CCBlock.cable.stack(quantity, ordinal());
+		return Multitypes.stack(this, quantity);
 	}
 
 	@Override
-	public ItemStack stack(int quantity, int meta) {
-		throw new IllegalArgumentException();
+	public boolean isThis(ItemStack stack) {
+		return stack != null && getTyped().isThis(stack) && stack.getItemDamage() == ordinal();
 	}
 
 	@Override
@@ -47,11 +48,6 @@ public enum CableType implements Type<CableType>, de.take_weiland.mods.cameracra
 	@Override
 	public boolean isPower() {
 		return this == POWER;
-	}
-
-	@Override
-	public boolean is(de.take_weiland.mods.cameracraft.api.cable.CableType other) {
-		return other == this;
 	}
 
 }

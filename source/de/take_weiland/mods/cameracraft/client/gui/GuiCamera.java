@@ -13,7 +13,7 @@ public class GuiCamera extends AbstractGuiContainer<InventoryCamera, ContainerCa
 
 	@Override
 	protected ResourceLocation provideTexture() {
-		return new ResourceLocation("cameracraft:textures/gui/filmCamera.png");
+		return container.inventory().getType().getGuiTexture();
 	}
 
 }

@@ -27,13 +27,19 @@ public class ItemCamera extends CCItemMultitype<CameraType> {
 			CCGuis.CAMERA.open(player);
 		} else {
 			if (Sides.logical(world).isServer()) {
-				new PacketClientAction(Action.TAKE_PHOTO).sendTo(player);
+				InventoryCamera inv = newInventory(player);
+				if (inv.hasStorageItem() && !inv.getPhotoStorage().isFull()) {
+					new PacketClientAction(Action.TAKE_PHOTO).sendTo(player);
+					world.playSoundAtEntity(player, "cameracraft:cameraclick", 1, 1);
+				}
 			}
-			
-			player.playSound("cameracraft:cameraclick", 1, 1);
 		}
 		
 		return item;
+	}
+
+	public InventoryCamera newInventory(EntityPlayer player) {
+		return newInventory(player, player.getCurrentEquippedItem());
 	}
 	
 	public InventoryCamera newInventory(EntityPlayer player, ItemStack stack) {
@@ -43,35 +49,5 @@ public class ItemCamera extends CCItemMultitype<CameraType> {
 	public boolean isCamera(ItemStack stack) {
 		return stack != null && stack.itemID == itemID;
 	}
-	
-//
-//	public static PhotoStorage storageForItemStack(ItemStack stack) {
-//		return new PhotoStorage() {
-//			
-//			@Override
-//			public void store(Photo photo) {
-//				// TODO Auto-generated method stub
-//				
-//			}
-//			
-//			@Override
-//			public int size() {
-//				// TODO Auto-generated method stub
-//				return 0;
-//			}
-//			
-//			@Override
-//			public List<Photo> getPhotos() {
-//				// TODO Auto-generated method stub
-//				return null;
-//			}
-//			
-//			@Override
-//			public int capacity() {
-//				// TODO Auto-generated method stub
-//				return 0;
-//			}
-//		};
-//	}
-	
+
 }

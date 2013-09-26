@@ -2,6 +2,7 @@ package de.take_weiland.mods.cameracraft.item;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.commons.templates.Type;
 import de.take_weiland.mods.commons.templates.Typed;
@@ -14,14 +15,48 @@ public enum CameraType implements Type<CameraType>, de.take_weiland.mods.camerac
 
 	private final String name;
 	final int slotCount;
+	private final ResourceLocation texture;
 	
 	private CameraType(String name, int slotCount) {
 		this.name = name;
 		this.slotCount = slotCount;
+		texture = new ResourceLocation("cameracraft", "textures/gui/" + name + "Camera.png");
 	}
 	
 	public InventoryCamera newInventory(EntityPlayer player) {
-		return new CameraInvImpl(player);
+		return new InventoryCamera(player) {
+			
+			@Override
+			public int getSizeInventory() {
+				return slotCount;
+			}
+
+			@Override
+			public CameraType getType() {
+				return CameraType.this;
+			}
+
+			@Override
+			protected int storageSlot() {
+				return CameraType.this == DIGITAL ? 2 : 1;
+			}
+			
+		};
+	}
+	
+	public boolean isItemValid(int slot, ItemStack stack) {
+		switch (this) {
+		case DIGITAL:
+			return slot == 1 ? CCItem.battery.isThis(stack) : PhotoStorageType.MEMORY_CARD.isThis(stack);
+		case FILM:
+			return Multitypes.isAny(stack, PhotoStorageType.FILM_B_W, PhotoStorageType.FILM_COLOR);
+		default:
+			throw new AssertionError();
+		}
+	}
+	
+	public ResourceLocation getGuiTexture() {
+		return texture;
 	}
 	
 	@Override
@@ -43,39 +78,16 @@ public enum CameraType implements Type<CameraType>, de.take_weiland.mods.camerac
 	public ItemStack stack(int quantity) {
 		return Multitypes.stack(this, quantity);
 	}
-
+	
 	@Override
-	public ItemStack stack(int quantity, int meta) {
-		throw new IllegalArgumentException();
+	public boolean isThis(ItemStack stack) {
+		return Multitypes.is(stack, this);
 	}
 	
-	private class CameraInvImpl extends InventoryCamera {
-
-		protected CameraInvImpl(EntityPlayer player) {
-			super(player);
-		}
-
-		@Override
-		public int getSizeInventory() {
-			return slotCount;
-		}
-
-		@Override
-		public CameraType getType() {
-			return CameraType.this;
-		}
-		
-	}
-
 	// API interface
 	@Override
 	public int getSlots() {
 		return slotCount;
-	}
-
-	@Override
-	public boolean is(de.take_weiland.mods.cameracraft.api.camera.CameraType other) {
-		return other == this;
 	}
 
 	@Override

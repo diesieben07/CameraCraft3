@@ -36,8 +36,8 @@ public enum IngotDustType implements Type<IngotDustType> {
 	}
 
 	@Override
-	public ItemStack stack(int quantity, int meta) {
-		throw new IllegalArgumentException();
+	public boolean isThis(ItemStack stack) {
+		return Multitypes.is(stack, this);
 	}
 	
 }

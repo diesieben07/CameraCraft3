@@ -5,7 +5,6 @@ import de.take_weiland.mods.cameracraft.api.camera.PhotoStorage;
 import de.take_weiland.mods.cameracraft.photo.PhotoStorages;
 import de.take_weiland.mods.commons.templates.Type;
 import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Multitypes;
 
 public enum PhotoStorageType implements Type<PhotoStorageType> {
@@ -28,6 +27,14 @@ public enum PhotoStorageType implements Type<PhotoStorageType> {
 		this.isSealed = isSealed;
 	}
 	
+	public int getCapacity() {
+		return capacity;
+	}
+	
+	public PhotoStorage getStorage(ItemStack stack) {
+		return PhotoStorages.withCapacity(capacity, isSealed, stack);
+	}
+
 	@Override
 	public String unlocalizedName() {
 		return name;
@@ -49,12 +56,8 @@ public enum PhotoStorageType implements Type<PhotoStorageType> {
 	}
 
 	@Override
-	public ItemStack stack(int quantity, int meta) {
-		throw new IllegalArgumentException();
+	public boolean isThis(ItemStack stack) {
+		return stack != null && getTyped().isThis(stack) && stack.getItemDamage() == ordinal();
 	}
 
-	public PhotoStorage getStorage(ItemStack stack) {
-		return PhotoStorages.withCapacity(capacity, isSealed, ItemStacks.getNbt(stack).getTagList("cameracraft.photos"));
-	}
-	
 }

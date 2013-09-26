@@ -2,10 +2,16 @@ package de.take_weiland.mods.cameracraft.photo;
 
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkState;
+
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import de.take_weiland.mods.cameracraft.api.camera.PhotoStorage;
 
 public abstract class AbstractPhotoStorage implements PhotoStorage {
 
+	private List<Listener> listeners;
 	protected final boolean isSealed;
 	
 	protected AbstractPhotoStorage(boolean isSealed) {
@@ -14,7 +20,7 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 
 	@Override
 	public boolean isFull() {
-		return size() < capacity();
+		return size() >= capacity();
 	}
 
 	@Override
@@ -43,7 +49,8 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 			return -1;
 		} else {
 			storeImpl(photoId);
-			return size() - 2;
+			onChange();
+			return size() - 1;
 		}
 	}
 
@@ -56,6 +63,29 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	@Override
 	public boolean isSealed() {
 		return isSealed;
+	}
+	
+	protected final void onChange() {
+		if (listeners != null) {
+			for (Listener l : listeners) {
+				l.onChange(this);
+			}
+		}
+	}
+
+	@Override
+	public void addListener(Listener l) {
+		if (listeners == null) {
+			listeners = Lists.newArrayList();
+		}
+		listeners.add(l);
+	}
+
+	@Override
+	public void removeListener(Listener l) {
+		if (listeners != null) {
+			listeners.remove(l);
+		}
 	}
 
 }

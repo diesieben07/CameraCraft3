@@ -14,8 +14,14 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 	
 	@Override
 	protected void addSlots() {
-		addSlotToContainer(new AdvancedSlot(inventory, 0, 121, 31));
-		addSlotToContainer(new AdvancedSlot(inventory, 1, 146, 31));
+		int slots = inventory.getType().getSlots();
+		int slotX = 171 - slots * 25;
+		
+		for (int slot = 0; slot < slots; ++slot) {
+			addSlotToContainer(new AdvancedSlot(inventory, slot, slotX, 31));
+			slotX += 25;
+		}
+		
 	}
 
 	@Override
