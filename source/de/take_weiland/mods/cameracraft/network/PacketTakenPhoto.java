@@ -6,8 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.channels.Channels;
-import java.nio.channels.FileChannel;
 
 import javax.imageio.ImageIO;
 
@@ -22,6 +20,8 @@ import com.google.common.io.ByteStreams;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CCWorldData;
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
@@ -54,12 +54,13 @@ public class PacketTakenPhoto extends AbstractMultipartPacket {
 		
 		InventoryCamera inv = CCItem.camera.newInventory(player);
 		if (inv.hasStorageItem()) {
-			int idx = inv.getPhotoStorage().store(photoId);
+			PhotoStorage storage = inv.getPhotoStorage();
+			int idx = storage.store(photoId);
 			inv.closeChest();
 			if (idx < 0) {
 				warnHack(player);
 			} else {
-				CameraCraft.executor.execute(new ImageDataSaver(photoId, in, file));
+				CameraCraft.executor.execute(new ImageDataSaver(photoId, in, file, storage.getFilter()));
 			}
 		} else {
 			warnHack(player);
@@ -74,36 +75,29 @@ public class PacketTakenPhoto extends AbstractMultipartPacket {
 		final String photoId;
 		private final InputStream in;
 		private final File file;
+		private final ImageFilter filter;
 
-		ImageDataSaver(String photoId, InputStream in, File file) {
+		ImageDataSaver(String photoId, InputStream in, File file, ImageFilter filter) {
 			this.photoId = photoId;
 			this.in = in;
 			this.file = file;
+			this.filter = filter;
 		}
 
 		@Override
 		public void run() {
 			try {
-				OutputStream out = new FileOutputStream(file);
-//				SimpleRgbFilter filter = new OverexposeFilter();
-//				ImageIO.write(ImageFilters.apply(ImageIO.read(in), filter), "PNG", out);
-//				out.close();
-				
-				@SuppressWarnings("resource") // damn you eclipse!
-				FileChannel fileChannel = new FileOutputStream(file).getChannel();
-			
-				ByteStreams.copy(Channels.newChannel(in), fileChannel);
-			
-				fileChannel.close();
-			} catch (final IOException e) {
-				Scheduler.server().schedule(new Runnable() {
-					@Override
-					public void run() {
-						CrashReport cr = CrashReport.makeCrashReport(e, "Saving CameraCraft Image file");
-						cr.makeCategory("Photo being saved").addCrashSection("PhotoId", photoId);
-						throw new ReportedException(cr);
-					}
-				});
+				if (filter != null) {
+					ImageIO.write(filter.apply(ImageIO.read(in)), "PNG", file);
+				} else {
+					OutputStream out = new FileOutputStream(file);
+					ByteStreams.copy(in, out);
+					out.close();
+				}
+			} catch (IOException e) {
+				CrashReport cr = CrashReport.makeCrashReport(e, "Saving CameraCraft Image file");
+				cr.makeCategory("Photo being saved").addCrashSection("PhotoId", photoId);
+				Scheduler.server().throwInMainThread(new ReportedException(cr));
 			}
 		}
 	}

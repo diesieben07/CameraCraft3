@@ -8,6 +8,7 @@ import net.minecraft.nbt.NBTTagString;
 
 import com.google.common.collect.Iterators;
 
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.NBT;
@@ -23,10 +24,18 @@ public final class PhotoStorages {
 	}
 	
 	public static PhotoStorage withCapacity(int cap, boolean sealed, ItemStack stack) {
-		return withCapacity(cap, sealed, NBT.getOrCreateList(ItemStacks.getNbt(stack), NBT_KEY));
+		return withCapacity(cap, sealed, stack, null);
+	}
+	
+	public static PhotoStorage withCapacity(int cap, boolean sealed, ItemStack stack, ImageFilter filter) {
+		return withCapacity(cap, sealed, NBT.getOrCreateList(ItemStacks.getNbt(stack), NBT_KEY), filter);
 	}
 	
 	public static PhotoStorage withCapacity(final int cap, boolean sealed, final NBTTagList nbt) {
+		return withCapacity(cap, sealed, nbt, null);
+	}
+	
+	public static PhotoStorage withCapacity(final int cap, boolean sealed, final NBTTagList nbt, final ImageFilter filter) {
 		return new AbstractPhotoStorage(sealed) {
 			
 			@Override
@@ -61,6 +70,11 @@ public final class PhotoStorages {
 			@Override
 			public Iterator<String> iterator() {
 				return Iterators.transform(NBT.<NBTTagString>asList(nbt).iterator(), NBT.getStringFunction());
+			}
+
+			@Override
+			public ImageFilter getFilter() {
+				return filter;
 			}
 
 		};

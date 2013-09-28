@@ -70,7 +70,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer implement
 		PhotoStorage storage = getPhotoStorage();
 		if (storage != null) {
 			waitForRemainingTasks();
-			convertTasks = PhotoManager.applyFilterTo(storage, ImageFilters.fromRgbFilter(ImageFilters.OVEREXPOSE));
+			convertTasks = PhotoManager.applyFilterTo(storage, ImageFilters.OVEREXPOSE);
 		}
 	}
 	

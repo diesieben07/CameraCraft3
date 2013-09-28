@@ -10,12 +10,12 @@ public final class ImageFilters {
 
 	private ImageFilters() { }
 	
-	public static final SimpleRgbFilter RED = new ColorFilter(Channel.RED);
-	public static final SimpleRgbFilter GREEN = new ColorFilter(Channel.GREEN);
-	public static final SimpleRgbFilter BLUE = new ColorFilter(Channel.BLUE);
-	public static final SimpleRgbFilter SEPIA = new SepiaFilter();
-	public static final SimpleRgbFilter GRAY = new GrayscaleFilter();
-	public static final SimpleRgbFilter OVEREXPOSE = new OverexposeFilter();
+	public static final ImageFilter RED = fromRgbFilter(new ColorFilter(Channel.RED));
+	public static final ImageFilter GREEN = fromRgbFilter(new ColorFilter(Channel.GREEN));
+	public static final ImageFilter BLUE = fromRgbFilter(new ColorFilter(Channel.BLUE));
+	public static final ImageFilter SEPIA = fromRgbFilter(new SepiaFilter());
+	public static final ImageFilter GRAY = fromRgbFilter(new GrayscaleFilter());
+	public static final ImageFilter OVEREXPOSE = fromRgbFilter(new OverexposeFilter());
 	
 	public static BufferedImage apply(BufferedImage src, SimpleRgbFilter filter) {
 		int w = src.getWidth();

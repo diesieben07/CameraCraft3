@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.google.common.collect.Lists;
 
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 
 public abstract class AbstractPhotoStorage implements PhotoStorage {
@@ -106,6 +107,11 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 		if (listeners != null) {
 			listeners.remove(l);
 		}
+	}
+
+	@Override
+	public ImageFilter getFilter() { // default to no filter
+		return null;
 	}
 
 }

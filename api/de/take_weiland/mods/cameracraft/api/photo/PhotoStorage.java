@@ -1,5 +1,7 @@
 package de.take_weiland.mods.cameracraft.api.photo;
 
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
+
 
 /**
  * Represents something that can store photos
@@ -41,6 +43,8 @@ public interface PhotoStorage extends Iterable<String> {
 	int getPosition(String photoId);
 	
 	boolean isSealed();
+	
+	ImageFilter getFilter();
 	
 	void addListener(Listener l);
 	
