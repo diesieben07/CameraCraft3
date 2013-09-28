@@ -24,6 +24,8 @@ public class ImageFilterFromRGBMultiple implements ImageFilter {
 	public ImageFilter combine(ImageFilter other) {
 		if (other instanceof ImageFilterFromRGBMultiple) {
 			return new ImageFilterFromRGBMultiple(ObjectArrays.concat(this.filters, ((ImageFilterFromRGBMultiple) other).filters, SimpleRgbFilter.class));
+		} else if (other instanceof ImageFilterFromRGB) {
+			return new ImageFilterFromRGBMultiple(ObjectArrays.concat(this.filters, ((ImageFilterFromRGB) other).filter));
 		} else {
 			return new ChainedImageFilter(this, other);
 		}

@@ -9,7 +9,7 @@ import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 
 public class ImageFilterFromRGB implements ImageFilter {
 	
-	private final SimpleRgbFilter filter;
+	final SimpleRgbFilter filter;
 
 	ImageFilterFromRGB(SimpleRgbFilter filter) {
 		this.filter = filter;
