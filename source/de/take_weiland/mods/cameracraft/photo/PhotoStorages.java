@@ -18,7 +18,7 @@ public final class PhotoStorages {
 	}
 	
 	public static PhotoStorage withCapacity(int cap, boolean sealed, ItemStack stack) {
-		return withCapacity(cap, sealed, NBT.getOrCreateList(ItemStacks.getNbt(stack), (NBT_KEY)));
+		return withCapacity(cap, sealed, NBT.getOrCreateList(ItemStacks.getNbt(stack), NBT_KEY));
 	}
 	
 	public static PhotoStorage withCapacity(final int cap, boolean sealed, final NBTTagList nbt) {
@@ -35,10 +35,8 @@ public final class PhotoStorages {
 			}
 			
 			@Override
-			public void remove(int index) {
-				checkNotSealed();
+			protected void removeImpl(int index) {
 				nbt.removeTag(index);
-				onChange();
 			}
 
 			@Override
@@ -50,6 +48,11 @@ public final class PhotoStorages {
 			protected void storeImpl(String photoId) {
 				nbt.appendTag(new NBTTagString("", photoId));
 			}
+			
+			protected void clearImpl() {
+				NBT.asList(nbt).clear();
+			}
+
 		};
 	}
 	

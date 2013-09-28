@@ -9,9 +9,9 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
-import de.take_weiland.mods.commons.gui.AbstractContainer;
-import de.take_weiland.mods.commons.gui.AdvancedSlot;
 import de.take_weiland.mods.commons.network.Packets;
+import de.take_weiland.mods.commons.templates.AbstractContainer;
+import de.take_weiland.mods.commons.templates.AdvancedSlot;
 
 public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcessor> {
 

@@ -36,6 +36,8 @@ public interface PhotoStorage {
 	
 	void remove(int position);
 	
+	void clear();
+	
 	int getPosition(String photoId);
 	
 	boolean isSealed();

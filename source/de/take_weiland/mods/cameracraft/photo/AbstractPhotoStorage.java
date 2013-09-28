@@ -53,12 +53,32 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 			return size() - 1;
 		}
 	}
+	
+	protected abstract void storeImpl(String photoId);
 
+	@Override
+	public void remove(int index) {
+		checkNotSealed();
+		removeImpl(index);
+		onChange();
+	}
+	
+	protected abstract void removeImpl(int index);
+	
+	@Override
+	public void clear() {
+		boolean willChange = size() != 0;
+		clearImpl();
+		if (willChange) {
+			onChange();
+		}
+	}
+	
+	protected abstract void clearImpl();
+	
 	protected final void checkNotSealed() {
 		checkState(!isSealed, "PhotoStorage is sealed!");
 	}
-	
-	protected abstract void storeImpl(String photoId);
 
 	@Override
 	public boolean isSealed() {

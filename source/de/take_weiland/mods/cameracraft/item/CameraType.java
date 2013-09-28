@@ -37,8 +37,13 @@ public enum CameraType implements Type<CameraType>, de.take_weiland.mods.camerac
 			}
 
 			@Override
-			protected int storageSlot() {
+			public int storageSlot() {
 				return CameraType.this == DIGITAL ? 2 : 1;
+			}
+
+			@Override
+			public boolean canLidClose() {
+				return CameraType.this == FILM;
 			}
 			
 		};

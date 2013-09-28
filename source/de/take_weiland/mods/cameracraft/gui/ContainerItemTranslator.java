@@ -11,8 +11,8 @@ import net.minecraft.world.World;
 import net.minecraftforge.oredict.OreDictionary;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
-import de.take_weiland.mods.commons.gui.AbstractContainer;
-import de.take_weiland.mods.commons.gui.AdvancedSlot;
+import de.take_weiland.mods.commons.templates.AbstractContainer;
+import de.take_weiland.mods.commons.templates.AdvancedSlot;
 
 public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> {
 	

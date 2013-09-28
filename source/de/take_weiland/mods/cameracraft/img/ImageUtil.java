@@ -2,6 +2,8 @@ package de.take_weiland.mods.cameracraft.img;
 
 import java.awt.image.BufferedImage;
 
+import net.minecraft.util.MathHelper;
+
 public final class ImageUtil {
 
 	private ImageUtil() { }
@@ -18,5 +20,9 @@ public final class ImageUtil {
 			}
 		}
 		return image;
+	}
+	
+	public static int clampRgb(int value) {
+		return MathHelper.clamp_int(value, 0, 255);
 	}
 }

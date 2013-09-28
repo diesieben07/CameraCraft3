@@ -9,10 +9,10 @@ import de.take_weiland.mods.commons.util.Multitypes;
 
 public enum PhotoStorageType implements Type<PhotoStorageType> {
 
-	FILM_B_W("film_bw", 24, false),
-	FILM_B_W_PROCESSED("film_bw_processed", 24, true),
-	FILM_COLOR("film_color", 32, false),
-	FILM_COLOR_PROCESSED("film_color_processed", 32, true),
+	FILM_B_W("filmBw", 24, false),
+	FILM_B_W_SEALED("filmBwSealed", 24, true),
+	FILM_COLOR("filmColor", 32, false),
+	FILM_COLOR_SEALED("filmColorSealed", 32, true),
 	MEMORY_CARD("memoryCard", 50, false);
 	
 	public static final PhotoStorageType[] VALUES = values();
@@ -29,6 +29,10 @@ public enum PhotoStorageType implements Type<PhotoStorageType> {
 	
 	public int getCapacity() {
 		return capacity;
+	}
+	
+	public boolean isSealed() {
+		return isSealed;
 	}
 	
 	public PhotoStorage getStorage(ItemStack stack) {

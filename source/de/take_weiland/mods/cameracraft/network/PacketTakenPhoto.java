@@ -23,6 +23,13 @@ import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CCUtil;
 import de.take_weiland.mods.cameracraft.CCWorldData;
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
+import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
+import de.take_weiland.mods.cameracraft.img.GrayscaleFilter;
+import de.take_weiland.mods.cameracraft.img.ColorFilter;
+import de.take_weiland.mods.cameracraft.img.OverexposeFilter;
+import de.take_weiland.mods.cameracraft.img.ColorFilter.Channel;
+import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.commons.network.AbstractMultipartPacket;
@@ -55,6 +62,7 @@ public class PacketTakenPhoto extends AbstractMultipartPacket {
 		InventoryCamera inv = CCItem.camera.newInventory(player);
 		if (inv.hasStorageItem()) {
 			int idx = inv.getPhotoStorage().store(photoId);
+			inv.closeChest();
 			if (idx < 0) {
 				warnHack(player);
 			} else {
@@ -83,12 +91,17 @@ public class PacketTakenPhoto extends AbstractMultipartPacket {
 		@Override
 		public void run() {
 			try {
-				@SuppressWarnings("resource") // damn you eclipse!
-				FileChannel fileChannel = new FileOutputStream(file).getChannel();
-			
-				ByteStreams.copy(Channels.newChannel(in), fileChannel);
-			
-				fileChannel.close();
+				OutputStream out = new FileOutputStream(file);
+				SimpleRgbFilter filter = new OverexposeFilter();
+				ImageIO.write(ImageFilters.apply(ImageIO.read(in), filter), "PNG", out);
+				out.close();
+				
+//				@SuppressWarnings("resource") // damn you eclipse!
+//				FileChannel fileChannel = new FileOutputStream(file).getChannel();
+//			
+//				ByteStreams.copy(Channels.newChannel(in), fileChannel);
+//			
+//				fileChannel.close();
 			} catch (final IOException e) {
 				Scheduler.server().schedule(new Runnable() {
 					@Override

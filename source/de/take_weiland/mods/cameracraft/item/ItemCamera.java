@@ -32,6 +32,7 @@ public class ItemCamera extends CCItemMultitype<CameraType> {
 					new PacketClientAction(Action.TAKE_PHOTO).sendTo(player);
 					world.playSoundAtEntity(player, "cameracraft:cameraclick", 1, 1);
 				}
+				inv.closeChest();
 			}
 		}
 		

@@ -6,6 +6,9 @@ import static de.take_weiland.mods.cameracraft.item.PhotoStorageType.MEMORY_CARD
 
 import java.util.List;
 
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.cameracraft.api.photo.ItemPhotoStorage;
@@ -19,12 +22,13 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 		super("photoStorage", defaultId);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked" })
+	@SuppressWarnings({ "rawtypes", "unchecked", "boxing" })
 	@Override
+	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List text, boolean verbose) {
-		int cap = Multitypes.getType(this, stack).getCapacity();
-		int size = PhotoStorages.fastSize(stack);
-		text.add(size + " / " + cap);
+		PhotoStorageType type = Multitypes.getType(this, stack);
+		String key = type.isSealed() ? "item.CameraCraft.photoStorage.subtext" : "item.CameraCraft.photoStorage.subtext.sealed";
+		text.add(I18n.getStringParams(key, PhotoStorages.fastSize(stack), type.getCapacity()));
 	}
 
 	@Override
