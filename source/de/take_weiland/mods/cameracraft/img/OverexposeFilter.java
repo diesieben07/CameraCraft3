@@ -3,7 +3,7 @@ package de.take_weiland.mods.cameracraft.img;
 import static de.take_weiland.mods.cameracraft.img.ImageUtil.clampRgb;
 import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 
-public class OverexposeFilter implements SimpleRgbFilter {
+class OverexposeFilter implements SimpleRgbFilter {
 
 	private static final int FACTOR = 14;
 

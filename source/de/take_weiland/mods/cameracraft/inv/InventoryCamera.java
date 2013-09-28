@@ -14,6 +14,8 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import de.take_weiland.mods.cameracraft.api.camera.Camera;
+import de.take_weiland.mods.cameracraft.api.camera.Lens;
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.ItemPhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.img.ImageFilters;
@@ -25,11 +27,32 @@ import de.take_weiland.mods.commons.util.Sides;
 
 public abstract class InventoryCamera extends ItemInventory.WithPlayer implements Camera, PhotoStorage.Listener {
 
+	private static final int LENS_SLOT = 0;
 	private static final String NBT_KEY = "cameracraft.camerainv";
+	
 	private boolean isLidClosed;
 	
 	protected InventoryCamera(EntityPlayer player) {
 		super(player, NBT_KEY);
+	}
+	
+	public Lens getLens() {
+		ItemStack lens = storage[LENS_SLOT];
+		if (lens == null) {
+			return null;
+		} else {
+			Item item = lens.getItem();
+			return item instanceof Lens ? (Lens)item : null;
+		}
+	}
+	
+	public ImageFilter getLensFilter() {
+		Lens lens = getLens();
+		return lens == null ? null : lens.getFilter(storage[LENS_SLOT]);
+	}
+	
+	public ItemStack getLensStack() {
+		return storage[LENS_SLOT];
 	}
 	
 	@Override
@@ -119,8 +142,8 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer implement
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack item) {
-		if (slot == 0) {
-			return false; // TODO lenses
+		if (slot == LENS_SLOT) {
+			return item.getItem() instanceof Lens;
 		} else {
 			return getType().isItemValid(slot, item);
 		}

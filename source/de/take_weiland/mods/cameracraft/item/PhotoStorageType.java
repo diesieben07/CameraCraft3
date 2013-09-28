@@ -71,5 +71,5 @@ public enum PhotoStorageType implements Type<PhotoStorageType> {
 	public boolean isThis(ItemStack stack) {
 		return stack != null && getTyped().isThis(stack) && stack.getItemDamage() == ordinal();
 	}
-
+	
 }

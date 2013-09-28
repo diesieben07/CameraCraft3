@@ -7,7 +7,7 @@ import com.google.common.collect.ObjectArrays;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 
-public class ImageFilterFromRGB implements ImageFilter {
+class ImageFilterFromRGB implements ImageFilter {
 	
 	final SimpleRgbFilter filter;
 
@@ -23,9 +23,9 @@ public class ImageFilterFromRGB implements ImageFilter {
 	@Override
 	public ImageFilter combine(ImageFilter other) {
 		if (other instanceof ImageFilterFromRGB) {
-			return new ImageFilterFromRGBMultiple(this.filter, ((ImageFilterFromRGB) other).filter);
-		} else if (other instanceof ImageFilterFromRGBMultiple) {
-			return new ImageFilterFromRGBMultiple(ObjectArrays.concat(this.filter, ((ImageFilterFromRGBMultiple) other).filters));
+			return new ImageFilterFromRGBChained(this.filter, ((ImageFilterFromRGB) other).filter);
+		} else if (other instanceof ImageFilterFromRGBChained) {
+			return new ImageFilterFromRGBChained(ObjectArrays.concat(this.filter, ((ImageFilterFromRGBChained) other).filters));
 		} else {
 			return new ChainedImageFilter(this, other);
 		}

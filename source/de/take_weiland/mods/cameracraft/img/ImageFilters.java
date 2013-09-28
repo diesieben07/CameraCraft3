@@ -13,6 +13,8 @@ public final class ImageFilters {
 	public static final ImageFilter RED = fromRgbFilter(new ColorFilter(Channel.RED));
 	public static final ImageFilter GREEN = fromRgbFilter(new ColorFilter(Channel.GREEN));
 	public static final ImageFilter BLUE = fromRgbFilter(new ColorFilter(Channel.BLUE));
+	public static final ImageFilter YELLOW = fromRgbFilter(new YellowFilter());
+	
 	public static final ImageFilter SEPIA = fromRgbFilter(new SepiaFilter());
 	public static final ImageFilter GRAY = fromRgbFilter(new GrayscaleFilter());
 	public static final ImageFilter OVEREXPOSE = fromRgbFilter(new OverexposeFilter());
@@ -56,7 +58,11 @@ public final class ImageFilters {
 	}
 	
 	public static ImageFilter fromRgbFilters(final SimpleRgbFilter... filters) {
-		return new ImageFilterFromRGBMultiple(filters);
+		return new ImageFilterFromRGBChained(filters);
+	}
+	
+	public static ImageFilter combineNullable(ImageFilter filter1, ImageFilter filter2) {
+		return filter1 == null ? filter2 : filter2 == null ? filter1 : filter1.combine(filter2);
 	}
 	
 	public static ImageFilter combine(ImageFilter... filters) {

@@ -6,7 +6,7 @@ import com.google.common.collect.ObjectArrays;
 
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 
-public class ChainedImageFilter implements ImageFilter {
+class ChainedImageFilter implements ImageFilter {
 
 	private final ImageFilter[] filters;
 	

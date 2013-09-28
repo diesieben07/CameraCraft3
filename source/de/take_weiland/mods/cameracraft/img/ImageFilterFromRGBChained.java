@@ -7,11 +7,11 @@ import com.google.common.collect.ObjectArrays;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 
-public class ImageFilterFromRGBMultiple implements ImageFilter {
+class ImageFilterFromRGBChained implements ImageFilter {
 	
 	final SimpleRgbFilter[] filters;
 
-	public ImageFilterFromRGBMultiple(SimpleRgbFilter... filters) {
+	public ImageFilterFromRGBChained(SimpleRgbFilter... filters) {
 		this.filters = filters;
 	}
 
@@ -22,10 +22,10 @@ public class ImageFilterFromRGBMultiple implements ImageFilter {
 
 	@Override
 	public ImageFilter combine(ImageFilter other) {
-		if (other instanceof ImageFilterFromRGBMultiple) {
-			return new ImageFilterFromRGBMultiple(ObjectArrays.concat(this.filters, ((ImageFilterFromRGBMultiple) other).filters, SimpleRgbFilter.class));
+		if (other instanceof ImageFilterFromRGBChained) {
+			return new ImageFilterFromRGBChained(ObjectArrays.concat(this.filters, ((ImageFilterFromRGBChained) other).filters, SimpleRgbFilter.class));
 		} else if (other instanceof ImageFilterFromRGB) {
-			return new ImageFilterFromRGBMultiple(ObjectArrays.concat(this.filters, ((ImageFilterFromRGB) other).filter));
+			return new ImageFilterFromRGBChained(ObjectArrays.concat(this.filters, ((ImageFilterFromRGB) other).filter));
 		} else {
 			return new ChainedImageFilter(this, other);
 		}

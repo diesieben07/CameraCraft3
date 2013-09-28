@@ -22,6 +22,7 @@ import de.take_weiland.mods.cameracraft.CCWorldData;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
+import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
@@ -56,11 +57,14 @@ public class PacketTakenPhoto extends AbstractMultipartPacket {
 		if (inv.hasStorageItem()) {
 			PhotoStorage storage = inv.getPhotoStorage();
 			int idx = storage.store(photoId);
+			
+			ImageFilter combinedFilter = ImageFilters.combineNullable(inv.getLensFilter(), storage.getFilter());
+			
 			inv.closeChest();
 			if (idx < 0) {
 				warnHack(player);
 			} else {
-				CameraCraft.executor.execute(new ImageDataSaver(photoId, in, file, storage.getFilter()));
+				CameraCraft.executor.execute(new ImageDataSaver(photoId, in, file, combinedFilter));
 			}
 		} else {
 			warnHack(player);

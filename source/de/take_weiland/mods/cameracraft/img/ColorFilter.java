@@ -2,9 +2,9 @@ package de.take_weiland.mods.cameracraft.img;
 
 import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 
-public class ColorFilter implements SimpleRgbFilter {
+class ColorFilter implements SimpleRgbFilter {
 
-	public static enum Channel { RED, GREEN, BLUE }
+	static enum Channel { RED, GREEN, BLUE }
 	
 	private int shift;
 	

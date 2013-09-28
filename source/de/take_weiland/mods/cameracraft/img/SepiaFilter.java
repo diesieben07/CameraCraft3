@@ -2,7 +2,7 @@ package de.take_weiland.mods.cameracraft.img;
 
 import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 
-public class SepiaFilter implements SimpleRgbFilter {
+class SepiaFilter implements SimpleRgbFilter {
 
 	private static final int sepiaIntensity = 20;
 

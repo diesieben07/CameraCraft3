@@ -2,8 +2,7 @@ package de.take_weiland.mods.cameracraft.img;
 
 import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 
-
-public class GrayscaleFilter implements SimpleRgbFilter {
+class GrayscaleFilter implements SimpleRgbFilter {
 
 	// algorithm from http://spyrestudios.com/html5-canvas-image-effects-black-white/
 	@Override
