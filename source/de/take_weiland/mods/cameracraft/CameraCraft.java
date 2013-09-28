@@ -1,6 +1,5 @@
 package de.take_weiland.mods.cameracraft;
 
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
@@ -10,6 +9,8 @@ import net.minecraftforge.common.Configuration;
 import net.minecraftforge.common.MinecraftForge;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.ListeningExecutorService;
+import com.google.common.util.concurrent.MoreExecutors;
 
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -58,7 +59,7 @@ public final class CameraCraft {
 	
 	public static PacketTransport packetTransport;
 	
-	public static ExecutorService executor;
+	public static ListeningExecutorService executor;
 	
 	public static CreativeTabs tab = new CreativeTabs("cameracraft") {
 
@@ -84,7 +85,7 @@ public final class CameraCraft {
 		
 		ConfigInjector.inject(config, CameraCraft.class, false, false);
 		
-		executor = Executors.newFixedThreadPool(maxThreadCount);
+		executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(maxThreadCount));
 		
 		packetTransport = PacketTransports.withPacket131(this, CCPackets.class);
 		

@@ -1,15 +1,27 @@
 package de.take_weiland.mods.cameracraft.inv;
 
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ReportedException;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+
 import de.take_weiland.mods.cameracraft.api.camera.Camera;
 import de.take_weiland.mods.cameracraft.api.photo.ItemPhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
+import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.cameracraft.item.CameraType;
+import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.templates.ItemInventory;
 import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.util.Sides;
 
 public abstract class InventoryCamera extends ItemInventory.WithPlayer implements Camera, PhotoStorage.Listener {
 
@@ -49,12 +61,33 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer implement
 		
 	}
 	
+	private List<ListenableFuture<Void>> convertTasks;
+	
 	private void openLid() {
+		if (Sides.logical(player).isClient()) {
+			return;
+		}
 		PhotoStorage storage = getPhotoStorage();
 		if (storage != null) {
-			listening = false; // stop us from saving twice
-			storage.clear();
-			listening = true;
+			waitForRemainingTasks();
+			convertTasks = PhotoManager.applyFilterTo(storage, ImageFilters.fromRgbFilter(ImageFilters.OVEREXPOSE));
+		}
+	}
+	
+	private void waitForRemainingTasks() {
+		if (convertTasks != null) {
+			ListenableFuture<List<Void>> combined = Futures.allAsList(convertTasks);
+			try {
+				long start = System.currentTimeMillis();
+				List<Void> result = combined.get();
+				System.out.println("spent " + (System.currentTimeMillis() - start) + " ms cleaning up " + result.size() + " tasks");
+			} catch (InterruptedException e) {
+				Thread.currentThread().interrupt();
+			} catch (ExecutionException e) {
+				CrashReport cr = CrashReport.makeCrashReport(e, "Applying filters to CameraCraft photos");
+				throw new ReportedException(cr);
+			}
+			convertTasks = null;
 		}
 	}
 	
@@ -128,6 +161,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer implement
 		if (lastStorage != null) {
 			lastStorage.removeListener(this);
 		}
+		waitForRemainingTasks();
 	}
 
 	public boolean hasStorageItem() {

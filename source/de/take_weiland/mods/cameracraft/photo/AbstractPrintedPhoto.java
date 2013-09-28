@@ -21,7 +21,7 @@ public abstract class AbstractPrintedPhoto implements PrintedPhoto {
 	
 	private void setupDelegate() {
 		if (delegate != null) {
-			delegate = PhotoDataManager.getDataForId(id);
+			delegate = PhotoManager.getDataForId(id);
 		}
 	}
 

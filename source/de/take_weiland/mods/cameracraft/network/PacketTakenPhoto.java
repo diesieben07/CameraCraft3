@@ -20,18 +20,11 @@ import net.minecraft.util.ReportedException;
 import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.cameracraft.CCUtil;
 import de.take_weiland.mods.cameracraft.CCWorldData;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
-import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
-import de.take_weiland.mods.cameracraft.img.GrayscaleFilter;
-import de.take_weiland.mods.cameracraft.img.ColorFilter;
-import de.take_weiland.mods.cameracraft.img.OverexposeFilter;
-import de.take_weiland.mods.cameracraft.img.ColorFilter.Channel;
-import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.cameracraft.item.CCItem;
+import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.network.AbstractMultipartPacket;
 import de.take_weiland.mods.commons.network.PacketType;
 import de.take_weiland.mods.commons.util.Scheduler;
@@ -57,7 +50,7 @@ public class PacketTakenPhoto extends AbstractMultipartPacket {
 	@Override
 	public void read(EntityPlayer player, Side side, final InputStream in) throws IOException {
 		final String photoId = CCWorldData.get(player.worldObj).nextId();
-		final File file = CCUtil.getImageFile(photoId);
+		final File file = PhotoManager.getImageFile(photoId);
 		
 		InventoryCamera inv = CCItem.camera.newInventory(player);
 		if (inv.hasStorageItem()) {
@@ -92,16 +85,16 @@ public class PacketTakenPhoto extends AbstractMultipartPacket {
 		public void run() {
 			try {
 				OutputStream out = new FileOutputStream(file);
-				SimpleRgbFilter filter = new OverexposeFilter();
-				ImageIO.write(ImageFilters.apply(ImageIO.read(in), filter), "PNG", out);
-				out.close();
+//				SimpleRgbFilter filter = new OverexposeFilter();
+//				ImageIO.write(ImageFilters.apply(ImageIO.read(in), filter), "PNG", out);
+//				out.close();
 				
-//				@SuppressWarnings("resource") // damn you eclipse!
-//				FileChannel fileChannel = new FileOutputStream(file).getChannel();
-//			
-//				ByteStreams.copy(Channels.newChannel(in), fileChannel);
-//			
-//				fileChannel.close();
+				@SuppressWarnings("resource") // damn you eclipse!
+				FileChannel fileChannel = new FileOutputStream(file).getChannel();
+			
+				ByteStreams.copy(Channels.newChannel(in), fileChannel);
+			
+				fileChannel.close();
 			} catch (final IOException e) {
 				Scheduler.server().schedule(new Runnable() {
 					@Override

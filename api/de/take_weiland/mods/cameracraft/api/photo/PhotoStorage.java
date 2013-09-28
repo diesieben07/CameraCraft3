@@ -6,7 +6,7 @@ package de.take_weiland.mods.cameracraft.api.photo;
  * @author Take Weiland
  *
  */
-public interface PhotoStorage {
+public interface PhotoStorage extends Iterable<String> {
 
 	/**
 	 * @return the amount of photos this PhotoStorage can store

@@ -1,8 +1,13 @@
 package de.take_weiland.mods.cameracraft.photo;
 
+import java.util.Iterator;
+
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTTagString;
+
+import com.google.common.collect.Iterators;
+
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.NBT;
@@ -51,6 +56,11 @@ public final class PhotoStorages {
 			
 			protected void clearImpl() {
 				NBT.asList(nbt).clear();
+			}
+
+			@Override
+			public Iterator<String> iterator() {
+				return Iterators.transform(NBT.<NBTTagString>asList(nbt).iterator(), NBT.getStringFunction());
 			}
 
 		};

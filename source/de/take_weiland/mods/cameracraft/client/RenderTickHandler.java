@@ -6,8 +6,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
-import de.take_weiland.mods.cameracraft.CCUtil;
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 
 public class RenderTickHandler implements ITickHandler {
 
@@ -35,7 +35,7 @@ public class RenderTickHandler implements ITickHandler {
 			
 			gs.hideGUI = true;
 			gs.thirdPersonView = 0;
-			mc.displayHeight = mc.displayWidth = CCUtil.PHOTO_SIZE;
+			mc.displayHeight = mc.displayWidth = PhotoManager.PHOTO_SIZE;
 			
 			mc.entityRenderer.renderWorld(0, 0);
 			
