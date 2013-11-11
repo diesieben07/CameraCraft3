@@ -1,15 +1,17 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
-import de.take_weiland.mods.commons.templates.Type;
-import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.templates.Metadata.BlockMeta;
+import de.take_weiland.mods.commons.util.ItemStacks;
 
-public enum CableType implements Type<CableType>, de.take_weiland.mods.cameracraft.api.cable.CableType {
+public enum CableType implements BlockMeta, de.take_weiland.mods.cameracraft.api.cable.CableType {
 	POWER("power"),
 	DATA("data");
 
+	public static final CableType[] VALUES = values();
+	
 	private final String name;
 	
 	private CableType(String name) {
@@ -17,7 +19,7 @@ public enum CableType implements Type<CableType>, de.take_weiland.mods.cameracra
 	}
 	
 	@Override
-	public Typed<CableType> getTyped() {
+	public Block getBlock() {
 		return CCBlock.cable;
 	}
 	
@@ -27,18 +29,8 @@ public enum CableType implements Type<CableType>, de.take_weiland.mods.cameracra
 	}
 
 	@Override
-	public ItemStack stack() {
-		return stack(1);
-	}
-
-	@Override
-	public ItemStack stack(int quantity) {
-		return Multitypes.stack(this, quantity);
-	}
-
-	@Override
 	public boolean isThis(ItemStack stack) {
-		return Multitypes.is(stack, this);
+		return ItemStacks.is(stack, this);
 	}
 	
 	@Override

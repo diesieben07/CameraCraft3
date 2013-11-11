@@ -1,11 +1,9 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
-import net.minecraft.item.ItemStack;
-import de.take_weiland.mods.commons.templates.Type;
-import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.Multitypes;
+import net.minecraft.block.Block;
+import de.take_weiland.mods.commons.templates.Metadata.BlockMeta;
 
-public enum OreType implements Type<OreType> {
+public enum OreType implements BlockMeta {
 	
 	TIN("tin"),
 	ALKALINE("alkaline"),
@@ -23,23 +21,8 @@ public enum OreType implements Type<OreType> {
 	}
 
 	@Override
-	public Typed<OreType> getTyped() {
+	public Block getBlock() {
 		return CCBlock.ores;
 	}
 	
-	@Override
-	public ItemStack stack() {
-		return stack(1);
-	}
-
-	@Override
-	public ItemStack stack(int quantity) {
-		return Multitypes.stack(this, quantity);
-	}
-
-	@Override
-	public boolean isThis(ItemStack stack) {
-		return stack != null && getTyped().isThis(stack) && stack.getItemDamage() == ordinal();
-	}
-
 }

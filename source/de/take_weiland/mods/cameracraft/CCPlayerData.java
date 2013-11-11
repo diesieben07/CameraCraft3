@@ -14,22 +14,32 @@ public class CCPlayerData implements IExtendedEntityProperties {
 		return (CCPlayerData)player.getExtendedProperties(INDENTIFIER);
 	}
 	
-	public int nextId() {
-		return nextId++;
+	public boolean isOnCooldown() {
+		return cooldown > 0;
 	}
 	
-	private static final String NEXT_PHOTO_ID = "nextPhotoId";
+	public void setCooldown(int cooldown) {
+		this.cooldown = cooldown;
+	}
+	
+	public void onUpdate() {
+		if (cooldown > 0) {
+			cooldown--;
+		}
+	}
+	
+	private static final String COOLDOWN = "cooldown";
 
-	private int nextId;
+	private int cooldown = 0;
 	
 	@Override
 	public void saveNBTData(NBTTagCompound nbt) {
-		nbt.setInteger(NEXT_PHOTO_ID, nextId);
+		nbt.setInteger(COOLDOWN, cooldown);
 	}
 
 	@Override
 	public void loadNBTData(NBTTagCompound nbt) {
-		nextId = nbt.getInteger(NEXT_PHOTO_ID);
+		cooldown = nbt.getInteger(COOLDOWN);
 	}
 	
 	@Override

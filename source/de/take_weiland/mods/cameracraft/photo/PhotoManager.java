@@ -9,12 +9,14 @@ import javax.imageio.ImageIO;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
+import net.minecraft.world.World;
 import net.minecraftforge.common.DimensionManager;
 
 import com.google.common.collect.ImmutableList;
 import com.google.common.io.Files;
 import com.google.common.util.concurrent.ListenableFuture;
 
+import de.take_weiland.mods.cameracraft.CCWorldData;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 
@@ -23,6 +25,10 @@ public final class PhotoManager {
 	private PhotoManager() { }
 	
 	public static final int PHOTO_SIZE = 256;
+	
+	public static String nextPhotoId(World world) {
+		return CCWorldData.get(world).nextId();
+	}
 	
 	public static File getImageFile(String photoId) {
 		return getFile(photoId, "png");

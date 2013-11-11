@@ -5,13 +5,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.commons.templates.AdvancedItem;
+import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Items;
 
 public abstract class CCItem extends Item implements AdvancedItem {
 
 	public static ItemBattery battery;
 	public static ItemCamera camera;
-	public static ItemIngotsDusts ingotsDusts;
+	public static CCItemMisc miscItems;
 	public static ItemPhotoStorages photoStorage;
 	public static ItemPhoto photo;
 	public static ItemLens lenses;
@@ -32,11 +33,11 @@ public abstract class CCItem extends Item implements AdvancedItem {
 	public static final void createItems() {
 		(battery = new ItemBattery(9876)).lateInit();
 		(camera = new ItemCamera(9877)).lateInit();
-		(ingotsDusts = new ItemIngotsDusts(9878)).lateInit();
+		(miscItems = new CCItemMisc(9878)).lateInit();
 		(photoStorage = new ItemPhotoStorages(9879)).lateInit();
 		(lenses = new ItemLens(9880)).lateInit();
 		
-		OreDictionary.registerOre("ingotTin", IngotDustType.TIN_INGOT.stack());
+		OreDictionary.registerOre("ingotTin", ItemStacks.of(MiscItemType.TIN_INGOT));
 	}
 
 	private static int getId(String name, int defaultId) {
@@ -57,12 +58,6 @@ public abstract class CCItem extends Item implements AdvancedItem {
 	public boolean isThis(ItemStack stack) {
 		return stack != null && stack.itemID == itemID;
 	}
-
-	@Override
-	public String unlocalizedName() {
-		return getUnlocalizedName();
-	}
-
 	@Override
 	public String getUnlocalizedNameInefficiently(ItemStack item) {
 		return getUnlocalizedName(item); // some optimization

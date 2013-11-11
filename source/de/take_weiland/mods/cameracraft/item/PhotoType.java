@@ -1,11 +1,9 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import net.minecraft.item.ItemStack;
-import de.take_weiland.mods.commons.templates.Type;
-import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.Multitypes;
+import net.minecraft.item.Item;
+import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
 
-public enum PhotoType implements Type<PhotoType> {
+public enum PhotoType implements ItemMeta {
 	;
 
 	public static final PhotoType[] VALUES = values();
@@ -17,27 +15,12 @@ public enum PhotoType implements Type<PhotoType> {
 	}
 	
 	@Override
-	public ItemStack stack() {
-		return stack(1);
-	}
-
-	@Override
-	public ItemStack stack(int quantity) {
-		return Multitypes.stack(this, quantity);
-	}
-
-	@Override
-	public boolean isThis(ItemStack stack) {
-		return Multitypes.is(stack, this);
-	}
-
-	@Override
 	public String unlocalizedName() {
 		return name;
 	}
 
 	@Override
-	public Typed<PhotoType> getTyped() {
+	public Item getItem() {
 		return CCItem.photo;
 	}
 

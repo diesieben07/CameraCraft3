@@ -6,8 +6,10 @@ import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.GuiCamera;
+import de.take_weiland.mods.cameracraft.client.gui.GuiCardReader;
 import de.take_weiland.mods.cameracraft.client.gui.GuiItemTranslator;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoProcessor;
+import de.take_weiland.mods.cameracraft.client.gui.GuiPrinter;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.commons.util.JavaUtils;
 
@@ -15,7 +17,9 @@ public enum CCGuis {
 
 	PHOTO_PROCESSOR,
 	ORE_DICTIONARY,
-	CAMERA;
+	CAMERA,
+	CARD_READER,
+	PRINTER;
 	
 	static final CCGuis[] VALUES = values(); // don't create a new array each time we switch
 	
@@ -45,7 +49,11 @@ public enum CCGuis {
 			case ORE_DICTIONARY:
 				return new ContainerItemTranslator(world, x, y, z, player);
 			case CAMERA:
-				return new ContainerCamera(CCItem.camera.newInventory(player, player.getCurrentEquippedItem()), player);
+				return CCItem.camera.newInventory(player, player.getCurrentEquippedItem()).createContainer(player);
+			case CARD_READER:
+				return new ContainerCardReader(world, x, y, z, player);
+			case PRINTER:
+				return new ContainerPrinter(world, x, y, z, player);
 			default:
 				throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}
@@ -69,6 +77,10 @@ public enum CCGuis {
 				return new GuiItemTranslator((ContainerItemTranslator) c);
 			case CAMERA:
 				return new GuiCamera((ContainerCamera) c);
+			case CARD_READER:
+				return new GuiCardReader((ContainerCardReader) c);
+			case PRINTER:
+				return new GuiPrinter((ContainerPrinter) c);
 			default:
 				throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}

@@ -1,6 +1,9 @@
 package de.take_weiland.mods.cameracraft.client;
 
 import java.util.EnumSet;
+import java.util.Queue;
+
+import com.google.common.collect.Queues;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
@@ -13,19 +16,20 @@ public class RenderTickHandler implements ITickHandler {
 
 	private final Minecraft mc;
 	
-	private boolean isPhotoScheduled;
+	private final Queue<Integer> photoQueue = Queues.newArrayDeque();
 	
 	public RenderTickHandler(Minecraft mc) {
 		this.mc = mc;
 	}
 	
-	public void schedulePhoto() {
-		isPhotoScheduled = true;
+	public void schedulePhoto(int transferId) {
+		photoQueue.offer(Integer.valueOf(transferId));
 	}
 	
 	@Override
 	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		if (isPhotoScheduled) {
+		if (!photoQueue.isEmpty()) {
+			int transferId = photoQueue.poll().intValue();
 			GameSettings gs = mc.gameSettings;
 			boolean hideGuiState = gs.hideGUI;
 			int thirdPersonState = gs.thirdPersonView;
@@ -40,7 +44,7 @@ public class RenderTickHandler implements ITickHandler {
 			mc.entityRenderer.renderWorld(0, 0);
 			
 			byte[] rawImage = ClientUtil.rawScreenshot(mc);
-			ScreenshotPostProcess postProcess = new ScreenshotPostProcess(mc.displayWidth, mc.displayHeight, rawImage);
+			ScreenshotPostProcess postProcess = new ScreenshotPostProcess(transferId, mc.displayWidth, mc.displayHeight, rawImage);
 			CameraCraft.executor.execute(postProcess);
 			
 			gs.hideGUI = hideGuiState;
@@ -48,7 +52,6 @@ public class RenderTickHandler implements ITickHandler {
 			mc.displayHeight = heightState;
 			mc.displayWidth = widthState;
 			
-			isPhotoScheduled = false;
 		}
 	}
 

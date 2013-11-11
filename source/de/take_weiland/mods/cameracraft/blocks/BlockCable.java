@@ -1,8 +1,6 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
-import static de.take_weiland.mods.commons.util.Multitypes.getType;
 import static net.minecraftforge.common.ForgeDirection.VALID_DIRECTIONS;
-import net.minecraft.block.Block;
 import net.minecraft.block.StepSound;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
@@ -14,8 +12,9 @@ import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.take_weiland.mods.cameracraft.api.cable.CableConnector;
-import de.take_weiland.mods.commons.util.Blocks;
+import de.take_weiland.mods.commons.client.Icons;
 import de.take_weiland.mods.commons.util.JavaUtils;
+import de.take_weiland.mods.commons.util.Multitypes;
 
 public class BlockCable extends CCMultitypeBlock<CableType> implements CableConnector {
 
@@ -109,25 +108,25 @@ public class BlockCable extends CCMultitypeBlock<CableType> implements CableConn
 		int otherX = x + dir.offsetX;
 		int otherY = y + dir.offsetY;
 		int otherZ = z + dir.offsetZ;
-		Block block = blocksList[world.getBlockId(otherX, otherY, otherZ)];
-		return block instanceof CableConnector && ((CableConnector)block).canConnect(world, otherX, otherY, otherZ, dir.getOpposite(), getType(cable, world.getBlockMetadata(x, y, z)));
+		net.minecraft.block.Block block = blocksList[world.getBlockId(otherX, otherY, otherZ)];
+		return block instanceof CableConnector && ((CableConnector)block).canConnect(world, otherX, otherY, otherZ, dir.getOpposite(), Multitypes.getType(cable, world.getBlockMetadata(x, y, z)));
 	}
 	
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister register) {
-		icons = Blocks.registerIcons(this, "active", register);
-		bareIcons = Blocks.registerIcons(this, "bare", register);
+		icons = Icons.registerMulti(register, getTypes(), "active");
+		bareIcons = Icons.registerMulti(register, getTypes(), "bare");
 	}
 
 	@Override
 	public boolean canConnect(IBlockAccess world, int x, int y, int z, ForgeDirection side, de.take_weiland.mods.cameracraft.api.cable.CableType type) {
-		return getType(this, world.getBlockMetadata(x, y, z)) == type;
+		return Multitypes.getType(this, world.getBlockMetadata(x, y, z)) == type;
 	}
 
 	@Override
 	public CableType[] getTypes() {
-		return CableType.values();
+		return CableType.VALUES;
 	}
 
 }

@@ -63,7 +63,7 @@ public class CCWorldData extends WorldSavedData {
 
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
-		nbt.setInteger("photoId", nextId);
+		nbt.setInteger("nextId", nextId);
 	}
 	
 	public String nextId() {

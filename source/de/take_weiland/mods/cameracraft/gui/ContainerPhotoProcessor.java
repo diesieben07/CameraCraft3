@@ -13,7 +13,7 @@ import de.take_weiland.mods.commons.network.Packets;
 import de.take_weiland.mods.commons.templates.AbstractContainer;
 import de.take_weiland.mods.commons.templates.AdvancedSlot;
 
-public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcessor> {
+public class ContainerPhotoProcessor extends AbstractContainer.Synced<TilePhotoProcessor> {
 
 	public ContainerPhotoProcessor(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player);
@@ -31,11 +31,6 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 	}
 	
 	@Override
-	public boolean isSynced() {
-		return true;
-	}
-
-	@Override
 	public void writeSyncData(DataOutputStream out) throws IOException {
 		Packets.writeFluidStack(out, inventory.tank.getFluid());
 	}
@@ -46,7 +41,7 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 	}
 
 	@Override
-	public int getMergeTargetSlot(ItemStack stack) {
+	public int getSlotFor(ItemStack stack) {
 		if (FluidContainerRegistry.isFilledContainer(stack)) {
 			return 0;
 		} else {

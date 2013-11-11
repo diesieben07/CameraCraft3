@@ -6,7 +6,7 @@ public interface Environment {
 
 	void preInit();
 
-	void executePhoto();
+	void onPhotoRequest(int transferId);
 
 	void handleClientPhotoData(BufferedImage img);
 	

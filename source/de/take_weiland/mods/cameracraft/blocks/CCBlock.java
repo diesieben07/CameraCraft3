@@ -7,12 +7,11 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
-import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.tileentity.TileEntityCable;
 import de.take_weiland.mods.commons.templates.AdvancedBlock;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.Inventories;
+import de.take_weiland.mods.commons.util.ItemStacks;
 
 public class CCBlock extends Block implements AdvancedBlock {
 
@@ -33,10 +32,9 @@ public class CCBlock extends Block implements AdvancedBlock {
 		(alkaline = new BlockAlkaline(3081)).lateInit();
 		
 		MachineType.registerTileEntities();
-		GameRegistry.registerTileEntity(TileEntityCable.class, "cameracraft.cable");
 		
-		OreDictionary.registerOre("oreTin", OreType.TIN.stack());
-		OreDictionary.registerOre("oreAlkaline", OreType.ALKALINE.stack());
+		OreDictionary.registerOre("oreTin", ItemStacks.of(OreType.TIN));
+		OreDictionary.registerOre("oreAlkaline", ItemStacks.of(OreType.ALKALINE));
 		OreDictionary.registerOre("oreGold", Block.stone);
 		OreDictionary.registerOre("oreGold", Block.stoneBrick);
 		OreDictionary.registerOre("oreGold", Block.stoneButton);
@@ -85,11 +83,6 @@ public class CCBlock extends Block implements AdvancedBlock {
 	@Override
 	public boolean isThis(ItemStack stack) {
 		return stack != null && stack.itemID == blockID;
-	}
-
-	@Override
-	public String unlocalizedName() {
-		return getUnlocalizedName();
 	}
 
 }

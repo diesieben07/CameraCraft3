@@ -6,6 +6,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.gui.ContainerCamera;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
+import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.client.Rendering;
 
@@ -26,7 +27,12 @@ public class GuiCamera extends AbstractGuiContainer<InventoryCamera, ContainerCa
 	@Override
 	public void initGui() {
 		super.initGui();
-		buttonList.add(new GuiButton(ContainerCamera.BUTTON_TOGGLE_LID, 10, 10, 80, 20, "ToggleLid"));
+		if (container.inventory().hasLid()) {
+			buttonList.add(new GuiButton(ContainerCamera.BUTTON_TOGGLE_LID, 10, 10, 80, 20, "ToggleLid"));
+		}
+		if (container.inventory().getType() == CameraType.FILM) {
+			buttonList.add(new GuiButton(ContainerCamera.BUTTON_REWIND_FILM, 10, 40, 80, 20, "Rewind"));
+		}
 	}
 
 	@Override
@@ -50,7 +56,7 @@ public class GuiCamera extends AbstractGuiContainer<InventoryCamera, ContainerCa
 
 	private boolean shouldDrawLid(Slot slot) {
 		InventoryCamera inv = container.inventory();
-		return slot.inventory == inv && slot.getHasStack() && inv.storageSlot() == slot.getSlotIndex() && (inv.isLidClosed() || lidXSize != 0);
+		return (inv.isLidClosed() || lidXSize != 0) && slot.inventory == inv && slot.getHasStack() && inv.storageSlot() == slot.getSlotIndex();
 	}
 	
 	@Override

@@ -23,6 +23,8 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.TickRegistry;
+import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApiHandler;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
@@ -34,6 +36,7 @@ import de.take_weiland.mods.commons.config.ConfigInjector;
 import de.take_weiland.mods.commons.config.GetProperty;
 import de.take_weiland.mods.commons.network.PacketTransport;
 import de.take_weiland.mods.commons.network.PacketTransports;
+import de.take_weiland.mods.commons.util.ItemStacks;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
@@ -65,7 +68,7 @@ public final class CameraCraft {
 
 		@Override
 		public ItemStack getIconItemStack() {
-			return CameraType.FILM.stack();
+			return ItemStacks.of(CameraType.FILM);
 		}
 		
 	};
@@ -101,6 +104,7 @@ public final class CameraCraft {
 		CCRecipes.addRecipes();
 		
 		MinecraftForge.EVENT_BUS.register(new CCEventHandler());
+		TickRegistry.registerTickHandler(new CCPlayerTickHandler(), Side.SERVER);
 		
 		api = new ApiImpl();
 		

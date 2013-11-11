@@ -14,7 +14,7 @@ import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.commons.templates.AbstractContainer;
 import de.take_weiland.mods.commons.templates.AdvancedSlot;
 
-public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> {
+public class ContainerItemTranslator extends AbstractContainer.Synced<TileItemMutator> {
 	
 	protected ContainerItemTranslator(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player, 48, 84);
@@ -27,13 +27,8 @@ public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> 
 	}
 
 	@Override
-	public int getMergeTargetSlot(ItemStack stack) {
+	public int getSlotFor(ItemStack stack) {
 		return OreDictionary.getOreID(stack) >= 0 ? 0 : -1;
-	}
-
-	@Override
-	public boolean isSynced() {
-		return true;
 	}
 
 	@Override
@@ -49,7 +44,7 @@ public class ContainerItemTranslator extends AbstractContainer<TileItemMutator> 
 	}
 
 	@Override
-	public void clickButton(Side side, EntityPlayer player, int buttonId) {
+	public void onButtonClick(Side side, EntityPlayer player, int buttonId) {
 		List<ItemStack> results = inventory.getTransmutingResult();
 		if (buttonId >= 0 && buttonId < results.size()) {
 			inventory.selectResult((short) buttonId);

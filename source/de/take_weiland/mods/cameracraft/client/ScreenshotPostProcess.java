@@ -7,11 +7,13 @@ import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
 
 public final class ScreenshotPostProcess implements Runnable {
 
+	private final int transferId;
 	private byte[] data;
 	private final int width;
 	private final int height;
 	
-	public ScreenshotPostProcess(int width, int height, byte[] data) {
+	public ScreenshotPostProcess(int transferId, int width, int height, byte[] data) {
+		this.transferId = transferId;
 		this.data = data;
 		this.width = width;
 		this.height = height;
@@ -24,7 +26,7 @@ public final class ScreenshotPostProcess implements Runnable {
 		BufferedImage image = ImageUtil.fromRawRotatedRgb(width, height, data);
 		data = null; // for GC
 		
-		new PacketTakenPhoto(image).sendToServer();
+		new PacketTakenPhoto(transferId, image).sendToServer();
 	}
 
 }

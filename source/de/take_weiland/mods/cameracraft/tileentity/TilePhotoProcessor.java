@@ -16,7 +16,7 @@ import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 
-public class TilePhotoProcessor extends TileEntityInventory implements IFluidHandler, NameableTileEntity {
+public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> implements IFluidHandler, NameableTileEntity {
 
 	private static final int TANK_CAPACITY = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	

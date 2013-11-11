@@ -1,15 +1,14 @@
 package de.take_weiland.mods.cameracraft.item;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.cameracraft.photo.PhotoStorages;
-import de.take_weiland.mods.commons.templates.Type;
-import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
 
-public enum PhotoStorageType implements Type<PhotoStorageType> {
+public enum PhotoStorageType implements ItemMeta {
 
 	FILM_B_W("filmBw", 24, false, ImageFilters.GRAY),
 	FILM_B_W_SEALED("filmBwSealed", 24, true),
@@ -53,23 +52,8 @@ public enum PhotoStorageType implements Type<PhotoStorageType> {
 	}
 
 	@Override
-	public Typed<PhotoStorageType> getTyped() {
+	public Item getItem() {
 		return CCItem.photoStorage;
-	}
-	
-	@Override
-	public ItemStack stack() {
-		return stack(1);
-	}
-
-	@Override
-	public ItemStack stack(int quantity) {
-		return Multitypes.stack(this, quantity);
-	}
-
-	@Override
-	public boolean isThis(ItemStack stack) {
-		return stack != null && getTyped().isThis(stack) && stack.getItemDamage() == ordinal();
 	}
 	
 }

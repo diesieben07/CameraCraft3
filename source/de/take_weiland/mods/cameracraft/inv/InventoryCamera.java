@@ -5,6 +5,7 @@ import java.util.concurrent.ExecutionException;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,21 +14,26 @@ import net.minecraft.util.ReportedException;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
-import de.take_weiland.mods.cameracraft.api.camera.Camera;
-import de.take_weiland.mods.cameracraft.api.camera.Lens;
+import de.take_weiland.mods.cameracraft.CCPlayerData;
+import de.take_weiland.mods.cameracraft.api.camera.CameraInventory;
+import de.take_weiland.mods.cameracraft.api.camera.LensItem;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
-import de.take_weiland.mods.cameracraft.api.photo.ItemPhotoStorage;
+import de.take_weiland.mods.cameracraft.api.photo.FilmItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
+import de.take_weiland.mods.cameracraft.gui.ContainerCamera;
 import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.templates.ItemInventory;
+import de.take_weiland.mods.commons.util.Listenable;
 import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 
-public abstract class InventoryCamera extends ItemInventory.WithPlayer implements Camera, PhotoStorage.Listener {
+public abstract class InventoryCamera extends ItemInventory.WithPlayer<InventoryCamera> implements CameraInventory, Listenable.Listener<PhotoStorage> {
 
-	private static final int LENS_SLOT = 0;
+	private static final int COOLDOWN = 30;
+	public static final int LENS_SLOT = 0;
 	private static final String NBT_KEY = "cameracraft.camerainv";
 	
 	private boolean isLidClosed;
@@ -36,53 +42,11 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer implement
 		super(player, NBT_KEY);
 	}
 	
-	public Lens getLens() {
-		ItemStack lens = storage[LENS_SLOT];
-		if (lens == null) {
-			return null;
-		} else {
-			Item item = lens.getItem();
-			return item instanceof Lens ? (Lens)item : null;
-		}
-	}
-	
-	public ImageFilter getLensFilter() {
-		Lens lens = getLens();
-		return lens == null ? null : lens.getFilter(storage[LENS_SLOT]);
-	}
-	
-	public ItemStack getLensStack() {
-		return storage[LENS_SLOT];
-	}
-	
-	@Override
 	public abstract CameraType getType();
 	
 	public abstract int storageSlot();
 	
-	protected abstract boolean canLidClose();
-	
-	public boolean isLidClosed() {
-		return isLidClosed;
-	}
-	
-	public void toggleLid() {
-		if (canLidClose()) {
-			isLidClosed = !isLidClosed;
-			
-			if (isLidClosed) {
-				closeLid();
-			} else {
-				openLid();
-			}
-					
-			onChange();
-		}
-	}
-	
-	private void closeLid() {
-		
-	}
+	private void closeLid() { }
 	
 	private List<ListenableFuture<Void>> convertTasks;
 	
@@ -93,9 +57,62 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer implement
 		PhotoStorage storage = getPhotoStorage();
 		if (storage != null) {
 			waitForRemainingTasks();
-			convertTasks = PhotoManager.applyFilterTo(storage, ImageFilters.OVEREXPOSE);
+			convertTasks = PhotoManager.applyFilterTo(storage.getPhotos(), ImageFilters.OVEREXPOSE);
 		}
 	}
+	
+	@Override
+	protected void writeToNbt(NBTTagCompound nbt) {
+		super.writeToNbt(nbt);
+		if (hasLid()) {
+			nbt.setBoolean("lid", isLidClosed);
+		}
+	}
+
+	@Override
+	protected void readFromNbt(NBTTagCompound nbt) {
+		super.readFromNbt(nbt);
+		if (hasLid()) {
+			isLidClosed = nbt.getBoolean("lid");
+		}
+	}
+
+	@Override
+	public String getInvName() {
+		return Multitypes.fullName(getType());
+	}
+
+	@Override
+	public boolean isInvNameLocalized() {
+		return false;
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int slot, ItemStack item) {
+		if (slot == LENS_SLOT) {
+			return item.getItem() instanceof LensItem;
+		} else {
+			return getType().isItemValid(slot, item);
+		}
+	}
+	
+	@Override
+	public void closeChest() {
+		super.closeChest();
+		dispose();
+	}
+
+	private boolean listening = true;
+	
+	@Override
+	public void onChange(PhotoStorage storage) {
+		if (listening) {
+			saveData();
+		}
+	}
+	
+	private ItemStack lastStorageStack;
+	private PhotoStorage lastStorage;
 	
 	private void waitForRemainingTasks() {
 		if (convertTasks != null) {
@@ -114,44 +131,13 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer implement
 		}
 	}
 	
-	@Override
-	protected void writeToNbt(NBTTagCompound nbt) {
-		super.writeToNbt(nbt);
-		if (canLidClose()) {
-			nbt.setBoolean("lid", isLidClosed);
-		}
-	}
-
-	@Override
-	protected void readFromNbt(NBTTagCompound nbt) {
-		super.readFromNbt(nbt);
-		if (canLidClose()) {
-			isLidClosed = nbt.getBoolean("lid");
-		}
-	}
-
-	@Override
-	public String getInvName() {
-		return Multitypes.name(getType());
-	}
-
-	@Override
-	public boolean isInvNameLocalized() {
-		return false;
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack item) {
-		if (slot == LENS_SLOT) {
-			return item.getItem() instanceof Lens;
-		} else {
-			return getType().isItemValid(slot, item);
-		}
-	}
+	// Public API
 	
-	private ItemStack lastStorageStack;
-	private PhotoStorage lastStorage;
-	
+	@Override
+	public Container createContainer(EntityPlayer player) {
+		return new ContainerCamera(this, player, hasLid() ? storageSlot() : -1);
+	}
+
 	@Override
 	public PhotoStorage getPhotoStorage() {
 		ItemStack storageSlot = storage[storageSlot()];
@@ -166,10 +152,9 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer implement
 				lastStorage = null;
 			} else {
 				Item item = storageSlot.getItem();
-				if (item instanceof ItemPhotoStorage) {
-					PhotoStorage storage = ((ItemPhotoStorage)item).getStorage(storageSlot);
-					storage.addListener(this);
-					lastStorage = storage;
+				if (item instanceof PhotoStorageItem) {
+					lastStorage = ((PhotoStorageItem)item).getStorage(storageSlot);
+					lastStorage.addListener(this);
 				} else {
 					lastStorage = null;
 				}
@@ -177,27 +162,81 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer implement
 			return lastStorage;
 		}
 	}
+
+	@Override
+	public ItemStack getCamera() {
+		return originalStack.copy();
+	}
 	
 	@Override
-	public void closeChest() {
-		super.closeChest();
+	public ItemStack getLens() {
+		return storage[LENS_SLOT];
+	}
+
+	@Override
+	public boolean hasStorage() {
+		ItemStack storageSlot = storage[storageSlot()];
+		return storageSlot != null && storageSlot.getItem() instanceof PhotoStorageItem;
+	}
+	
+	
+	@Override
+	public ImageFilter getFilter() {
+		ItemStack lensStack = getLens();
+		LensItem lens = lensStack == null ? null : (LensItem)lensStack.getItem();
+		PhotoStorage storage = getPhotoStorage();
+		
+		ImageFilter lensFilter = lens == null ? null : lens.getFilter(getLens());
+		ImageFilter storageFilter = storage == null ? null : storage.getFilter();
+		return ImageFilters.combine(lensFilter, storageFilter);
+	}
+	
+	@Override
+	public boolean isLidClosed() {
+		return isLidClosed;
+	}
+	
+	@Override
+	public void toggleLid() {
+		if (hasLid()) {
+			isLidClosed = !isLidClosed;
+			
+			if (isLidClosed) {
+				closeLid();
+			} else {
+				openLid();
+			}
+					
+			onChange();
+		}
+	}
+	
+	@Override
+	public boolean canTakePhoto() {
+		return !CCPlayerData.get(player).isOnCooldown() && hasStorage() && !getPhotoStorage().isFull();
+	}
+
+	@Override
+	public void dispose() {
 		if (lastStorage != null) {
 			lastStorage.removeListener(this);
 		}
 		waitForRemainingTasks();
 	}
 
-	public boolean hasStorageItem() {
-		ItemStack storageSlot = storage[storageSlot()];
-		return storageSlot != null && storageSlot.getItem() instanceof ItemPhotoStorage;
+	@Override
+	public void onTakePhoto() {
+		CCPlayerData.get(player).setCooldown(COOLDOWN);
 	}
 
-	private boolean listening = true;
-	
 	@Override
-	public void onChange(PhotoStorage storage) {
-		if (listening) {
-			saveData();
+	public void rewind() {
+		if (canRewind()) {
+			ItemStack film = storage[storageSlot()];
+			Item filmItem = film.getItem();
+			if (filmItem instanceof FilmItem) {
+				storage[storageSlot()] = ((FilmItem) filmItem).rewind(film);
+			}
 		}
 	}
 	

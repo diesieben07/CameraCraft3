@@ -9,6 +9,7 @@ import net.minecraftforge.event.ForgeSubscribe;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import de.take_weiland.mods.cameracraft.CCSounds;
 import de.take_weiland.mods.cameracraft.Environment;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
@@ -35,8 +36,8 @@ public class EnvironmentClient implements Environment {
 	}
 
 	@Override
-	public void executePhoto() {
-		rth.schedulePhoto();
+	public void onPhotoRequest(int transferId) {
+		rth.schedulePhoto(transferId);
 	}
 
 	@Override
@@ -47,7 +48,9 @@ public class EnvironmentClient implements Environment {
 	
 	@ForgeSubscribe
 	public void onSoundLoad(SoundLoadEvent event) {
-		event.manager.addSound("cameracraft:cameraclick.ogg");
+		for (CCSounds sound : CCSounds.values()) {
+			sound.register(event.manager);
+		}
 	}
 
 	@Override
@@ -59,6 +62,7 @@ public class EnvironmentClient implements Environment {
 				// TODO Auto-generated method stub
 				
 			}
+			
 		}));
 	}
 

@@ -15,7 +15,7 @@ import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 
-public class TileItemMutator extends TileEntityInventory implements ISidedInventory, NameableTileEntity {
+public class TileItemMutator extends TileEntityInventory<TileItemMutator> implements ISidedInventory, NameableTileEntity {
 
 	private static final int TRANSMUTE_DURATION = 200;
 	

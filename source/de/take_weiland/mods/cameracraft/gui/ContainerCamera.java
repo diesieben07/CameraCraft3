@@ -1,8 +1,10 @@
 package de.take_weiland.mods.cameracraft.gui;
 
-import cpw.mods.fml.relauncher.Side;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import cpw.mods.fml.relauncher.Side;
+import de.take_weiland.mods.cameracraft.api.camera.LensItem;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.commons.templates.AbstractContainer;
 import de.take_weiland.mods.commons.templates.AdvancedSlot;
@@ -10,17 +12,20 @@ import de.take_weiland.mods.commons.templates.AdvancedSlot;
 public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 
 	public static final int BUTTON_TOGGLE_LID = 0;
+	public static final int BUTTON_REWIND_FILM = 1;
 	
-	protected ContainerCamera(InventoryCamera upper, EntityPlayer player) {
+	private final int closedSlot;
+	
+	public ContainerCamera(InventoryCamera upper, EntityPlayer player, int closedSlot) {
 		super(upper, player);
+		this.closedSlot = closedSlot;
 	}
 	
 	@Override
 	protected void addSlots() {
-		int slots = inventory.getType().getSlots();
+		int slots = inventory.getSizeInventory();
 		int slotX = 171 - slots * 25;
 		
-		int closedSlot = inventory.storageSlot();
 		for (int slot = 0; slot < slots; ++slot) {
 			if (slot == closedSlot) {
 				addSlotToContainer(new AdvancedSlot(inventory, slot, slotX, 31) {
@@ -54,16 +59,30 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 
 	@Override
 	public boolean handlesButton(EntityPlayer player, int buttonId) {
-		return buttonId == BUTTON_TOGGLE_LID;
+		return buttonId == BUTTON_TOGGLE_LID || buttonId == BUTTON_REWIND_FILM;
 	}
 
 	@Override
-	public void clickButton(Side side, EntityPlayer player, int buttonId) {
-		inventory.toggleLid();
+	public void onButtonClick(Side side, EntityPlayer player, int buttonId) {
+		switch (buttonId) {
+		case BUTTON_TOGGLE_LID:
+			inventory.toggleLid();
+			break;
+		case BUTTON_REWIND_FILM:
+			if (inventory.canRewind()) {
+				inventory.rewind();
+			}
+			break;
+		}
 	}
 	
 	@Override
-	public int getMergeTargetSlot(ItemStack stack) {
+	protected int getSlotFor(ItemStack stack) {
+		if (stack.getItem() instanceof LensItem) {
+			return InventoryCamera.LENS_SLOT;
+		} else if (stack.getItem() instanceof PhotoStorageItem) {
+			return inventory.storageSlot();
+		}
 		return -1;
 	}
 	

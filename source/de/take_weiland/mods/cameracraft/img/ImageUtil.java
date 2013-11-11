@@ -1,8 +1,16 @@
 package de.take_weiland.mods.cameracraft.img;
 
 import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
+import javax.imageio.ImageIO;
+
+import net.minecraft.crash.CrashReport;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.ReportedException;
+import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.commons.util.Scheduler;
 
 public final class ImageUtil {
 
@@ -10,8 +18,8 @@ public final class ImageUtil {
 	
 	public static BufferedImage fromRawRotatedRgb(int width, int height, byte[] data) {
 		BufferedImage image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-		for(int x = 0; x < width; x++) {
-			for(int y = 0; y < height; y++) {
+		for (int x = 0; x < width; x++) {
+			for (int y = 0; y < height; y++) {
 				int i = (x + (width * y)) * 3;
 				int r = data[i] & 0xFF;
 				int g = data[i + 1] & 0xFF;
@@ -24,5 +32,21 @@ public final class ImageUtil {
 	
 	public static int clampRgb(int value) {
 		return MathHelper.clamp_int(value, 0, 255);
+	}
+	
+	public static void savePngAsync(final BufferedImage img, final File file) {
+		CameraCraft.executor.execute(new Runnable() {
+			
+			@Override
+			public void run() {
+				try {
+					ImageIO.write(img, "PNG", file);
+				} catch (IOException e) {
+					CrashReport cr = CrashReport.makeCrashReport(e, "Saving ImageFile");
+					cr.makeCategory("File being saved to").addCrashSection("Location", file);
+					Scheduler.server().throwInMainThread(new ReportedException(cr));
+				}
+			}
+		});
 	}
 }

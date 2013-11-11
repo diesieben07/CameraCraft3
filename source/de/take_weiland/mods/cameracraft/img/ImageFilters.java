@@ -10,6 +10,19 @@ public final class ImageFilters {
 
 	private ImageFilters() { }
 	
+	public static final ImageFilter NO_FILTER = new ImageFilter() {
+		
+		@Override
+		public ImageFilter combine(ImageFilter other) {
+			return other;
+		}
+		
+		@Override
+		public BufferedImage apply(BufferedImage image) {
+			return image;
+		}
+	};
+	
 	public static final ImageFilter RED = fromRgbFilter(new ColorFilter(Channel.RED));
 	public static final ImageFilter GREEN = fromRgbFilter(new ColorFilter(Channel.GREEN));
 	public static final ImageFilter BLUE = fromRgbFilter(new ColorFilter(Channel.BLUE));
@@ -61,18 +74,24 @@ public final class ImageFilters {
 		return new ImageFilterFromRGBChained(filters);
 	}
 	
-	public static ImageFilter combineNullable(ImageFilter filter1, ImageFilter filter2) {
-		return filter1 == null ? filter2 : filter2 == null ? filter1 : filter1.combine(filter2);
+	public static ImageFilter combine(ImageFilter filter1, ImageFilter filter2) {
+		return filter1 == null ? (filter2 == null ? NO_FILTER : filter2) : (filter2 == null ? filter1 : filter1.combine(filter2));
 	}
 	
 	public static ImageFilter combine(ImageFilter... filters) {
 		ImageFilter result = filters[0];
+		if (result == null) {
+			result = NO_FILTER;
+		}
+		
 		int len = filters.length;
 		if (len == 1) {
 			return result;
 		}
+		
 		for (int i = 1; i < len; ++i) {
-			result = result.combine(filters[i]);
+			ImageFilter next = filters[i];
+			result = result.combine(next == null ? NO_FILTER : next);
 		}
 		return result;
 	}

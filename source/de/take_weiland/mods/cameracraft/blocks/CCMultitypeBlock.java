@@ -9,13 +9,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import de.take_weiland.mods.commons.templates.Type;
-import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.Blocks;
+import de.take_weiland.mods.commons.client.Icons;
+import de.take_weiland.mods.commons.templates.HasMetadata;
+import de.take_weiland.mods.commons.templates.Metadata.BlockMeta;
+import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.JavaUtils;
-import de.take_weiland.mods.commons.util.Multitypes;
 
-public abstract class CCMultitypeBlock<E extends Type<E>> extends CCBlock implements Typed<E> {
+public abstract class CCMultitypeBlock<TYPE extends BlockMeta> extends CCBlock implements HasMetadata<TYPE> {
 
 	protected Icon[] icons;
 	private List<ItemStack> subtypes;
@@ -31,11 +31,11 @@ public abstract class CCMultitypeBlock<E extends Type<E>> extends CCBlock implem
 	}
 
 	protected List<ItemStack> provideSubtypes() {
-		return Multitypes.allStacks(this);
+		return ItemStacks.allOf(this);
 	}
 
 	@Override
-	public E getDefault() {
+	public TYPE getDefault() {
 		return getTypes()[0];
 	}
 
@@ -49,18 +49,17 @@ public abstract class CCMultitypeBlock<E extends Type<E>> extends CCBlock implem
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int meta) {
+		if (icons == null) {
+			System.out.println(this);
+			System.exit(0);
+		}
 		return JavaUtils.safeArrayAccess(icons, meta);
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void registerIcons(IconRegister register) {
-		icons = Blocks.registerIcons(this, register);
-	}
-
-	@Override
-	public String subtypeName(E subtype) {
-		return getUnlocalizedName() + "." + subtype.unlocalizedName() + ".name";
+		icons = Icons.registerMulti(register, getTypes());
 	}
 
 }

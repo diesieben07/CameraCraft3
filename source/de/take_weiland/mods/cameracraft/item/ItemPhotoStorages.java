@@ -11,12 +11,13 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import de.take_weiland.mods.cameracraft.api.photo.ItemPhotoStorage;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.photo.PhotoStorages;
+import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Multitypes;
 
-public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> implements ItemPhotoStorage {
+public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> implements PhotoStorageItem {
 
 	public ItemPhotoStorages(int defaultId) {
 		super("photoStorage", defaultId);
@@ -38,7 +39,7 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 
 	@Override
 	protected List<ItemStack> provideSubtypes() {
-		return Multitypes.stacks(FILM_B_W, FILM_COLOR, MEMORY_CARD);
+		return ItemStacks.of(FILM_B_W, FILM_COLOR, MEMORY_CARD);
 	}
 
 	@Override

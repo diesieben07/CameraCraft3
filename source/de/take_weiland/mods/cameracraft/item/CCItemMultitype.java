@@ -6,14 +6,14 @@ import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
-import de.take_weiland.mods.commons.templates.Named;
-import de.take_weiland.mods.commons.templates.Type;
-import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.Items;
+import de.take_weiland.mods.commons.client.Icons;
+import de.take_weiland.mods.commons.templates.HasMetadata;
+import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
+import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.JavaUtils;
 import de.take_weiland.mods.commons.util.Multitypes;
 
-public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implements Typed<T> {
+public abstract class CCItemMultitype<T extends ItemMeta> extends CCItem implements HasMetadata<T> {
 
 	private Icon[] icons;
 	private List<ItemStack> subtypes;
@@ -29,7 +29,7 @@ public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implemen
 	}
 
 	protected List<ItemStack> provideSubtypes() {
-		return Multitypes.allStacks(this);
+		return ItemStacks.allOf(this);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -50,21 +50,12 @@ public abstract class CCItemMultitype<T extends Type<T>> extends CCItem implemen
 
 	@Override
 	public void registerIcons(IconRegister register) {
-		icons = Items.registerIcons(this, register);
+		icons = Icons.registerMulti(register, getTypes());
 	}
 	
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return subtypeNameInternal(Multitypes.getType(this, stack), "");
+		return Multitypes.name(Multitypes.getType(this, stack));
 	}
 	
-	private String subtypeNameInternal(Named named, String suffix) {
-		return getUnlocalizedName() + "." + named.unlocalizedName() + suffix;
-	}
-
-	@Override
-	public String subtypeName(T subtype) {
-		return subtypeNameInternal(subtype, ".name");
-	}
-
 }

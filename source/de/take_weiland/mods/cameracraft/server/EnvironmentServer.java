@@ -10,7 +10,7 @@ public class EnvironmentServer implements Environment {
 	public void preInit() { }
 
 	@Override
-	public void executePhoto() { }
+	public void onPhotoRequest(int transferId) { }
 
 	@Override
 	public void handleClientPhotoData(BufferedImage image) { }

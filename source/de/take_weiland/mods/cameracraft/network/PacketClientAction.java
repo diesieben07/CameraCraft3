@@ -25,7 +25,7 @@ public class PacketClientAction extends AbstractPacket {
 	public void execute(EntityPlayer player, Side side) {
 		switch (action) {
 		case TAKE_PHOTO:
-			CameraCraft.env.executePhoto();
+//			CameraCraft.env.executePhoto();
 			break;
 		case NAME_PHOTO:
 			

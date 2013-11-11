@@ -2,8 +2,8 @@ package de.take_weiland.mods.cameracraft.api.photo;
 
 import net.minecraft.item.ItemStack;
 
-public interface ItemPhotoStorage {
+public interface PhotoStorageItem {
 
-	public PhotoStorage getStorage(ItemStack stack);
+	PhotoStorage getStorage(ItemStack stack);
 	
 }

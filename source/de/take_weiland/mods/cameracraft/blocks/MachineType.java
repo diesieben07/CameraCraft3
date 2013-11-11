@@ -1,21 +1,23 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
+import de.take_weiland.mods.cameracraft.gui.TilePrinter;
+import de.take_weiland.mods.cameracraft.tileentity.TileCardReader;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
-import de.take_weiland.mods.commons.templates.Type;
-import de.take_weiland.mods.commons.templates.Typed;
-import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.templates.Metadata.BlockMeta;
 
-public enum MachineType implements Type<MachineType> {
+public enum MachineType implements BlockMeta {
 	
 	PHOTO_PROCESSOR("processor", TilePhotoProcessor.class, CCGuis.PHOTO_PROCESSOR),
-	ITEM_MUTATOR("oreDictionary", TileItemMutator.class, CCGuis.ORE_DICTIONARY);
+	ITEM_MUTATOR("oreDictionary", TileItemMutator.class, CCGuis.ORE_DICTIONARY),
+	CARD_READER("cardReader", TileCardReader.class, CCGuis.CARD_READER),
+	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER);
 
 	private final String name;
 	private final Class<? extends TileEntity> teClass;
@@ -37,23 +39,8 @@ public enum MachineType implements Type<MachineType> {
 	}
 
 	@Override
-	public Typed<MachineType> getTyped() {
+	public Block getBlock() {
 		return CCBlock.machines;
-	}
-	
-	@Override
-	public ItemStack stack() {
-		return stack(1);
-	}
-
-	@Override
-	public ItemStack stack(int quantity) {
-		return Multitypes.stack(this, quantity);
-	}
-
-	@Override
-	public boolean isThis(ItemStack stack) {
-		return stack != null && getTyped().isThis(stack) && stack.getItemDamage() == ordinal();
 	}
 	
 	public void openGui(EntityPlayer player, int x, int y, int z) {

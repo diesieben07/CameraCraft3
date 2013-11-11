@@ -2,17 +2,14 @@ package de.take_weiland.mods.cameracraft.photo;
 
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkState;
-
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
+import de.take_weiland.mods.commons.util.ListenerArrayList;
+import de.take_weiland.mods.commons.util.ListenerList;
 
 public abstract class AbstractPhotoStorage implements PhotoStorage {
 
-	private List<Listener> listeners;
+	private final ListenerList<PhotoStorage> listeners = ListenerArrayList.<PhotoStorage>create(this);
 	protected final boolean isSealed;
 	
 	protected AbstractPhotoStorage(boolean isSealed) {
@@ -87,26 +84,17 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	}
 	
 	protected final void onChange() {
-		if (listeners != null) {
-			for (Listener l : listeners) {
-				l.onChange(this);
-			}
-		}
+		listeners.onChange();
 	}
 
 	@Override
-	public void addListener(Listener l) {
-		if (listeners == null) {
-			listeners = Lists.newArrayList();
-		}
+	public void addListener(Listener<? super PhotoStorage> l) {
 		listeners.add(l);
 	}
 
 	@Override
-	public void removeListener(Listener l) {
-		if (listeners != null) {
-			listeners.remove(l);
-		}
+	public void removeListener(Listener<? super PhotoStorage> l) {
+		listeners.remove(l);
 	}
 
 	@Override

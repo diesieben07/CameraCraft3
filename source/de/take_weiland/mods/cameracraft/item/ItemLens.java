@@ -1,11 +1,11 @@
 package de.take_weiland.mods.cameracraft.item;
 
 import net.minecraft.item.ItemStack;
-import de.take_weiland.mods.cameracraft.api.camera.Lens;
+import de.take_weiland.mods.cameracraft.api.camera.LensItem;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.commons.util.Multitypes;
 
-public class ItemLens extends CCItemMultitype<LensType> implements Lens {
+public class ItemLens extends CCItemMultitype<LensType> implements LensItem {
 
 	public ItemLens(int defaultId) {
 		super("lens", defaultId);

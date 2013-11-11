@@ -1,16 +1,29 @@
 package de.take_weiland.mods.cameracraft.item;
 
+import static de.take_weiland.mods.commons.util.Multitypes.getType;
+
+import java.awt.image.BufferedImage;
+
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+
+import com.google.common.util.concurrent.Futures;
+import com.google.common.util.concurrent.ListenableFuture;
+
+import de.take_weiland.mods.cameracraft.CCSounds;
+import de.take_weiland.mods.cameracraft.PhotoCallbackManager;
+import de.take_weiland.mods.cameracraft.api.camera.CameraInventory;
+import de.take_weiland.mods.cameracraft.api.camera.CameraItem;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
+import de.take_weiland.mods.cameracraft.img.ImageUtil;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
-import de.take_weiland.mods.cameracraft.network.PacketClientAction;
-import de.take_weiland.mods.cameracraft.network.PacketClientAction.Action;
-import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.cameracraft.photo.PhotoManager;
+import de.take_weiland.mods.commons.util.Scheduler;
 import de.take_weiland.mods.commons.util.Sides;
 
-public class ItemCamera extends CCItemMultitype<CameraType> {
+public class ItemCamera extends CCItemMultitype<CameraType> implements CameraItem {
 
 	public ItemCamera(int defaultId) {
 		super("camera", defaultId);
@@ -22,29 +35,53 @@ public class ItemCamera extends CCItemMultitype<CameraType> {
 	}
 
 	@Override
-	public ItemStack onItemRightClick(ItemStack item, World world, EntityPlayer player) {
+	public ItemStack onItemRightClick(ItemStack item, final World world, final EntityPlayer player) {
 		if (player.isSneaking()) {
 			CCGuis.CAMERA.open(player);
 		} else {
 			if (Sides.logical(world).isServer()) {
-				InventoryCamera inv = newInventory(player);
-				if (inv.hasStorageItem() && !inv.getPhotoStorage().isFull()) {
-					new PacketClientAction(Action.TAKE_PHOTO).sendTo(player);
-					world.playSoundAtEntity(player, "cameracraft:cameraclick", 1, 1);
+				final InventoryCamera inv = getInventory(player);
+				if (inv.canTakePhoto()) {
+					inv.onTakePhoto();
+					final ListenableFuture<BufferedImage> futureImage = PhotoCallbackManager.requestPhoto(player);
+
+					CCSounds.CAMERA_CLICK.playAt(player);
+					futureImage.addListener(new Runnable() {
+
+						@Override
+						public void run() {
+							String photoId = null;
+							if (!inv.getPhotoStorage().isFull()) {
+								photoId = PhotoManager.nextPhotoId(world);
+								
+								ImageUtil.savePngAsync(Futures.getUnchecked(futureImage), PhotoManager.getImageFile(photoId));
+								
+								inv.getPhotoStorage().store(photoId);
+								inv.dispose();
+							}
+						}
+						
+					}, Scheduler.server());
 				}
-				inv.closeChest();
 			}
 		}
 		
 		return item;
 	}
 
-	public InventoryCamera newInventory(EntityPlayer player) {
+	@Override
+	public InventoryCamera getInventory(EntityPlayer player) {
 		return newInventory(player, player.getCurrentEquippedItem());
 	}
 	
+	@Override
+	public CameraInventory getInventory(IInventory inventory, int slot) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	public InventoryCamera newInventory(EntityPlayer player, ItemStack stack) {
-		return isCamera(stack) ? Multitypes.getType(this, stack).newInventory(player) : null;
+		return isCamera(stack) ? getType(this, stack).newInventory(player) : null;
 	}
 	
 	public boolean isCamera(ItemStack stack) {
