@@ -62,7 +62,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	}
 	
 	@Override
-	protected void writeToNbt(NBTTagCompound nbt) {
+	public void writeToNbt(NBTTagCompound nbt) {
 		super.writeToNbt(nbt);
 		if (hasLid()) {
 			nbt.setBoolean("lid", isLidClosed);
@@ -70,7 +70,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	}
 
 	@Override
-	protected void readFromNbt(NBTTagCompound nbt) {
+	public void readFromNbt(NBTTagCompound nbt) {
 		super.readFromNbt(nbt);
 		if (hasLid()) {
 			isLidClosed = nbt.getBoolean("lid");

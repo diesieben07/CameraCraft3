@@ -6,15 +6,15 @@ import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
 public enum MiscItemType implements ItemMeta {
 
 	TIN_INGOT("ingotTin"),
-	CYAN_INK("inkCyan"),
 	YELLOW_INK("inkYellow"),
+	CYAN_INK("inkCyan"),
 	MAGENTA_INK("inkMagenta"),
 	BLACK_INK("inkBlack"),
 	PHOTONIC_DUST("photonicDust"),
 	PHOTOELECTRIC_DUST("photoelectrictDust");
 	
 	public static final MiscItemType[] VALUES = values();
-	public static final MiscItemType[] ALL_INKS = { CYAN_INK, YELLOW_INK, MAGENTA_INK, BLACK_INK };
+	public static final MiscItemType[] ALL_INKS = { YELLOW_INK, CYAN_INK, MAGENTA_INK, BLACK_INK };
 
 	private final String name;
 	

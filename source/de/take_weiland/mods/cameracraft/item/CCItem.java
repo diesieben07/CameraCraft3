@@ -4,11 +4,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.oredict.OreDictionary;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.commons.templates.AdvancedItem;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Items;
 
-public abstract class CCItem extends Item implements AdvancedItem {
+public abstract class CCItem extends Item {
 
 	public static ItemBattery battery;
 	public static ItemCamera camera;
@@ -44,20 +43,6 @@ public abstract class CCItem extends Item implements AdvancedItem {
 		return CameraCraft.config.getItem(name, defaultId).getInt();
 	}
 
-	@Override
-	public ItemStack stack() {
-		return stack(1);
-	}
-
-	@Override
-	public ItemStack stack(int quantity) {
-		return new ItemStack(this, quantity);
-	}
-
-	@Override
-	public boolean isThis(ItemStack stack) {
-		return stack != null && stack.itemID == itemID;
-	}
 	@Override
 	public String getUnlocalizedNameInefficiently(ItemStack item) {
 		return getUnlocalizedName(item); // some optimization

@@ -6,10 +6,10 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
-import de.take_weiland.mods.cameracraft.gui.TilePrinter;
 import de.take_weiland.mods.cameracraft.tileentity.TileCardReader;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
+import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.templates.Metadata.BlockMeta;
 
 public enum MachineType implements BlockMeta {

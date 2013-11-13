@@ -2,18 +2,16 @@ package de.take_weiland.mods.cameracraft.blocks;
 
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
-import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.commons.templates.AdvancedBlock;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.Inventories;
 import de.take_weiland.mods.commons.util.ItemStacks;
 
-public class CCBlock extends Block implements AdvancedBlock {
+public class CCBlock extends Block {
 
 	public static Fluid alkalineFluid;
 	
@@ -68,21 +66,6 @@ public class CCBlock extends Block implements AdvancedBlock {
 			Inventories.spillIfInventory(world.getBlockTileEntity(x, y, z));
 		}
 		super.breakBlock(world, x, y, z, blockId, metadata);
-	}
-
-	@Override
-	public ItemStack stack() {
-		return stack(1);
-	}
-
-	@Override
-	public ItemStack stack(int quantity) {
-		return new ItemStack(this, quantity);
-	}
-
-	@Override
-	public boolean isThis(ItemStack stack) {
-		return stack != null && stack.itemID == blockID;
 	}
 
 }
