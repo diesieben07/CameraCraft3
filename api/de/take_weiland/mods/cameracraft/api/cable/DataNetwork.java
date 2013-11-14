@@ -6,6 +6,8 @@ public interface DataNetwork {
 
 	Collection<NetworkNode> getNodes();
 	
+	void invalidate();
+	
 	void join(NetworkNode node);
 	
 	void leave(NetworkNode node);

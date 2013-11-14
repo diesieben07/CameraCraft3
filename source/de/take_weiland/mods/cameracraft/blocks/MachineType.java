@@ -70,7 +70,7 @@ public enum MachineType implements BlockMeta {
 	}
 
 	public boolean canCableConnect(ForgeDirection side, de.take_weiland.mods.cameracraft.api.cable.CableType type) {
-		return type == CableType.POWER;
+		return type == CableType.POWER || this == PRINTER && type == CableType.DATA;
 	}
 
 }

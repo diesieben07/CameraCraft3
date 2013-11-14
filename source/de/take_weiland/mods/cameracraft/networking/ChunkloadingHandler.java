@@ -1,73 +1,44 @@
 package de.take_weiland.mods.cameracraft.networking;
 
-import java.util.List;
-import java.util.Map;
-
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldSavedData;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.event.Event;
+import net.minecraftforge.event.EventBus;
+import net.minecraftforge.event.EventPriority;
+import net.minecraftforge.event.IEventListener;
 import net.minecraftforge.event.world.ChunkEvent;
+import cpw.mods.fml.relauncher.ReflectionHelper;
+import de.take_weiland.mods.commons.util.JavaUtils;
 
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
+public final class ChunkloadingHandler {
 
-public class ChunkloadingHandler extends WorldSavedData {
-
-	public static class LoadListener {
-		
-		@ForgeSubscribe
-		public void onChunkLoad(ChunkEvent.Load event) {
-			List<ChunkloadListener> waiting = get(event.world).listeners.remove(event.getChunk().getChunkCoordIntPair());
-			if (waiting != null) {
-				for (ChunkloadListener listener : waiting) {
-					listener.onChunkLoad();
-				}
-			}
-		}
-		
-	}
+	private ChunkloadingHandler() { }
+	
+	@SuppressWarnings("boxing")
+	static final int EVENT_BUS_BUSID = ReflectionHelper.getPrivateValue(EventBus.class, MinecraftForge.EVENT_BUS, "busID");
+	
+	static ChunkEvent.Load DUMMY_EVENT;
 	
 	static {
-		MinecraftForge.EVENT_BUS.register(new LoadListener());
-	}
-	
-	private static final String IDENTIFIER = "cameracraft.chunkloader";
-	
-	public static ChunkloadingHandler get(World world) {
-		ChunkloadingHandler handler = (ChunkloadingHandler)world.loadItemData(ChunkloadingHandler.class, IDENTIFIER);
-		if (handler == null) {
-			handler = new ChunkloadingHandler(IDENTIFIER);
-			world.setItemData(IDENTIFIER, handler);
+		try {
+			DUMMY_EVENT = ChunkEvent.Load.class.newInstance();
+		} catch (ReflectiveOperationException e) {
+			JavaUtils.throwUnchecked(e);
 		}
-		return handler;
 	}
 	
-	public ChunkloadingHandler(String identifier) {
-		super(identifier);
-	}
-	
-	final Map<ChunkCoordIntPair, List<ChunkloadListener>> listeners = Maps.newHashMap();
-	
-	public void registerListener(int chunkX, int chunkZ, ChunkloadListener listener) {
-		ChunkCoordIntPair coords = new ChunkCoordIntPair(chunkX, chunkZ);
-		List<ChunkloadListener> listenersPerChunk = listeners.get(coords);
-		if (listenersPerChunk == null) {
-			listeners.put(coords, (listenersPerChunk = Lists.newArrayList()));
-		}
-		listenersPerChunk.add(listener);
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbttagcompound) {
-		throw new IllegalStateException();
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbttagcompound) {
-		throw new IllegalStateException();
+	public static void register(final World world, final int chunkX, final int chunkZ, final ChunkloadListener listener) {
+		DUMMY_EVENT.getListenerList().register(EVENT_BUS_BUSID, EventPriority.NORMAL, new IEventListener() {
+			
+			@Override
+			public void invoke(Event event) {
+				ChunkEvent.Load evt = (ChunkEvent.Load)event;
+				if (evt.world == world && evt.getChunk().xPosition == chunkX && evt.getChunk().zPosition == chunkZ) {
+					listener.onChunkLoad();
+					DUMMY_EVENT.getListenerList().unregister(EVENT_BUS_BUSID, this);
+				}
+			}
+		});
 	}
 	
 }

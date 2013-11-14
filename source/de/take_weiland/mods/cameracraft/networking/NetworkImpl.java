@@ -39,7 +39,12 @@ public class NetworkImpl implements DataNetwork {
 		}
 		nodes.addAll(otherNodes);
 	}
-	
-	
 
+	@Override
+	public void invalidate() {
+		for (NetworkNode node : nodes) {
+			node.setNetwork(null);
+		}
+	}
+	
 }

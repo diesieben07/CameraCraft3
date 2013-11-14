@@ -1,5 +1,6 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
@@ -7,6 +8,7 @@ import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 import net.minecraftforge.oredict.OreDictionary;
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.tileentity.TileEntityDataCable;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.Inventories;
 import de.take_weiland.mods.commons.util.ItemStacks;
@@ -30,6 +32,7 @@ public class CCBlock extends Block {
 		(alkaline = new BlockAlkaline(3081)).lateInit();
 		
 		MachineType.registerTileEntities();
+		GameRegistry.registerTileEntity(TileEntityDataCable.class, "cameracraft.dataCable");
 		
 		OreDictionary.registerOre("oreTin", ItemStacks.of(OreType.TIN));
 		OreDictionary.registerOre("oreAlkaline", ItemStacks.of(OreType.ALKALINE));

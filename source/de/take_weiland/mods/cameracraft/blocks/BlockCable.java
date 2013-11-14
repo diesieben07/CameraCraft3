@@ -4,6 +4,8 @@ import static net.minecraftforge.common.ForgeDirection.VALID_DIRECTIONS;
 import net.minecraft.block.StepSound;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Icon;
 import net.minecraft.world.IBlockAccess;
@@ -12,9 +14,11 @@ import net.minecraftforge.common.ForgeDirection;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.take_weiland.mods.cameracraft.api.cable.CableConnector;
+import de.take_weiland.mods.cameracraft.tileentity.TileEntityDataCable;
 import de.take_weiland.mods.commons.client.Icons;
 import de.take_weiland.mods.commons.util.JavaUtils;
 import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.util.Sides;
 
 public class BlockCable extends CCMultitypeBlock<CableType> implements CableConnector {
 
@@ -128,5 +132,25 @@ public class BlockCable extends CCMultitypeBlock<CableType> implements CableConn
 	public CableType[] getTypes() {
 		return CableType.VALUES;
 	}
+
+	@Override
+	public boolean hasTileEntity(int metadata) {
+		return Multitypes.getType(this, metadata) == CableType.DATA;
+	}
+
+	@Override
+	public TileEntity createTileEntity(World world, int metadata) {
+		return Multitypes.getType(this, metadata) == CableType.DATA ? new TileEntityDataCable() : null;
+	}
+
+//	@Override
+//	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer par5EntityPlayer, int par6, float par7, float par8, float par9) {
+//		if (Sides.logical(world).isServer()) {
+//			TileEntityDataCable tile = (TileEntityDataCable) world.getBlockTileEntity(x, y, z);
+//			System.out.println(tile.getNetwork().getNodes().size());
+//			System.out.println(tile.getNetwork().hashCode());
+//		}
+//		return true;
+//	}
 
 }
