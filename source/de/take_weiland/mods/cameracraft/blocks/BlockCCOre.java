@@ -8,6 +8,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import de.take_weiland.mods.cameracraft.item.CCItem;
+import de.take_weiland.mods.cameracraft.item.MiscItemType;
 import de.take_weiland.mods.commons.util.Multitypes;
 
 public class BlockCCOre extends CCMultitypeBlock<OreType> {
@@ -23,9 +24,19 @@ public class BlockCCOre extends CCMultitypeBlock<OreType> {
 	@Override
 	public int idDropped(int meta, Random random, int fortune) {
 		if (Multitypes.getType(this, meta) == OreType.ALKALINE) {
-			return CCItem.battery.itemID;
+			return CCItem.miscItems.itemID;
 		} else {
 			return blockID;
+		}
+	}
+	
+
+	@Override
+	public int damageDropped(int meta) {
+		if (Multitypes.getType(this, meta) == OreType.ALKALINE) {
+			return MiscItemType.ALKALINE_DUST.ordinal();
+		} else {
+			return 0;
 		}
 	}
 

@@ -1,7 +1,13 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
+import java.util.Collection;
+
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import com.google.common.base.Predicates;
+
+import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
 import de.take_weiland.mods.cameracraft.api.cable.DataNetwork;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
@@ -21,6 +27,13 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 	
 	private DataNetwork network;
 	
+	private int ticks;
+	private Collection<? extends PhotoStorageProvider> providers;
+	
+	@Override
+	public void updateEntity() {
+	}
+
 	public int getSizeInventory() {
 		return 5;
 	}
@@ -66,9 +79,16 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 		return network != null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void setNetwork(DataNetwork network) {
 		this.network = network;
+		providers = (Collection<? extends PhotoStorageProvider>) (network == null ? null : network.nodesMatching(Predicates.instanceOf(PhotoStorageProvider.class)));
+	}
+
+	@Override
+	public String getDisplayName() {
+		return "Printer [x=" + xCoord + ", y=" + yCoord + ", z=" + zCoord + "]";
 	}
 
 }

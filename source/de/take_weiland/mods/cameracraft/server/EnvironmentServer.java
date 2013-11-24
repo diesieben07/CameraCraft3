@@ -18,4 +18,7 @@ public class EnvironmentServer implements Environment {
 	@Override
 	public void displayNamePhotoGui(String oldName) { }
 
+	@Override
+	public void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ) { }
+
 }

@@ -57,5 +57,5 @@ public abstract class CCItemMultitype<T extends ItemMeta> extends CCItem impleme
 	public String getUnlocalizedName(ItemStack stack) {
 		return Multitypes.name(Multitypes.getType(this, stack));
 	}
-	
+
 }

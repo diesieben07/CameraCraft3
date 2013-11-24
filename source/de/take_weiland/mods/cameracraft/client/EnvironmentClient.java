@@ -66,4 +66,9 @@ public class EnvironmentClient implements Environment {
 		}));
 	}
 
+	@Override
+	public void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ) {
+		mc.effectRenderer.addEffect(new EntityAlkalineBubbleFX(mc.theWorld, x, y, z, motionX, motionY, motionZ));
+	}
+
 }

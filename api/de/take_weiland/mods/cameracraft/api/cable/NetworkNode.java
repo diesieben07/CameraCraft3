@@ -9,4 +9,6 @@ public interface NetworkNode {
 
 	void setNetwork(DataNetwork network);
 	
+	String getDisplayName();
+	
 }

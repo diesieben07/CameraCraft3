@@ -4,7 +4,6 @@ import static net.minecraftforge.common.ForgeDirection.VALID_DIRECTIONS;
 import net.minecraft.block.StepSound;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Icon;
@@ -18,7 +17,6 @@ import de.take_weiland.mods.cameracraft.tileentity.TileEntityDataCable;
 import de.take_weiland.mods.commons.client.Icons;
 import de.take_weiland.mods.commons.util.JavaUtils;
 import de.take_weiland.mods.commons.util.Multitypes;
-import de.take_weiland.mods.commons.util.Sides;
 
 public class BlockCable extends CCMultitypeBlock<CableType> implements CableConnector {
 

@@ -36,4 +36,9 @@ public class TileEntityDataCable extends AbstractTileEntity implements NetworkNo
 		NetworkUtil.shutdownNetworking(this);
 	}
 
+	@Override
+	public String getDisplayName() {
+		return null;
+	}
+
 }
