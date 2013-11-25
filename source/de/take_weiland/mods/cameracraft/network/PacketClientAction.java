@@ -9,7 +9,6 @@ import java.io.OutputStream;
 
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.commons.network.AbstractPacket;
 import de.take_weiland.mods.commons.network.PacketType;
 

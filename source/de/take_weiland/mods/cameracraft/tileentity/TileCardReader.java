@@ -102,7 +102,7 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 
 	@Override
 	public String getDisplayName() {
-		return "CardReader @ " + xCoord + ", " + yCoord + ", " + zCoord;
+		return (hasCustomName() ? getCustomName() : "CardReader") + " @ " + xCoord + ", " + yCoord + ", " + zCoord;
 	}
 
 }

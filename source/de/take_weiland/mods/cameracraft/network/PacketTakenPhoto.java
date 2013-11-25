@@ -13,8 +13,6 @@ import javax.imageio.ImageIO;
 
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ReportedException;
@@ -22,15 +20,8 @@ import net.minecraft.util.ReportedException;
 import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.cameracraft.CCWorldData;
-import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.PhotoCallbackManager;
-import de.take_weiland.mods.cameracraft.api.camera.CameraInventory;
-import de.take_weiland.mods.cameracraft.api.camera.CameraItem;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
-import de.take_weiland.mods.cameracraft.photo.PhotoManager;
-import de.take_weiland.mods.commons.network.AbstractMultipartPacket;
 import de.take_weiland.mods.commons.network.MultipartDataPacket;
 import de.take_weiland.mods.commons.network.PacketType;
 import de.take_weiland.mods.commons.util.Scheduler;

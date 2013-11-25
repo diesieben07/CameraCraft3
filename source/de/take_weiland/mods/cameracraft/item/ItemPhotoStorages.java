@@ -39,8 +39,7 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 
 	@Override
 	protected List<ItemStack> provideSubtypes() {
-		return ItemStacks.allOf(this);
-//		return ItemStacks.of(FILM_B_W, FILM_COLOR, MEMORY_CARD);
+		return ItemStacks.of(FILM_B_W, FILM_COLOR, MEMORY_CARD);
 	}
 
 	@Override

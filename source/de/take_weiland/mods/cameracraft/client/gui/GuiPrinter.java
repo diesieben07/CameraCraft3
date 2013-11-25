@@ -1,15 +1,23 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
+import static org.lwjgl.opengl.GL11.GL_LIGHTING;
+import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
+import static org.lwjgl.opengl.GL11.glDisable;
+import static org.lwjgl.opengl.GL11.glEnable;
+import static org.lwjgl.opengl.GL11.glPopMatrix;
+import static org.lwjgl.opengl.GL11.glPushMatrix;
+import static org.lwjgl.opengl.GL11.glScissor;
+import static org.lwjgl.opengl.GL11.glTranslatef;
+
 import java.util.List;
 
-import org.lwjgl.opengl.GL11;
-
-import static org.lwjgl.opengl.GL11.*;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+
+import org.lwjgl.input.Mouse;
+
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
@@ -19,6 +27,8 @@ import de.take_weiland.mods.commons.util.JavaUtils;
 
 public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrinter> {
 
+	private static boolean isScrollerOpen = false;
+	
 	private class ButtonOpenScroller extends GuiButton {
 		
 		public ButtonOpenScroller(int id, int x, int y) {
@@ -27,17 +37,13 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 
 		@Override
 		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-//			if (scrollerOffsetX == getScrollerHiddenOffset()) {
-//				field_82253_i = mouseX >= xPosition && mouseY >= yPosition && mouseX < xPosition + width && mouseY < yPosition + height;
-//				
-//			}
 			GuiPrinter.this.bindTexture();
 			drawTexturedModalRect(xPosition, yPosition, 176 + (scrollerOffsetX == getScrollerHiddenOffset() ? 0 : 4), 0, 4, 7);
 		}
 		
 	}
 	
-	int scrollerOffsetX = getScrollerHiddenOffset();
+	int scrollerOffsetX = isScrollerOpen ? 0 : getScrollerHiddenOffset();
 
 	private int scrollerMotion = 0;
 	
@@ -56,6 +62,8 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		return new ResourceLocation("cameracraft:textures/gui/printer.png");
 	}
 	
+	int selectedNode = -1;
+	
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
@@ -63,14 +71,24 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		super.initGui();
 		scroller = new ScrollPane(this, guiLeft + 8, guiTop + 15, xSize - 16, 70, 0) {
 			
-			@SuppressWarnings("synthetic-access")
 			@Override
 			protected void drawImpl() {
-				List<String> nodes = JavaUtils.nullToEmpty(container.getNodeNames());
+				drawRect(0, 0, width, contentHeight, 0x44000000);
+				
+				List<String> nodes = JavaUtils.nullToEmpty(getContainer().getNodeNames());
 				int size = nodes.size();
-				drawRect(0, 0, xSize - 16, size * 10, 0x44000000);
 				for (int i = 0; i < size; ++i) {
-					fontRenderer.drawString(nodes.get(i), 0, i * 10, 0xffffff);
+					mc.fontRenderer.drawString(nodes.get(i), 1, 1 + i * 10, selectedNode == i ? 0x000000 : 0xffffff);
+				}
+			}
+
+			@Override
+			protected void handleMouseClick(int relX, int relY, int btn) {
+				if (relX >= 0 && relX <= width) {
+					int newSelection = MathHelper.floor_float(relY / 10f);
+					if (JavaUtils.listIndexExists(JavaUtils.nullToEmpty(getContainer().getNodeNames()), newSelection)) {
+						selectedNode = newSelection;
+					}
 				}
 			}
 		};
@@ -111,6 +129,12 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	}
 
 	@Override
+	public void handleMouseInput() {
+		super.handleMouseInput();
+		scroller.onMouseWheel(Mouse.getEventDWheel());
+	}
+
+	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int btn) {
 		super.mouseClicked(mouseX, mouseY, btn);
 		scroller.onMouseClick(mouseX, mouseY, btn);
@@ -133,6 +157,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		super.actionPerformed(button);
 		if (button.id == 0 && scrollerMotion == 0) {
 			scrollerMotion = -Integer.signum(scrollerOffsetX + 1);
+			isScrollerOpen = !isScrollerOpen;
 		}
 	}
 

@@ -3,6 +3,7 @@ package de.take_weiland.mods.cameracraft.gui;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,7 +14,6 @@ import net.minecraft.world.World;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
-import com.google.common.collect.Lists;
 
 import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
@@ -56,11 +56,6 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> {
 		}
 	}
 	
-
-	public final void setNodeNames(List<String> nodeNames) {
-		this.nodeNames = nodeNames;
-	}
-
 	public final List<String> getNodeNames() {
 		return nodeNames;
 	}
@@ -77,10 +72,11 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> {
 	@Override
 	public void readSyncData(DataInputStream in) throws IOException {
 		int count = in.readUnsignedShort();
-		nodeNames = Lists.newArrayListWithCapacity(count);
+		String[] nodes = new String[count];
 		for (int i = 0; i < count; ++i) {
-			nodeNames.add(in.readUTF());
+			nodes[i] = in.readUTF();
 		}
+		nodeNames = Arrays.asList(nodes);
 	}
 
 	@Override
