@@ -73,9 +73,9 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 			
 			@Override
 			protected void drawImpl() {
-				drawRect(0, 0, width, contentHeight, 0x44000000);
+				drawRect(0, 0, width, Math.max(contentHeight, height), 0x44000000);
 				
-				List<String> nodes = JavaUtils.nullToEmpty(getContainer().getNodeNames());
+				List<String> nodes = getNodes();
 				int size = nodes.size();
 				for (int i = 0; i < size; ++i) {
 					mc.fontRenderer.drawString(nodes.get(i), 1, 1 + i * 10, selectedNode == i ? 0x000000 : 0xffffff);
@@ -86,7 +86,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 			protected void handleMouseClick(int relX, int relY, int btn) {
 				if (relX >= 0 && relX <= width) {
 					int newSelection = MathHelper.floor_float(relY / 10f);
-					if (JavaUtils.listIndexExists(JavaUtils.nullToEmpty(getContainer().getNodeNames()), newSelection)) {
+					if (JavaUtils.listIndexExists(getNodes(), newSelection)) {
 						selectedNode = newSelection;
 					}
 				}
@@ -101,7 +101,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		glDisable(GL_LIGHTING);
 		
-		List<String> nodes = container.getNodeNames();
+		List<String> nodes = getNodes();
 		scroller.setContentHeight(nodes == null ? 0 : nodes.size() * 10);
 		
 		if (scrollerOffsetX != 0) {
@@ -121,6 +121,10 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		}
 		glEnable(GL_LIGHTING);
 
+	}
+
+	List<String> getNodes() {
+		return JavaUtils.nullToEmpty(container.getNodeNames());
 	}
 
 	@Override

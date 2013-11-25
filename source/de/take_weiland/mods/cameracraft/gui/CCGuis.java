@@ -65,7 +65,7 @@ public enum CCGuis {
 			if (c == null) {
 				return null;
 			}
-			CCGuis gui = JavaUtils.safeArrayAccess(values(), id);
+			CCGuis gui = JavaUtils.safeArrayAccess(VALUES, id);
 			if (gui == null) {
 				return null;
 			}
