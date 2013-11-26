@@ -1,24 +1,21 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
-import java.util.List;
-
-import com.google.common.collect.Lists;
-
 import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
-import de.take_weiland.mods.cameracraft.api.cable.DataNetwork;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
+import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.cameracraft.item.PhotoStorageType;
+import de.take_weiland.mods.cameracraft.networking.NetworkNodeImpl;
 import de.take_weiland.mods.cameracraft.networking.NetworkUtil;
 import de.take_weiland.mods.commons.templates.NameableTileEntity;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Multitypes;
 
-public class TileCardReader extends TileEntityInventory<TileCardReader> implements NetworkNode, NameableTileEntity, PhotoStorageProvider {
+public class TileCardReader extends TileEntityInventory<TileCardReader> implements NetworkTile, NameableTileEntity, PhotoStorageProvider {
 
 	public static final int NO_ACC = 0;
 	public static final int READ_ACC = 1;
@@ -26,7 +23,7 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 	
 	private int access = NO_ACC;
 	
-	private DataNetwork network;
+	private NetworkNode node = new NetworkNodeImpl(this);
 	
 	@Override
 	public int getSizeInventory() {
@@ -48,7 +45,7 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 
 	@Override
 	public void updateEntity() {
-		if (network == null) {
+		if (!node.hasNetwork()) {
 			NetworkUtil.initializeNetworking(this);
 		}
 		if (storage[0] != null) {
@@ -87,55 +84,14 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 	}
 
 	@Override
-	public DataNetwork getNetwork() {
-		return network;
-	}
-
-	@Override
-	public boolean hasNetwork() {
-		return network != null && network.isValid();
-	}
-
-	@Override
 	public String getDisplayName() {
 		return (hasCustomName() ? getCustomName() : "CardReader") + " @ " + xCoord + ", " + yCoord + ", " + zCoord;
 	}
-	
-	private List<NetworkNode.ChangeListener> listeners;
-	
-	@Override
-	public void setNetwork(DataNetwork network) {
-		DataNetwork oldNetwork = this.network;
-		this.network = network;
-		if (listeners != null) {
-			int l = listeners.size();
-			for (int i = 0; i < l; ++i) {
-				listeners.get(i).onNewNetwork(this, oldNetwork);
-			}
-		}
-	}
-
-	
-	@Override
-	public void onNetworkChange() {
-		if (listeners != null) {
-			int l = listeners.size();
-			for (int i = 0; i < l; ++i) {
-				listeners.get(i).onNetworkChange(this);
-			}
-		}
-	}
 
 	@Override
-	public void addListener(ChangeListener listener) {
-		(listeners == null ? (listeners = Lists.newArrayListWithCapacity(3)) : listeners).add(listener);
+	public NetworkNode getNode() {
+		return node;
 	}
-
-	@Override
-	public void removeListener(ChangeListener listener) {
-		if (listeners != null) {
-			listeners.remove(listener);
-		}
-	}
+	
 
 }

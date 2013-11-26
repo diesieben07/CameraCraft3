@@ -12,6 +12,7 @@ import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 
 public class NetworkImpl implements DataNetwork {
 
+	private int nextId = 0;
 	private boolean isValid = true;
 	private final List<NetworkNode> nodes;
 	
@@ -27,6 +28,7 @@ public class NetworkImpl implements DataNetwork {
 	@Override
 	public void join(NetworkNode node) {
 		nodes.add(node);
+		node.assignId(nextId++);
 		fireOnChange();
 	}
 
@@ -43,13 +45,6 @@ public class NetworkImpl implements DataNetwork {
 			otherNode.setNetwork(this);
 		}
 		nodes.addAll(otherNodes);
-		other.onJoinWith(this);
-		// ?
-	}
-	
-	@Override
-	public void onJoinWith(DataNetwork newNetwork) {
-		// ? 
 	}
 
 	private void fireOnChange() {

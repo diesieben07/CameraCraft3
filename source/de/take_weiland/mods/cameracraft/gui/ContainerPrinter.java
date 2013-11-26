@@ -35,7 +35,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player, Containers.PLAYER_INV_X_DEFAULT, 118);
 		if (Sides.logical(world).isServer()) {
-			inventory.addListener(this);
+			inventory.getNode().addListener(this);
 		}
 	}
 
@@ -43,7 +43,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	public void onContainerClosed(EntityPlayer player) {
 		super.onContainerClosed(player);
 		if (Sides.logical(player).isServer()) {
-			inventory.removeListener(this);
+			inventory.getNode().removeListener(this);
 		}
 	}
 
@@ -73,7 +73,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 
 		@Override
 		public boolean apply(NetworkNode node) {
-			return node != inventory() && node.getDisplayName() != null && node instanceof PhotoStorageProvider;
+			return node.getTile() != inventory() && node.getDisplayName() != null && node.getTile() instanceof PhotoStorageProvider;
 		}
 		
 	};
@@ -92,7 +92,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	@Override
 	public boolean writeSyncData(DataOutputStream out) throws IOException {
 		if (clientNeedsRefresh) {
-			Collection<NetworkNode> toSend = Collections2.filter(inventory.getNetwork().getNodes(), nodeFilter);
+			Collection<NetworkNode> toSend = Collections2.filter(inventory.getNode().getNetwork().getNodes(), nodeFilter);
 			out.writeShort(toSend.size());
 			for (NetworkNode node : toSend) {
 				out.writeUTF(node.getDisplayName());

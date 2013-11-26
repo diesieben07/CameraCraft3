@@ -20,6 +20,4 @@ public interface DataNetwork {
 	
 	void joinWith(DataNetwork other);
 	
-	void onJoinWith(DataNetwork newNetwork);
-	
 }
