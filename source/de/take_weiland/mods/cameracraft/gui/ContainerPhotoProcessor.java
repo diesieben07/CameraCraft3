@@ -31,8 +31,9 @@ public class ContainerPhotoProcessor extends AbstractContainer.Synced<TilePhotoP
 	}
 	
 	@Override
-	public void writeSyncData(DataOutputStream out) throws IOException {
+	public boolean writeSyncData(DataOutputStream out) throws IOException {
 		Packets.writeFluidStack(out, inventory.tank.getFluid());
+		return true;
 	}
 
 	@Override

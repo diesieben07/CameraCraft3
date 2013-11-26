@@ -1,5 +1,9 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
+import java.util.List;
+
+import com.google.common.collect.Lists;
+
 import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
 import de.take_weiland.mods.cameracraft.api.cable.DataNetwork;
@@ -44,6 +48,9 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 
 	@Override
 	public void updateEntity() {
+		if (network == null) {
+			NetworkUtil.initializeNetworking(this);
+		}
 		if (storage[0] != null) {
 			access = READ_ACC;
 		} else {
@@ -74,12 +81,6 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 	}
 	
 	@Override
-	public void validate() {
-		super.validate();
-		NetworkUtil.initializeNetworking(this);
-	}
-	
-	@Override
 	public void invalidate() {
 		super.invalidate();
 		NetworkUtil.shutdownNetworking(this);
@@ -92,17 +93,49 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 
 	@Override
 	public boolean hasNetwork() {
-		return network != null;
-	}
-
-	@Override
-	public void setNetwork(DataNetwork network) {
-		this.network = network;
+		return network != null && network.isValid();
 	}
 
 	@Override
 	public String getDisplayName() {
 		return (hasCustomName() ? getCustomName() : "CardReader") + " @ " + xCoord + ", " + yCoord + ", " + zCoord;
+	}
+	
+	private List<NetworkNode.ChangeListener> listeners;
+	
+	@Override
+	public void setNetwork(DataNetwork network) {
+		DataNetwork oldNetwork = this.network;
+		this.network = network;
+		if (listeners != null) {
+			int l = listeners.size();
+			for (int i = 0; i < l; ++i) {
+				listeners.get(i).onNewNetwork(this, oldNetwork);
+			}
+		}
+	}
+
+	
+	@Override
+	public void onNetworkChange() {
+		if (listeners != null) {
+			int l = listeners.size();
+			for (int i = 0; i < l; ++i) {
+				listeners.get(i).onNetworkChange(this);
+			}
+		}
+	}
+
+	@Override
+	public void addListener(ChangeListener listener) {
+		(listeners == null ? (listeners = Lists.newArrayListWithCapacity(3)) : listeners).add(listener);
+	}
+
+	@Override
+	public void removeListener(ChangeListener listener) {
+		if (listeners != null) {
+			listeners.remove(listener);
+		}
 	}
 
 }

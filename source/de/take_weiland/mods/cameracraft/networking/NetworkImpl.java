@@ -12,6 +12,7 @@ import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 
 public class NetworkImpl implements DataNetwork {
 
+	private boolean isValid = true;
 	private final List<NetworkNode> nodes;
 	
 	public NetworkImpl() {
@@ -19,34 +20,20 @@ public class NetworkImpl implements DataNetwork {
 	}
 
 	@Override
-	public List<NetworkNode> getNodes() {
+	public Collection<NetworkNode> getNodes() {
 		return nodes;
 	}
 
 	@Override
 	public void join(NetworkNode node) {
 		nodes.add(node);
-		if (listeners == null) {
-			return;
-		}
-		List<ChangeListener> listeners = this.listeners;
-		int l = listeners.size();
-		for (int i = 0; i < l; ++i) {
-			listeners.get(i).onNewNode(this, node);
-		}
+		fireOnChange();
 	}
 
 	@Override
 	public void leave(NetworkNode node) {
 		nodes.remove(node);
-		if (listeners == null) {
-			return;
-		}
-		List<ChangeListener> listeners = this.listeners;
-		int l = listeners.size();
-		for (int i = 0; i < l; ++i) {
-			listeners.get(i).onNodeRemoved(this, node);
-		}
+		fireOnChange();
 	}
 
 	@Override
@@ -57,44 +44,34 @@ public class NetworkImpl implements DataNetwork {
 		}
 		nodes.addAll(otherNodes);
 		other.onJoinWith(this);
+		// ?
 	}
 	
 	@Override
 	public void onJoinWith(DataNetwork newNetwork) {
-		if (listeners == null) {
-			return;
-		}
-		List<ChangeListener> listeners = this.listeners;
-		int l = listeners.size();
+		// ? 
+	}
+
+	private void fireOnChange() {
+		int l = nodes.size();
 		for (int i = 0; i < l; ++i) {
-			listeners.get(i).onMergeWith(this, newNetwork);
+			nodes.get(i).onNetworkChange();
 		}
 	}
 
 	@Override
 	public void invalidate() {
-		for (NetworkNode node : nodes) {
-			node.setNetwork(null);
-		}
+		isValid = false;
+	}
+	
+	@Override
+	public boolean isValid() {
+		return isValid;
 	}
 
 	@Override
 	public Collection<NetworkNode> nodesMatching(Predicate<? super NetworkNode> predicate) {
 		return Collections2.filter(nodes, predicate);
-	}
-	
-	private List<ChangeListener> listeners;
-
-	@Override
-	public void addListener(ChangeListener listener) {
-		(listeners == null ? (listeners = Lists.newArrayListWithCapacity(3)) : listeners).add(listener);
-	}
-
-	@Override
-	public void removeListener(ChangeListener listener) {
-		if (listeners != null) {
-			listeners.remove(listener);
-		}
 	}
 
 }

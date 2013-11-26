@@ -35,8 +35,9 @@ public class ContainerCardReader extends AbstractContainer.Synced<TileCardReader
 	}
 
 	@Override
-	public void writeSyncData(DataOutputStream out) throws IOException {
+	public boolean writeSyncData(DataOutputStream out) throws IOException {
 		out.writeByte(inventory.getAccessState());
+		return true;
 	}
 
 }

@@ -16,6 +16,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
 import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
+import de.take_weiland.mods.cameracraft.api.cable.DataNetwork;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
@@ -24,18 +25,26 @@ import de.take_weiland.mods.commons.templates.AdvancedSlot;
 import de.take_weiland.mods.commons.util.Containers;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.util.Sides;
 
-public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> {
+public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> implements NetworkNode.ChangeListener {
 
 	private List<String> nodeNames;
+	private boolean clientNeedsRefresh = true;
 	
 	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player, Containers.PLAYER_INV_X_DEFAULT, 118);
+		if (Sides.logical(world).isServer()) {
+			inventory.addListener(this);
+		}
 	}
 
 	@Override
 	public void onContainerClosed(EntityPlayer player) {
 		super.onContainerClosed(player);
+		if (Sides.logical(player).isServer()) {
+			inventory.removeListener(this);
+		}
 	}
 
 	@Override
@@ -76,16 +85,33 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> {
 		for (int i = 0; i < count; ++i) {
 			nodes[i] = in.readUTF();
 		}
+		Arrays.sort(nodes, String.CASE_INSENSITIVE_ORDER);
 		nodeNames = Arrays.asList(nodes);
 	}
 
 	@Override
-	public void writeSyncData(DataOutputStream out) throws IOException {
-		Collection<NetworkNode> toSend = Collections2.filter(inventory.getNetwork().getNodes(), nodeFilter);
-		out.writeShort(toSend.size());
-		for (NetworkNode node : toSend) {
-			out.writeUTF(node.getDisplayName());
+	public boolean writeSyncData(DataOutputStream out) throws IOException {
+		if (clientNeedsRefresh) {
+			Collection<NetworkNode> toSend = Collections2.filter(inventory.getNetwork().getNodes(), nodeFilter);
+			out.writeShort(toSend.size());
+			for (NetworkNode node : toSend) {
+				out.writeUTF(node.getDisplayName());
+			}
+			clientNeedsRefresh = false;
+			return true;
+		} else {
+			return false;
 		}
+	}
+
+	@Override
+	public void onNewNetwork(NetworkNode node, DataNetwork oldNetwork) {
+		clientNeedsRefresh = true;
+	}
+
+	@Override
+	public void onNetworkChange(NetworkNode node) {
+		clientNeedsRefresh = true;
 	}
 
 }

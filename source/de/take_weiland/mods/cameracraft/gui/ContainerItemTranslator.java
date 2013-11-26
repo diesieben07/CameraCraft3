@@ -32,9 +32,10 @@ public class ContainerItemTranslator extends AbstractContainer.Synced<TileItemMu
 	}
 
 	@Override
-	public void writeSyncData(DataOutputStream out) throws IOException {
+	public boolean writeSyncData(DataOutputStream out) throws IOException {
 		out.writeShort(inventory.getTransmuteTime());
 		out.writeShort(inventory.getSelectedResult());
+		return true;
 	}
 
 	@Override

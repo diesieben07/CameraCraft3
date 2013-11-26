@@ -1,6 +1,5 @@
 package de.take_weiland.mods.cameracraft.networking;
 
-import java.util.Collection;
 import java.util.Set;
 
 import net.minecraft.tileentity.TileEntity;
@@ -57,20 +56,21 @@ public final class NetworkUtil {
 	
 	public static <T extends TileEntity & NetworkNode> void initializeNetworking(final T tile) {
 		if (Sides.logical(tile).isServer()) {
-			int chunkX = tile.xCoord >> 4;
-			int chunkZ = tile.zCoord >> 4;
-			if (!tile.worldObj.getChunkProvider().chunkExists(chunkX, chunkZ)) { // don't want to initialize if we're still loading the chunks
-				ChunkloadingHandler.register(tile.worldObj, chunkX, chunkZ, new ChunkloadListener() {
-					
-					@Override
-					public void onChunkLoad() {
-						tile.setNetwork(findNetworkFor(tile));
-					}
-					
-				});
-			} else {
-				tile.setNetwork(findNetworkFor(tile));
-			}
+			tile.setNetwork(findNetworkFor(tile));
+//			int chunkX = tile.xCoord >> 4;
+//			int chunkZ = tile.zCoord >> 4;
+//			if (!tile.worldObj.getChunkProvider().chunkExists(chunkX, chunkZ)) { // don't want to initialize if we're still loading the chunks
+//				ChunkloadingHandler.register(tile.worldObj, chunkX, chunkZ, new ChunkloadListener() {
+//					
+//					@Override
+//					public void onChunkLoad() {
+//						tile.setNetwork(findNetworkFor(tile));
+//					}
+//					
+//				});
+//			} else {
+//				tile.setNetwork(findNetworkFor(tile));
+//			}
 		}
 	}
 	
@@ -96,9 +96,8 @@ public final class NetworkUtil {
 				DataNetwork network = tile.getNetwork();
 				network.leave(tile);
 				network.invalidate();
-				Collection<NetworkNode> nodes = network.getNodes();
 				long start = System.nanoTime();
-				for (NetworkNode node : nodes) {
+				for (NetworkNode node : network.getNodes()) {
 					node.setNetwork(findNetworkFor((T) node));
 				}
 				System.out.println("spent " + (System.nanoTime() - start) + " nanos rebuilding");
