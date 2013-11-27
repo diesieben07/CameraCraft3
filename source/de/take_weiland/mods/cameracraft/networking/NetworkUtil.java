@@ -17,7 +17,7 @@ public final class NetworkUtil {
 
 	private NetworkUtil() { }
 	
-	private static <T extends TileEntity & NetworkTile> DataNetwork findNetworkFor(NetworkNode node) {
+	private static <T extends TileEntity & NetworkTile> void findNetworkFor(NetworkNode node, DataNetwork oldNetwork) {
 		TileEntity tile = node.getTile();
 		Set<DataNetwork> nearbyNetworks = Sets.newHashSetWithExpectedSize(3);
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
@@ -48,34 +48,24 @@ public final class NetworkUtil {
 				if (first == null) { // yay, ugly hack because Sets don't guarantee iteration order...
 					first = nearbyNetwork;
 				} else {
+					System.out.println(nearbyNetwork.getListeners());
 					first.joinWith(nearbyNetwork);
 				}
 			}
 			network = first;
 			break;
 		}
+		if (oldNetwork != null && oldNetwork.getListeners() != null) {
+			network.addListeners(oldNetwork.getListeners());
+		}
+		node.setNetwork(network);
 		network.join(node);
-		return network;
+//		return network;
 	}
 	
 	public static <T extends TileEntity & NetworkTile> void initializeNetworking(final T tile) {
 		if (Sides.logical(tile).isServer()) {
-			NetworkNode node = tile.getNode();
-			node.setNetwork(findNetworkFor(node));
-//			int chunkX = tile.xCoord >> 4;
-//			int chunkZ = tile.zCoord >> 4;
-//			if (!tile.worldObj.getChunkProvider().chunkExists(chunkX, chunkZ)) { // don't want to initialize if we're still loading the chunks
-//				ChunkloadingHandler.register(tile.worldObj, chunkX, chunkZ, new ChunkloadListener() {
-//					
-//					@Override
-//					public void onChunkLoad() {
-//						tile.setNetwork(findNetworkFor(tile));
-//					}
-//					
-//				});
-//			} else {
-//				tile.setNetwork(findNetworkFor(tile));
-//			}
+			findNetworkFor(tile.getNode(), null);
 		}
 	}
 	
@@ -98,12 +88,12 @@ public final class NetworkUtil {
 			
 			NetworkNode node = tile.getNode();
 			if (adjacentNodes >= 2) { // rebuild the network TODO: optimize this?
-				DataNetwork network = node.getNetwork();
-				network.leave(node);
-				network.invalidate();
+				DataNetwork oldNetwork = node.getNetwork();
+				oldNetwork.leave(node);
+				oldNetwork.invalidate();
 				long start = System.nanoTime();
-				for (NetworkNode adjNode : network.getNodes()) {
-					adjNode.setNetwork(findNetworkFor(adjNode));
+				for (NetworkNode adjNode : oldNetwork.getNodes()) {
+					findNetworkFor(adjNode, oldNetwork);
 				}
 				System.out.println("spent " + (System.nanoTime() - start) + " nanos rebuilding");
 			} else {

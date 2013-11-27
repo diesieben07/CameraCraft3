@@ -64,7 +64,7 @@ public class TileItemMutator extends TileEntityInventory<TileItemMutator> implem
 			ItemStack selected;
 			if (result != null && ItemStacks.canMergeFully((selected = result.get(selectedResult)), storage[1])) {
 				decrStackSize(0, 1);
-				storage[1] = ItemStacks.merge(selected.copy(), storage[1], true);
+				setInventorySlotContents(1, ItemStacks.merge(selected.copy(), storage[1], true));
 			}
 		}
 	}

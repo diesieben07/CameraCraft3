@@ -28,30 +28,16 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	private static boolean isScrollerOpen = false;
 	int selectedNode = -1;
 	
-	private class ButtonOpenScroller extends GuiButton {
-		
-		public ButtonOpenScroller(int id, int x, int y) {
-			super(id, x, y, 4, 7, "");
-		}
-
-		@Override
-		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-			GuiPrinter.this.bindTexture();
-			drawTexturedModalRect(xPosition, yPosition, 176 + (scrollerOffsetX == getScrollerHiddenOffset() ? 0 : 4), 0, 4, 7);
-		}
-		
-	}
-	
 	int sliderToggleDelay = -1;
 	int scrollerOffsetX = isScrollerOpen ? 0 : getScrollerHiddenOffset();
 	private int scrollerMotion = 0;
+	
+	private ScrollPane networkScroller;
 	
 	public GuiPrinter(ContainerPrinter container) {
 		super(container);
 	}
 
-	private ScrollPane scroller;
-	
 	int getScrollerHiddenOffset() {
 		return - (xSize - 16);
 	}
@@ -66,7 +52,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	public void initGui() {
 		ySize = 200;
 		super.initGui();
-		scroller = new ScrollPane(this, guiLeft + 8, guiTop + 15, xSize - 16, 70, 0) {
+		networkScroller = new ScrollPane(this, guiLeft + 8, guiTop + 15, xSize - 16, 70, 0) {
 			
 			@Override
 			protected void drawImpl() {
@@ -107,22 +93,22 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		glDisable(GL_LIGHTING);
 		
 		ClientNodeInfo[] nodes = container.getNodes();
-		scroller.setContentHeight(nodes == null ? 0 : nodes.length * 10);
+		networkScroller.setContentHeight(nodes == null ? 0 : nodes.length * 10);
 		
 		if (scrollerOffsetX != 0) {
-			scroller.setClip(false);
+			networkScroller.setClip(false);
 			int scale = Guis.computeGuiScale(mc);
 			glPushMatrix();
 			glEnable(GL_SCISSOR_TEST);
 			glScissor((guiLeft + 8) * scale, mc.displayHeight - (guiTop + 15 + 70) * scale, (xSize - 16 + guiLeft + 8) * scale, 70 * scale);
 			glTranslatef(scrollerOffsetX + (partialTicks * 40 * scrollerMotion), 0, 0);
 			
-			scroller.draw(mouseX, mouseY);
+			networkScroller.draw(mouseX, mouseY);
 			glDisable(GL_SCISSOR_TEST);
 			glPopMatrix();
 		} else {
-			scroller.setClip(true);
-			scroller.draw(mouseX, mouseY);
+			networkScroller.setClip(true);
+			networkScroller.draw(mouseX, mouseY);
 		}
 		glEnable(GL_LIGHTING);
 
@@ -132,7 +118,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
 		ClientNodeInfo[] nodes = container.getNodes();
-		if (scrollerOffsetX == getScrollerHiddenOffset() && selectedNode != -1 && nodes != null) {
+		if (scrollerOffsetX == getScrollerHiddenOffset() && selectedNode != -1 && nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode)) {
 			String[] selectedIds = nodes[selectedNode].photoIds;
 			if (selectedIds.length != 0) {
 				for (int i = 0; i < selectedIds.length; ++i) {
@@ -147,14 +133,14 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	@Override
 	public void handleMouseInput() {
 		super.handleMouseInput();
-		scroller.onMouseWheel(Mouse.getEventDWheel());
+		networkScroller.onMouseWheel(Mouse.getEventDWheel());
 	}
 
 	@Override
 	protected void mouseClicked(int mouseX, int mouseY, int btn) {
 		super.mouseClicked(mouseX, mouseY, btn);
 		if (isScrollerOpen) {
-			scroller.onMouseClick(mouseX, mouseY, btn);
+			networkScroller.onMouseClick(mouseX, mouseY, btn);
 		}
 	}
 
@@ -162,7 +148,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	protected void mouseMovedOrUp(int mouseX, int mouseY, int btn) {
 		super.mouseMovedOrUp(mouseX, mouseY, btn);
 		if (isScrollerOpen) {
-			scroller.onMouseBtnReleased(btn);
+			networkScroller.onMouseBtnReleased(btn);
 		}
 	}
 
@@ -170,7 +156,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	protected void mouseClickMove(int mouseX, int mouseY, int btn, long time) {
 		super.mouseClickMove(mouseX, mouseY, btn, time);
 		if (isScrollerOpen) {
-			scroller.onMouseMoved(mouseX, mouseY);
+			networkScroller.onMouseMoved(mouseX, mouseY);
 		}
 	}
 
@@ -182,7 +168,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		}
 	}
 
-	void toggleSlider() {
+	private void toggleSlider() {
 		scrollerMotion = -Integer.signum(scrollerOffsetX + 1);
 		isScrollerOpen = !isScrollerOpen;
 	}
@@ -203,6 +189,18 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		super.updateScreen();
 	}
 	
-	
+	private class ButtonOpenScroller extends GuiButton {
+		
+		ButtonOpenScroller(int id, int x, int y) {
+			super(id, x, y, 4, 7, "");
+		}
+
+		@Override
+		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+			GuiPrinter.this.bindTexture();
+			drawTexturedModalRect(xPosition, yPosition, 176 + (scrollerOffsetX == getScrollerHiddenOffset() ? 0 : 4), 0, 4, 7);
+		}
+		
+	}
 
 }

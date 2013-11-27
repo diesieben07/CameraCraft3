@@ -20,4 +20,14 @@ public interface DataNetwork {
 	
 	void joinWith(DataNetwork other);
 	
+	void dispatch(NetworkEvent event);
+	
+	void addListener(NetworkListener listener);
+	
+	void addListeners(Collection<NetworkListener> listeners);
+	
+	void removeListener(NetworkListener listener);
+	
+	Collection<NetworkListener> getListeners();
+	
 }

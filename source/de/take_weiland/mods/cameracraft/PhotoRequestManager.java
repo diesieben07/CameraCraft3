@@ -15,10 +15,11 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.SettableFuture;
 
 import de.take_weiland.mods.cameracraft.network.PacketRequestPhoto;
+import de.take_weiland.mods.commons.util.Scheduler;
 
-public final class PhotoCallbackManager {
+public final class PhotoRequestManager {
 
-	private PhotoCallbackManager() { }
+	private PhotoRequestManager() { }
 	
 	private static final ConcurrentMap<EntityPlayer, ConcurrentMap<Integer, SettableFuture<BufferedImage>>> listenerMap;
 	
@@ -41,8 +42,8 @@ public final class PhotoCallbackManager {
 		}
 		
 		if (playerData.putIfAbsent(transferId, future) != null) {
-			CrashReport cr = CrashReport.makeCrashReport(new IllegalStateException(), "Duplicate PhotoTransferID");
-			throw new ReportedException(cr);
+			Scheduler.server().throwInMainThread(new ReportedException(CrashReport.makeCrashReport(new IllegalStateException(), "Duplicate PhotoTransferID")));
+			throw new IllegalArgumentException();
 		} else {
 			new PacketRequestPhoto(transferId.intValue()).sendTo(player);
 			return future;

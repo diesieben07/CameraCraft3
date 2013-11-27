@@ -2,7 +2,7 @@ package de.take_weiland.mods.cameracraft.api.cable;
 
 import net.minecraft.tileentity.TileEntity;
 
-public interface NetworkNode {
+public interface NetworkNode extends NetworkListener {
 
 	TileEntity getTile();
 	
@@ -14,22 +14,18 @@ public interface NetworkNode {
 
 	void setNetwork(DataNetwork network);
 	
-	void onNetworkChange();
-	
-	void assignId(int id);
-	
-	int getId();
-	
-	void addListener(ChangeListener listener);
-	
-	void removeListener(ChangeListener listener);
-	
-	public static interface ChangeListener {
-		
-		void onNewNetwork(NetworkNode node, DataNetwork oldNetwork);
-		
-		void onNetworkChange(NetworkNode node);
-		
-	}
+//	void onNetworkChange();
+//	
+//	void addListener(ChangeListener listener);
+//	
+//	void removeListener(ChangeListener listener);
+//	
+//	public static interface ChangeListener {
+//		
+//		void onNewNetwork(NetworkNode node, DataNetwork oldNetwork);
+//		
+//		void onNetworkChange(NetworkNode node);
+//		
+//	}
 	
 }

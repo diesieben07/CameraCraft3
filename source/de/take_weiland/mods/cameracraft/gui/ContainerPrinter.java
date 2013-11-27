@@ -18,7 +18,8 @@ import com.google.common.collect.Collections2;
 import com.google.common.primitives.UnsignedBytes;
 
 import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
-import de.take_weiland.mods.cameracraft.api.cable.DataNetwork;
+import de.take_weiland.mods.cameracraft.api.cable.NetworkEvent;
+import de.take_weiland.mods.cameracraft.api.cable.NetworkListener;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.item.CCItem;
@@ -30,7 +31,7 @@ import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 
-public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> implements NetworkNode.ChangeListener {
+public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> implements NetworkListener {
 
 	private boolean clientNeedsRefresh = true;
 	
@@ -39,7 +40,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player, Containers.PLAYER_INV_X_DEFAULT, 118);
 		if (Sides.logical(world).isServer()) {
-			inventory.getNode().addListener(this);
+			inventory.getNode().getNetwork().addListener(this);
 		}
 	}
 
@@ -47,7 +48,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	public void onContainerClosed(EntityPlayer player) {
 		super.onContainerClosed(player);
 		if (Sides.logical(player).isServer()) {
-			inventory.getNode().removeListener(this);
+			inventory.getNode().getNetwork().removeListener(this);
 		}
 	}
 
@@ -123,17 +124,12 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 			return false;
 		}
 	}
-
-	@Override
-	public void onNewNetwork(NetworkNode node, DataNetwork oldNetwork) {
-		clientNeedsRefresh = true;
-	}
-
-	@Override
-	public void onNetworkChange(NetworkNode node) {
-		clientNeedsRefresh = true;
-	}
 	
+	@Override
+	public void handleEvent(NetworkEvent event) {
+		clientNeedsRefresh = true;
+	}
+
 	public static final class ClientNodeInfo implements Comparable<ClientNodeInfo> {
 		
 		public final String displayName;

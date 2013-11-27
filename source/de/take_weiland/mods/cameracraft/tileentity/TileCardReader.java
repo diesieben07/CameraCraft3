@@ -2,6 +2,8 @@ package de.take_weiland.mods.cameracraft.tileentity;
 
 import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
+import de.take_weiland.mods.cameracraft.api.cable.DataNetwork;
+import de.take_weiland.mods.cameracraft.api.cable.NetworkEvent;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
@@ -55,6 +57,17 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 		}
 	}
 	
+	@Override
+	public void setInventorySlotContents(int slot, ItemStack item) {
+		super.setInventorySlotContents(slot, item);
+		if (slot == 0) {
+			DataNetwork nw = node.getNetwork();
+			if (nw != null) {
+				nw.dispatch(new NetworkEvent(nw, NetworkEvent.Type.CUSTOM, node, PhotoStorageProvider.STORAGE_CHANGED_EVENT));
+			}
+		}
+	}
+
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack item) {
 		return slot == 0 && ItemStacks.is(item, PhotoStorageType.MEMORY_CARD);

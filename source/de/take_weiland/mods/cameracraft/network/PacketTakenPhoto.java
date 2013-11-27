@@ -20,7 +20,7 @@ import net.minecraft.util.ReportedException;
 import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.cameracraft.PhotoCallbackManager;
+import de.take_weiland.mods.cameracraft.PhotoRequestManager;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.commons.network.MultipartDataPacket;
 import de.take_weiland.mods.commons.network.PacketType;
@@ -51,7 +51,7 @@ public class PacketTakenPhoto extends MultipartDataPacket {
 	public void read(EntityPlayer player, Side side, final DataInputStream in) throws IOException {
 		transferId = in.readInt();
 		image = ImageIO.read(in);
-		PhotoCallbackManager.incomingPhoto(player, transferId, image);
+		PhotoRequestManager.incomingPhoto(player, transferId, image);
 		
 //		
 //		ItemStack currentStack = player.getCurrentEquippedItem();

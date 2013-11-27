@@ -13,7 +13,7 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import de.take_weiland.mods.cameracraft.CCSounds;
-import de.take_weiland.mods.cameracraft.PhotoCallbackManager;
+import de.take_weiland.mods.cameracraft.PhotoRequestManager;
 import de.take_weiland.mods.cameracraft.api.camera.CameraInventory;
 import de.take_weiland.mods.cameracraft.api.camera.CameraItem;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
@@ -43,7 +43,7 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 				final InventoryCamera inv = getInventory(player);
 				if (inv.canTakePhoto()) {
 					inv.onTakePhoto();
-					final ListenableFuture<BufferedImage> futureImage = PhotoCallbackManager.requestPhoto(player);
+					final ListenableFuture<BufferedImage> futureImage = PhotoRequestManager.requestPhoto(player);
 
 					CCSounds.CAMERA_CLICK.playAt(player);
 					futureImage.addListener(new Runnable() {
