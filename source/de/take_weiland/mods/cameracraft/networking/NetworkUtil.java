@@ -54,7 +54,6 @@ public final class NetworkUtil {
 			network = first;
 			break;
 		}
-		System.out.println(network);
 		network.join(node);
 		return network;
 	}

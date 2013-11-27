@@ -22,8 +22,6 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 	
 	private NetworkNode node = new NetworkNodeImpl(this);
 	
-	private int selectedX, selectedY, selectedZ;
-	
 	@Override
 	public void updateEntity() {
 		super.updateEntity();

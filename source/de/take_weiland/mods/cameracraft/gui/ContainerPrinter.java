@@ -10,14 +10,17 @@ import java.util.List;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.primitives.UnsignedBytes;
 
 import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
 import de.take_weiland.mods.cameracraft.api.cable.DataNetwork;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.templates.AbstractContainer;
@@ -29,8 +32,9 @@ import de.take_weiland.mods.commons.util.Sides;
 
 public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> implements NetworkNode.ChangeListener {
 
-	private List<String> nodeNames;
 	private boolean clientNeedsRefresh = true;
+	
+	private ClientNodeInfo[] nodes;
 	
 	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player, Containers.PLAYER_INV_X_DEFAULT, 118);
@@ -65,15 +69,16 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 		}
 	}
 	
-	public final List<String> getNodeNames() {
-		return nodeNames;
+	public final ClientNodeInfo[] getNodes() {
+		return nodes;
 	}
 	
 	private final Predicate<NetworkNode> nodeFilter = new Predicate<NetworkNode>() {
 
 		@Override
 		public boolean apply(NetworkNode node) {
-			return node.getTile() != inventory() && node.getDisplayName() != null && node.getTile() instanceof PhotoStorageProvider;
+			TileEntity tile = node.getTile();
+			return tile != inventory() && tile instanceof PhotoStorageProvider && node.getDisplayName() != null;
 		}
 		
 	};
@@ -81,12 +86,17 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	@Override
 	public void readSyncData(DataInputStream in) throws IOException {
 		int count = in.readUnsignedShort();
-		String[] nodes = new String[count];
+		nodes = new ClientNodeInfo[count];
 		for (int i = 0; i < count; ++i) {
-			nodes[i] = in.readUTF();
+			String name = in.readUTF();
+			int numPhotos = in.readUnsignedByte();
+			String[] photoIds = new String[numPhotos];
+			for (int j = 0; j < numPhotos; ++j) {
+				photoIds[j] = in.readUTF();
+			}
+			nodes[i] = new ClientNodeInfo(name, photoIds);
 		}
-		Arrays.sort(nodes, String.CASE_INSENSITIVE_ORDER);
-		nodeNames = Arrays.asList(nodes);
+		Arrays.sort(nodes);
 	}
 
 	@Override
@@ -96,6 +106,16 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 			out.writeShort(toSend.size());
 			for (NetworkNode node : toSend) {
 				out.writeUTF(node.getDisplayName());
+				PhotoStorage storage = ((PhotoStorageProvider) node.getTile()).getPhotoStorage();
+				if (storage != null) {
+					List<String> photoIds = storage.getPhotos();
+					out.writeByte(UnsignedBytes.checkedCast(photoIds.size()));
+					for (String photoId : photoIds) {
+						out.writeUTF(photoId);
+					}
+				} else {
+					out.writeByte(0);
+				}
 			}
 			clientNeedsRefresh = false;
 			return true;
@@ -112,6 +132,23 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	@Override
 	public void onNetworkChange(NetworkNode node) {
 		clientNeedsRefresh = true;
+	}
+	
+	public static final class ClientNodeInfo implements Comparable<ClientNodeInfo> {
+		
+		public final String displayName;
+		public final String[] photoIds;
+		
+		ClientNodeInfo(String displayName, String[] photoIds) {
+			this.displayName = displayName;
+			this.photoIds = photoIds;
+		}
+
+		@Override
+		public int compareTo(ClientNodeInfo o) {
+			return String.CASE_INSENSITIVE_ORDER.compare(displayName, o.displayName);
+		}
+		
 	}
 
 }
