@@ -2,4 +2,4 @@
 /*/
 !/src/
 !.gitignore
-!/dependencies/
+!build.gradle

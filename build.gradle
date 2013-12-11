@@ -1,0 +1,51 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        maven {
+            name = "forge"
+            url = "http://files.minecraftforge.net/maven"
+        }
+    }
+    dependencies {
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+    }
+}
+
+repositories {
+	maven {
+		name = 'SevenCommons'
+		url = "http://take-weiland.de/maven/"
+	}
+}
+
+dependencies {
+    compile 'de.take_weiland.mods.commons:SevenCommons:1.0-SNAPSHOT:deobf'
+}
+
+
+minecraft {
+	version = "1.6.4-9.11.1.964"
+}
+
+apply plugin: 'forge'
+apply plugin: 'maven'
+
+version = "1.0"
+group = "de.take_weiland.mods.cameracraft" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+archivesBaseName = "CameraCraft"
+
+task deobfJar(type: Jar) {
+    from sourceSets.main.output
+    appendix = 'deobf'
+}
+
+task sourceJar(type: Jar) {
+    from sourceSets.main.allSource
+    appendix = 'src'
+}
+
+tasks.build.dependsOn('sourceJar', 'deobfJar')
+
+processResources {
+    from (sourceSets.main.resources.srcDirs)
+}
