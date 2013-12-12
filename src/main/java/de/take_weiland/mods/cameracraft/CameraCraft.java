@@ -25,6 +25,7 @@ import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
+import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApiHandler;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
@@ -58,7 +59,7 @@ public final class CameraCraft {
 	
 	public static Logger logger;
 	
-	public static ApiImpl api;
+	public static CameraCraftApi api;
 	
 	public static PacketTransport packetTransport;
 	
@@ -84,6 +85,8 @@ public final class CameraCraft {
 		config = new Configuration(event.getSuggestedConfigurationFile());
 		config.load();
 		
+		api = new ApiImpl();
+		
 		logger = event.getModLog();
 		
 		ConfigInjector.inject(config, CameraCraft.class, false, false);
@@ -92,8 +95,8 @@ public final class CameraCraft {
 		
 		packetTransport = PacketTransports.withPacket131(this, CCPackets.class);
 		
-		CCItem.createItems();
 		CCBlock.createBlocks();
+		CCItem.createItems();
 		
 		if (enableOreGeneration) {
 			MinecraftForge.ORE_GEN_BUS.register(new CCWorldGen());
@@ -101,12 +104,11 @@ public final class CameraCraft {
 		
 		NetworkRegistry.instance().registerGuiHandler(this, new CCGuis.Handler());
 		
-		CCRecipes.addRecipes();
+		CCRegistry.addRecipes();
+		CCRegistry.doMiscRegistering();
 		
 		MinecraftForge.EVENT_BUS.register(new CCEventHandler());
 		TickRegistry.registerTickHandler(new CCPlayerTickHandler(), Side.SERVER);
-		
-		api = new ApiImpl();
 		
 		if (config.hasChanged()) {
 			config.save();

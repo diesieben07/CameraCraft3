@@ -53,6 +53,8 @@ public class BlockAlkaline extends BlockFluidClassic { // damn you java, we need
 	public void registerIcons(IconRegister register) {
 		blockIcon = register.registerIcon("cameracraft:alkaline");
 		iconFlow = register.registerIcon("cameracraft:alkaline_flowing");
+		
+		CCBlock.alkalineFluid.setIcons(blockIcon, iconFlow);
 	}
 
 	@Override

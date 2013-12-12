@@ -64,6 +64,16 @@ public enum CameraType implements ItemMeta {
 		public boolean canRewind() {
 			return CameraType.this == FILM && storage[storageSlot()] != null;
 		}
+
+		@Override
+		public boolean needsBattery() {
+			return CameraType.this == DIGITAL;
+		}
+
+		@Override
+		public int batterySlot() {
+			return CameraType.this == DIGITAL ? 1 : -1;
+		}
 		
 	}
 	

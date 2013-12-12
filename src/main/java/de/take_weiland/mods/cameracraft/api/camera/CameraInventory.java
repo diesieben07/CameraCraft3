@@ -20,6 +20,12 @@ public interface CameraInventory extends IInventory {
 	 * @return
 	 */
 	boolean hasStorage();
+	
+	boolean needsBattery();
+	
+	boolean hasBattery();
+	
+	ItemStack getBattery();
 
 	/**
 	 * get the ItemStack containing the CameraItem this camera was created from

@@ -15,8 +15,10 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import de.take_weiland.mods.cameracraft.CCPlayerData;
+import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.camera.CameraInventory;
 import de.take_weiland.mods.cameracraft.api.camera.LensItem;
+import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.FilmItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
@@ -45,6 +47,8 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	public abstract CameraType getType();
 	
 	public abstract int storageSlot();
+	
+	public abstract int batterySlot();
 	
 	private void closeLid() { }
 	
@@ -162,6 +166,25 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 			return lastStorage;
 		}
 	}
+	
+	@Override
+	public boolean hasBattery() {
+		return getBattery() != null;
+	}
+
+	@Override
+	public ItemStack getBattery() {
+		return needsBattery() ? getStackInSlot(batterySlot()) : null;
+	}
+	
+	private int getBatteryCharge() {
+		ItemStack b = getBattery();
+		if (b == null) {
+			return 0;
+		}
+		BatteryHandler handler = CameraCraft.api.findBatteryHandler(b);
+		return handler.getCharge(b);
+	}
 
 	@Override
 	public ItemStack getCamera() {
@@ -178,7 +201,6 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 		ItemStack storageSlot = storage[storageSlot()];
 		return storageSlot != null && storageSlot.getItem() instanceof PhotoStorageItem;
 	}
-	
 	
 	@Override
 	public ImageFilter getFilter() {
@@ -213,7 +235,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	
 	@Override
 	public boolean canTakePhoto() {
-		return !CCPlayerData.get(player).isOnCooldown() && hasStorage() && !getPhotoStorage().isFull();
+		return !CCPlayerData.get(player).isOnCooldown() && getBatteryCharge() > 0 && hasStorage() && !getPhotoStorage().isFull();
 	}
 
 	@Override
@@ -227,6 +249,11 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	@Override
 	public void onTakePhoto() {
 		CCPlayerData.get(player).setCooldown(COOLDOWN);
+		ItemStack battery = getBattery();
+		if (battery != null) {
+			BatteryHandler handler = CameraCraft.api.findBatteryHandler(battery);
+			handler.drain(battery, 10);
+		}
 	}
 
 	@Override
@@ -239,5 +266,5 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 			}
 		}
 	}
-	
+
 }

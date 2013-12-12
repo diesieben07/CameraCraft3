@@ -3,6 +3,7 @@ package de.take_weiland.mods.cameracraft.gui;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
+import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.camera.LensItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
@@ -82,6 +83,8 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 			return InventoryCamera.LENS_SLOT;
 		} else if (stack.getItem() instanceof PhotoStorageItem) {
 			return inventory.storageSlot();
+		} else if (CameraCraft.api.isBattery(stack)) {
+			return inventory.batterySlot();
 		}
 		return -1;
 	}

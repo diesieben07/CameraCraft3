@@ -1,22 +1,16 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import net.minecraftforge.oredict.OreDictionary;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.tileentity.TileEntityDataCable;
 import de.take_weiland.mods.commons.util.Blocks;
 import de.take_weiland.mods.commons.util.Inventories;
-import de.take_weiland.mods.commons.util.ItemStacks;
 
 public class CCBlock extends Block {
 
-	public static Fluid alkalineFluid;
-	
 	public static BlockCCOre ores;
 	public static BlockCCMachine machines;
 	public static BlockCable cable;
@@ -30,17 +24,6 @@ public class CCBlock extends Block {
 		(machines = new BlockCCMachine(3079)).lateInit();
 		(cable = new BlockCable(3080)).lateInit();
 		(alkaline = new BlockAlkaline(3081)).lateInit();
-		
-		MachineType.registerTileEntities();
-		GameRegistry.registerTileEntity(TileEntityDataCable.class, "cameracraft.dataCable");
-		
-		OreDictionary.registerOre("oreTin", ItemStacks.of(OreType.TIN));
-		OreDictionary.registerOre("oreAlkaline", ItemStacks.of(OreType.ALKALINE));
-		OreDictionary.registerOre("oreGold", Block.stone);
-		OreDictionary.registerOre("oreGold", Block.stoneBrick);
-		OreDictionary.registerOre("oreGold", Block.stoneButton);
-		OreDictionary.registerOre("oreGold", Block.whiteStone);
-		OreDictionary.registerOre("oreGold", Block.waterlily);
 	}
 	
 	static final int getId(String name, int defaultId) {
@@ -48,6 +31,7 @@ public class CCBlock extends Block {
 	}
 	
 	private final String baseName;
+	public static Fluid alkalineFluid;
 	
 	protected CCBlock(String name, int defaultId, Material material) {
 		super(getId(name, defaultId), material);

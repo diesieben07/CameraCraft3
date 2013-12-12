@@ -7,6 +7,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
 import de.take_weiland.mods.cameracraft.api.cable.CableType;
+import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 
 public interface CameraCraftApi {
 	
@@ -21,5 +22,11 @@ public interface CameraCraftApi {
 	CableType getDataCable();
 	
 	ListenableFuture<String> takePhoto(EntityPlayer viewport);
+	
+	BatteryHandler findBatteryHandler(ItemStack stack);
+	
+	void registerBatteryHandler(BatteryHandler handler);
+	
+	boolean isBattery(ItemStack stack);
 	
 }

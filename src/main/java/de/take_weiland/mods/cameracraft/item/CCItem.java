@@ -2,9 +2,7 @@ package de.take_weiland.mods.cameracraft.item;
 
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.oredict.OreDictionary;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Items;
 
 public abstract class CCItem extends Item {
@@ -35,8 +33,6 @@ public abstract class CCItem extends Item {
 		(miscItems = new CCItemMisc(9878)).lateInit();
 		(photoStorage = new ItemPhotoStorages(9879)).lateInit();
 		(lenses = new ItemLens(9880)).lateInit();
-		
-		OreDictionary.registerOre("ingotTin", ItemStacks.of(MiscItemType.TIN_INGOT));
 	}
 
 	private static int getId(String name, int defaultId) {

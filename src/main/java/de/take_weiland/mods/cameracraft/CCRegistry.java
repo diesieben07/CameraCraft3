@@ -3,25 +3,33 @@ package de.take_weiland.mods.cameracraft;
 import static de.take_weiland.mods.cameracraft.blocks.CCBlock.ores;
 import static de.take_weiland.mods.commons.util.Constants.CLOTH_BLACK;
 import static de.take_weiland.mods.commons.util.Constants.CLOTH_GRAY;
+import static net.minecraftforge.fluids.FluidContainerRegistry.BUCKET_VOLUME;
 import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.oredict.OreDictionary;
 import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import cpw.mods.fml.common.registry.GameRegistry;
+import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.CableType;
+import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.cameracraft.blocks.OreType;
+import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.MiscItemType;
+import de.take_weiland.mods.cameracraft.tileentity.TileEntityDataCable;
 import de.take_weiland.mods.commons.util.Constants;
 import de.take_weiland.mods.commons.util.ItemStacks;
 
-public final class CCRecipes {
+public final class CCRegistry {
 
-	private CCRecipes() { }
+	private CCRegistry() { }
 	
 	@SuppressWarnings("boxing")
-	static void addRecipes() {
+	public static void addRecipes() {
 		FurnaceRecipes f = FurnaceRecipes.smelting();
 		
 		ItemStack tinIngot = ItemStacks.of(MiscItemType.TIN_INGOT);
@@ -61,6 +69,23 @@ public final class CCRecipes {
 		GameRegistry.addShapelessRecipe(ItemStacks.of(MiscItemType.YELLOW_INK), photonicDust, new ItemStack(Item.dyePowder, 1, Constants.DYE_YELLOW));
 		GameRegistry.addShapelessRecipe(ItemStacks.of(MiscItemType.MAGENTA_INK), photonicDust, new ItemStack(Item.dyePowder, 1, Constants.DYE_MAGENTA));
 		GameRegistry.addShapelessRecipe(ItemStacks.of(MiscItemType.CYAN_INK), photonicDust, new ItemStack(Item.dyePowder, 1, Constants.DYE_CYAN));
+	}
+	
+	public static void doMiscRegistering() {
+		MachineType.registerTileEntities();
+		GameRegistry.registerTileEntity(TileEntityDataCable.class, "cameracraft.dataCable");
+		
+		OreDictionary.registerOre("oreTin", ItemStacks.of(OreType.TIN));
+		OreDictionary.registerOre("oreAlkaline", ItemStacks.of(OreType.ALKALINE));
+		OreDictionary.registerOre("oreGold", Block.stone);
+		OreDictionary.registerOre("oreGold", Block.stoneBrick);
+		OreDictionary.registerOre("oreGold", Block.stoneButton);
+		OreDictionary.registerOre("oreGold", Block.whiteStone);
+		OreDictionary.registerOre("oreGold", Block.waterlily);
+		
+		CameraCraft.api.registerBatteryHandler(CCItem.battery);
+		OreDictionary.registerOre("ingotTin", ItemStacks.of(MiscItemType.TIN_INGOT));
+		FluidContainerRegistry.registerFluidContainer(new FluidStack(CCBlock.alkalineFluid, BUCKET_VOLUME), ItemStacks.of(MiscItemType.ALKALINE_BUCKET), ItemStacks.of(Item.bucketEmpty));
 	}
 
 }
