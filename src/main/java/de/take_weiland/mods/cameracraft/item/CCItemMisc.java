@@ -97,6 +97,11 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> {
 	}
 	
 	@Override
+	public int getItemStackLimit(ItemStack stack) {
+		return Multitypes.getType(this, stack) == MiscItemType.ALKALINE_BUCKET ? 1 : 64;
+	}
+
+	@Override
 	public boolean hasCustomEntity(ItemStack stack) {
 		return Multitypes.getType(this, stack) == MiscItemType.ALKALINE_DUST;
 	}
