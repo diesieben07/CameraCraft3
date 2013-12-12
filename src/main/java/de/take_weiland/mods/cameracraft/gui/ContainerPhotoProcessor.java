@@ -23,6 +23,7 @@ public class ContainerPhotoProcessor extends AbstractContainer.Synced<TilePhotoP
 	protected void addSlots() {
 		addSlotToContainer(new AdvancedSlot(inventory, 0, 128, 14));
 		addSlotToContainer(new AdvancedSlot(inventory, 1, 128, 49));
+		addSlotToContainer(new AdvancedSlot(inventory, 2, 100, 14));
 	}
 	
 	@Override

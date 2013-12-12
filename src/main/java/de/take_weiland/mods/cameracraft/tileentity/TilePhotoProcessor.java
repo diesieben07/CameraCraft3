@@ -10,6 +10,7 @@ import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
+import de.take_weiland.mods.cameracraft.item.PhotoStorageType;
 import de.take_weiland.mods.commons.templates.NameableTileEntity;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
@@ -31,7 +32,7 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 	
 	@Override
 	public int getSizeInventory() {
-		return 2;
+		return 3;
 	}
 
 	@Override
@@ -39,6 +40,8 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 		return Multitypes.name(MachineType.PHOTO_PROCESSOR);
 	}
 
+	// worldObj.getBlockLightValue(x, y, z));
+	
 	@Override
 	public void updateEntity() {
 		if (Sides.logical(this).isServer()) {
@@ -83,7 +86,14 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack item) {
-		return slot == 0 && FluidContainerRegistry.isFilledContainer(item);
+		switch (slot) {
+		case 0:
+			return FluidContainerRegistry.isFilledContainer(item);
+		case 2:
+			return ItemStacks.isAny(item, PhotoStorageType.FILM_B_W_SEALED, PhotoStorageType.FILM_COLOR_SEALED);
+		default:
+			return false;
+		}
 	}
 
 	@Override

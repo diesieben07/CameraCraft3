@@ -13,6 +13,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 
@@ -88,6 +89,11 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> {
 			world.setBlock(x, y, z, CCBlock.alkaline.blockID, 0, 3);
 			return true;
 		}
+	}
+	
+	@Override
+	public ItemStack getContainerItemStack(ItemStack stack) {
+		return Multitypes.getType(this, stack) == MiscItemType.ALKALINE_BUCKET ? ItemStacks.of(Item.bucketEmpty) : null;
 	}
 	
 	@Override
