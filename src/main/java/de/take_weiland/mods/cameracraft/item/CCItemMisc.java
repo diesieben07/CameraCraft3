@@ -112,7 +112,7 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> {
 	}
 	
 	@Override
-	public boolean onEntityItemUpdate(EntityItem entity) {
+	public boolean onEntityItemUpdate(EntityItem entity) { // can't do this in our custom entity class, because custom item entities are don't work on the client
 		if (Sides.logical(entity).isClient()) {
 			int x = MathHelper.floor_double(entity.posX);
 			int y = MathHelper.floor_double(entity.posY);

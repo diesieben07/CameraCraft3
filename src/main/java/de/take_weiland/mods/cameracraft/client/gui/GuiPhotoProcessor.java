@@ -16,8 +16,14 @@ public class GuiPhotoProcessor extends AbstractGuiContainer<TilePhotoProcessor, 
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+		
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-		Rendering.drawFluidStack(container.inventory().tank, 152, 9, 16, 59, this);
+	}
+
+	@Override
+	protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+		super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+		Rendering.drawFluidStack(container.inventory().tank, guiLeft + 152, guiTop + 9, 16, 59);
 	}
 
 	@Override

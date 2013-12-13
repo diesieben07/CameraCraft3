@@ -97,7 +97,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		
 		if (scrollerOffsetX != 0) {
 			networkScroller.setClip(false);
-			int scale = Guis.computeGuiScale(mc);
+			int scale = Guis.computeGuiScale();
 			glPushMatrix();
 			glEnable(GL_SCISSOR_TEST);
 			glScissor((guiLeft + 8) * scale, mc.displayHeight - (guiTop + 15 + 70) * scale, (xSize - 16 + guiLeft + 8) * scale, 70 * scale);
