@@ -178,6 +178,9 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	}
 	
 	private int getBatteryCharge() {
+		if (!needsBattery()) {
+			return Integer.MAX_VALUE;
+		}
 		ItemStack b = getBattery();
 		if (b == null) {
 			return 0;
