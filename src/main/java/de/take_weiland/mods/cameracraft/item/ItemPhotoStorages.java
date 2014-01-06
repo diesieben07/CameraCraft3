@@ -11,6 +11,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.resources.I18n;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.photo.PhotoStorages;
@@ -45,6 +46,34 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 	@Override
 	public PhotoStorage getStorage(ItemStack stack) {
 		return Multitypes.getType(this, stack).getStorage(stack);
+	}
+
+	@Override
+	public boolean isSealed(ItemStack stack) {
+		return Multitypes.getType(this, stack).isSealed();
+	}
+
+	@Override
+	public ItemStack unseal(ItemStack sealed) {
+		return applyMeta(sealed, Multitypes.getType(this, sealed).getUnsealed());
+	}
+	
+	@Override
+	public boolean canRewind(ItemStack stack) {
+		return Multitypes.getType(this, stack).canRewind();
+	}
+
+	@Override
+	public ItemStack rewind(ItemStack stack) {
+		return applyMeta(stack, Multitypes.getType(this, stack).rewind());
+	}
+	
+	private static ItemStack applyMeta(ItemStack stack, PhotoStorageType meta) {
+		ItemStack n = ItemStacks.of(meta);
+		if (stack.hasTagCompound()) {
+			n.stackTagCompound = (NBTTagCompound) stack.stackTagCompound.copy();
+		}
+		return n;
 	}
 
 

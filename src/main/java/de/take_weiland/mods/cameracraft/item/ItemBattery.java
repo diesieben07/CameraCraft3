@@ -88,6 +88,7 @@ public class ItemBattery extends CCItem implements BatteryHandler {
 		}
 	}
 
+	// BatteryHandler
 	@Override
 	public boolean handles(ItemStack battery) {
 		return ItemStacks.is(battery, this);

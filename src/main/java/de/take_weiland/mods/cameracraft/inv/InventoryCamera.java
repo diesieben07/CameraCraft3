@@ -20,7 +20,6 @@ import de.take_weiland.mods.cameracraft.api.camera.CameraInventory;
 import de.take_weiland.mods.cameracraft.api.camera.LensItem;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
-import de.take_weiland.mods.cameracraft.api.photo.FilmItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.gui.ContainerCamera;
@@ -263,9 +262,14 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	public void rewind() {
 		if (canRewind()) {
 			ItemStack film = storage[storageSlot()];
-			Item filmItem = film.getItem();
-			if (filmItem instanceof FilmItem) {
-				storage[storageSlot()] = ((FilmItem) filmItem).rewind(film);
+			if (film != null) {
+				Item filmItem = film.getItem();
+				if (filmItem instanceof PhotoStorageItem) {
+					storage[storageSlot()] = ((PhotoStorageItem) filmItem).rewind(film);
+					if (isLidClosed) {
+						toggleLid();
+					}
+				}
 			}
 		}
 	}

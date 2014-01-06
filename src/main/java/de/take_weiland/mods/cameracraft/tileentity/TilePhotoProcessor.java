@@ -1,5 +1,6 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
@@ -9,8 +10,9 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.FluidTank;
 import net.minecraftforge.fluids.FluidTankInfo;
 import net.minecraftforge.fluids.IFluidHandler;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
+import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
-import de.take_weiland.mods.cameracraft.item.PhotoStorageType;
 import de.take_weiland.mods.commons.templates.NameableTileEntity;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
@@ -18,6 +20,8 @@ import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 
 public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> implements IFluidHandler, NameableTileEntity {
+
+	private static final int FLUID_PER_PROCESS = 10;
 
 	private static final int TANK_CAPACITY = FluidContainerRegistry.BUCKET_VOLUME * 4;
 	
@@ -27,6 +31,7 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 	private static final int FILL_DELAY = 10;
 	
 	private int fillCountdown = CHECKING_SCHEDULED;
+	private int processProgress;
 	
 	public final FluidTank tank = new FluidTank(TANK_CAPACITY);
 	
@@ -52,8 +57,35 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 			} else if (fillCountdown == CHECKING_SCHEDULED && storage[0] != null) {
 				fillCountdown = FILL_DELAY;
 			}
+			
+			boolean canProcess = canProcess();
+			if (canProcess) {
+				if (processProgress > 0) {
+					processProgress--;
+				} else if (processProgress == 0) {
+					finishProcessing();
+				} else {
+					processProgress = 127; // TODO
+				}
+			} else {
+				processProgress = -1;
+			}
 		}
 	}
+	
+	private void finishProcessing() {
+		processProgress = -1;
+		storage[2] = ((PhotoStorageItem) storage[2].getItem()).unseal(storage[2]);
+	}
+
+	private boolean canProcess() {
+		if (!isValidPhotoStorage(storage[2])) {
+			return false;
+		}
+		FluidStack f = tank.getFluid();
+		return f != null && f.fluidID == CCBlock.alkalineFluid.getID() && f.amount > FLUID_PER_PROCESS;
+	}
+
 	private void processFluidInput() {
 		if (storage[0] == null) {
 			fillCountdown = INVALID_ITEM;
@@ -90,10 +122,15 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 		case 0:
 			return FluidContainerRegistry.isFilledContainer(item);
 		case 2:
-			return ItemStacks.isAny(item, PhotoStorageType.FILM_B_W_SEALED, PhotoStorageType.FILM_COLOR_SEALED);
+			return isValidPhotoStorage(item);
 		default:
 			return false;
 		}
+	}
+
+	private boolean isValidPhotoStorage(ItemStack stack) {
+		Item item;
+		return stack != null && (item = stack.getItem()) instanceof PhotoStorageItem && ((PhotoStorageItem) item).isSealed(stack);
 	}
 
 	@Override
@@ -139,6 +176,18 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		nbt.setCompoundTag("tank", tank.writeToNBT(new NBTTagCompound()));
+	}
+
+	public int getProcessProgress() {
+		return processProgress;
+	}
+
+	public void setProcessProgress(int processProgress) {
+		this.processProgress = processProgress;
+	}
+	
+	public boolean isProcessing() {
+		return processProgress >= 0;
 	}
 
 }

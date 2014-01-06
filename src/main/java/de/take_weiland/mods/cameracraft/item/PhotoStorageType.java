@@ -42,8 +42,28 @@ public enum PhotoStorageType implements ItemMeta {
 		return isSealed;
 	}
 	
+	public PhotoStorageType getUnsealed() {
+		if (isSealed) {
+			return VALUES[ordinal() - 1];
+		} else {
+			return this;
+		}
+	}
+	
 	public PhotoStorage getStorage(ItemStack stack) {
 		return PhotoStorages.withCapacity(capacity, isSealed, stack, filter);
+	}
+	
+	public boolean canRewind() {
+		return this != MEMORY_CARD;
+	}
+	
+	public PhotoStorageType rewind() {
+		if (canRewind()) {
+			return VALUES[ordinal() + 1];
+		} else {
+			return this;
+		}
 	}
 
 	@Override
