@@ -58,7 +58,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 			return;
 		}
 		PhotoStorage storage = getPhotoStorage();
-		if (storage != null) {
+		if (storage != null && !storage.isSealed()) {
 			waitForRemainingTasks();
 			convertTasks = PhotoManager.applyFilterTo(storage.getPhotos(), ImageFilters.OVEREXPOSE);
 		}
@@ -195,7 +195,8 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	
 	@Override
 	public ItemStack getLens() {
-		return storage[LENS_SLOT];
+		ItemStack lens = storage[LENS_SLOT];
+		return lens == null || !(lens.getItem() instanceof LensItem) ? null : lens;
 	}
 
 	@Override
@@ -210,9 +211,14 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 		LensItem lens = lensStack == null ? null : (LensItem)lensStack.getItem();
 		PhotoStorage storage = getPhotoStorage();
 		
-		ImageFilter lensFilter = lens == null ? null : lens.getFilter(getLens());
+		ImageFilter lensFilter = lens == null ? null : lens.getFilter(lensStack);
 		ImageFilter storageFilter = storage == null ? null : storage.getFilter();
-		return ImageFilters.combine(lensFilter, storageFilter);
+		
+		if (hasLid() && !isLidClosed()) {
+			return ImageFilters.combine(lensFilter, ImageFilters.OVEREXPOSE, storageFilter);
+		} else {
+			return ImageFilters.combine(lensFilter, storageFilter);
+		}
 	}
 	
 	@Override
@@ -237,7 +243,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	
 	@Override
 	public boolean canTakePhoto() {
-		return !CCPlayerData.get(player).isOnCooldown() && getBatteryCharge() > 0 && hasStorage() && !getPhotoStorage().isFull();
+		return !CCPlayerData.get(player).isOnCooldown() && getBatteryCharge() > 0 && hasStorage() && getPhotoStorage().canAccept();
 	}
 
 	@Override

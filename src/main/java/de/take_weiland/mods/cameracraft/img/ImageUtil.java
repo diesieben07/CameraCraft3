@@ -10,6 +10,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.commons.util.Scheduler;
 
 public final class ImageUtil {
@@ -35,12 +36,16 @@ public final class ImageUtil {
 	}
 	
 	public static void savePngAsync(final BufferedImage img, final File file) {
+		savePngAsync(img, file, null);
+	}
+	
+	public static void savePngAsync(final BufferedImage img, final File file, final ImageFilter filter) {
 		CameraCraft.executor.execute(new Runnable() {
 			
 			@Override
 			public void run() {
 				try {
-					ImageIO.write(img, "PNG", file);
+					ImageIO.write(filter == null ? img : filter.apply(img), "PNG", file);
 				} catch (IOException e) {
 					CrashReport cr = CrashReport.makeCrashReport(e, "Saving ImageFile");
 					cr.makeCategory("File being saved to").addCrashSection("Location", file);

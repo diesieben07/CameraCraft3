@@ -22,6 +22,11 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	}
 
 	@Override
+	public boolean canAccept() {
+		return !isFull() && !isSealed();
+	}
+
+	@Override
 	public int getPosition(String photoId) {
 		int size = size();
 		for (int i = 0; i < size; ++i) {

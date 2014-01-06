@@ -30,6 +30,11 @@ public interface PhotoStorage extends Listenable<PhotoStorage> {
 	boolean isFull();
 	
 	/**
+	 * @return true if this PhotoStorage can store another photo
+	 */
+	boolean canAccept();
+	
+	/**
 	 * @return whether this PhotoStorage is sealed (cannot store new photos)
 	 */
 	boolean isSealed();

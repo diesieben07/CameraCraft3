@@ -54,7 +54,7 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 							if (!inv.getPhotoStorage().isFull()) {
 								photoId = PhotoManager.nextPhotoId(world);
 								
-								ImageUtil.savePngAsync(Futures.getUnchecked(futureImage), PhotoManager.getImageFile(photoId));
+								ImageUtil.savePngAsync(Futures.getUnchecked(futureImage), PhotoManager.getImageFile(photoId), inv.getFilter());
 								
 								inv.getPhotoStorage().store(photoId);
 								inv.dispose();
