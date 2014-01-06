@@ -79,21 +79,17 @@ public final class ImageFilters {
 	}
 	
 	public static ImageFilter combine(ImageFilter... filters) {
-		ImageFilter result = filters[0];
-		if (result == null) {
-			result = NO_FILTER;
+		ImageFilter result = null;
+		for (int i = 0; i < filters.length; ++i) {
+			ImageFilter current = filters[i];
+			if (current != null) {
+				if (result == null) {
+					result = current;
+				} else {
+					result = result.combine(current);
+				}
+			}
 		}
-		
-		int len = filters.length;
-		if (len == 1) {
-			return result;
-		}
-		
-		for (int i = 1; i < len; ++i) {
-			ImageFilter next = filters[i];
-			result = result.combine(next == null ? NO_FILTER : next);
-		}
-		return result;
+		return result == null ? NO_FILTER : result;
 	}
-	
 }
