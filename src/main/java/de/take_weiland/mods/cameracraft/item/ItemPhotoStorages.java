@@ -68,6 +68,16 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 		return applyMeta(stack, Multitypes.getType(this, stack).rewind());
 	}
 	
+	@Override
+	public boolean canBeProcessed(ItemStack stack) {
+		return Multitypes.getType(this, stack).canProcess();
+	}
+
+	@Override
+	public ItemStack process(ItemStack stack) {
+		return applyMeta(stack, Multitypes.getType(this, stack).getProcessed());
+	}
+	
 	private static ItemStack applyMeta(ItemStack stack, PhotoStorageType meta) {
 		ItemStack n = ItemStacks.of(meta);
 		if (stack.hasTagCompound()) {
@@ -75,6 +85,5 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 		}
 		return n;
 	}
-
 
 }

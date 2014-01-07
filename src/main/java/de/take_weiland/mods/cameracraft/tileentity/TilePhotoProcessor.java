@@ -75,7 +75,7 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 	
 	private void finishProcessing() {
 		processProgress = -1;
-		storage[2] = ((PhotoStorageItem) storage[2].getItem()).unseal(storage[2]);
+		storage[2] = ((PhotoStorageItem) storage[2].getItem()).process(storage[2]);
 	}
 
 	private boolean canProcess() {
@@ -128,9 +128,9 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 		}
 	}
 
-	private boolean isValidPhotoStorage(ItemStack stack) {
+	public boolean isValidPhotoStorage(ItemStack stack) {
 		Item item;
-		return stack != null && (item = stack.getItem()) instanceof PhotoStorageItem && ((PhotoStorageItem) item).isSealed(stack);
+		return stack != null && (item = stack.getItem()) instanceof PhotoStorageItem && ((PhotoStorageItem) item).canBeProcessed(stack);
 	}
 
 	@Override

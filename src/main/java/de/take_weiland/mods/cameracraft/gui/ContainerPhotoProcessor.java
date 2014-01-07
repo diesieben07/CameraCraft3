@@ -48,6 +48,8 @@ public class ContainerPhotoProcessor extends AbstractContainer.Synced<TilePhotoP
 	public int getSlotFor(ItemStack stack) {
 		if (FluidContainerRegistry.isFilledContainer(stack)) {
 			return 0;
+		} else if (inventory.isValidPhotoStorage(stack)) {
+			return 2;
 		} else {
 			return -1;
 		}

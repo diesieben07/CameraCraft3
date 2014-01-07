@@ -24,4 +24,17 @@ public interface PhotoStorageItem {
 	 */
 	ItemStack rewind(ItemStack stack);
 	
+	/**
+	 * @param stack
+	 * @return whether this PhotoStorage can be processed in the PhotoProcessor
+	 */
+	boolean canBeProcessed(ItemStack stack);
+	
+	/**
+	 * get the result of processing this PhotoStorage in the PhotoProcessor
+	 * @param stack
+	 * @return
+	 */
+	ItemStack process(ItemStack stack);
+	
 }
