@@ -80,12 +80,15 @@ public class NetworkImpl implements DataNetwork {
 
 	@Override
 	public void dispatch(NetworkEvent event) {
-		for (NetworkListener listener : nodes) {
-			listener.handleEvent(event);
-		}
+		dispatchTo(nodes, event);
+		dispatchTo(listeners, event);
+	}
+	
+	private void dispatchTo(List<? extends NetworkListener> listeners, NetworkEvent event) {
 		if (listeners != null) {
-			for (NetworkListener listener : listeners) {
-				listener.handleEvent(event);
+			int len = listeners.size();
+			for (int i = 0; i < len; ++i) {
+				listeners.get(i).handleEvent(event);
 			}
 		}
 	}
