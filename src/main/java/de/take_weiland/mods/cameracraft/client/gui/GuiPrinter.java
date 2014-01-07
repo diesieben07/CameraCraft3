@@ -69,7 +69,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 
 			@Override
 			protected void handleMouseClick(int relX, int relY, int btn) {
-				if (relX >= 0 && relX <= width) {
+				if (relX >= 0 && relX <= width - scrollbarWidth - 2) {
 					int newSelection = MathHelper.floor_float(relY / 10f);
 					
 					ClientNodeInfo[] nodes = getContainer().getNodes();
