@@ -85,6 +85,10 @@ public enum PhotoStorageType implements ItemMeta {
 			return this;
 		}
 	}
+	
+	public boolean isScannable() {
+		return this == FILM_B_W_PROCESSED || this == FILM_COLOR_PROCESSED;
+	}
 
 	@Override
 	public String unlocalizedName() {
@@ -95,5 +99,5 @@ public enum PhotoStorageType implements ItemMeta {
 	public Item getItem() {
 		return CCItem.photoStorage;
 	}
-	
+
 }

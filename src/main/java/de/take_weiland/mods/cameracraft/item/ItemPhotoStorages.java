@@ -44,7 +44,7 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 	}
 
 	@Override
-	public PhotoStorage getStorage(ItemStack stack) {
+	public PhotoStorage getPhotoStorage(ItemStack stack) {
 		return Multitypes.getType(this, stack).getStorage(stack);
 	}
 
@@ -76,6 +76,11 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 	@Override
 	public ItemStack process(ItemStack stack) {
 		return applyMeta(stack, Multitypes.getType(this, stack).getProcessed());
+	}
+	
+	@Override
+	public boolean isScannable(ItemStack stack) {
+		return Multitypes.getType(this, stack).isScannable();
 	}
 	
 	private static ItemStack applyMeta(ItemStack stack, PhotoStorageType meta) {

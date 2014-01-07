@@ -3,9 +3,9 @@ package de.take_weiland.mods.cameracraft.api.photo;
 import net.minecraft.item.ItemStack;
 
 public interface PhotoStorageItem {
-
-	PhotoStorage getStorage(ItemStack stack);
 	
+	PhotoStorage getPhotoStorage(ItemStack stack);
+
 	boolean isSealed(ItemStack stack);
 	
 	ItemStack unseal(ItemStack sealed);
@@ -36,5 +36,10 @@ public interface PhotoStorageItem {
 	 * @return
 	 */
 	ItemStack process(ItemStack stack);
+
+	/**
+	 * @return whether this PhotoStorage can be scanned in a Scanner
+	 */
+	boolean isScannable(ItemStack stack);
 	
 }

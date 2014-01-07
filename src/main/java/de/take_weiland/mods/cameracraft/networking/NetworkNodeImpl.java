@@ -40,8 +40,18 @@ public class NetworkNodeImpl implements NetworkNode {
 	public String getDisplayName() {
 		return ((NetworkTile) tile).getDisplayName();
 	}
-
+	
 	@Override
 	public void handleEvent(NetworkEvent event) { }
+	
+	public void update() {
+		if (!hasNetwork()) {
+			NetworkUtil.initializeNetworking(this);
+		}
+	}
+	
+	public void shutdown() {
+		NetworkUtil.shutdownNetworking(this);
+	}
 
 }

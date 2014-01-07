@@ -7,7 +7,6 @@ import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.networking.NetworkNodeImpl;
-import de.take_weiland.mods.cameracraft.networking.NetworkUtil;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Multitypes;
@@ -20,14 +19,12 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 	public static final int SLOT_BLACK = 3;
 	public static final int SLOT_PAPER = 4;
 	
-	private NetworkNode node = new NetworkNodeImpl(this);
+	private NetworkNodeImpl node = new NetworkNodeImpl(this);
 	
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		if (!node.hasNetwork()) {
-			NetworkUtil.initializeNetworking(this);
-		}
+		node.update();
 	}
 
 	public int getSizeInventory() {
@@ -51,7 +48,7 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 	@Override
 	public void invalidate() {
 		super.invalidate();
-		NetworkUtil.shutdownNetworking(this);
+		node.shutdown();
 	}
 
 	@Override

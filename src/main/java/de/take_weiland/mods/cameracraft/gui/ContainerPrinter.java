@@ -104,7 +104,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	public boolean writeSyncData(DataOutputStream out) throws IOException {
 		if (clientNeedsRefresh) {
 			Collection<NetworkNode> toSend = Collections2.filter(inventory.getNode().getNetwork().getNodes(), nodeFilter);
-			out.writeShort(toSend.size());
+			out.writeShort(toSend.size()); // TODO: optimize this. size() is slow
 			for (NetworkNode node : toSend) {
 				out.writeUTF(node.getDisplayName());
 				PhotoStorage storage = ((PhotoStorageProvider) node.getTile()).getPhotoStorage();

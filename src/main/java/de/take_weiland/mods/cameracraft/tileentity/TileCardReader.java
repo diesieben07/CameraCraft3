@@ -11,7 +11,6 @@ import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.cameracraft.item.PhotoStorageType;
 import de.take_weiland.mods.cameracraft.networking.NetworkNodeImpl;
-import de.take_weiland.mods.cameracraft.networking.NetworkUtil;
 import de.take_weiland.mods.commons.templates.NameableTileEntity;
 import de.take_weiland.mods.commons.templates.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
@@ -25,7 +24,7 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 	
 	private int access = NO_ACC;
 	
-	private NetworkNode node = new NetworkNodeImpl(this);
+	private NetworkNodeImpl node = new NetworkNodeImpl(this);
 	
 	@Override
 	public int getSizeInventory() {
@@ -47,9 +46,7 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 
 	@Override
 	public void updateEntity() {
-		if (!node.hasNetwork()) {
-			NetworkUtil.initializeNetworking(this);
-		}
+		node.update();
 		if (storage[0] != null) {
 			access = READ_ACC;
 		} else {
@@ -83,7 +80,7 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 				return lastStorage;
 			} else {
 				lastStorageItem = storage[0];
-				return (lastStorage = ((PhotoStorageItem) storage[0].getItem()).getStorage(storage[0]));
+				return (lastStorage = ((PhotoStorageItem) storage[0].getItem()).getPhotoStorage(storage[0]));
 			}
 		} else {
 			return null;
@@ -93,7 +90,7 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 	@Override
 	public void invalidate() {
 		super.invalidate();
-		NetworkUtil.shutdownNetworking(this);
+		node.shutdown();
 	}
 
 	@Override

@@ -156,7 +156,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 			} else {
 				Item item = storageSlot.getItem();
 				if (item instanceof PhotoStorageItem) {
-					lastStorage = ((PhotoStorageItem)item).getStorage(storageSlot);
+					lastStorage = ((PhotoStorageItem)item).getPhotoStorage(storageSlot);
 					lastStorage.addListener(this);
 				} else {
 					lastStorage = null;

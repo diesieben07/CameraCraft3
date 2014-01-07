@@ -10,6 +10,7 @@ import de.take_weiland.mods.cameracraft.client.gui.GuiCardReader;
 import de.take_weiland.mods.cameracraft.client.gui.GuiItemTranslator;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoProcessor;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPrinter;
+import de.take_weiland.mods.cameracraft.client.gui.GuiScanner;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.commons.util.JavaUtils;
 
@@ -19,7 +20,8 @@ public enum CCGuis {
 	ORE_DICTIONARY,
 	CAMERA,
 	CARD_READER,
-	PRINTER;
+	PRINTER,
+	SCANNER;
 	
 	static final CCGuis[] VALUES = values(); // don't create a new array each time we switch
 	
@@ -54,6 +56,8 @@ public enum CCGuis {
 				return new ContainerCardReader(world, x, y, z, player);
 			case PRINTER:
 				return new ContainerPrinter(world, x, y, z, player);
+			case SCANNER:
+				return new ContainerScanner(world, x, y, z, player);
 			default:
 				throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}
@@ -81,6 +85,8 @@ public enum CCGuis {
 				return new GuiCardReader((ContainerCardReader) c);
 			case PRINTER:
 				return new GuiPrinter((ContainerPrinter) c);
+			case SCANNER:
+				return new GuiScanner((ContainerScanner) c);
 			default:
 				throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}

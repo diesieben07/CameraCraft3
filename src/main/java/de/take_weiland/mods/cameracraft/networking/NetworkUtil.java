@@ -19,6 +19,9 @@ public final class NetworkUtil {
 	
 	private static <T extends TileEntity & NetworkTile> void findNetworkFor(NetworkNode node, DataNetwork oldNetwork) {
 		TileEntity tile = node.getTile();
+		if (Sides.logical(tile).isClient()) {
+			return;
+		}
 		Set<DataNetwork> nearbyNetworks = Sets.newHashSetWithExpectedSize(3);
 		for (ForgeDirection dir : ForgeDirection.VALID_DIRECTIONS) {
 			int x = tile.xCoord + dir.offsetX;
@@ -63,13 +66,18 @@ public final class NetworkUtil {
 //		return network;
 	}
 	
+	public static void initializeNetworking(NetworkNode node) {
+		findNetworkFor(node, null);
+	}
+	
 	public static <T extends TileEntity & NetworkTile> void initializeNetworking(final T tile) {
 		if (Sides.logical(tile).isServer()) {
 			findNetworkFor(tile.getNode(), null);
 		}
 	}
 	
-	public static <T extends TileEntity & NetworkTile> void shutdownNetworking(T tile) {
+	public static <T extends TileEntity & NetworkTile> void shutdownNetworking(NetworkNode node) {
+		TileEntity tile = node.getTile();
 		if (Sides.logical(tile).isServer()) {
 			int adjacentNodes = 0;
 			for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
@@ -86,7 +94,6 @@ public final class NetworkUtil {
 				}
 			}
 			
-			NetworkNode node = tile.getNode();
 			if (adjacentNodes >= 2) { // rebuild the network TODO: optimize this?
 				DataNetwork oldNetwork = node.getNetwork();
 				oldNetwork.leave(node);
