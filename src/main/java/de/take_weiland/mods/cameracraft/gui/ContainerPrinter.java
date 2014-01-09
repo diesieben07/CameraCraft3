@@ -129,7 +129,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	public void handleEvent(NetworkEvent event) {
 		clientNeedsRefresh = true;
 	}
-
+	
 	public static final class ClientNodeInfo implements Comparable<ClientNodeInfo> {
 		
 		public final String displayName;

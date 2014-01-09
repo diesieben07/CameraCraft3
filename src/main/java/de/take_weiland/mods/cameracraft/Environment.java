@@ -1,6 +1,6 @@
 package de.take_weiland.mods.cameracraft;
 
-import java.awt.image.BufferedImage;
+import java.io.InputStream;
 
 public interface Environment {
 
@@ -8,7 +8,7 @@ public interface Environment {
 
 	void onPhotoRequest(int transferId);
 
-	void handleClientPhotoData(BufferedImage img);
+	void handleClientPhotoData(String photoId, InputStream in);
 	
 	void displayNamePhotoGui(String oldName);
 	

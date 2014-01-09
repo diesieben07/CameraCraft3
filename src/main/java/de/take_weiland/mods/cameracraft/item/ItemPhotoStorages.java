@@ -22,6 +22,7 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 
 	public ItemPhotoStorages(int defaultId) {
 		super("photoStorage", defaultId);
+		setMaxStackSize(1);
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked", "boxing" })

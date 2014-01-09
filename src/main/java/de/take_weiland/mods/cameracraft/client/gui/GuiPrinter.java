@@ -15,8 +15,10 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Mouse;
 
+import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter.ClientNodeInfo;
+import de.take_weiland.mods.cameracraft.network.PacketPrintJob;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.client.Guis;
@@ -25,6 +27,9 @@ import de.take_weiland.mods.commons.util.JavaUtils;
 
 public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrinter> {
 
+	private static final int BUTTON_OPEN_SCROLLER = 0;
+	public static final int BUTTON_PRINT = 1;
+	
 	private static boolean isScrollerOpen = false;
 	int selectedNode = -1;
 	
@@ -84,7 +89,8 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 
 		};
 		
-		buttonList.add(new ButtonOpenScroller(0, guiLeft + 4, guiTop + 15 + 30));
+		buttonList.add(new ButtonOpenScroller(BUTTON_OPEN_SCROLLER, guiLeft + 4, guiTop + 15 + 30));
+		buttonList.add(new GuiButton(GuiPrinter.BUTTON_PRINT, 0, 40, "Print!"));
 	}
 
 	@Override
@@ -163,8 +169,19 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		super.actionPerformed(button);
-		if (button.id == 0 && scrollerMotion == 0) {
-			toggleSlider();
+		switch (button.id) {
+		case BUTTON_OPEN_SCROLLER:
+			if (scrollerMotion == 0) {
+				toggleSlider();
+			}
+			break;
+		case BUTTON_PRINT:
+			ClientNodeInfo[] nodes = container.getNodes();
+			if (nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode)) {
+				if (nodes[selectedNode].photoIds.length >= 1) {
+					new PacketPrintJob(container, new PrintJob(nodes[selectedNode].photoIds[0])).sendToServer();
+				}
+			}
 		}
 	}
 

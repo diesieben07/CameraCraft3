@@ -33,6 +33,7 @@ public abstract class CCItem extends Item {
 		(miscItems = new CCItemMisc(9878)).lateInit();
 		(photoStorage = new ItemPhotoStorages(9879)).lateInit();
 		(lenses = new ItemLens(9880)).lateInit();
+		(photo = new ItemPhoto(9881)).lateInit();
 	}
 
 	private static int getId(String name, int defaultId) {

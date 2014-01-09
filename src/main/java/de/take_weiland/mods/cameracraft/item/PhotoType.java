@@ -4,7 +4,8 @@ import net.minecraft.item.Item;
 import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
 
 public enum PhotoType implements ItemMeta {
-	;
+	PHOTO("photo"),
+	POSTER("poster");
 
 	public static final PhotoType[] VALUES = values();
 	

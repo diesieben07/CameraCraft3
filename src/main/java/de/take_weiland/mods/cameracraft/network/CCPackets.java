@@ -10,7 +10,9 @@ public enum CCPackets implements PacketType {
 	CLIENT_ACTION(PacketClientAction.class),
 	TAKEN_PHOTO(PacketTakenPhoto.class),
 	PHOTO_NAME(PacketPhotoName.class),
-	REQUEST_PHOTO(PacketRequestPhoto.class);
+	REQUEST_PHOTO(PacketRequestPhoto.class),
+	CLIENT_REQUEST_PHOTO(PacketClientRequestPhoto.class),
+	PRINT_JOB(PacketPrintJob.class);
 
 	private final Class<? extends ModPacket> clazz;
 	
