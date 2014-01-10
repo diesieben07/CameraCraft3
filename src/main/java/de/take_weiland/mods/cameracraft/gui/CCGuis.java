@@ -21,6 +21,7 @@ public enum CCGuis {
 	CAMERA,
 	CARD_READER,
 	PRINTER,
+	PHOTO,
 	SCANNER;
 	
 	static final CCGuis[] VALUES = values(); // don't create a new array each time we switch

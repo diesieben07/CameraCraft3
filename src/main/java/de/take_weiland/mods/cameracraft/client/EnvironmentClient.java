@@ -25,6 +25,7 @@ import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.Environment;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
+import de.take_weiland.mods.cameracraft.client.gui.GuiViewPhoto;
 import de.take_weiland.mods.cameracraft.client.render.RenderBlockCable;
 import de.take_weiland.mods.commons.util.Consumer;
 import de.take_weiland.mods.commons.util.Scheduler;
@@ -83,6 +84,11 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 			
 		}));
 	}
+	
+	@Override
+	public void displayPhotoGui(String photoId) {
+		mc.displayGuiScreen(new GuiViewPhoto(photoId));
+	}
 
 	@Override
 	public void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ) {
@@ -98,12 +104,19 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, String server, int port, INetworkManager manager) {
-		PhotoDataCache.flushCache();
+		PhotoDataCache.invalidate();
 	}
 
 	@Override
 	public void connectionOpened(NetHandler netClientHandler, MinecraftServer server, INetworkManager manager) {
-		PhotoDataCache.flushCache();
+		PhotoDataCache.invalidate();
+	}
+	
+	@Override
+	public void connectionClosed(INetworkManager manager) {
+		if (manager == mc.getNetHandler().getNetManager()) {
+			PhotoDataCache.invalidate();
+		}
 	}
 	
 	@Override
@@ -115,8 +128,6 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 	}
 
 	@Override
-	public void connectionClosed(INetworkManager manager) { }
-
-	@Override
 	public void clientLoggedIn(NetHandler clientHandler, INetworkManager manager, Packet1Login login) { }
+
 }

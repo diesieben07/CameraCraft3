@@ -12,6 +12,7 @@ public enum CCPackets implements PacketType {
 	PHOTO_NAME(PacketPhotoName.class),
 	REQUEST_PHOTO(PacketRequestPhoto.class),
 	CLIENT_REQUEST_PHOTO(PacketClientRequestPhoto.class),
+	PHOTO_DATA(PacketPhotoData.class),
 	PRINT_JOB(PacketPrintJob.class);
 
 	private final Class<? extends ModPacket> clazz;
@@ -37,7 +38,7 @@ public enum CCPackets implements PacketType {
 
 	@Override
 	public boolean isMultipart() {
-		return this == TAKEN_PHOTO;
+		return this == TAKEN_PHOTO || this == PHOTO_DATA;
 	}
 	
 }

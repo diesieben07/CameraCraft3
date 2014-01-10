@@ -19,6 +19,9 @@ import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.network.PacketClientRequestPhoto;
+import de.take_weiland.mods.commons.client.Rendering;
+import de.take_weiland.mods.commons.util.TextureManagerProxy;
 
 public class PhotoDataCache {
 
@@ -28,19 +31,19 @@ public class PhotoDataCache {
 	static {
 		cache = CacheBuilder.newBuilder()
 				.concurrencyLevel(CameraCraft.maxThreadCount + 1)
-				.expireAfterAccess(1, TimeUnit.MINUTES)
+				.expireAfterAccess(3, TimeUnit.MINUTES) // TODO figure out the right value here
 				.removalListener(new PhotoTextureUnloader())
 				.build(new PhotoDataLoader());
 	}
 	
 	private PhotoDataCache() { }
 	
-	static void flushCache() {
+	static void invalidate() {
 		cache.invalidateAll();
 	}
 	
-	public static BufferedImage getTexture(String photoId) {
-		return cache.getUnchecked(photoId).img;
+	public static void bindTexture(String photoId) {
+		cache.getUnchecked(photoId).bindTexture();
 	}
 	
 	static void injectReceivedPhoto(String photoId, InputStream in) throws IOException {
@@ -59,11 +62,7 @@ public class PhotoDataCache {
 		ResourceLocation loc;
 		DynamicTexture tex;
 		
-		public BufferedImage getImage() {
-			return img;
-		}
-		
-		public void bindTexture() {
+		void bindTexture() {
 			TextureManager engine = mc.renderEngine;
 			if (loc == null) {
 				if (img == null) {
@@ -73,6 +72,7 @@ public class PhotoDataCache {
 					tex = new DynamicTexture(img);
 					loc = engine.getDynamicTextureLocation("cameracraft.photo", tex);
 					engine.bindTexture(loc);
+					System.out.println(((TextureManagerProxy)engine).getTexturesMap());
 				}
 			}
 			engine.bindTexture(loc);
@@ -82,7 +82,8 @@ public class PhotoDataCache {
 	static class PhotoDataLoader extends CacheLoader<String, CacheElement> {
 
 		@Override
-		public CacheElement load(String key) throws Exception {
+		public CacheElement load(String photoId) throws Exception {
+			new PacketClientRequestPhoto(photoId).sendToServer();
 			return new CacheElement();
 		}
 		
@@ -94,7 +95,7 @@ public class PhotoDataCache {
 		public void onRemoval(RemovalNotification<String, CacheElement> notification) {
 			ResourceLocation loc = notification.getValue().loc;
 			if (loc != null) {
-				
+				Rendering.unloadTexture(loc);
 			}
 		}
 		

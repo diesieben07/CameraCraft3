@@ -8,9 +8,11 @@ import net.minecraft.world.World;
 
 import com.google.common.collect.ImmutableList;
 
+import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.photo.AbstractPhotoStorage;
+import de.take_weiland.mods.commons.util.Sides;
 
 public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoStorageItem {
 
@@ -42,8 +44,9 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoStorag
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-		
-		
+		if (Sides.logical(world).isClient() && stack.hasTagCompound()) {
+			CameraCraft.env.displayPhotoGui(stack.getTagCompound().getString(NBT_KEY));
+		}
 		return stack;
 	}
 

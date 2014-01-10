@@ -12,6 +12,8 @@ public interface Environment {
 	
 	void displayNamePhotoGui(String oldName);
 	
+	void displayPhotoGui(String photoId);
+	
 	void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ);
 	
 }
