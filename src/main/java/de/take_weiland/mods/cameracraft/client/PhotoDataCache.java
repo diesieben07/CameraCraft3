@@ -21,7 +21,6 @@ import com.google.common.cache.RemovalNotification;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.network.PacketClientRequestPhoto;
 import de.take_weiland.mods.commons.client.Rendering;
-import de.take_weiland.mods.commons.util.TextureManagerProxy;
 
 public class PhotoDataCache {
 
@@ -72,7 +71,6 @@ public class PhotoDataCache {
 					tex = new DynamicTexture(img);
 					loc = engine.getDynamicTextureLocation("cameracraft.photo", tex);
 					engine.bindTexture(loc);
-					System.out.println(((TextureManagerProxy)engine).getTexturesMap());
 				}
 			}
 			engine.bindTexture(loc);
