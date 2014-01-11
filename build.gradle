@@ -17,12 +17,12 @@ apply plugin: 'maven'
 repositories {
 	maven {
 		name = 'SevenCommons'
-		url = "http://diesieben07.bplaced.net/maven/"
+		url = "http://take-weiland.de/maven/"
 	}
 }
 
 dependencies {
-    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.14:deobf'
+    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.17:deobf'
 }
 
 
@@ -44,12 +44,12 @@ archivesBaseName = "CameraCraft"
 
 task deobfJar(type: Jar) {
     from sourceSets.main.output
-    appendix = 'deobf'
+    classifier = 'deobf'
 }
 
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
-    appendix = 'src'
+    classifier = 'src'
 }
 
 tasks.build.dependsOn('sourceJar', 'deobfJar')
