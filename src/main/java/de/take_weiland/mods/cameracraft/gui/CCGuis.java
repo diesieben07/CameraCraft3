@@ -9,8 +9,8 @@ import de.take_weiland.mods.cameracraft.client.gui.GuiCamera;
 import de.take_weiland.mods.cameracraft.client.gui.GuiCardReader;
 import de.take_weiland.mods.cameracraft.client.gui.GuiItemTranslator;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoProcessor;
-import de.take_weiland.mods.cameracraft.client.gui.GuiPrinter;
 import de.take_weiland.mods.cameracraft.client.gui.GuiScanner;
+import de.take_weiland.mods.cameracraft.client.gui.printer.GuiPrinter;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.commons.util.JavaUtils;
 

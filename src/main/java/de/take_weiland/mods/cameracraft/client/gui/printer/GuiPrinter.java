@@ -1,4 +1,4 @@
-package de.take_weiland.mods.cameracraft.client.gui;
+package de.take_weiland.mods.cameracraft.client.gui.printer;
 
 import static org.lwjgl.opengl.GL11.GL_LIGHTING;
 import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
@@ -13,6 +13,7 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
+import org.lwjgl.Sys;
 import org.lwjgl.input.Mouse;
 
 import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
@@ -38,6 +39,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	private int scrollerMotion = 0;
 	
 	private ScrollPane networkScroller;
+	private ScrollPane photoIdScroller;
 	
 	public GuiPrinter(ContainerPrinter container) {
 		super(container);
@@ -57,37 +59,9 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	public void initGui() {
 		ySize = 200;
 		super.initGui();
-		networkScroller = new ScrollPane(this, guiLeft + 8, guiTop + 15, xSize - 16, 70, 0) {
-			
-			@Override
-			protected void drawImpl() {
-				drawRect(0, 0, width, Math.max(contentHeight, height), 0x44000000);
-				
-				ClientNodeInfo[] nodes = getContainer().getNodes();
-				if (nodes != null) {
-					int size = nodes.length;
-					for (int i = 0; i < size; ++i) {
-						mc.fontRenderer.drawString(nodes[i].displayName, 1, 1 + i * 10, i == selectedNode ? 0x7777ff : 0xffffff);
-					}
-				}
-			}
-
-			@Override
-			protected void handleMouseClick(int relX, int relY, int btn) {
-				if (relX >= 0 && relX <= width - scrollbarWidth - 2) {
-					int newSelection = MathHelper.floor_float(relY / 10f);
-					
-					ClientNodeInfo[] nodes = getContainer().getNodes();
-					
-					if (JavaUtils.arrayIndexExists(nodes, newSelection)) {
-						mc.sndManager.playSoundFX("random.click", 1, 1);
-						sliderToggleDelay = 10;
-						selectedNode = newSelection;
-					}
-				}
-			}
-
-		};
+		networkScroller = new NetworkListScroller(this, guiLeft + 8, guiTop + 15, xSize - 16, 70, 0);
+		photoIdScroller = new PhotoSelectionScroller(this, guiLeft + 8, guiTop + 15, xSize - 16, 70, 0);
+		photoIdScroller.setClip(true);
 		
 		buttonList.add(new ButtonOpenScroller(BUTTON_OPEN_SCROLLER, guiLeft + 4, guiTop + 15 + 30));
 		buttonList.add(new GuiButton(GuiPrinter.BUTTON_PRINT, 0, 40, "Print!"));
@@ -102,44 +76,58 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		networkScroller.setContentHeight(nodes == null ? 0 : nodes.length * 10);
 		
 		if (scrollerOffsetX != 0) {
-			networkScroller.setClip(false);
-			int scale = Guis.computeGuiScale();
-			glPushMatrix();
-			glEnable(GL_SCISSOR_TEST);
-			glScissor((guiLeft + 8) * scale, mc.displayHeight - (guiTop + 15 + 70) * scale, (xSize - 16 + guiLeft + 8) * scale, 70 * scale);
-			glTranslatef(scrollerOffsetX + (partialTicks * 40 * scrollerMotion), 0, 0);
-			
-			networkScroller.draw(mouseX, mouseY);
-			glDisable(GL_SCISSOR_TEST);
-			glPopMatrix();
+			if (scrollerOffsetX != getScrollerHiddenOffset()) {
+				networkScroller.setClip(false);
+				int scale = Guis.computeGuiScale();
+				glPushMatrix();
+				glEnable(GL_SCISSOR_TEST);
+				glScissor((guiLeft + 8) * scale, mc.displayHeight - (guiTop + 15 + 70) * scale, (xSize - 16 + guiLeft + 8) * scale, 70 * scale);
+				glTranslatef(scrollerOffsetX + (partialTicks * 40 * scrollerMotion), 0, 0);
+				
+				networkScroller.draw(mouseX, mouseY);
+				glDisable(GL_SCISSOR_TEST);
+				glPopMatrix();
+			}
 		} else {
 			networkScroller.setClip(true);
 			networkScroller.draw(mouseX, mouseY);
 		}
+		
+		if (shouldDrawIds()) {
+			photoIdScroller.setContentHeight(nodes[selectedNode].photoIds.length * 10);
+			photoIdScroller.draw(mouseX, mouseY);
+		}
+		
 		glEnable(GL_LIGHTING);
-
 	}
 
 	@Override
 	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
 		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
+//		ClientNodeInfo[] nodes = container.getNodes();
+//		if (scrollerOffsetX == getScrollerHiddenOffset() && selectedNode != -1 && nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode)) {
+//			String[] selectedIds = nodes[selectedNode].photoIds;
+//			if (selectedIds.length != 0) {
+//				for (int i = 0; i < selectedIds.length; ++i) {
+//					fontRenderer.drawString(selectedIds[i], 20, 20 + 10 * i, 0x000000);
+//				}
+//			} else {
+//				fontRenderer.drawString("No Photos", 20, 20, 0x000000);
+//			}
+//		}
+	}
+	
+	private boolean shouldDrawIds() {
 		ClientNodeInfo[] nodes = container.getNodes();
-		if (scrollerOffsetX == getScrollerHiddenOffset() && selectedNode != -1 && nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode)) {
-			String[] selectedIds = nodes[selectedNode].photoIds;
-			if (selectedIds.length != 0) {
-				for (int i = 0; i < selectedIds.length; ++i) {
-					fontRenderer.drawString(selectedIds[i], 20, 20 + 10 * i, 0x000000);
-				}
-			} else {
-				fontRenderer.drawString("No Photos", 20, 20, 0x000000);
-			}
-		}
+		return scrollerOffsetX == getScrollerHiddenOffset() && selectedNode != -1 && nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode);
 	}
 
 	@Override
 	public void handleMouseInput() {
 		super.handleMouseInput();
-		networkScroller.onMouseWheel(Mouse.getEventDWheel());
+		int dWheel = Mouse.getEventDWheel();
+		networkScroller.onMouseWheel(dWheel);
+		photoIdScroller.onMouseWheel(dWheel);
 	}
 
 	@Override
@@ -147,6 +135,8 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		super.mouseClicked(mouseX, mouseY, btn);
 		if (isScrollerOpen) {
 			networkScroller.onMouseClick(mouseX, mouseY, btn);
+		} else if (shouldDrawIds()) {
+			photoIdScroller.onMouseClick(mouseX, mouseY, btn);
 		}
 	}
 
@@ -155,6 +145,8 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		super.mouseMovedOrUp(mouseX, mouseY, btn);
 		if (isScrollerOpen) {
 			networkScroller.onMouseBtnReleased(btn);
+		} else if (shouldDrawIds()) {
+			photoIdScroller.onMouseBtnReleased(btn);
 		}
 	}
 
@@ -163,6 +155,8 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		super.mouseClickMove(mouseX, mouseY, btn, time);
 		if (isScrollerOpen) {
 			networkScroller.onMouseMoved(mouseX, mouseY);
+		} else if (shouldDrawIds()) {
+			photoIdScroller.onMouseMoved(mouseX, mouseY);
 		}
 	}
 
