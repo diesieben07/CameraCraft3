@@ -9,6 +9,7 @@ import net.minecraft.inventory.Container;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
+import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.network.DataPacket;
 import de.take_weiland.mods.commons.network.PacketType;
 
@@ -25,14 +26,14 @@ public class PacketPrintJob extends DataPacket {
 	@Override
 	protected void write(DataOutputStream out) throws IOException {
 		out.writeByte(windowId);
-		out.writeUTF(job.getPhotoId());
+		out.writeInt(PhotoManager.asInt(job.getPhotoId()));
 		out.writeShort(job.getAmount());
 	}
 	
 	@Override
 	protected void read(EntityPlayer player, Side side, DataInputStream in) throws IOException {
 		windowId = in.readByte();
-		job = new PrintJob(in.readUTF(), in.readUnsignedShort());
+		job = new PrintJob(PhotoManager.asString(in.readInt()), in.readUnsignedShort());
 	}
 	
 	@Override

@@ -26,8 +26,24 @@ public final class PhotoManager {
 	
 	public static final int PHOTO_SIZE = 256;
 	
+	public static int asInt(String photoId) {
+		return Integer.parseInt(photoId.substring(2));
+	}
+	
+	public static String asString(int photoId) {
+		return "p_" + Integer.toString(photoId);
+	}
+	
 	public static String nextPhotoId(World world) {
 		return CCWorldData.get(world).nextId();
+	}
+	
+	public static File getImageFile(int photoId) {
+		return getFile(asString(photoId), "png");
+	}
+
+	public static File getDataFile(int photoId) {
+		return getFile(asString(photoId), "dat");
 	}
 	
 	public static File getImageFile(String photoId) {

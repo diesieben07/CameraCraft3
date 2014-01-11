@@ -14,22 +14,23 @@ import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.network.MultipartDataPacket;
 import de.take_weiland.mods.commons.network.PacketType;
 
 public class PacketPhotoData extends MultipartDataPacket {
 
-	private String photoId;
+	private int photoId;
 	private File file;
 
-	public PacketPhotoData(String photoId, File file) {
+	public PacketPhotoData(int photoId, File file) {
 		this.photoId = photoId;
 		this.file = file;
 	}
 
 	@Override
 	protected void write(DataOutputStream out) throws IOException {
-		out.writeUTF(photoId);
+		out.writeInt(photoId);
 		ReadableByteChannel in = Files.newByteChannel(file.toPath());
 		ByteStreams.copy(in, Channels.newChannel(out));
 		in.close();
@@ -37,8 +38,7 @@ public class PacketPhotoData extends MultipartDataPacket {
 
 	@Override
 	protected void read(EntityPlayer player, Side side, DataInputStream in) throws IOException {
-		photoId = in.readUTF();
-		CameraCraft.env.handleClientPhotoData(photoId, in);
+		CameraCraft.env.handleClientPhotoData(PhotoManager.asString(in.readInt()), in);
 	}
 	
 

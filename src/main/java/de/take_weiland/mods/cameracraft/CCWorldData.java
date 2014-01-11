@@ -13,6 +13,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 
 import de.take_weiland.mods.cameracraft.photo.PhotoData;
+import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 
 public class CCWorldData extends WorldSavedData {
 
@@ -68,7 +69,7 @@ public class CCWorldData extends WorldSavedData {
 	
 	public String nextId() {
 		markDirty();
-		return "photo_" + nextId++;
+		return PhotoManager.asString(nextId++);
 	}
 
 }

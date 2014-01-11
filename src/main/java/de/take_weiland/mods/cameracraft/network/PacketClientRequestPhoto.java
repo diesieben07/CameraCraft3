@@ -14,20 +14,20 @@ import de.take_weiland.mods.commons.network.PacketType;
 
 public class PacketClientRequestPhoto extends DataPacket {
 
-	String photoId;
+	int photoId;
 	
 	public PacketClientRequestPhoto(String photoId) {
-		this.photoId = photoId;
+		this.photoId = PhotoManager.asInt(photoId);
 	}
 
 	@Override
 	protected void write(DataOutputStream out) throws IOException {
-		out.writeUTF(photoId);
+		out.writeInt(photoId);
 	}
 
 	@Override
 	protected void read(EntityPlayer player, Side side, DataInputStream in) throws IOException {
-		photoId = in.readUTF();
+		photoId = in.readInt();
 	}
 	
 	@Override
