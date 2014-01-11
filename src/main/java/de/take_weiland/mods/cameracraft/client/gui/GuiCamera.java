@@ -48,7 +48,7 @@ public class GuiCamera extends AbstractGuiContainer<InventoryCamera, ContainerCa
 			}
 			int x = slot.xDisplayPosition;
 			int y = slot.yDisplayPosition;
-			Rendering.drawRectWithZlevel(x, y, x + lidXSize, y + 16, 101, 0xff000000); // zlevel 101 to go above the itemstacks
+			Rendering.drawColoredRect(x, y, lidXSize, 16, 0xff000000, 101); // zlevel 101 to go above the itemstacks
 		} else {
 			super.drawSlotInventory(slot);
 		}
