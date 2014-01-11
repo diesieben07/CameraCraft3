@@ -58,6 +58,18 @@ processResources {
     from (sourceSets.main.resources.srcDirs)
 }
 
+configurations {
+    deployerJars
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    deployerJars "org.apache.maven.wagon:wagon-ftp:2.2"
+}
+
 if (ENV.CC_MAVEN_URL) {
 	uploadArchives {
 		repositories.mavenDeployer {
