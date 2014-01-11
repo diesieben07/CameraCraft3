@@ -12,7 +12,18 @@ import de.take_weiland.mods.commons.util.Listenable;
  */
 public interface PhotoStorage extends Listenable<PhotoStorage> {
 
+	/**
+	 * get an unmodifiable List view of the photos in this Storage
+	 * @return
+	 */
 	List<String> getPhotos();
+	
+	/**
+	 * get the raw PhotoIds
+	 * this may be slow if this PhotoStorage implementation doesn't use an int[] as a backing storage
+	 * @return
+	 */
+	int[] getRawPhotoIds();
 	
 	/**
 	 * @return the amount of photos this PhotoStorage can store

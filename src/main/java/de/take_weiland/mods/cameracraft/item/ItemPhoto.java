@@ -12,6 +12,7 @@ import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.photo.AbstractPhotoStorage;
+import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.util.Sides;
 
 public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoStorageItem {
@@ -58,7 +59,7 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoStorag
 		
 		return new AbstractPhotoStorage(true) {
 			
-			private final String photoId = stack.getTagCompound().getString(NBT_KEY);
+			private final String photoId = PhotoManager.asString(stack.getTagCompound().getInteger(NBT_KEY));
 			private final List<String> contents = ImmutableList.of(photoId); 
 			
 			@Override
@@ -81,6 +82,13 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoStorag
 				return photoId;
 			}
 			
+			private int[] raw;
+			
+			@Override
+			public int[] getRawPhotoIds() {
+				return raw == null ? (raw = new int[] { PhotoManager.asInt(photoId) }) : raw;
+			}
+			
 			// photos are immutable
 			@Override
 			protected void storeImpl(String photoId) { }
@@ -90,6 +98,7 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoStorag
 			
 			@Override
 			protected void clearImpl() { }
+
 		};
 	}
 

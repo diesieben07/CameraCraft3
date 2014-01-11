@@ -5,7 +5,6 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -23,6 +22,7 @@ import de.take_weiland.mods.cameracraft.api.cable.NetworkListener;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.item.CCItem;
+import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.templates.AbstractContainer;
 import de.take_weiland.mods.commons.templates.AdvancedSlot;
@@ -93,7 +93,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 			int numPhotos = in.readUnsignedByte();
 			String[] photoIds = new String[numPhotos];
 			for (int j = 0; j < numPhotos; ++j) {
-				photoIds[j] = in.readUTF();
+				photoIds[j] = PhotoManager.asString(in.readInt());
 			}
 			nodes[i] = new ClientNodeInfo(name, photoIds);
 		}
@@ -109,10 +109,10 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 				out.writeUTF(node.getDisplayName());
 				PhotoStorage storage = ((PhotoStorageProvider) node.getTile()).getPhotoStorage();
 				if (storage != null) {
-					List<String> photoIds = storage.getPhotos();
-					out.writeByte(UnsignedBytes.checkedCast(photoIds.size()));
-					for (String photoId : photoIds) {
-						out.writeUTF(photoId);
+					int[] photoIds = storage.getRawPhotoIds();
+					out.writeByte(UnsignedBytes.checkedCast(photoIds.length));
+					for (int photoId : photoIds) {
+						out.writeInt(photoId);
 					}
 				} else {
 					out.writeByte(0);
