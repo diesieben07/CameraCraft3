@@ -17,12 +17,12 @@ apply plugin: 'maven'
 repositories {
 	maven {
 		name = 'SevenCommons'
-		url = "http://take-weiland.de/maven/"
+		url = "http://diesieben07.bplaced.net/maven/"
 	}
 }
 
 dependencies {
-    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.4-SNAPSHOT:deobf'
+    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.14:deobf'
 }
 
 
@@ -30,7 +30,15 @@ minecraft {
 	version = "1.6.4-9.11.1.964"
 }
 
-version = "1.0"
+version = "0.1"
+
+def ENV = System.getenv()
+if (ENV.DRONE_BUILD_NUMBER) {
+	version += "." + ENV.DRONE_BUILD_NUMBER
+} else {
+	version += ".local"
+}
+
 group = "de.take_weiland.mods.cameracraft" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "CameraCraft"
 
@@ -48,4 +56,15 @@ tasks.build.dependsOn('sourceJar', 'deobfJar')
 
 processResources {
     from (sourceSets.main.resources.srcDirs)
+}
+
+if (ENV.CC_MAVEN_URL) {
+	uploadArchives {
+		repositories.mavenDeployer {
+			configuration = configurations.deployerJars
+			repository(url: ENV.CC_MAVEN_URL) {
+				authentication(userName: ENV.CC_MAVEN_USER, password: ENV.CC_MAVEN_PASS)
+			}
+		}
+	}
 }
