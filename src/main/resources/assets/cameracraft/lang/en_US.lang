@@ -32,7 +32,7 @@ item.CameraCraft.lens.green.name=Green Lens
 item.CameraCraft.lens.blue.name=Blue Lens
 item.CameraCraft.lens.yellow.name=Yellow Lens
 
-item.CameraCraft.photo.photo.name=Photo
+item.CameraCraft.photo.photo.name=Unnamed Photo
 
 item.CameraCraft.photoStorage.filmBw.name=Black & White Film
 item.CameraCraft.photoStorage.filmColor.name=Color Film

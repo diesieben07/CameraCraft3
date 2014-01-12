@@ -9,28 +9,29 @@ import net.minecraft.world.World;
 import com.google.common.collect.ImmutableList;
 
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.photo.AbstractPhotoStorage;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
+import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.Sides;
 
-public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoStorageItem {
+public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 
 	public static final String NBT_KEY = "cameracraft.photoId";
+	private static final String NBT_NAME_KEY = "cameracraft.photoname";
 
 	public ItemPhoto(int defaultId) {
 		super("photo", defaultId);
 		setMaxStackSize(1);
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
-	public void addInformation(ItemStack stack, EntityPlayer player, List info, boolean enhanced) {
-		super.addInformation(stack, player, info, enhanced);
-		if (stack.hasTagCompound()) {
-			info.add(stack.getTagCompound().getString(NBT_KEY));
+	public String getItemDisplayName(ItemStack stack) {
+		if (isNamed(stack)) {
+			return getNameImpl(stack);
 		}
+		return super.getItemDisplayName(stack);
 	}
 
 	@Override
@@ -135,6 +136,20 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoStorag
 	@Override
 	public boolean isScannable(ItemStack stack) {
 		return false;
+	}
+
+	@Override
+	public boolean isNamed(ItemStack stack) {
+		return ItemStacks.getNbt(stack).hasKey(NBT_NAME_KEY);
+	}
+
+	@Override
+	public String getName(ItemStack stack) {
+		return isNamed(stack) ? getNameImpl(stack) : null;
+	}
+
+	private String getNameImpl(ItemStack stack) {
+		return ItemStacks.getNbt(stack).getString(NBT_NAME_KEY);
 	}
 
 }
