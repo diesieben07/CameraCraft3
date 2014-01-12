@@ -13,7 +13,6 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 
-import org.lwjgl.Sys;
 import org.lwjgl.input.Mouse;
 
 import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
@@ -33,6 +32,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	
 	private static boolean isScrollerOpen = false;
 	int selectedNode = -1;
+	int selectedId = -1;
 	
 	int sliderToggleDelay = -1;
 	int scrollerOffsetX = isScrollerOpen ? 0 : getScrollerHiddenOffset();
@@ -64,7 +64,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		photoIdScroller.setClip(true);
 		
 		buttonList.add(new ButtonOpenScroller(BUTTON_OPEN_SCROLLER, guiLeft + 4, guiTop + 15 + 30));
-		buttonList.add(new GuiButton(GuiPrinter.BUTTON_PRINT, 0, 40, "Print!"));
+		buttonList.add(new GuiButton(GuiPrinter.BUTTON_PRINT, 0, 40, 50, 20, "Print!"));
 	}
 
 	@Override
@@ -100,26 +100,31 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		
 		glEnable(GL_LIGHTING);
 	}
-
-	@Override
-	protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
-		super.drawGuiContainerForegroundLayer(mouseX, mouseY);
-//		ClientNodeInfo[] nodes = container.getNodes();
-//		if (scrollerOffsetX == getScrollerHiddenOffset() && selectedNode != -1 && nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode)) {
-//			String[] selectedIds = nodes[selectedNode].photoIds;
-//			if (selectedIds.length != 0) {
-//				for (int i = 0; i < selectedIds.length; ++i) {
-//					fontRenderer.drawString(selectedIds[i], 20, 20 + 10 * i, 0x000000);
-//				}
-//			} else {
-//				fontRenderer.drawString("No Photos", 20, 20, 0x000000);
-//			}
-//		}
-	}
 	
 	private boolean shouldDrawIds() {
 		ClientNodeInfo[] nodes = container.getNodes();
 		return scrollerOffsetX == getScrollerHiddenOffset() && selectedNode != -1 && nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode);
+	}
+	
+
+	@Override
+	protected void actionPerformed(GuiButton button) {
+		super.actionPerformed(button);
+		switch (button.id) {
+		case BUTTON_OPEN_SCROLLER:
+			if (scrollerMotion == 0) {
+				toggleSlider();
+			}
+			break;
+		case BUTTON_PRINT:
+			ClientNodeInfo[] nodes = container.getNodes();
+			if (nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode)) {
+				String[] ids = nodes[selectedNode].photoIds;
+				if (JavaUtils.arrayIndexExists(ids, selectedId)) {
+					new PacketPrintJob(container, new PrintJob(ids[selectedId])).sendToServer();
+				}
+			}
+		}
 	}
 
 	@Override
@@ -157,25 +162,6 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 			networkScroller.onMouseMoved(mouseX, mouseY);
 		} else if (shouldDrawIds()) {
 			photoIdScroller.onMouseMoved(mouseX, mouseY);
-		}
-	}
-
-	@Override
-	protected void actionPerformed(GuiButton button) {
-		super.actionPerformed(button);
-		switch (button.id) {
-		case BUTTON_OPEN_SCROLLER:
-			if (scrollerMotion == 0) {
-				toggleSlider();
-			}
-			break;
-		case BUTTON_PRINT:
-			ClientNodeInfo[] nodes = container.getNodes();
-			if (nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode)) {
-				if (nodes[selectedNode].photoIds.length >= 1) {
-					new PacketPrintJob(container, new PrintJob(nodes[selectedNode].photoIds[0])).sendToServer();
-				}
-			}
 		}
 	}
 

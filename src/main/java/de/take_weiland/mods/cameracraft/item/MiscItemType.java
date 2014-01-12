@@ -11,7 +11,7 @@ public enum MiscItemType implements ItemMeta {
 	MAGENTA_INK("inkMagenta"),
 	BLACK_INK("inkBlack"),
 	PHOTONIC_DUST("photonicDust"),
-	PHOTOELECTRIC_DUST("photoelectrictDust"),
+	PHOTOELECTRIC_DUST("photoelectricDust"),
 	ALKALINE_DUST("alkalineDust"),
 	ALKALINE_BUCKET("alkalineBucket");
 	

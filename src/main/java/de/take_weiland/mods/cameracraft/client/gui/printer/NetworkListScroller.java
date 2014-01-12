@@ -38,6 +38,7 @@ public class NetworkListScroller extends ScrollPane {
 				mc.sndManager.playSoundFX("random.click", 1, 1);
 				gui.sliderToggleDelay = 10;
 				gui.selectedNode = newSelection;
+				gui.selectedId = -1;
 			}
 		}
 	}
