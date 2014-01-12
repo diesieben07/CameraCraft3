@@ -45,7 +45,7 @@ public final class CameraCraft {
 
 	static final String MOD_ID = CameraCraftApiHandler.CAMERACRAFT_MODID;
 	static final String MOD_NAME = "CameraCraft";
-	static final String VERSION = "3.0b";
+	static final String VERSION = "@VERSION@";
 	private static final String CLIENT_ENV = "de.take_weiland.mods.cameracraft.client.EnvironmentClient";
 	private static final String SERVER_ENV = "de.take_weiland.mods.cameracraft.server.EnvironmentServer";
 	

@@ -22,21 +22,23 @@ repositories {
 }
 
 dependencies {
-    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.17:deobf'
+    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.23:deobf'
 }
 
 
-minecraft {
-	version = "1.6.4-9.11.1.964"
-}
-
-version = "0.1"
+version = "3.0a"
 
 def ENV = System.getenv()
 if (ENV.DRONE_BUILD_NUMBER) {
 	version += "." + ENV.DRONE_BUILD_NUMBER
 } else {
 	version += ".local"
+}
+
+minecraft {
+	version = "1.6.4-9.11.1.964"
+	replaceIn "cameracraft/CameraCraft.java"
+	replace "@VERSION@", project.version
 }
 
 group = "de.take_weiland.mods.cameracraft" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
