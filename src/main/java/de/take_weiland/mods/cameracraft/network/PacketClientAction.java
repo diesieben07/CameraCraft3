@@ -3,16 +3,16 @@ package de.take_weiland.mods.cameracraft.network;
 import static de.take_weiland.mods.commons.network.Packets.readEnum;
 import static de.take_weiland.mods.commons.network.Packets.writeEnum;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.commons.network.AbstractPacket;
+import de.take_weiland.mods.commons.network.DataPacket;
 import de.take_weiland.mods.commons.network.PacketType;
 
-public class PacketClientAction extends AbstractPacket {
+public class PacketClientAction extends DataPacket {
 
 	private Action action;
 	
@@ -33,12 +33,12 @@ public class PacketClientAction extends AbstractPacket {
 	}
 
 	@Override
-	public void read(EntityPlayer player, Side side, InputStream in) throws IOException {
+	public void read(EntityPlayer player, Side side, DataInputStream in) throws IOException {
 		action = readEnum(in, Action.class);
 	}
 
 	@Override
-	public void write(OutputStream out) throws IOException {
+	public void write(DataOutputStream out) throws IOException {
 		writeEnum(out, action);
 	}
 	
