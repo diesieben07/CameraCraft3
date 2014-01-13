@@ -86,8 +86,8 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 	}
 	
 	@Override
-	public void displayPhotoGui(String photoId) {
-		mc.displayGuiScreen(new GuiViewPhoto(photoId));
+	public void displayPhotoGui(String photoId, String displayName, boolean canRename) {
+		mc.displayGuiScreen(new GuiViewPhoto(photoId, displayName, canRename));
 	}
 
 	@Override

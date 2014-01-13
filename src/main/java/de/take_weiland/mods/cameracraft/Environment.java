@@ -12,7 +12,7 @@ public interface Environment {
 	
 	void displayNamePhotoGui(String oldName);
 	
-	void displayPhotoGui(String photoId);
+	void displayPhotoGui(String photoId, String displayName, boolean canRename);
 	
 	void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ);
 	

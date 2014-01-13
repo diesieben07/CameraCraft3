@@ -5,43 +5,45 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
 import de.take_weiland.mods.commons.network.DataPacket;
 import de.take_weiland.mods.commons.network.PacketType;
 
 public class PacketPhotoName extends DataPacket {
 
-	private String previousName;
+	private String name;
 	
-	public PacketPhotoName(String previousName) {
-		this.previousName = previousName;
-	}
-	
-	@Override
-	public int expectedSize() {
-		int len = previousName.length();
-		return 2 + len + len >> 1;
+	public PacketPhotoName(String name) {
+		this.name = name;
 	}
 
 	@Override
 	protected void write(DataOutputStream out) throws IOException {
-		out.writeUTF(previousName);
+		out.writeUTF(name);
 	}
 
 	@Override
 	protected void read(EntityPlayer player, Side side, DataInputStream in) throws IOException {
-		previousName = in.readUTF();
+		name = in.readUTF();
 	}
 	
 	@Override
 	public void execute(EntityPlayer player, Side side) {
-		CameraCraft.env.displayNamePhotoGui(previousName);
+		ItemStack current = player.getCurrentEquippedItem();
+		if (current != null) {
+			Item item = current.getItem();
+			if (item instanceof PhotoItem) {
+				((PhotoItem) item).setName(current, name);
+			}
+		}
 	}
 
 	@Override
 	public boolean isValidForSide(Side side) {
-		return side.isClient();
+		return side.isServer();
 	}
 
 	@Override

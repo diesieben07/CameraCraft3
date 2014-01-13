@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 
+import com.google.common.base.Strings;
 import com.google.common.collect.ImmutableList;
 
 import de.take_weiland.mods.cameracraft.CameraCraft;
@@ -47,7 +48,8 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if (Sides.logical(world).isClient() && stack.hasTagCompound()) {
-			CameraCraft.env.displayPhotoGui(stack.getTagCompound().getString(NBT_KEY));
+			boolean isNamed = isNamed(stack);
+			CameraCraft.env.displayPhotoGui(stack.getTagCompound().getString(NBT_KEY), isNamed ? getNameImpl(stack) : null, !isNamed);
 		}
 		return stack;
 	}
@@ -150,6 +152,13 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 
 	private String getNameImpl(ItemStack stack) {
 		return ItemStacks.getNbt(stack).getString(NBT_NAME_KEY);
+	}
+
+	@Override
+	public void setName(ItemStack stack, String name) {
+		if (!isNamed(stack)) {
+			ItemStacks.getNbt(stack).setString(NBT_NAME_KEY, Strings.nullToEmpty(name));
+		}
 	}
 
 }

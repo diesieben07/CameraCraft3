@@ -8,4 +8,6 @@ public interface PhotoItem extends PhotoStorageItem {
 	
 	String getName(ItemStack stack);
 	
+	void setName(ItemStack stack, String name);
+	
 }

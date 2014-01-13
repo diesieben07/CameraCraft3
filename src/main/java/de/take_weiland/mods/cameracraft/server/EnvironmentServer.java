@@ -22,6 +22,6 @@ public class EnvironmentServer implements Environment {
 	public void handleClientPhotoData(String photoId, InputStream in) { }
 
 	@Override
-	public void displayPhotoGui(String photoId) { }
+	public void displayPhotoGui(String photoId, String displayName, boolean canRename) { }
 
 }
