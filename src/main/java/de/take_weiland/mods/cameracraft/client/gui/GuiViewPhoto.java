@@ -10,6 +10,7 @@ import net.minecraft.item.Item;
 
 import org.lwjgl.input.Keyboard;
 
+import de.take_weiland.mods.cameracraft.client.EnvironmentClient;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.network.PacketPhotoName;
@@ -19,6 +20,8 @@ import de.take_weiland.mods.commons.client.Rendering;
 public class GuiViewPhoto extends GuiScreen {
 
 	private static final int BUTTON_RENAME = 0;
+	private static final int BUTTON_DONE = 1;
+	
 	private final String photoId;
 	private boolean isNameable;
 	private String displayName;
@@ -26,6 +29,8 @@ public class GuiViewPhoto extends GuiScreen {
 	private boolean isRenaming = false;
 	
 	private GuiTextField nameTextField;
+	private GuiButton buttonDone;
+	private GuiButton buttonRename;
 	
 	public GuiViewPhoto(String photoId, String displayName, boolean isNameable) {
 		this.photoId = photoId;
@@ -37,12 +42,19 @@ public class GuiViewPhoto extends GuiScreen {
 	@Override
 	public void initGui() {
 		super.initGui();
-		GuiButton btn = new GuiButtonRename(BUTTON_RENAME, 10, height - 30);
-		btn.enabled = isNameable;
-		buttonList.add(btn);
+		
+		int photoDim = computePhotoDim();
+		
+		buttonRename = new GuiButtonRename(BUTTON_RENAME, (width + photoDim) / 2 + 10, height - 30);
+		buttonRename.enabled = isNameable;
+		buttonList.add(buttonRename);
+		
+		buttonDone = new GuiButtonDone(BUTTON_DONE, (width + photoDim) / 2 + 10, height - 30);
+		buttonDone.drawButton = isRenaming;
+		buttonList.add(buttonDone);
 		
 		GuiTextField oldTB = nameTextField;
-		int textFieldWidth = computePhotoDim() - 20;
+		int textFieldWidth = photoDim - 20;
 		nameTextField = new GuiTextField(fontRenderer, (width - textFieldWidth) / 2, height - 30, textFieldWidth, 20);
 		if (oldTB != null) {
 			Guis.copyState(oldTB, nameTextField);
@@ -81,7 +93,7 @@ public class GuiViewPhoto extends GuiScreen {
 	protected void actionPerformed(GuiButton button) {
 		super.actionPerformed(button);
 		switch (button.id) {
-		case BUTTON_RENAME:
+		case BUTTON_DONE:
 			toggleRename();
 			break;
 		}
@@ -96,7 +108,9 @@ public class GuiViewPhoto extends GuiScreen {
 			} else {
 				nameTextField.setFocused(true);
 			}
-			isRenaming = !isRenaming;
+			buttonDone.drawButton = isRenaming = !isRenaming;
+			buttonRename.drawButton = !buttonDone.drawButton;
+			buttonRename.enabled = isNameable;
 		}
 	}
 
@@ -149,7 +163,22 @@ public class GuiViewPhoto extends GuiScreen {
 			}
 		}
 		
+	}
+	
+	private static final class GuiButtonDone extends GuiButton {
+
+		public GuiButtonDone(int id, int x, int y) {
+			super(id, x, y, 20, 20, "");
+		}
 		
+		@Override
+		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+			super.drawButton(mc, mouseX, mouseY);
+			if (drawButton) {
+				mc.renderEngine.bindTexture(EnvironmentClient.CONTROLS);
+				Rendering.drawTexturedQuad(xPosition + 3, yPosition + 5, 14, 10, 0, 0, 14, 10, 64);
+			}
+		}
 		
 	}
 	

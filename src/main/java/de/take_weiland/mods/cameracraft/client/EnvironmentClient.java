@@ -11,6 +11,7 @@ import net.minecraft.network.packet.NetHandler;
 import net.minecraft.network.packet.Packet1Login;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.ForgeSubscribe;
@@ -32,6 +33,8 @@ import de.take_weiland.mods.commons.util.Scheduler;
 
 public class EnvironmentClient implements Environment, IConnectionHandler {
 
+	public static final ResourceLocation CONTROLS = new ResourceLocation("cameracraft", "textures/gui/controls.png");
+	
 	private Minecraft mc;
 	private RenderTickHandler rth;
 	
