@@ -94,6 +94,7 @@ public class GuiViewPhoto extends GuiScreen {
 		super.actionPerformed(button);
 		switch (button.id) {
 		case BUTTON_DONE:
+		case BUTTON_RENAME:
 			toggleRename();
 			break;
 		}
