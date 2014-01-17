@@ -1,5 +1,7 @@
 package de.take_weiland.mods.cameracraft.client.gui.printer;
 
+import java.util.List;
+
 import net.minecraft.util.MathHelper;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter.ClientNodeInfo;
 import de.take_weiland.mods.commons.client.ScrollPane;
@@ -18,11 +20,12 @@ public class NetworkListScroller extends ScrollPane {
 	protected void drawImpl() {
 		drawRect(0, 0, width, Math.max(contentHeight, height), 0x44000000);
 		
-		ClientNodeInfo[] nodes = gui.getContainer().getNodes();
+		List<ClientNodeInfo> nodes = gui.getContainer().getNodes();
 		if (nodes != null) {
-			int size = nodes.length;
+			int size = nodes.size();
+			int selectedNode = gui.getContainer().getSelectedNodeIdx();
 			for (int i = 0; i < size; ++i) {
-				mc.fontRenderer.drawString(nodes[i].displayName, 1, 1 + i * 10, i == gui.selectedNode ? 0x7777ff : 0xffffff);
+				mc.fontRenderer.drawString(nodes.get(i).displayName, 1, 1 + i * 10, i == selectedNode ? 0x7777ff : 0xffffff);
 			}
 		}
 	}
@@ -32,13 +35,12 @@ public class NetworkListScroller extends ScrollPane {
 		if (relX >= 0 && relX <= width - scrollbarWidth - 2) {
 			int newSelection = MathHelper.floor_float(relY / 10f);
 			
-			ClientNodeInfo[] nodes = gui.getContainer().getNodes();
+			List<ClientNodeInfo> nodes = gui.getContainer().getNodes();
 			
-			if (JavaUtils.arrayIndexExists(nodes, newSelection)) {
+			if (JavaUtils.listIndexExists(nodes, newSelection)) {
 				mc.sndManager.playSoundFX("random.click", 1, 1);
 				gui.sliderToggleDelay = 10;
-				gui.selectedNode = newSelection;
-				gui.selectedId = -1;
+				gui.getContainer().selectNode(newSelection);
 			}
 		}
 	}

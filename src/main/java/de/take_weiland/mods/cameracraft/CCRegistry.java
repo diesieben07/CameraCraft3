@@ -8,6 +8,7 @@ import net.minecraft.block.Block;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.crafting.FurnaceRecipes;
+import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.oredict.OreDictionary;
@@ -20,6 +21,7 @@ import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.cameracraft.blocks.OreType;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.MiscItemType;
+import de.take_weiland.mods.cameracraft.item.PhotoType;
 import de.take_weiland.mods.cameracraft.tileentity.TileEntityDataCable;
 import de.take_weiland.mods.commons.util.Constants;
 import de.take_weiland.mods.commons.util.ItemStacks;
@@ -54,21 +56,26 @@ public final class CCRegistry {
 				"WRW",
 				"WWW",
 				'W', new ItemStack(Block.cloth, 1, CLOTH_BLACK),
-				'R', Block.blockRedstone
-			);
+				'R', Block.blockRedstone);
 		
 		GameRegistry.addRecipe(cableData8, 
 				"WWW",
 				"WLW",
 				"WWW",
 				'W', new ItemStack(Block.cloth, 1, CLOTH_GRAY),
-				'L', Block.blockLapis
-			);
+				'L', Block.blockLapis);
 		
 		GameRegistry.addShapelessRecipe(ItemStacks.of(MiscItemType.BLACK_INK), photonicDust, new ItemStack(Item.dyePowder, 1, Constants.DYE_BLACK));
 		GameRegistry.addShapelessRecipe(ItemStacks.of(MiscItemType.YELLOW_INK), photonicDust, new ItemStack(Item.dyePowder, 1, Constants.DYE_YELLOW));
 		GameRegistry.addShapelessRecipe(ItemStacks.of(MiscItemType.MAGENTA_INK), photonicDust, new ItemStack(Item.dyePowder, 1, Constants.DYE_MAGENTA));
 		GameRegistry.addShapelessRecipe(ItemStacks.of(MiscItemType.CYAN_INK), photonicDust, new ItemStack(Item.dyePowder, 1, Constants.DYE_CYAN));
+		
+		((ShapedRecipes) GameRegistry.addShapedRecipe(ItemStacks.of(PhotoType.POSTER), 
+				"SSS",
+				"SPS",
+				"SSS",
+				'S', Item.stick,
+				'P', ItemStacks.of(PhotoType.PHOTO))).func_92100_c();
 	}
 	
 	public static void doMiscRegistering() {

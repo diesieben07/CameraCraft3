@@ -45,7 +45,7 @@ public class TileScanner extends TileEntityInventory<TileScanner> implements Net
 	}
 
 	@Override
-	public String getDisplayName() {
+	public String getNetworkName() {
 		return "Scanner [x=" + xCoord + ", y=" + yCoord + ", z=" + zCoord + "]";
 	}
 

@@ -38,7 +38,7 @@ public class NetworkNodeImpl implements NetworkNode {
 
 	@Override
 	public String getDisplayName() {
-		return ((NetworkTile) tile).getDisplayName();
+		return ((NetworkTile) tile).getNetworkName();
 	}
 	
 	@Override

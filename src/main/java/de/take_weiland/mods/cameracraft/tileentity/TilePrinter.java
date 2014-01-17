@@ -70,7 +70,7 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 		
 		for (int i = 0; i < job.getAmount(); ++i) {
 			ItemStack photo = ItemStacks.of(PhotoType.PHOTO);
-			ItemStacks.getNbt(photo).setString(ItemPhoto.NBT_KEY, job.getPhotoId());
+			CCItem.photo.setPhotoId(photo, job.getPhotoId());
 			worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord, yCoord + 1, zCoord, photo));
 		}
 	}
@@ -100,7 +100,7 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 	}
 
 	@Override
-	public String getDisplayName() {
+	public String getNetworkName() {
 		return "Printer [x=" + xCoord + ", y=" + yCoord + ", z=" + zCoord + "]";
 	}
 

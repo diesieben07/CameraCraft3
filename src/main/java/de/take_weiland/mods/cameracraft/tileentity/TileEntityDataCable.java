@@ -22,7 +22,7 @@ public class TileEntityDataCable extends AbstractTileEntity implements NetworkTi
 	}
 
 	@Override
-	public String getDisplayName() {
+	public String getNetworkName() {
 		return null;
 	}
 

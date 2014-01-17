@@ -8,6 +8,9 @@ import static org.lwjgl.opengl.GL11.glPopMatrix;
 import static org.lwjgl.opengl.GL11.glPushMatrix;
 import static org.lwjgl.opengl.GL11.glScissor;
 import static org.lwjgl.opengl.GL11.glTranslatef;
+
+import java.util.List;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.MathHelper;
@@ -23,7 +26,6 @@ import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.client.Guis;
 import de.take_weiland.mods.commons.client.ScrollPane;
-import de.take_weiland.mods.commons.util.JavaUtils;
 
 public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrinter> {
 
@@ -31,8 +33,6 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	public static final int BUTTON_PRINT = 1;
 	
 	private static boolean isScrollerOpen = false;
-	int selectedNode = -1;
-	int selectedId = -1;
 	
 	int sliderToggleDelay = -1;
 	int scrollerOffsetX = isScrollerOpen ? 0 : getScrollerHiddenOffset();
@@ -40,6 +40,8 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	
 	private ScrollPane networkScroller;
 	private ScrollPane photoIdScroller;
+	
+	
 	
 	public GuiPrinter(ContainerPrinter container) {
 		super(container);
@@ -72,8 +74,8 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		glDisable(GL_LIGHTING);
 		
-		ClientNodeInfo[] nodes = container.getNodes();
-		networkScroller.setContentHeight(nodes == null ? 0 : nodes.length * 10);
+		List<ClientNodeInfo> nodes = container.getNodes();
+		networkScroller.setContentHeight(nodes == null ? 0 : nodes.size() * 10);
 		
 		if (scrollerOffsetX != 0) {
 			if (scrollerOffsetX != getScrollerHiddenOffset()) {
@@ -94,7 +96,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		}
 		
 		if (shouldDrawIds()) {
-			photoIdScroller.setContentHeight(nodes[selectedNode].photoIds.length * 10);
+			photoIdScroller.setContentHeight(container.getSelectedNode().photoIds.length * 10);
 			photoIdScroller.draw(mouseX, mouseY);
 		}
 		
@@ -102,8 +104,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	}
 	
 	private boolean shouldDrawIds() {
-		ClientNodeInfo[] nodes = container.getNodes();
-		return scrollerOffsetX == getScrollerHiddenOffset() && selectedNode != -1 && nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode);
+		return scrollerOffsetX == getScrollerHiddenOffset() && container.getSelectedNode() != null;
 	}
 	
 
@@ -117,12 +118,9 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 			}
 			break;
 		case BUTTON_PRINT:
-			ClientNodeInfo[] nodes = container.getNodes();
-			if (nodes != null && JavaUtils.arrayIndexExists(nodes, selectedNode)) {
-				String[] ids = nodes[selectedNode].photoIds;
-				if (JavaUtils.arrayIndexExists(ids, selectedId)) {
-					new PacketPrintJob(container, new PrintJob(ids[selectedId])).sendToServer();
-				}
+			String selectedId = container.getSelectedPhotoId();
+			if (selectedId != null) {
+				new PacketPrintJob(container, new PrintJob(selectedId)).sendToServer();
 			}
 		}
 	}

@@ -4,6 +4,7 @@ import java.util.List;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 
 import com.google.common.base.Strings;
@@ -12,9 +13,11 @@ import com.google.common.collect.ImmutableList;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
+import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.cameracraft.photo.AbstractPhotoStorage;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.util.ItemStacks;
+import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 
 public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
@@ -49,9 +52,30 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if (Sides.logical(world).isClient() && stack.hasTagCompound()) {
 			boolean isNamed = isNamed(stack);
-			CameraCraft.env.displayPhotoGui(stack.getTagCompound().getString(NBT_KEY), isNamed ? getNameImpl(stack) : null, !isNamed);
+			CameraCraft.env.displayPhotoGui(getPhotoId(stack), isNamed ? getNameImpl(stack) : null, !isNamed);
 		}
 		return stack;
+	}
+
+	@Override
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		if (Multitypes.getType(this, stack) != PhotoType.POSTER || !stack.hasTagCompound() || side < 2 || !player.canPlayerEdit(x, y, z, side, stack)) {
+			return false;
+		}
+		if (Sides.logical(world).isServer()) {
+			System.out.println("yes");
+			EntityPoster poster = new EntityPoster(world, x, y, z, Direction.facingToDirection[side], getPhotoId(stack));
+			world.spawnEntityInWorld(poster);
+		}
+		return true;
+	}
+	
+	String getPhotoId(final ItemStack stack) {
+		return PhotoManager.asString(stack.getTagCompound().getInteger(NBT_KEY));
+	}
+	
+	public void setPhotoId(ItemStack stack, String photoId) {
+		ItemStacks.getNbt(stack).setInteger(NBT_KEY, PhotoManager.asInt(photoId));
 	}
 
 	@Override
@@ -62,7 +86,7 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 		
 		return new AbstractPhotoStorage(true) {
 			
-			private final String photoId = PhotoManager.asString(stack.getTagCompound().getInteger(NBT_KEY));
+			private final String photoId = getPhotoId(stack);
 			private final List<String> contents = ImmutableList.of(photoId); 
 			
 			@Override

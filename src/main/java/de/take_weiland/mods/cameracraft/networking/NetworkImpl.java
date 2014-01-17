@@ -99,7 +99,11 @@ public class NetworkImpl implements DataNetwork {
 	}
 
 	private List<NetworkListener> writeAccListeners() {
-		return listeners == null ? (listeners = Lists.newArrayListWithCapacity(3)) : listeners;
+		return writeAccListeners(3);
+	}
+	
+	private List<NetworkListener> writeAccListeners(int cap) {
+		return listeners == null ? (listeners = Lists.newArrayListWithCapacity(cap)) : listeners;
 	}
 
 	@Override
@@ -116,7 +120,7 @@ public class NetworkImpl implements DataNetwork {
 
 	@Override
 	public void addListeners(Collection<NetworkListener> listeners) {
-		writeAccListeners().addAll(listeners);
+		writeAccListeners(listeners.size() + 3).addAll(listeners);
 	}
 
 }

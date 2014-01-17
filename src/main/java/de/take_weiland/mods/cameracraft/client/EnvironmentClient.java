@@ -28,6 +28,8 @@ import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
 import de.take_weiland.mods.cameracraft.client.gui.GuiViewPhoto;
 import de.take_weiland.mods.cameracraft.client.render.RenderBlockCable;
+import de.take_weiland.mods.cameracraft.client.render.RenderPoster;
+import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.commons.util.Consumer;
 import de.take_weiland.mods.commons.util.Scheduler;
 
@@ -48,6 +50,8 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 		int renderId = RenderingRegistry.getNextAvailableRenderId();
 		RenderingRegistry.registerBlockHandler(renderId, new RenderBlockCable());
 		CCBlock.cable.injectRenderId(renderId);
+		
+		RenderingRegistry.registerEntityRenderingHandler(EntityPoster.class, new RenderPoster());
 		
 		MinecraftForge.EVENT_BUS.register(this);
 		NetworkRegistry.instance().registerConnectionHandler(this);
@@ -117,7 +121,7 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 	
 	@Override
 	public void connectionClosed(INetworkManager manager) {
-		if (manager == mc.getNetHandler().getNetManager()) {
+		if (mc.getNetHandler() != null && manager == mc.getNetHandler().getNetManager()) {
 			PhotoDataCache.invalidate();
 		}
 	}

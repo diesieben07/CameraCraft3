@@ -23,11 +23,13 @@ import cpw.mods.fml.common.event.FMLPostInitializationEvent;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApiHandler;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
@@ -97,6 +99,8 @@ public final class CameraCraft {
 		
 		CCBlock.createBlocks();
 		CCItem.createItems();
+		
+		EntityRegistry.registerModEntity(EntityPoster.class, "poster", 0, this, 160, Integer.MAX_VALUE, false);
 		
 		if (enableOreGeneration) {
 			MinecraftForge.ORE_GEN_BUS.register(new CCWorldGen());

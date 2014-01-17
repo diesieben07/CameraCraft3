@@ -4,6 +4,6 @@ public interface NetworkTile {
 
 	NetworkNode getNode();
 	
-	String getDisplayName();
+	String getNetworkName();
 	
 }

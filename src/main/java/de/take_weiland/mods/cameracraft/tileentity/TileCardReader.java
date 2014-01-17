@@ -94,7 +94,7 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 	}
 
 	@Override
-	public String getDisplayName() {
+	public String getNetworkName() {
 		return (hasCustomName() ? getCustomName() : "CardReader") + " @ " + xCoord + ", " + yCoord + ", " + zCoord;
 	}
 
