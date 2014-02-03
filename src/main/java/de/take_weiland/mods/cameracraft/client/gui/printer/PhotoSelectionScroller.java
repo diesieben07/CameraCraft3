@@ -23,10 +23,11 @@ public class PhotoSelectionScroller extends ScrollPane {
 		if (selected != null) {
 			String[] selectedIds = selected.photoIds;
 			if (selectedIds.length != 0) {
-				int selectedId = container.getSelectedPhotoIdIdx();
 				for (int i = 0; i < selectedIds.length; ++i) {
 					Rendering.drawColoredRect(0, 10 * i, mc.fontRenderer.getStringWidth(selectedIds[i]), mc.fontRenderer.FONT_HEIGHT, 0xffddddff);
-					mc.fontRenderer.drawString(selectedIds[i], 0, 10 * i, i == selectedId ? 0x7777ff : 0x000000);
+					int count = selected.counts[i];
+					String txt = selectedIds[i] + (count != 0 ? " x" + String.valueOf(count) : ""); 
+					mc.fontRenderer.drawString(txt, 0, 10 * i, 0x000000);
 				}
 			} else {
 				mc.fontRenderer.drawString("No Photos", 0, 0, 0x000000);
@@ -37,13 +38,13 @@ public class PhotoSelectionScroller extends ScrollPane {
 	@Override
 	protected void handleMouseClick(int relX, int relY, int btn) {
 		if (relX >= 0 && relX <= width - scrollbarWidth - 2) {
-			int newSelection = MathHelper.floor_float(relY / 10f);
+			int selectedIdx = MathHelper.floor_float(relY / 10f);
 			
 			ClientNodeInfo node = gui.getContainer().getSelectedNode();
 			
-			if (node != null && JavaUtils.arrayIndexExists(node.photoIds, newSelection)) {
+			if (node != null && JavaUtils.arrayIndexExists(node.photoIds, selectedIdx)) {
 				mc.sndManager.playSoundFX("random.click", 1, 1);
-				gui.getContainer().selectPhotoId(newSelection);
+				node.counts[selectedIdx] += btn == 0 ? 1 : (btn == 1 && node.counts[selectedIdx] > 0) ? -1 : 0;
 			}
 		}
 	}

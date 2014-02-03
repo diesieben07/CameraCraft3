@@ -40,7 +40,6 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	
 	private List<ClientNodeInfo> nodes;
 	private int selectedNode = -1;
-	private int selectedPhotoId = -1;
 	
 	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player, Containers.PLAYER_INV_X_DEFAULT, 118);
@@ -85,11 +84,6 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 		return JavaUtils.safeListAccess(nodes, selectedNode);
 	}
 	
-	public final String getSelectedPhotoId() {
-		ClientNodeInfo selectedNode = getSelectedNode();
-		return selectedNode == null ? null : JavaUtils.safeArrayAccess(selectedNode.photoIds, selectedPhotoId);
-	}
-	
 	private final Predicate<NetworkNode> nodeFilter = new Predicate<NetworkNode>() {
 
 		@Override
@@ -102,7 +96,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 
 	@Override
 	public void readSyncData(DataInputStream in) throws IOException {
-		selectedNode = selectedPhotoId = -1;
+		selectedNode = -1;
 		nodes.clear();
 		int nameLen;
 		do {
@@ -114,11 +108,9 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 				}
 				int photoCount = in.readUnsignedByte();
 				String[] photoIds = null;
-				if (photoCount > 0) {
-					photoIds = new String[photoCount];
-					for (int j = 0; j < photoCount; ++j) {
-						photoIds[j] = PhotoManager.asString(in.readInt());
-					}
+				photoIds = new String[photoCount];
+				for (int j = 0; j < photoCount; ++j) {
+					photoIds[j] = PhotoManager.asString(in.readInt());
 				}
 				nodes.add(new ClientNodeInfo(b.toString(), photoIds));
 			}
@@ -163,10 +155,12 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 		
 		public final String displayName;
 		public final String[] photoIds;
+		public final int[] counts;
 		
 		ClientNodeInfo(String displayName, String[] photoIds) {
 			this.displayName = displayName;
 			this.photoIds = photoIds;
+			counts = photoIds == null ? null : new int[photoIds.length];
 		}
 
 		@Override
@@ -182,15 +176,6 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 
 	public void selectNode(int selectedNode) {
 		this.selectedNode = selectedNode;
-		selectedPhotoId = -1;
-	}
-
-	public int getSelectedPhotoIdIdx() {
-		return selectedPhotoId;
-	}
-
-	public void selectPhotoId(int selectedPhotoId) {
-		this.selectedPhotoId = selectedPhotoId;
 	}
 
 }

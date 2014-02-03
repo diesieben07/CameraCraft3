@@ -1,11 +1,12 @@
 package de.take_weiland.mods.cameracraft.api;
 
-import com.google.common.util.concurrent.ListenableFuture;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
+
+import com.google.common.util.concurrent.ListenableFuture;
+
 import de.take_weiland.mods.cameracraft.api.cable.CableType;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 

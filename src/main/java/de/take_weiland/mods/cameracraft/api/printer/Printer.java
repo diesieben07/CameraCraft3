@@ -22,15 +22,23 @@ public interface Printer {
 	boolean addJob(PrintJob job);
 	
 	/**
+	 * adds all the jobs in the given collection to the queue<br>
+	 * The Collection may be truncated if it is too big for this Printer's queue
+	 * @param jobs
+	 * @return the amount of jobs actually added to the queue
+	 */
+	int addJobs(Collection<? extends PrintJob> jobs);
+	
+	/**
 	 * get this printer's job queue
 	 * the collection is ordered from last Job to first (last element in the Collection is the next job to be executed)
 	 * @return a non-null read-only view of this printer's Job queue
 	 */
-	Collection<PrintJob> getQueue();
+	Collection<QueuedPrintJob> getQueue();
 	
 	/**
 	 * @return the current Job this printer is performing or null if there is currently no job being executed
 	 */
-	PrintJob getCurrentJob();
+	QueuedPrintJob getCurrentJob();
 	
 }

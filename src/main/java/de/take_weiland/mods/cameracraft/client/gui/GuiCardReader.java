@@ -25,7 +25,7 @@ public class GuiCardReader extends AbstractGuiContainer<TileCardReader, Containe
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
-		switch (container.inventory().getAccessState()) {
+		switch (container.getAccessState()) {
 		case TileCardReader.NO_ACC:
 		default:
 			lampTexU = GREEN;

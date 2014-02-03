@@ -1,18 +1,12 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import static de.take_weiland.mods.commons.network.Packets.readEnum;
-import static de.take_weiland.mods.commons.network.Packets.writeEnum;
-
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.commons.network.DataPacket;
-import de.take_weiland.mods.commons.network.PacketType;
+import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.Packets;
+import de.take_weiland.mods.commons.net.WritableDataBuf;
 
-public class PacketClientAction extends DataPacket {
+public class PacketClientAction extends CCPacket {
 
 	private Action action;
 	
@@ -21,35 +15,23 @@ public class PacketClientAction extends DataPacket {
 	}
 	
 	@Override
-	public void execute(EntityPlayer player, Side side) {
-		switch (action) {
-		case TAKE_PHOTO:
-//			CameraCraft.env.executePhoto();
-			break;
-		case NAME_PHOTO:
-			
-			break;
-		}
-	}
-
-	@Override
-	public void read(EntityPlayer player, Side side, DataInputStream in) throws IOException {
-		action = readEnum(in, Action.class);
-	}
-
-	@Override
-	public void write(DataOutputStream out) throws IOException {
-		writeEnum(out, action);
-	}
-	
-	@Override
-	public boolean isValidForSide(Side side) {
+	protected boolean validOn(Side side) {
 		return side.isClient();
 	}
-	
+
 	@Override
-	public PacketType type() {
-		return CCPackets.CLIENT_ACTION;
+	protected void write(WritableDataBuf buffer) {
+		Packets.writeEnum(buffer, action);
+	}
+
+	@Override
+	protected void handle(DataBuf buffer, EntityPlayer player, Side side) {
+		switch (Packets.readEnum(buffer, Action.class)) {
+		case TAKE_PHOTO:
+			break;
+		case NAME_PHOTO:
+			break;
+		}
 	}
 	
 	public static enum Action {

@@ -37,8 +37,7 @@ import de.take_weiland.mods.cameracraft.network.CCPackets;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.config.ConfigInjector;
 import de.take_weiland.mods.commons.config.GetProperty;
-import de.take_weiland.mods.commons.network.PacketTransport;
-import de.take_weiland.mods.commons.network.PacketTransports;
+import de.take_weiland.mods.commons.net.Network;
 import de.take_weiland.mods.commons.util.ItemStacks;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
@@ -62,8 +61,6 @@ public final class CameraCraft {
 	public static Logger logger;
 	
 	public static CameraCraftApi api;
-	
-	public static PacketTransport packetTransport;
 	
 	public static ListeningExecutorService executor;
 	
@@ -95,7 +92,7 @@ public final class CameraCraft {
 		
 		executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(maxThreadCount));
 		
-		packetTransport = PacketTransports.withPacket131(this, CCPackets.class);
+		Network.simplePacketHandler("CameraCraft", CCPackets.class);
 		
 		CCBlock.createBlocks();
 		CCItem.createItems();

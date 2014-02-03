@@ -1,27 +1,9 @@
 package de.take_weiland.mods.cameracraft.api.printer;
 
-import com.google.common.base.Preconditions;
+public interface PrintJob {
 
-public final class PrintJob {
-
-	private final String photoId;
-	private final int amount;
+	String getPhotoId();
 	
-	public PrintJob(String photoId) {
-		this(photoId, 1);
-	}
+	int getAmount();
 	
-	public PrintJob(String photoId, int amount) {
-		this.photoId = Preconditions.checkNotNull(photoId);
-		this.amount = amount;
-	}
-
-	public String getPhotoId() {
-		return photoId;
-	}
-
-	public int getAmount() {
-		return amount;
-	}
-
 }

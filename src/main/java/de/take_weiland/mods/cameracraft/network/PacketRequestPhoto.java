@@ -1,16 +1,12 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.commons.network.DataPacket;
-import de.take_weiland.mods.commons.network.PacketType;
+import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.WritableDataBuf;
 
-public class PacketRequestPhoto extends DataPacket {
+public class PacketRequestPhoto extends CCPacket {
 
 	private int transferId;
 	
@@ -19,28 +15,19 @@ public class PacketRequestPhoto extends DataPacket {
 	}
 	
 	@Override
-	protected void write(DataOutputStream out) throws IOException {
-		out.writeInt(transferId);
+	protected void write(WritableDataBuf buffer) {
+		buffer.putVarInt(transferId);
 	}
 
 	@Override
-	protected void read(EntityPlayer player, Side side, DataInputStream in) throws IOException {
-		transferId = in.readInt();
-	}
-
-	@Override
-	public void execute(EntityPlayer player, Side side) {
+	protected void handle(DataBuf buffer, EntityPlayer player, Side side) {
+		transferId = buffer.getVarInt();
 		CameraCraft.env.onPhotoRequest(transferId);
 	}
 	
 	@Override
-	public boolean isValidForSide(Side side) {
+	protected boolean validOn(Side side) {
 		return side.isClient();
-	}
-	
-	@Override
-	public PacketType type() {
-		return CCPackets.REQUEST_PHOTO;
 	}
 
 }

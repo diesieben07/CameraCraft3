@@ -1,24 +1,22 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.nio.file.Files;
 
+import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.ReportedException;
 
 import com.google.common.io.ByteStreams;
 
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
-import de.take_weiland.mods.commons.network.MultipartDataPacket;
-import de.take_weiland.mods.commons.network.PacketType;
+import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.WritableDataBuf;
 
-public class PacketPhotoData extends MultipartDataPacket {
+public class PacketPhotoData extends CCPacket {
 
 	private int photoId;
 	private File file;
@@ -29,30 +27,27 @@ public class PacketPhotoData extends MultipartDataPacket {
 	}
 
 	@Override
-	protected void write(DataOutputStream out) throws IOException {
-		out.writeInt(photoId);
-		ReadableByteChannel in = Files.newByteChannel(file.toPath());
-		ByteStreams.copy(in, Channels.newChannel(out));
-		in.close();
+	protected void write(WritableDataBuf buffer) {
+		buffer.putVarInt(photoId);
+		try {
+			FileInputStream in = new FileInputStream(file);
+			ByteStreams.copy(in, buffer.asOutputStream());
+			in.close();
+		} catch (IOException e) {
+			CrashReport cr = new CrashReport("Reading CameraCraft Photo File", e);
+			cr.makeCategory("Photo being read").addCrashSection("PhotoId", Integer.valueOf(photoId));
+			throw new ReportedException(cr);
+		}
 	}
 
 	@Override
-	protected void read(EntityPlayer player, Side side, DataInputStream in) throws IOException {
-		CameraCraft.env.handleClientPhotoData(PhotoManager.asString(in.readInt()), in);
+	protected void handle(DataBuf buffer, EntityPlayer player, Side side) {
+		CameraCraft.env.handleClientPhotoData(PhotoManager.asString(buffer.getVarInt()), buffer.asInputStream());
 	}
 	
-
 	@Override
-	public void execute(EntityPlayer player, Side side) { }
-	
-	@Override
-	public boolean isValidForSide(Side side) {
+	protected boolean validOn(Side side) {
 		return side.isClient();
-	}
-
-	@Override
-	public PacketType type() {
-		return CCPackets.PHOTO_DATA;
 	}
 
 }

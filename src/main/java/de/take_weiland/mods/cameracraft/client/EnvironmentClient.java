@@ -69,6 +69,7 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 			@Override
 			public void run() {
 				try {
+					System.out.println("received photo: " + photoId);
 					PhotoDataCache.injectReceivedPhoto(photoId, in);
 				} catch (IOException e) {
 					CrashReport cr = new CrashReport("Receiving CameraCraft photodata", e);

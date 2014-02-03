@@ -18,10 +18,12 @@ import net.minecraft.util.ResourceLocation;
 
 import org.lwjgl.input.Mouse;
 
-import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
+import com.google.common.collect.Lists;
+
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter.ClientNodeInfo;
-import de.take_weiland.mods.cameracraft.network.PacketPrintJob;
+import de.take_weiland.mods.cameracraft.network.PacketPrintJobs;
+import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.client.Guis;
@@ -40,8 +42,6 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	
 	private ScrollPane networkScroller;
 	private ScrollPane photoIdScroller;
-	
-	
 	
 	public GuiPrinter(ContainerPrinter container) {
 		super(container);
@@ -118,9 +118,18 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 			}
 			break;
 		case BUTTON_PRINT:
-			String selectedId = container.getSelectedPhotoId();
-			if (selectedId != null) {
-				new PacketPrintJob(container, new PrintJob(selectedId)).sendToServer();
+			ClientNodeInfo node = container.getSelectedNode();
+			if (node.photoIds != null) {
+				List<SimplePrintJob> jobs = Lists.newArrayList();
+				int len = node.photoIds.length;
+				for (int i = 0; i < len; ++i) {
+					if (node.counts[i] > 0) {
+						jobs.add(new SimplePrintJob(node.photoIds[i], node.counts[i]));
+					}
+				}
+				if (jobs.size() != 0) {
+					new PacketPrintJobs(container, jobs).sendToServer();
+				}
 			}
 		}
 	}

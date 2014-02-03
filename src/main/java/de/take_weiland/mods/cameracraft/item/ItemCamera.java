@@ -40,11 +40,11 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 			CCGuis.CAMERA.open(player);
 		} else {
 			if (Sides.logical(world).isServer()) {
-				final InventoryCamera inv = getInventory(player);
+				final CameraInventory inv = getInventory(player);
 				if (inv.canTakePhoto()) {
 					inv.onTakePhoto();
 					final ListenableFuture<BufferedImage> futureImage = PhotoRequestManager.requestPhoto(player);
-
+					
 					CCSounds.CAMERA_CLICK.playAt(player);
 					futureImage.addListener(new Runnable() {
 

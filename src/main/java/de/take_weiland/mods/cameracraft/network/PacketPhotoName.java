@@ -1,37 +1,29 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
-import de.take_weiland.mods.commons.network.DataPacket;
-import de.take_weiland.mods.commons.network.PacketType;
+import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.WritableDataBuf;
 
-public class PacketPhotoName extends DataPacket {
+public class PacketPhotoName extends CCPacket {
 
 	private String name;
 	
 	public PacketPhotoName(String name) {
 		this.name = name;
 	}
-
-	@Override
-	protected void write(DataOutputStream out) throws IOException {
-		out.writeUTF(name);
-	}
-
-	@Override
-	protected void read(EntityPlayer player, Side side, DataInputStream in) throws IOException {
-		name = in.readUTF();
-	}
 	
 	@Override
-	public void execute(EntityPlayer player, Side side) {
+	protected void write(WritableDataBuf buf) {
+		buf.putString(name);
+	}
+
+	@Override
+	protected void handle(DataBuf buf, EntityPlayer player, Side side) {
+		String name = buf.getString();
 		ItemStack current = player.getCurrentEquippedItem();
 		if (current != null) {
 			Item item = current.getItem();
@@ -42,13 +34,8 @@ public class PacketPhotoName extends DataPacket {
 	}
 
 	@Override
-	public boolean isValidForSide(Side side) {
+	protected boolean validOn(Side side) {
 		return side.isServer();
 	}
 
-	@Override
-	public PacketType type() {
-		return CCPackets.PHOTO_NAME;
-	}
-	
 }
