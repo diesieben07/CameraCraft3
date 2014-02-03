@@ -126,7 +126,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 			break;
 		case BUTTON_PRINT:
 			ClientNodeInfo node = container.getSelectedNode();
-			if (node.photoIds != null) {
+			if (node != null && node.photoIds != null) {
 				List<SimplePrintJob> jobs = Lists.newArrayList();
 				int len = node.photoIds.length;
 				for (int i = 0; i < len; ++i) {
