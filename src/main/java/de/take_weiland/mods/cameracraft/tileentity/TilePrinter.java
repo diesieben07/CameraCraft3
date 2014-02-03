@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Queue;
 
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -13,14 +14,17 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.packet.Packet;
 import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.util.ChatMessageComponent;
+import net.minecraftforge.common.ForgeDirection;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterators;
 import com.google.common.collect.Queues;
+import com.google.common.primitives.Ints;
 
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
+import de.take_weiland.mods.cameracraft.api.printer.InkItem;
 import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
 import de.take_weiland.mods.cameracraft.api.printer.Printer;
 import de.take_weiland.mods.cameracraft.api.printer.QueuedPrintJob;
@@ -36,7 +40,7 @@ import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.NBT;
 import de.take_weiland.mods.commons.util.UnsignedShorts;
 
-public class TilePrinter extends TileEntityInventory<TilePrinter> implements NetworkTile, Printer {
+public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISidedInventory, NetworkTile, Printer {
 
 	private static final int MAX_QUEUE_SIZE = 100;
 	public static final int SLOT_YELLOW = 0;
@@ -58,19 +62,25 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 		super.updateEntity();
 		node.update();
 		
-		if (jobTimeout == 0) {
-			if (currentJob != null) {
-				executeJob(currentJob);
-				if (currentJob.isFinished()) {
-					currentJob = null;
+		if (canPrint()) { // TODO: maybe don't check every tick?
+			if (jobTimeout == 0) {
+				if (currentJob != null) {
+					executeJob(currentJob);
+					if (currentJob.isFinished()) {
+						currentJob = null;
+					}
+				}
+				if (currentJob == null) {
+					currentJob = jobs.poll();
+				}
+				if (currentJob != null) {
+					jobTimeout = JOB_TIME;
 				}
 			}
-			if (currentJob == null) {
-				currentJob = jobs.poll();
+			if (jobTimeout > 0) {
+				jobTimeout--;
 			}
-			jobTimeout = JOB_TIME;
 		}
-		jobTimeout--;
 	}
 	
 	private void executeJob(SimplePrintJob.Queued job) {
@@ -81,6 +91,21 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 		ItemStack photo = ItemStacks.of(PhotoType.PHOTO);
 		CCItem.photo.setPhotoId(photo, job.getPhotoId());
 		
+		useSupplies();
+		tryStore(photo);
+	}
+
+	private void useSupplies() {
+		for (int slot : inkSlots) {
+			ItemStack stack = getStackInSlot(slot);
+			InkItem ink = (InkItem) stack.getItem();
+			ink.setAmount(stack, ink.getAmount(stack) - 10);
+		}
+		decrStackSize(SLOT_PAPER, 1);
+	}
+
+	private void tryStore(ItemStack photo) {
+		// TODO
 		worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord, yCoord + 1, zCoord, photo));
 	}
 
@@ -88,13 +113,62 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 		return 5;
 	}
 
+	public static final int[] INK_COLOR_TO_SLOT = new int[4];
+	
+	static {
+		INK_COLOR_TO_SLOT[InkItem.Color.BLACK.ordinal()] = SLOT_BLACK;
+		INK_COLOR_TO_SLOT[InkItem.Color.CYAN.ordinal()] = SLOT_CYAN;
+		INK_COLOR_TO_SLOT[InkItem.Color.MAGENTA.ordinal()] = SLOT_MAGENTA;
+		INK_COLOR_TO_SLOT[InkItem.Color.YELLOW.ordinal()] = SLOT_YELLOW;
+	}
+	
 	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack item) {
-		if (ItemStacks.is(item, CCItem.miscItems)) {
-			return Multitypes.getType(CCItem.miscItems, item).ordinal() - 1 == slot;
-		} else {
-			return slot == SLOT_PAPER && ItemStacks.is(item, Item.paper);
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
+		Item item;
+		if (slot == SLOT_PAPER) {
+			ItemStacks.is(stack, Item.paper);
+		} else if ((item = stack.getItem()) instanceof InkItem) {
+			return INK_COLOR_TO_SLOT[((InkItem) item).getColor(stack).ordinal()] == slot;
 		}
+		return false;
+	}
+	
+	private static final int[] extractSlots = new int[] { }; // TODO
+	private static final int[] paperSlot = new int[] { SLOT_PAPER };
+	private static final int[] inkSlots = new int[] { SLOT_YELLOW, SLOT_CYAN, SLOT_MAGENTA, SLOT_BLACK };
+
+	@Override
+	public int[] getAccessibleSlotsFromSide(int side) {
+		return accessibleSlots0(ForgeDirection.VALID_DIRECTIONS[side]);
+	}
+	
+	private int[] accessibleSlots0(ForgeDirection side) {
+		switch (side) {
+		case DOWN:
+			return extractSlots;
+		case UP:
+			return paperSlot;
+		default:
+			return inkSlots;
+		}
+	}
+	
+	private boolean isStackValidOn(ItemStack stack, ForgeDirection dir, int slot) {
+		return Ints.contains(accessibleSlots0(dir), slot) && isItemValidForSlot(slot, stack);
+	}
+
+	@Override
+	public boolean canInsertItem(int slot, ItemStack stack, int side) {
+		ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[side];
+		return dir != ForgeDirection.DOWN // can't insert from below
+				&& isStackValidOn(stack, dir, slot); // TODO: this should ALWAYS be true, based on when vanilla calls this. optimize?
+	}
+
+	@Override
+	public boolean canExtractItem(int slot, ItemStack stack, int side) {
+		ForgeDirection dir = ForgeDirection.VALID_DIRECTIONS[side];
+		return dir == ForgeDirection.DOWN
+				&& Ints.contains(accessibleSlots0(dir), slot); // see above, should always be true
 	}
 
 	@Override
@@ -177,6 +251,15 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements Net
 	
 	@Override
 	public boolean canPrint() {
+		if (getStackInSlot(SLOT_PAPER) == null) {
+			return false;
+		}
+		for (int slot : inkSlots) {
+			ItemStack stack;
+			if ((stack = getStackInSlot(slot)) == null || !isItemValidForSlot(slot, stack)) {
+				return false;
+			}
+		}
 		return true;
 	}
 

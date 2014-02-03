@@ -12,12 +12,15 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.printer.InkItem;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.commons.util.ItemStacks;
+import de.take_weiland.mods.commons.util.JavaUtils;
 import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
+import de.take_weiland.mods.commons.util.UnsignedShorts;
 
-public class CCItemMisc extends CCItemMultitype<MiscItemType> {
+public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem {
 
 	public CCItemMisc(int defaultId) {
 		super("misc", defaultId);
@@ -25,9 +28,24 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> {
 
 	@Override
 	public MiscItemType[] getTypes() {
-		return MiscItemType.values();
+		return JavaUtils.getEnumConstantsShared(MiscItemType.class);
 	}
 	
+	@Override
+	public int getDisplayDamage(ItemStack stack) {
+		return isInk(stack) ? getAmount0(stack) : 0;
+	}
+
+	@Override
+	public boolean isDamaged(ItemStack stack) {
+		return isInk(stack);
+	}
+
+	@Override
+	public int getMaxDamage(ItemStack stack) {
+		return isInk(stack) ? 100 : 0;
+	}
+
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if (Multitypes.getType(this, stack) == MiscItemType.ALKALINE_BUCKET) {
@@ -98,7 +116,8 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> {
 	
 	@Override
 	public int getItemStackLimit(ItemStack stack) {
-		return Multitypes.getType(this, stack) == MiscItemType.ALKALINE_BUCKET ? 1 : 64;
+		MiscItemType type = Multitypes.getType(this, stack);
+		return type == MiscItemType.ALKALINE_BUCKET || type.isInk() ? 1 : 64;
 	}
 
 	@Override
@@ -112,7 +131,7 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> {
 	}
 	
 	@Override
-	public boolean onEntityItemUpdate(EntityItem entity) { // can't do this in our custom entity class, because custom item entities are don't work on the client
+	public boolean onEntityItemUpdate(EntityItem entity) { // can't do this in our custom entity class, because custom item entities don't work on the client
 		if (Sides.logical(entity).isClient()) {
 			int x = MathHelper.floor_double(entity.posX);
 			int y = MathHelper.floor_double(entity.posY);
@@ -164,6 +183,37 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> {
 			}
 		}
 		
+	}
+
+	// InkItem
+	@Override
+	public boolean isInk(ItemStack stack) {
+		return Multitypes.getType(this, stack).isInk();
+	}
+
+	@Override
+	public int getAmount(ItemStack stack) {
+		if (isInk(stack)) {
+			return 100 - getAmount0(stack);
+		} else {
+			return -1;
+		}
+	}
+
+	private int getAmount0(ItemStack stack) {
+		return UnsignedShorts.toInt(ItemStacks.getNbt(stack).getShort("cameracraft_ink"));
+	}
+
+	@Override
+	public void setAmount(ItemStack stack, int newAmount) {
+		if (isInk(stack)) {
+			ItemStacks.getNbt(stack).setShort("cameracraft_ink", UnsignedShorts.checkedCast(100 - newAmount));
+		}
+	}
+
+	@Override
+	public InkItem.Color getColor(ItemStack stack) {
+		return Multitypes.getType(this, stack).getInkColor();
 	}
 
 }

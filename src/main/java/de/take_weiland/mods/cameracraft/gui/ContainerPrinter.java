@@ -23,7 +23,7 @@ import de.take_weiland.mods.cameracraft.api.cable.NetworkEvent;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkListener;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
-import de.take_weiland.mods.cameracraft.item.CCItem;
+import de.take_weiland.mods.cameracraft.api.printer.InkItem;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.templates.AbstractContainer;
@@ -31,7 +31,6 @@ import de.take_weiland.mods.commons.templates.AdvancedSlot;
 import de.take_weiland.mods.commons.util.Containers;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.JavaUtils;
-import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 
 public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> implements NetworkListener {
@@ -59,11 +58,12 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	}
 
 	@Override
-	protected int getSlotFor(ItemStack item) {
-		if (ItemStacks.is(item, CCItem.miscItems)) {
-			return Multitypes.getType(CCItem.miscItems, item).ordinal() - 1;
-		} else if (ItemStacks.is(item, Item.paper)) {
+	protected int getSlotFor(ItemStack stack) {
+		Item item;
+		if (ItemStacks.is(stack, Item.paper)) {
 			return 4;
+		} else if ((item = stack.getItem()) instanceof InkItem) {
+			return TilePrinter.INK_COLOR_TO_SLOT[((InkItem)item).getColor(stack).ordinal()];
 		} else {
 			return -1;
 		}
