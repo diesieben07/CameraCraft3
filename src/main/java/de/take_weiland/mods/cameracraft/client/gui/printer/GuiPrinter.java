@@ -27,6 +27,7 @@ import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.client.Guis;
+import de.take_weiland.mods.commons.client.Rendering;
 import de.take_weiland.mods.commons.client.ScrollPane;
 
 public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrinter> {
@@ -40,7 +41,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	int scrollerOffsetX = isScrollerOpen ? 0 : getScrollerHiddenOffset();
 	private int scrollerMotion = 0;
 	
-	private ScrollPane networkScroller;
+	private NetworkListScroller networkScroller;
 	private ScrollPane photoIdScroller;
 	
 	public GuiPrinter(ContainerPrinter container) {
@@ -74,8 +75,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		glDisable(GL_LIGHTING);
 		
-		List<ClientNodeInfo> nodes = container.getNodes();
-		networkScroller.setContentHeight(nodes == null ? 0 : nodes.size() * 10);
+		networkScroller.updateHeight();
 		
 		if (scrollerOffsetX != 0) {
 			if (scrollerOffsetX != getScrollerHiddenOffset()) {
@@ -93,6 +93,13 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		} else {
 			networkScroller.setClip(true);
 			networkScroller.draw(mouseX, mouseY);
+			
+			if (networkScroller.overNode >= 0) {
+				String overlay = container.getNodes().get(networkScroller.overNode).displayName;
+				int overlayWidth = mc.fontRenderer.getStringWidth(overlay);
+				Rendering.drawColoredRect(mouseX, mouseY + 10, overlayWidth + 2, mc.fontRenderer.FONT_HEIGHT + 2, 0x55000000);
+				mc.fontRenderer.drawString(overlay, mouseX + 1, mouseY + 11, 0xffffff);
+			}
 		}
 		
 		if (shouldDrawIds()) {
