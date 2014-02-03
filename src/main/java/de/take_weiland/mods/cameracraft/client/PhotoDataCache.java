@@ -18,7 +18,6 @@ import com.google.common.cache.LoadingCache;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
 
-import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.network.PacketClientRequestPhoto;
 import de.take_weiland.mods.commons.client.Rendering;
 
@@ -29,7 +28,7 @@ public class PhotoDataCache {
 	
 	static {
 		cache = CacheBuilder.newBuilder()
-				.concurrencyLevel(CameraCraft.maxThreadCount + 1)
+				.concurrencyLevel(2) // everything higher is unlikely to ever happen
 				.expireAfterAccess(3, TimeUnit.MINUTES) // TODO figure out the right value here
 				.removalListener(new PhotoTextureUnloader())
 				.build(new PhotoDataLoader());
@@ -54,8 +53,7 @@ public class PhotoDataCache {
 	
 	public static class CacheElement {
 		
-		// TODO something else!
-		private static final ResourceLocation DUMMY = new ResourceLocation("textures/painting/paintings_kristoffer_zetterstrand.png");
+		private static final ResourceLocation DUMMY = new ResourceLocation("cameracraft", "textures/gui/loadingPhoto.png");
 		
 		BufferedImage img;
 		ResourceLocation loc;
