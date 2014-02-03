@@ -48,9 +48,7 @@ public class PhotoDataCache {
 	static void injectReceivedPhoto(String photoId, InputStream in) throws IOException {
 		CacheElement element = cache.getIfPresent(photoId);
 		if (element != null) {
-			System.out.println("injecting photo " + photoId);
 			element.img = ImageIO.read(in);
-			System.out.println("injected: " + element.img);
 		}
 	}
 	

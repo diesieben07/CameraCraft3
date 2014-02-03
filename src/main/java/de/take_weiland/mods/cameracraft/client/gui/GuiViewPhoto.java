@@ -56,6 +56,7 @@ public class GuiViewPhoto extends GuiScreen {
 		GuiTextField oldTB = nameTextField;
 		int textFieldWidth = photoDim - 20;
 		nameTextField = new GuiTextField(fontRenderer, (width - textFieldWidth) / 2, height - 30, textFieldWidth, 20);
+		nameTextField.setCanLoseFocus(false);
 		if (oldTB != null) {
 			Guis.copyState(oldTB, nameTextField);
 		}
@@ -89,13 +90,18 @@ public class GuiViewPhoto extends GuiScreen {
 		return Math.min(height, width) - 4;
 	}
 
+	private boolean btnBlock;
+	
 	@Override
 	protected void actionPerformed(GuiButton button) {
 		super.actionPerformed(button);
 		switch (button.id) {
 		case BUTTON_DONE:
 		case BUTTON_RENAME:
-			toggleRename();
+			if (!btnBlock) {
+				toggleRename();
+				btnBlock = true; // need to block the buttons because they are right on top of each other so the other one would trigger again immediately
+			}
 			break;
 		}
 	}
@@ -125,6 +131,7 @@ public class GuiViewPhoto extends GuiScreen {
 	public void updateScreen() {
 		super.updateScreen();
 		nameTextField.updateCursorCounter();
+		btnBlock = false;
 	}
 
 	@Override
