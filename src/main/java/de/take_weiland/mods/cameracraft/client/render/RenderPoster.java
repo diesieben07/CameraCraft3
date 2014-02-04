@@ -15,6 +15,8 @@ import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 
 public class RenderPoster extends Render {
 
+	private static final ResourceLocation vanillaPainting = new ResourceLocation("textures/painting/paintings_kristoffer_zetterstrand.png");
+	
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float posYaw, float partialTickTime) {
 		EntityPoster poster = (EntityPoster) entity;
@@ -34,13 +36,11 @@ public class RenderPoster extends Render {
 	}
 
 	private void drawPoster(EntityPoster poster) {
-		int par2 = 256; // sizex
-		int par3 = 256; // sizeY
-		int par4 = 0; // offsetX
-		int par5 = 0; // offsetY
+		int sizeX = 256; // sizex
+		int sizeY = 256; // sizeY
 
-		float f = (float)(-par2) / 2.0F;
-		float f1 = (float)(-par3) / 2.0F;
+		float f = (float)(-sizeX) / 2.0F;
+		float f1 = (float)(-sizeY) / 2.0F;
 		float f2 = 0.5F;
 		float f3 = 0.75F;
 		float f4 = 0.8125F;
@@ -55,8 +55,8 @@ public class RenderPoster extends Render {
 		float f13 = 0.0F;
 		float f14 = 0.0625F;
 
-		for (int tileX = 0; tileX < par2 / 64; ++tileX) {
-			for (int tileY = 0; tileY < par3 / 64; ++tileY) {
+		for (int tileX = 0; tileX < sizeX / 64; ++tileX) {
+			for (int tileY = 0; tileY < sizeY / 64; ++tileY) {
 				float xEnd = f + (float)((tileX + 1) * 64);
 				float xStart = f + (float)(tileX * 64);
 				float yEnd = f1 + (float)((tileY + 1) * 64);
@@ -64,13 +64,13 @@ public class RenderPoster extends Render {
 
 				setupLightmap(poster, (xEnd + xStart) / 2.0F, (yEnd + yStart) / 2.0F);
 
-				float uStart = (float)(par4 + par2 - tileX * 64) / 256.0F;
-				float uEnd = (float)(par4 + par2 - (tileX + 1) * 64) / 256.0F;
-				float vStart = (float)(par5 + par3 - tileY * 64) / 256.0F;
-				float vEnd = (float)(par5 + par3 - (tileY + 1) * 64) / 256.0F;
+				float uStart = (float)(0 + sizeX - tileX * 64) / 256.0F;
+				float uEnd = (float)(0 + sizeX - (tileX + 1) * 64) / 256.0F;
+				float vStart = (float)(0 + sizeY - tileY * 64) / 256.0F;
+				float vEnd = (float)(0 + sizeY - (tileY + 1) * 64) / 256.0F;
 				Tessellator t = Tessellator.instance;
 				
-				bindTexture(new ResourceLocation("textures/painting/paintings_kristoffer_zetterstrand.png"));
+				bindTexture(vanillaPainting);
 				
 				t.startDrawingQuads();
 				

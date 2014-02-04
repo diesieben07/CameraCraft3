@@ -4,7 +4,7 @@ import net.minecraft.item.ItemStack;
 
 public interface BatteryHandler {
 
-	boolean handles(ItemStack battery);
+	boolean isBattery(ItemStack stack);
 	
 	int getCharge(ItemStack stack);
 	
@@ -13,9 +13,10 @@ public interface BatteryHandler {
 	int getCapacity(ItemStack stack);
 	
 	/**
-	 * tries to charge the Battery with <code>amount</code> units of energy
+	 * tries to charge the Battery with <code>amount</code> units of energy<br>
+	 * does nothing if this battery is not rechargable
 	 * @param stack the battery
-	 * @param amount the 
+	 * @param amount the amount actually charged
 	 * @return
 	 */
 	int charge(ItemStack stack, int amount);
@@ -27,7 +28,5 @@ public interface BatteryHandler {
 	 * @return the actual amount drained
 	 */
 	int drain(ItemStack stack, int amount);
-	
-	int setCharge(ItemStack stack, int newCharge);
 	
 }

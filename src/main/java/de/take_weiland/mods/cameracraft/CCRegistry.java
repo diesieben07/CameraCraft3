@@ -19,7 +19,6 @@ import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.CableType;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.cameracraft.blocks.OreType;
-import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.MiscItemType;
 import de.take_weiland.mods.cameracraft.item.PhotoType;
 import de.take_weiland.mods.cameracraft.tileentity.TileEntityDataCable;
@@ -90,7 +89,6 @@ public final class CCRegistry {
 		OreDictionary.registerOre("oreGold", Block.whiteStone);
 		OreDictionary.registerOre("oreGold", Block.waterlily);
 		
-		CameraCraft.api.registerBatteryHandler(CCItem.battery);
 		OreDictionary.registerOre("ingotTin", ItemStacks.of(MiscItemType.TIN_INGOT));
 		FluidContainerRegistry.registerFluidContainer(new FluidStack(CCBlock.alkalineFluid, BUCKET_VOLUME), ItemStacks.of(MiscItemType.ALKALINE_BUCKET), ItemStacks.of(Item.bucketEmpty));
 	}

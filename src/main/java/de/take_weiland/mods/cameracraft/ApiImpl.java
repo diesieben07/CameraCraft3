@@ -1,13 +1,14 @@
 package de.take_weiland.mods.cameracraft;
 
-import java.util.List;
+import java.util.Map;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType;
 
-import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 import com.google.common.util.concurrent.ListenableFuture;
 
 import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
@@ -20,7 +21,7 @@ import de.take_weiland.mods.commons.util.Multitypes;
 
 public final class ApiImpl implements CameraCraftApi {
 
-	private final List<BatteryHandler> batteryHandlers = Lists.newArrayList();
+	private final Map<Item, BatteryHandler> batteryHandlers = Maps.newHashMap();
 	
 	@Override
 	public CableType getCableType(IBlockAccess world, int x, int y, int z) {
@@ -55,32 +56,31 @@ public final class ApiImpl implements CameraCraftApi {
 
 	@Override
 	public BatteryHandler findBatteryHandler(ItemStack battery) {
-		for (BatteryHandler h : batteryHandlers) {
-			if (h.handles(battery)) {
-				return h;
-			}
+		Item item = battery.getItem();
+		if (item instanceof BatteryHandler) {
+			return (BatteryHandler) item;
 		}
-		return NullBatteryHandler.INSTANCE;
+		BatteryHandler handler = batteryHandlers.get(item);
+		if (handler != null) {
+			return handler;
+		} else {
+			return NullBatteryHandler.INSTANCE;
+		}
 	}
 	
 	@Override
-	public boolean isBattery(ItemStack stack) {
-		return findBatteryHandler(stack) != NullBatteryHandler.INSTANCE;
-	}
-
-	@Override
-	public void registerBatteryHandler(BatteryHandler handler) {
-		batteryHandlers.add(handler);
+	public void registerBatteryHandler(Item item, BatteryHandler handler) {
+		batteryHandlers.put(item, handler);
 	}
 
 	private static enum NullBatteryHandler implements BatteryHandler {
 		INSTANCE;
 
 		@Override
-		public boolean handles(ItemStack battery) {
-			return true;
+		public boolean isBattery(ItemStack stack) {
+			return false;
 		}
-
+		
 		@Override
 		public int getCharge(ItemStack stack) {
 			return 0;
@@ -106,11 +106,6 @@ public final class ApiImpl implements CameraCraftApi {
 			return 0;
 		}
 
-		@Override
-		public int setCharge(ItemStack stack, int newCharge) {
-			return 0;
-		}
-		
 	}
 
 }

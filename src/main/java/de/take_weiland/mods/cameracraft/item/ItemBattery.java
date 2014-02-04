@@ -89,11 +89,12 @@ public class ItemBattery extends CCItem implements BatteryHandler {
 	}
 
 	// BatteryHandler
+	
 	@Override
-	public boolean handles(ItemStack battery) {
-		return ItemStacks.is(battery, this);
+	public boolean isBattery(ItemStack stack) {
+		return true;
 	}
-
+	
 	@Override
 	public int getCharge(ItemStack stack) {
 		return ItemStacks.getNbt(stack).getInteger(CHARGE_NBT_KEY);
@@ -125,8 +126,7 @@ public class ItemBattery extends CCItem implements BatteryHandler {
 		return amount;
 	}
 
-	@Override
-	public int setCharge(ItemStack stack, int newCharge) {
+	private int setCharge(ItemStack stack, int newCharge) {
 		newCharge = MathHelper.clamp_int(newCharge, 0, CAPACITY);
 		ItemStacks.getNbt(stack).setInteger(CHARGE_NBT_KEY, newCharge);
 		return newCharge;

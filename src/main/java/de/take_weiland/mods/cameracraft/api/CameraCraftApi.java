@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.api;
 
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
@@ -26,8 +27,6 @@ public interface CameraCraftApi {
 	
 	BatteryHandler findBatteryHandler(ItemStack stack);
 	
-	void registerBatteryHandler(BatteryHandler handler);
-	
-	boolean isBattery(ItemStack stack);
+	void registerBatteryHandler(Item battery, BatteryHandler handler);
 	
 }

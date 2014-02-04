@@ -83,7 +83,7 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 			return InventoryCamera.LENS_SLOT;
 		} else if (stack.getItem() instanceof PhotoStorageItem) {
 			return inventory.storageSlot();
-		} else if (CameraCraft.api.isBattery(stack)) {
+		} else if (CameraCraft.api.findBatteryHandler(stack).isBattery(stack)) {
 			return inventory.batterySlot();
 		}
 		return -1;

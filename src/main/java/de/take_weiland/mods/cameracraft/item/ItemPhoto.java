@@ -62,18 +62,24 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 		if (Multitypes.getType(this, stack) != PhotoType.POSTER || !stack.hasTagCompound() || side < 2 || !player.canPlayerEdit(x, y, z, side, stack)) {
 			return false;
 		}
-		if (Sides.logical(world).isServer()) {
-			System.out.println("yes");
-			EntityPoster poster = new EntityPoster(world, x, y, z, Direction.facingToDirection[side], getPhotoId(stack));
-			world.spawnEntityInWorld(poster);
+		EntityPoster poster = new EntityPoster(world, x, y, z, Direction.facingToDirection[side], stack);
+		if (poster.onValidSurface()) {
+			if (Sides.logical(world).isServer()) {
+				world.spawnEntityInWorld(poster);
+			}
+			player.destroyCurrentEquippedItem();
+			return true;
+		} else {
+			return false;
 		}
-		return true;
 	}
 	
-	String getPhotoId(final ItemStack stack) {
-		return PhotoManager.asString(stack.getTagCompound().getInteger(NBT_KEY));
+	@Override
+	public String getPhotoId(final ItemStack stack) {
+		return PhotoManager.asString(ItemStacks.getNbt(stack).getInteger(NBT_KEY));
 	}
 	
+	@Override
 	public void setPhotoId(ItemStack stack, String photoId) {
 		ItemStacks.getNbt(stack).setInteger(NBT_KEY, PhotoManager.asInt(photoId));
 	}
