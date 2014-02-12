@@ -80,7 +80,7 @@ public class NetworkListScroller extends ScrollPane {
 			
 			List<ClientNodeInfo> nodes = gui.getContainer().getNodes();
 			
-			if (JavaUtils.listIndexExists(nodes, selection)) {
+			if (JavaUtils.indexExists(nodes, selection)) {
 				mc.sndManager.playSoundFX("random.click", 1, 1);
 				gui.sliderToggleDelay = 10;
 				gui.getContainer().selectNode(selection);

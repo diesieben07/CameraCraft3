@@ -41,11 +41,13 @@ public enum CCGuis {
 	public static class Handler implements IGuiHandler {
 		
 		@Override
-		public Container getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-			CCGuis gui = JavaUtils.safeArrayAccess(VALUES, id);
-			if (gui == null) {
-				return null;
-			}
+		public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+			CCGuis gui = JavaUtils.byOrdinal(CCGuis.class, id);
+
+			return gui == null ? null : getContainer0(gui, player, world, x, y, z);
+		}
+
+		private Container getContainer0(CCGuis gui, EntityPlayer player, World world, int x, int y, int z) {
 			switch (gui) {
 			case PHOTO_PROCESSOR:
 				return new ContainerPhotoProcessor(world, x, y, z, player);
@@ -66,15 +68,12 @@ public enum CCGuis {
 
 		@Override
 		public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-			Container c = getServerGuiElement(id, player, world, x, y, z);
-			if (c == null) {
-				return null;
-			}
-			CCGuis gui = JavaUtils.safeArrayAccess(VALUES, id);
+			CCGuis gui = JavaUtils.byOrdinal(CCGuis.class, id);
 			if (gui == null) {
 				return null;
 			}
-			
+			Container c = getContainer0(gui, player, world, x, y, z);
+
 			switch (gui) {
 			case PHOTO_PROCESSOR:
 				return new GuiPhotoProcessor((ContainerPhotoProcessor) c);

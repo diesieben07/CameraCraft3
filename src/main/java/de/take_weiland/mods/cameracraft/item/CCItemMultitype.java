@@ -45,7 +45,7 @@ public abstract class CCItemMultitype<T extends ItemMeta> extends CCItem impleme
 
 	@Override
 	public Icon getIconFromDamage(int meta) {
-		return JavaUtils.safeArrayAccess(icons, meta);
+		return JavaUtils.get(icons, meta);
 	}
 
 	@Override

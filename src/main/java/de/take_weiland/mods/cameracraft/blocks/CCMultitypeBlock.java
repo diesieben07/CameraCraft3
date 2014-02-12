@@ -52,7 +52,7 @@ public abstract class CCMultitypeBlock<TYPE extends BlockMeta> extends CCBlock i
 	@Override
 	@SideOnly(Side.CLIENT)
 	public Icon getIcon(int side, int meta) {
-		return JavaUtils.safeArrayAccess(icons, meta);
+		return JavaUtils.get(icons, meta);
 	}
 
 	@Override

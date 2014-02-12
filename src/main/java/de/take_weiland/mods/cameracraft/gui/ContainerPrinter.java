@@ -81,7 +81,7 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 	}
 	
 	public final ClientNodeInfo getSelectedNode() {
-		return JavaUtils.safeListAccess(nodes, selectedNode);
+		return JavaUtils.get(nodes, selectedNode);
 	}
 	
 	private final Predicate<NetworkNode> nodeFilter = new Predicate<NetworkNode>() {

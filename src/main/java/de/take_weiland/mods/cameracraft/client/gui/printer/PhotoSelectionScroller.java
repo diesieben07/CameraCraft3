@@ -19,7 +19,7 @@ public class PhotoSelectionScroller extends ScrollPane {
 	@Override
 	protected void drawImpl() {
 		ContainerPrinter container = gui.getContainer();
-		ClientNodeInfo selected = JavaUtils.safeListAccess(container.getNodes(), container.getSelectedNodeIdx());
+		ClientNodeInfo selected = JavaUtils.get(container.getNodes(), container.getSelectedNodeIdx());
 		if (selected != null) {
 			String[] selectedIds = selected.photoIds;
 			if (selectedIds.length != 0) {
@@ -42,7 +42,7 @@ public class PhotoSelectionScroller extends ScrollPane {
 			
 			ClientNodeInfo node = gui.getContainer().getSelectedNode();
 			
-			if (node != null && JavaUtils.arrayIndexExists(node.photoIds, selectedIdx)) {
+			if (node != null && JavaUtils.indexExists(node.photoIds, selectedIdx)) {
 				mc.sndManager.playSoundFX("random.click", 1, 1);
 				node.counts[selectedIdx] += btn == 0 ? 1 : (btn == 1 && node.counts[selectedIdx] > 0) ? -1 : 0;
 			}

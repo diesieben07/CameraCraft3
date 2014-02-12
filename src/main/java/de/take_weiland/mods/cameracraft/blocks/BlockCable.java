@@ -103,7 +103,7 @@ public class BlockCable extends CCMultitypeBlock<CableType> implements CableConn
 	}
 	
 	private Icon getBareIcon(int meta) {
-		return JavaUtils.safeArrayAccess(bareIcons, meta);
+		return JavaUtils.get(bareIcons, meta);
 	}
 	
 	public static boolean connectsTo(IBlockAccess world, int x, int y, int z, ForgeDirection dir) {
