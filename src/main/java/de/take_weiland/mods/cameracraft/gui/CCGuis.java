@@ -1,5 +1,8 @@
 package de.take_weiland.mods.cameracraft.gui;
 
+import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.blocks.MachineType;
+import de.take_weiland.mods.commons.util.Multitypes;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
@@ -21,10 +24,9 @@ public enum CCGuis {
 	CAMERA,
 	CARD_READER,
 	PRINTER,
+	PRINTER_ADVANCED,
 	PHOTO,
 	SCANNER;
-	
-	static final CCGuis[] VALUES = values(); // don't create a new array each time we switch
 	
 	public void open(EntityPlayer player) {
 		open(player, 0, 0, 0);
@@ -58,7 +60,9 @@ public enum CCGuis {
 			case CARD_READER:
 				return new ContainerCardReader(world, x, y, z, player);
 			case PRINTER:
-				return new ContainerPrinter(world, x, y, z, player);
+				return new ContainerPrinter(world, x, y, z, player, false);
+			case PRINTER_ADVANCED:
+				return new ContainerPrinter(world, x, y, z, player, true);
 			case SCANNER:
 				return new ContainerScanner(world, x, y, z, player);
 			default:
@@ -84,6 +88,7 @@ public enum CCGuis {
 			case CARD_READER:
 				return new GuiCardReader((ContainerCardReader) c);
 			case PRINTER:
+			case PRINTER_ADVANCED:
 				return new GuiPrinter((ContainerPrinter) c);
 			case SCANNER:
 				return new GuiScanner((ContainerScanner) c);

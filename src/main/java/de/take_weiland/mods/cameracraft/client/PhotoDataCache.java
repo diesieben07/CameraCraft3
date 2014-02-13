@@ -43,6 +43,10 @@ public class PhotoDataCache {
 	public static void bindTexture(String photoId) {
 		cache.getUnchecked(photoId).bindTexture();
 	}
+
+	public static CacheElement get(String photoId) {
+		return cache.getUnchecked(photoId);
+	}
 	
 	static void injectReceivedPhoto(String photoId, InputStream in) throws IOException {
 		CacheElement element = cache.getIfPresent(photoId);
@@ -59,7 +63,7 @@ public class PhotoDataCache {
 		ResourceLocation loc;
 		DynamicTexture tex;
 		
-		void bindTexture() {
+		public void bindTexture() {
 			TextureManager engine = mc.renderEngine;
 			if (loc == null) {
 				if (img == null) {
@@ -71,6 +75,10 @@ public class PhotoDataCache {
 				}
 			}
 			engine.bindTexture(loc);
+		}
+
+		public boolean isLoaded() {
+			return img != null;
 		}
 	}
 	

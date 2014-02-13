@@ -40,6 +40,10 @@ public class TileCardReader extends TileEntityInventory<TileCardReader> implemen
 		return access;
 	}
 
+	public void setAccessState(int accessState) {
+		this.access = accessState;
+	}
+
 	@Override
 	public void updateEntity() {
 		node.update();

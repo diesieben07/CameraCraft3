@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Queue;
 
+import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
@@ -173,7 +174,7 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 
 	@Override
 	protected String getDefaultName() {
-		return Multitypes.fullName(MachineType.PRINTER);
+		return Multitypes.fullName(Multitypes.getType(CCBlock.machines, getBlockMetadata()));
 	}
 	
 	@Override

@@ -20,6 +20,7 @@ public enum MachineType implements BlockMeta {
 	ITEM_MUTATOR("oreDictionary", TileItemMutator.class, CCGuis.ORE_DICTIONARY),
 	CARD_READER("cardReader", TileCardReader.class, CCGuis.CARD_READER),
 	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER),
+	PRINTER_ADVANCED("printerAdvanced", TilePrinter.class, CCGuis.PRINTER_ADVANCED),
 	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER);
 
 	private final String name;

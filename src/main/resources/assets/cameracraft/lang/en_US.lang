@@ -10,6 +10,7 @@ tile.CameraCraft.cable.data.name=Data Cable
 tile.CameraCraft.machines.processor.name=Photo Processor
 tile.CameraCraft.machines.cardReader.name=Card Reader
 tile.CameraCraft.machines.printer.name=Printer
+tile.CameraCraft.machines.printerAdvanced.name=Advanced Printer
 tile.CameraCraft.machines.scanner.name=Scanner
 
 item.CameraCraft.camera.film.name=Film Camera

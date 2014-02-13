@@ -13,9 +13,6 @@ import de.take_weiland.mods.commons.util.ItemStacks;
 @Synced
 public class ContainerCardReader extends AbstractContainer<TileCardReader> {
 
-	@de.take_weiland.mods.commons.sync.Synced
-	private byte accessState;
-	
 	public ContainerCardReader(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player);
 	}
@@ -30,14 +27,14 @@ public class ContainerCardReader extends AbstractContainer<TileCardReader> {
 		addSlotToContainer(new AdvancedSlot(inventory, 0, 80, 35));
 	}
 	
-	@Override
-	public void detectAndSendChanges() {
-		super.detectAndSendChanges();
-		accessState = (byte) inventory.getAccessState();
+	@de.take_weiland.mods.commons.sync.Synced(setter = "accessState")
+	public int getAccessState() {
+		return inventory.getAccessState();
 	}
 
-	public int getAccessState() {
-		return accessState;
+	@de.take_weiland.mods.commons.sync.Synced.Setter("accessState")
+	private void setAccessState(int accessState) {
+		inventory.setAccessState(accessState);
 	}
 
 }

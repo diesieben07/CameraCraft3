@@ -1,16 +1,8 @@
 package de.take_weiland.mods.cameracraft.client.gui.printer;
 
-import static org.lwjgl.opengl.GL11.GL_LIGHTING;
-import static org.lwjgl.opengl.GL11.GL_SCISSOR_TEST;
-import static org.lwjgl.opengl.GL11.glDisable;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glPopMatrix;
-import static org.lwjgl.opengl.GL11.glPushMatrix;
-import static org.lwjgl.opengl.GL11.glScissor;
-import static org.lwjgl.opengl.GL11.glTranslatef;
-
 import java.util.List;
 
+import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.util.MathHelper;
@@ -30,6 +22,8 @@ import de.take_weiland.mods.commons.client.Guis;
 import de.take_weiland.mods.commons.client.Rendering;
 import de.take_weiland.mods.commons.client.ScrollPane;
 
+import static org.lwjgl.opengl.GL11.*;
+
 public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrinter> {
 
 	private static final int BUTTON_OPEN_SCROLLER = 0;
@@ -42,7 +36,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	private int scrollerMotion = 0;
 	
 	private NetworkListScroller networkScroller;
-	private ScrollPane photoIdScroller;
+	private PhotoSelectionScroller photoIdScroller;
 	
 	public GuiPrinter(ContainerPrinter container) {
 		super(container);
@@ -103,8 +97,21 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		}
 		
 		if (shouldDrawIds()) {
-			photoIdScroller.setContentHeight(container.getSelectedNode().photoIds.length * 10);
+			String[] photoIds = container.getSelectedNode().photoIds;
+			photoIdScroller.setContentHeight(photoIds.length * 10);
 			photoIdScroller.draw(mouseX, mouseY);
+
+
+
+			int hovered;
+			if (container.isAdvanced() && (hovered = photoIdScroller.hoveredNode()) >= 0) {
+				PhotoDataCache.CacheElement ce = PhotoDataCache.get(photoIds[hovered]);
+				if (ce.isLoaded()) {
+					ce.bindTexture();
+					glColor3f(1, 1, 1);
+					Rendering.drawTexturedQuad(mouseX, mouseY, 64, 64, 0, 0, 256, 256, 256);
+				}
+			}
 		}
 		
 		glEnable(GL_LIGHTING);

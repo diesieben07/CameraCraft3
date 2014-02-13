@@ -3,6 +3,7 @@ package de.take_weiland.mods.cameracraft;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import de.take_weiland.mods.cameracraft.network.CCPacket;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.Configuration;
@@ -33,7 +34,6 @@ import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
-import de.take_weiland.mods.cameracraft.network.CCPackets;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.config.ConfigInjector;
 import de.take_weiland.mods.commons.config.GetProperty;
@@ -92,7 +92,7 @@ public final class CameraCraft {
 		
 		executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(maxThreadCount));
 		
-		Network.simplePacketHandler("CameraCraft", CCPackets.class);
+		Network.simplePacketHandler("CameraCraft", CCPacket.Type.class);
 		
 		CCBlock.createBlocks();
 		CCItem.createItems();

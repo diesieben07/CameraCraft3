@@ -1,52 +1,58 @@
 package de.take_weiland.mods.cameracraft.gui;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.World;
-
 import com.google.common.base.Predicate;
+import com.google.common.base.Strings;
 import com.google.common.collect.Collections2;
 import com.google.common.collect.Lists;
-import com.google.common.primitives.UnsignedBytes;
-
 import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkEvent;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkListener;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.printer.InkItem;
+import de.take_weiland.mods.cameracraft.network.PacketPrinterGui;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
+import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.WritableDataBuf;
 import de.take_weiland.mods.commons.templates.AbstractContainer;
 import de.take_weiland.mods.commons.templates.AdvancedSlot;
 import de.take_weiland.mods.commons.util.Containers;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.JavaUtils;
 import de.take_weiland.mods.commons.util.Sides;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.World;
 
-public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> implements NetworkListener {
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
+public class ContainerPrinter extends AbstractContainer<TilePrinter> implements NetworkListener {
+
+	private final boolean isAdvanced;
 
 	private boolean clientNeedsRefresh = true;
 	
 	private List<ClientNodeInfo> nodes;
 	private int selectedNode = -1;
 	
-	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player) {
+	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player, boolean isAdvanced) {
 		super(world, x, y, z, player, Containers.PLAYER_INV_X_DEFAULT, 118);
+		this.isAdvanced = isAdvanced;
+
 		if (Sides.logical(world).isServer()) {
 			inventory.getNode().getNetwork().addListener(this);
 		} else {
 			nodes = Lists.newArrayList();
 		}
+	}
+
+	public boolean isAdvanced() {
+		return isAdvanced;
 	}
 
 	@Override
@@ -94,58 +100,54 @@ public class ContainerPrinter extends AbstractContainer.Synced<TilePrinter> impl
 		
 	};
 
-	@Override
-	public void readSyncData(DataInputStream in) throws IOException {
+	public void readData(DataBuf in) {
 		selectedNode = -1;
 		nodes.clear();
-		int nameLen;
+		String name;
 		do {
-			nameLen = in.readShort();
-			if (nameLen >= 0) {
-				StringBuilder b = new StringBuilder();
-				for (int i = 0; i < nameLen; ++i) {
-					b.append(in.readChar());
+			name = in.getString();
+			if (name != null) {
+				int photoCount = in.getVarInt();
+				String[] photoIds = new String[photoCount];
+				for (int i = 0; i < photoCount; ++i) {
+					photoIds[i] = PhotoManager.asString(in.getVarInt());
 				}
-				int photoCount = in.readUnsignedByte();
-				String[] photoIds = null;
-				photoIds = new String[photoCount];
-				for (int j = 0; j < photoCount; ++j) {
-					photoIds[j] = PhotoManager.asString(in.readInt());
-				}
-				nodes.add(new ClientNodeInfo(b.toString(), photoIds));
+				nodes.add(new ClientNodeInfo(name, photoIds));
 			}
-		} while (nameLen >= 0);
+		} while (name != null);
 		Collections.sort(nodes);
 	}
 
-	@Override
-	public boolean writeSyncData(DataOutputStream out) throws IOException {
+	public void writeData(WritableDataBuf out) {
 		if (clientNeedsRefresh) {
 			Collection<NetworkNode> toSend = Collections2.filter(inventory.getNode().getNetwork().getNodes(), nodeFilter);
 			
 			for (NetworkNode node : toSend) {
 				String name = node.getDisplayName();
-				out.writeShort(name.length());
-				out.writeChars(name);
+				out.putString(Strings.nullToEmpty(node.getDisplayName()));
 				PhotoStorage storage = ((PhotoStorageProvider) node.getTile()).getPhotoStorage();
 				if (storage != null) {
 					int[] photoIds = storage.getRawPhotoIds();
-					out.writeByte(UnsignedBytes.checkedCast(photoIds.length));
+					out.putVarInt(photoIds.length);
 					for (int photoId : photoIds) {
-						out.writeInt(photoId);
+						out.putVarInt(photoId);
 					}
 				} else {
-					out.writeByte(0);
+					out.putVarInt(0);
 				}
 			}
-			out.writeShort(-1);
+			out.putString(null);
 			clientNeedsRefresh = false;
-			return true;
-		} else {
-			return false;
 		}
 	}
-	
+
+	@Override
+	public void detectAndSendChanges() {
+		if (clientNeedsRefresh) {
+			new PacketPrinterGui(this).sendToViewing(this);
+		}
+	}
+
 	@Override
 	public void handleEvent(NetworkEvent event) {
 		clientNeedsRefresh = true;
