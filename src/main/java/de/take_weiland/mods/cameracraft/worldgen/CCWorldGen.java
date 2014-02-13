@@ -67,7 +67,6 @@ public class CCWorldGen implements IWorldGenerator {
 				int x = chunkX * 16 + rand.nextInt(16);
 				int y = rand.nextInt(ore.maxY - ore.minY) + ore.minY;
 				int z = chunkZ * 16 + rand.nextInt(16);
-				System.out.println("Generated " + ore + " at " + x + ", " + y + ", " + z);
 				ore.gen.generate(world, rand, x, y, z);
 			}
 		}
