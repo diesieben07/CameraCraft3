@@ -17,9 +17,6 @@ public enum MiscItemType implements ItemMeta {
 	ALKALINE_DUST("alkalineDust"),
 	ALKALINE_BUCKET("alkalineBucket");
 	
-	public static final MiscItemType[] VALUES = values();
-	public static final MiscItemType[] ALL_INKS = { YELLOW_INK, CYAN_INK, MAGENTA_INK, BLACK_INK };
-
 	private final boolean isInk;
 	private final String name;
 	

@@ -3,6 +3,7 @@ package de.take_weiland.mods.cameracraft;
 import java.util.concurrent.Executors;
 import java.util.logging.Logger;
 
+import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.network.CCPacket;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
@@ -74,7 +75,7 @@ public final class CameraCraft {
 	};
 	
 	@GetProperty
-	public static boolean enableOreGeneration;
+	public static boolean enableOreGeneration = true;
 	
 	@GetProperty(comment = "How many Threads CameraCraft should use for Performance optimizations")
 	public static int maxThreadCount = 3;
@@ -100,7 +101,7 @@ public final class CameraCraft {
 		EntityRegistry.registerModEntity(EntityPoster.class, "poster", 0, this, 160, Integer.MAX_VALUE, false);
 		
 		if (enableOreGeneration) {
-			MinecraftForge.ORE_GEN_BUS.register(new CCWorldGen());
+			GameRegistry.registerWorldGenerator(new CCWorldGen());
 		}
 		
 		NetworkRegistry.instance().registerGuiHandler(this, new CCGuis.Handler());

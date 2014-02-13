@@ -14,8 +14,12 @@ import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 public interface CameraCraftApi {
 	
 	CableType getCableType(IBlockAccess world, int x, int y, int z);
-	
+
 	GenerateMinable.EventType getTinMinableType();
+
+	GenerateMinable.EventType getAlkalineMinableType();
+
+	GenerateMinable.EventType getPhotonicMinableType();
 	
 	boolean isCamera(ItemStack stack);
 	

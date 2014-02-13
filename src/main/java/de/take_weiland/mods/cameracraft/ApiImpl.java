@@ -6,6 +6,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.event.terraingen.OreGenEvent;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType;
 
 import com.google.common.collect.Maps;
@@ -30,7 +31,17 @@ public final class ApiImpl implements CameraCraftApi {
 
 	@Override
 	public EventType getTinMinableType() {
-		return CCWorldGen.TIN_EVENT_TYPE;
+		return CCWorldGen.TIN;
+	}
+
+	@Override
+	public EventType getPhotonicMinableType() {
+		return CCWorldGen.PHOTONIC;
+	}
+
+	@Override
+	public EventType getAlkalineMinableType() {
+		return CCWorldGen.ALKALINE;
 	}
 
 	@Override

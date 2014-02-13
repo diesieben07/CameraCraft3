@@ -7,7 +7,8 @@ public enum OreType implements BlockMeta {
 	
 	TIN("tin"),
 	ALKALINE("alkaline"),
-	BLOCK_TIN("blockTin");
+	BLOCK_TIN("blockTin"),
+	PHOTONIC("photonic");
 
 	private final String name;
 	
