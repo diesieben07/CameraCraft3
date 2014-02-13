@@ -39,6 +39,16 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 	private void setFluid(FluidStack stack) {
 		inventory.tank.setFluid(stack);
 	}
+
+	@de.take_weiland.mods.commons.sync.Synced(setter = "progress")
+	private int getProcessProgress() {
+		return inventory.getProcessProgress();
+	}
+
+	@de.take_weiland.mods.commons.sync.Synced.Setter("progress")
+	private void setProcessProgress(int progress) {
+		inventory.setProcessProgress(progress);
+	}
 	
 	@Override
 	public int getSlotFor(ItemStack stack) {
