@@ -22,7 +22,7 @@ public class GuiViewPhoto extends GuiScreen {
 	private static final int BUTTON_RENAME = 0;
 	private static final int BUTTON_DONE = 1;
 	
-	private final String photoId;
+	private final Integer photoId;
 	private boolean isNameable;
 	private String displayName;
 	
@@ -32,7 +32,7 @@ public class GuiViewPhoto extends GuiScreen {
 	private GuiButton buttonDone;
 	private GuiButton buttonRename;
 	
-	public GuiViewPhoto(String photoId, String displayName, boolean isNameable) {
+	public GuiViewPhoto(Integer photoId, String displayName, boolean isNameable) {
 		this.photoId = photoId;
 		this.displayName = displayName;
 		this.isNameable = isNameable;

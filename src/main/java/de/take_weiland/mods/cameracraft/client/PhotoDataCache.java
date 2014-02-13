@@ -24,7 +24,7 @@ import de.take_weiland.mods.commons.client.Rendering;
 public class PhotoDataCache {
 
 	static final Minecraft mc = Minecraft.getMinecraft();
-	private static final LoadingCache<String, CacheElement> cache;
+	private static final LoadingCache<Integer, CacheElement> cache;
 	
 	static {
 		cache = CacheBuilder.newBuilder()
@@ -40,15 +40,15 @@ public class PhotoDataCache {
 		cache.invalidateAll();
 	}
 	
-	public static void bindTexture(String photoId) {
+	public static void bindTexture(Integer photoId) {
 		cache.getUnchecked(photoId).bindTexture();
 	}
 
-	public static CacheElement get(String photoId) {
+	public static CacheElement get(Integer photoId) {
 		return cache.getUnchecked(photoId);
 	}
 	
-	static void injectReceivedPhoto(String photoId, InputStream in) throws IOException {
+	static void injectReceivedPhoto(Integer photoId, InputStream in) throws IOException {
 		CacheElement element = cache.getIfPresent(photoId);
 		if (element != null) {
 			element.img = ImageIO.read(in);
@@ -82,20 +82,20 @@ public class PhotoDataCache {
 		}
 	}
 	
-	static class PhotoDataLoader extends CacheLoader<String, CacheElement> {
+	static class PhotoDataLoader extends CacheLoader<Integer, CacheElement> {
 
 		@Override
-		public CacheElement load(String photoId) throws Exception {
+		public CacheElement load(Integer photoId) throws Exception {
 			new PacketClientRequestPhoto(photoId).sendToServer();
 			return new CacheElement();
 		}
 		
 	}
 	
-	static class PhotoTextureUnloader implements RemovalListener<String, CacheElement> {
+	static class PhotoTextureUnloader implements RemovalListener<Integer, CacheElement> {
 		
 		@Override
-		public void onRemoval(RemovalNotification<String, CacheElement> notification) {
+		public void onRemoval(RemovalNotification<Integer, CacheElement> notification) {
 			ResourceLocation loc = notification.getValue().loc;
 			if (loc != null) {
 				Rendering.unloadTexture(loc);

@@ -108,9 +108,9 @@ public class ContainerPrinter extends AbstractContainer<TilePrinter> implements 
 			name = in.getString();
 			if (name != null) {
 				int photoCount = in.getVarInt();
-				String[] photoIds = new String[photoCount];
+				Integer[] photoIds = new Integer[photoCount];
 				for (int i = 0; i < photoCount; ++i) {
-					photoIds[i] = PhotoManager.asString(in.getVarInt());
+					photoIds[i] = Integer.valueOf(in.getVarInt());
 				}
 				nodes.add(new ClientNodeInfo(name, photoIds));
 			}
@@ -119,26 +119,23 @@ public class ContainerPrinter extends AbstractContainer<TilePrinter> implements 
 	}
 
 	public void writeData(WritableDataBuf out) {
-		if (clientNeedsRefresh) {
-			Collection<NetworkNode> toSend = Collections2.filter(inventory.getNode().getNetwork().getNodes(), nodeFilter);
-			
-			for (NetworkNode node : toSend) {
-				String name = node.getDisplayName();
-				out.putString(Strings.nullToEmpty(node.getDisplayName()));
-				PhotoStorage storage = ((PhotoStorageProvider) node.getTile()).getPhotoStorage();
-				if (storage != null) {
-					int[] photoIds = storage.getRawPhotoIds();
-					out.putVarInt(photoIds.length);
-					for (int photoId : photoIds) {
-						out.putVarInt(photoId);
-					}
-				} else {
-					out.putVarInt(0);
+		Collection<NetworkNode> toSend = Collections2.filter(inventory.getNode().getNetwork().getNodes(), nodeFilter);
+
+		for (NetworkNode node : toSend) {
+			out.putString(Strings.nullToEmpty(node.getDisplayName()));
+			PhotoStorage storage = ((PhotoStorageProvider) node.getTile()).getPhotoStorage();
+			if (storage != null) {
+				int[] photoIds = storage.getRawPhotoIds();
+				out.putVarInt(photoIds.length);
+				for (int photoId : photoIds) {
+					out.putVarInt(photoId);
 				}
+			} else {
+				out.putVarInt(0);
 			}
-			out.putString(null);
-			clientNeedsRefresh = false;
 		}
+		out.putString(null);
+		clientNeedsRefresh = false;
 	}
 
 	@Override
@@ -156,10 +153,10 @@ public class ContainerPrinter extends AbstractContainer<TilePrinter> implements 
 	public static final class ClientNodeInfo implements Comparable<ClientNodeInfo> {
 		
 		public final String displayName;
-		public final String[] photoIds;
+		public final Integer[] photoIds;
 		public final int[] counts;
 		
-		ClientNodeInfo(String displayName, String[] photoIds) {
+		ClientNodeInfo(String displayName, Integer[] photoIds) {
 			this.displayName = displayName;
 			this.photoIds = photoIds;
 			counts = photoIds == null ? null : new int[photoIds.length];

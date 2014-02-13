@@ -11,20 +11,20 @@ import de.take_weiland.mods.commons.net.WritableDataBuf;
 
 public class PacketClientRequestPhoto extends CCPacket {
 
-	int photoId;
+	Integer photoId;
 	
-	public PacketClientRequestPhoto(String photoId) {
-		this.photoId = PhotoManager.asInt(photoId);
+	public PacketClientRequestPhoto(Integer photoId) {
+		this.photoId = photoId;
 	}
 
 	@Override
 	protected void write(WritableDataBuf buffer) {
-		buffer.putVarInt(photoId);
+		buffer.putVarInt(photoId.intValue());
 	}
 
 	@Override
 	protected void handle(DataBuf buffer, final EntityPlayer player, Side side) {
-		photoId = buffer.getVarInt();
+		photoId = Integer.valueOf(buffer.getVarInt());
 		CameraCraft.executor.execute(new Runnable() {
 			
 			@Override

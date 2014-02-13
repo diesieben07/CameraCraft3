@@ -18,31 +18,31 @@ import de.take_weiland.mods.commons.net.WritableDataBuf;
 
 public class PacketPhotoData extends CCPacket {
 
-	private int photoId;
+	private Integer photoId;
 	private File file;
 
-	public PacketPhotoData(int photoId, File file) {
+	public PacketPhotoData(Integer photoId, File file) {
 		this.photoId = photoId;
 		this.file = file;
 	}
 
 	@Override
 	protected void write(WritableDataBuf buffer) {
-		buffer.putVarInt(photoId);
+		buffer.putVarInt(photoId.intValue());
 		try {
 			FileInputStream in = new FileInputStream(file);
 			ByteStreams.copy(in, buffer.asOutputStream());
 			in.close();
 		} catch (IOException e) {
 			CrashReport cr = new CrashReport("Reading CameraCraft Photo File", e);
-			cr.makeCategory("Photo being read").addCrashSection("PhotoId", Integer.valueOf(photoId));
+			cr.makeCategory("Photo being read").addCrashSection("PhotoId", photoId);
 			throw new ReportedException(cr);
 		}
 	}
 
 	@Override
 	protected void handle(DataBuf buffer, EntityPlayer player, Side side) {
-		CameraCraft.env.handleClientPhotoData(PhotoManager.asString(buffer.getVarInt()), buffer.asInputStream());
+		CameraCraft.env.handleClientPhotoData(Integer.valueOf(buffer.getVarInt()), buffer.asInputStream());
 	}
 	
 	@Override

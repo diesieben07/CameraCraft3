@@ -51,7 +51,7 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
 		if (Multitypes.getType(this, stack) == MiscItemType.ALKALINE_BUCKET) {
 			MovingObjectPosition hit = getMovingObjectPositionFromPlayer(world, player, false);
 
-			if (hit.typeOfHit == EnumMovingObjectType.TILE) {
+			if (hit != null && hit.typeOfHit == EnumMovingObjectType.TILE) {
 				int x = hit.blockX;
 				int y = hit.blockY;
 				int z = hit.blockZ;

@@ -16,7 +16,7 @@ public interface PhotoStorage extends Listenable<PhotoStorage> {
 	 * get an unmodifiable List view of the photos in this Storage
 	 * @return
 	 */
-	List<String> getPhotos();
+	List<Integer> getPhotos();
 	
 	/**
 	 * get the raw PhotoIds
@@ -63,21 +63,21 @@ public interface PhotoStorage extends Listenable<PhotoStorage> {
 	 * @param position
 	 * @return
 	 */
-	String get(int position);
+	Integer get(int position);
 	
 	/**
 	 * search for the given photoId
 	 * @param photoId the photoId to search for
 	 * @return the in index of the photoId (or -1 if not found)
 	 */
-	int getPosition(String photoId);
-	
+	int getPosition(Integer photoId);
+
 	/**
-	 * sets the first free slot to the given photoId 
+	 * sets the first free slot to the given photoId
 	 * @param photoId
 	 * @return the position the photoId was added or -1 if no free positions are available
 	 */
-	int store(String photoId);
+	int store(Integer photoId);
 	
 	/**
 	 * remove the photo at the given position

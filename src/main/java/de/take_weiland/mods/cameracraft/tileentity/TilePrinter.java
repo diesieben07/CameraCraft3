@@ -195,14 +195,14 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 	
 	static NBTTagCompound encodeJob(SimplePrintJob.Queued job) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setString("id", job.getPhotoId());
+		nbt.setInteger("id", job.getPhotoId().intValue());
 		nbt.setShort("amnt", (short) job.getAmount());
 		nbt.setShort("amntLeft", UnsignedShorts.checkedCast(job.getRemainingAmount()));
 		return nbt;
 	}
 	
 	static SimplePrintJob.Queued decodeJob(NBTTagCompound nbt) {
-		return new SimplePrintJob.Queued(nbt.getString("id"), nbt.getShort("amnt"), nbt.getShort("amntLeft"));
+		return new SimplePrintJob.Queued(Integer.valueOf(nbt.getInteger("id")), nbt.getShort("amnt"), nbt.getShort("amntLeft"));
 	}
 
 	private static final Function<NBTTagCompound, SimplePrintJob.Queued> JOB_DECODER = new Function<NBTTagCompound, SimplePrintJob.Queued>() {

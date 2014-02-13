@@ -18,7 +18,7 @@ import de.take_weiland.mods.commons.util.NBT;
 
 public class EntityPoster extends EntityHanging implements IEntityAdditionalSpawnData {
 
-	private String photoId;
+	private Integer photoId;
 	private ItemStack stack;
 	
 	public EntityPoster(World world) {
@@ -47,7 +47,7 @@ public class EntityPoster extends EntityHanging implements IEntityAdditionalSpaw
 		entityDropItem(stack, 0);
 	}
 
-	public String getPhotoId() {
+	public Integer getPhotoId() {
 		return photoId;
 	}
 
@@ -58,7 +58,7 @@ public class EntityPoster extends EntityHanging implements IEntityAdditionalSpaw
 
 	@Override
 	public void writeSpawnData(ByteArrayDataOutput out) {
-		out.writeInt(PhotoManager.asInt(photoId));
+		out.writeInt(photoId.intValue());
 		out.writeInt(xPosition);
 		out.writeInt(yPosition);
 		out.writeInt(zPosition);
@@ -67,7 +67,7 @@ public class EntityPoster extends EntityHanging implements IEntityAdditionalSpaw
 
 	@Override
 	public void readSpawnData(ByteArrayDataInput in) {
-		photoId = PhotoManager.asString(in.readInt());
+		photoId = Integer.valueOf(in.readInt());
 		xPosition = in.readInt();
 		yPosition = in.readInt();
 		zPosition = in.readInt(); // setDirection needs these

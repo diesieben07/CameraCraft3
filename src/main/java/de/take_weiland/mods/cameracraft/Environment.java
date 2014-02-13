@@ -8,11 +8,11 @@ public interface Environment {
 
 	void onPhotoRequest(int transferId);
 
-	void handleClientPhotoData(String photoId, InputStream in);
+	void handleClientPhotoData(Integer photoId, InputStream in);
 	
 	void displayNamePhotoGui(String oldName);
 	
-	void displayPhotoGui(String photoId, String displayName, boolean canRename);
+	void displayPhotoGui(Integer photoId, String displayName, boolean canRename);
 	
 	void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ);
 	

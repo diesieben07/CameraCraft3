@@ -27,10 +27,10 @@ public class PhotoSelectionScroller extends ScrollPane {
 		ContainerPrinter container = gui.getContainer();
 		ClientNodeInfo selected = JavaUtils.get(container.getNodes(), container.getSelectedNodeIdx());
 		if (selected != null) {
-			String[] selectedIds = selected.photoIds;
+			Integer[] selectedIds = selected.photoIds;
 			if (selectedIds.length != 0) {
 				for (int i = 0; i < selectedIds.length; ++i) {
-					Rendering.drawColoredRect(0, 10 * i, mc.fontRenderer.getStringWidth(selectedIds[i]), mc.fontRenderer.FONT_HEIGHT, 0xffddddff);
+					Rendering.drawColoredRect(0, 10 * i, mc.fontRenderer.getStringWidth(selectedIds[i].toString()), mc.fontRenderer.FONT_HEIGHT, 0xffddddff);
 					int count = selected.counts[i];
 					String txt = selectedIds[i] + (count != 0 ? " x" + Integer.toString(count) : "");
 					mc.fontRenderer.drawString(txt, 0, 10 * i, 0x000000);

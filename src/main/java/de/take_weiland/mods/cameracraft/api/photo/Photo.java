@@ -13,7 +13,7 @@ import net.minecraft.world.World;
  */
 public interface Photo {
 
-	String getId();
+	Integer getId();
 	
 	String getOwner();
 	

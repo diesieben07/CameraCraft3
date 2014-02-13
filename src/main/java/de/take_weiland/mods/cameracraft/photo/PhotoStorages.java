@@ -1,17 +1,17 @@
 package de.take_weiland.mods.cameracraft.photo;
 
-import java.util.AbstractList;
-import java.util.List;
-
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
-
-import org.apache.commons.lang3.ArrayUtils;
-
+import com.google.common.primitives.Ints;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.commons.util.ItemStacks;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagIntArray;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public final class PhotoStorages {
 
@@ -69,17 +69,29 @@ public final class PhotoStorages {
 
 		@Override
 		protected void removeImpl(int index) {
-			nbt.intArray = ArrayUtils.remove(nbt.intArray, index);
+			int newLen = nbt.intArray.length - 1;
+			if (newLen == 0) {
+				nbt.intArray = ArrayUtils.EMPTY_INT_ARRAY;
+			} else {
+				int[] arr = new int[newLen];
+				System.arraycopy(nbt.intArray, 0, arr, 0, index);
+				if (index != newLen) {
+					System.arraycopy(nbt.intArray, index + 1, arr, index, newLen - index);
+				}
+				nbt.intArray = arr;
+			}
 		}
 
 		@Override
-		protected String getImpl(int index) {
-			return PhotoManager.asString(nbt.intArray[index]);
+		protected Integer getImpl(int index) {
+			return Integer.valueOf(nbt.intArray[index]);
 		}
 
 		@Override
-		protected void storeImpl(String photoId) {
-			nbt.intArray = ArrayUtils.add(nbt.intArray, PhotoManager.asInt(photoId));
+		protected void storeImpl(Integer photoId) {
+			nbt.intArray = Arrays.copyOf(nbt.intArray, nbt.intArray.length + 1);
+			nbt.intArray[nbt.intArray.length] = photoId.intValue();
+
 		}
 
 		@Override
@@ -98,26 +110,15 @@ public final class PhotoStorages {
 			return nbt.intArray;
 		}
 
-		private List<String> listView;
+		private List<Integer> listView;
 		
 		@Override
-		public List<String> getPhotos() {
+		public List<Integer> getPhotos() {
 			return listView == null ? (listView = createListView()) : listView;
 		}
-		
-		private List<String> createListView() {
-			return new AbstractList<String>() {
 
-				@Override
-				public String get(int index) {
-					return ItemStackPhotoStorage.this.get(index);
-				}
-
-				@Override
-				public int size() {
-					return ItemStackPhotoStorage.this.size();
-				}
-			};
+		private List<Integer> createListView() {
+			return Collections.unmodifiableList(Ints.asList(nbt.intArray));
 		}
 	}
 

@@ -97,7 +97,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 		}
 		
 		if (shouldDrawIds()) {
-			String[] photoIds = container.getSelectedNode().photoIds;
+			Integer[] photoIds = container.getSelectedNode().photoIds;
 			photoIdScroller.setContentHeight(photoIds.length * 10);
 			photoIdScroller.draw(mouseX, mouseY);
 

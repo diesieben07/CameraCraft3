@@ -50,7 +50,7 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 
 						@Override
 						public void run() {
-							String photoId = null;
+							Integer photoId = null;
 							if (!inv.getPhotoStorage().isFull()) {
 								photoId = PhotoManager.nextPhotoId(world);
 								

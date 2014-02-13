@@ -19,9 +19,9 @@ public class EnvironmentServer implements Environment {
 	public void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ) { }
 
 	@Override
-	public void handleClientPhotoData(String photoId, InputStream in) { }
+	public void handleClientPhotoData(Integer photoId, InputStream in) { }
 
 	@Override
-	public void displayPhotoGui(String photoId, String displayName, boolean canRename) { }
+	public void displayPhotoGui(Integer photoId, String displayName, boolean canRename) { }
 
 }

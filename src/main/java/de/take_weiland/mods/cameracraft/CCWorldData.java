@@ -67,9 +67,9 @@ public class CCWorldData extends WorldSavedData {
 		nbt.setInteger("nextId", nextId);
 	}
 	
-	public String nextId() {
+	public Integer nextId() {
 		markDirty();
-		return PhotoManager.asString(nextId++);
+		return Integer.valueOf(nextId++);
 	}
 
 }

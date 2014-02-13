@@ -63,7 +63,7 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 	}
 
 	@Override
-	public void handleClientPhotoData(final String photoId, final InputStream in) {
+	public void handleClientPhotoData(final Integer photoId, final InputStream in) {
 		CameraCraft.executor.execute(new Runnable() {
 			
 			@Override
@@ -93,7 +93,7 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 	}
 	
 	@Override
-	public void displayPhotoGui(String photoId, String displayName, boolean canRename) {
+	public void displayPhotoGui(Integer photoId, String displayName, boolean canRename) {
 		mc.displayGuiScreen(new GuiViewPhoto(photoId, displayName, canRename));
 	}
 

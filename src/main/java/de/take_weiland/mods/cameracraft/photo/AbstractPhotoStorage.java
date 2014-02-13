@@ -27,10 +27,10 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	}
 
 	@Override
-	public int getPosition(String photoId) {
+	public int getPosition(Integer photoId) {
 		int size = size();
 		for (int i = 0; i < size; ++i) {
-			if (getImpl(i).equals(photoId)) {
+			if (getImpl(i).intValue() == photoId.intValue()) {
 				return i;
 			}
 		}
@@ -38,15 +38,15 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	}
 
 	@Override
-	public String get(int index) {
+	public Integer get(int index) {
 		checkPositionIndex(index, capacity());
 		return index < size() ? getImpl(index) : null;
 	}
 	
-	protected abstract String getImpl(int index);
+	protected abstract Integer getImpl(int index);
 
 	@Override
-	public int store(String photoId) {
+	public int store(Integer photoId) {
 		checkNotSealed();
 		if (isFull()) {
 			return -1;
@@ -57,7 +57,7 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 		}
 	}
 	
-	protected abstract void storeImpl(String photoId);
+	protected abstract void storeImpl(Integer photoId);
 
 	@Override
 	public void remove(int index) {

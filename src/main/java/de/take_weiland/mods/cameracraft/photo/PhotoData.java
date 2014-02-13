@@ -20,7 +20,7 @@ import de.take_weiland.mods.cameracraft.api.photo.TimeType;
 
 public class PhotoData implements Photo {
 	
-	public static PhotoData fromFile(String id, File file) throws IOException {
+	public static PhotoData fromFile(Integer id, File file) throws IOException {
 		InputStream in = null;
 		try {
 			in = new BufferedInputStream(new FileInputStream(file));
@@ -33,11 +33,11 @@ public class PhotoData implements Photo {
 		}
 	}
 	
-	public static PhotoData fromInputStream(String id, InputStream in) throws IOException {
+	public static PhotoData fromInputStream(Integer id, InputStream in) throws IOException {
 		return fromDataInput(id, new DataInputStream(in));
 	}
 	
-	public static PhotoData fromDataInput(String id, DataInput in) throws IOException {
+	public static PhotoData fromDataInput(Integer id, DataInput in) throws IOException {
 		String owner = in.readUTF();
 		int timeType = in.readByte();
 		if (timeType < 0) {
@@ -57,7 +57,7 @@ public class PhotoData implements Photo {
 		}
 	}
 	
-	private final String id;
+	private final Integer id;
 	private final String owner;
 	
 	private final boolean hasTimeAndCoords;
@@ -72,7 +72,7 @@ public class PhotoData implements Photo {
 	private World world;
 	private EntityPlayer player;
 	
-	public PhotoData(String id, String owner, long time, TimeType timeType, int dimension, int x, int y, int z) {
+	public PhotoData(Integer id, String owner, long time, TimeType timeType, int dimension, int x, int y, int z) {
 		this.id = id;
 		this.owner = owner;
 		this.time = time;
@@ -84,14 +84,14 @@ public class PhotoData implements Photo {
 		hasTimeAndCoords = true;
 	}
 
-	public PhotoData(String id, String owner) {
+	public PhotoData(Integer id, String owner) {
 		this.id = id;
 		this.owner = owner;
 		hasTimeAndCoords = false;
 	}
 
 	@Override
-	public String getId() {
+	public Integer getId() {
 		return id;
 	}
 

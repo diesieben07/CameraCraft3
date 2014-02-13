@@ -7,15 +7,15 @@ import de.take_weiland.mods.cameracraft.api.photo.TimeType;
 
 public abstract class AbstractPrintedPhoto implements PrintedPhoto {
 
-	protected final String id;
+	protected final Integer id;
 	private PhotoData delegate;
 	
-	protected AbstractPrintedPhoto(String id) {
+	protected AbstractPrintedPhoto(Integer id) {
 		this.id = id;
 	}
 
 	@Override
-	public final String getId() {
+	public final Integer getId() {
 		return id;
 	}
 	

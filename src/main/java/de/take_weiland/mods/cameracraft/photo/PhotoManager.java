@@ -26,32 +26,20 @@ public final class PhotoManager {
 	
 	public static final int PHOTO_SIZE = 256;
 	
-	public static int asInt(String photoId) {
-		return Integer.parseInt(photoId.substring(2));
-	}
-	
-	public static String asString(int photoId) {
-		return "p_" + Integer.toString(photoId);
-	}
-	
-	public static String nextPhotoId(World world) {
+	public static Integer nextPhotoId(World world) {
 		return CCWorldData.get(world).nextId();
 	}
+
+	private static String asString(Integer photoId) {
+		return "p_" + photoId.toString();
+	}
 	
-	public static File getImageFile(int photoId) {
+	public static File getImageFile(Integer photoId) {
 		return getFile(asString(photoId), "png");
 	}
 
-	public static File getDataFile(int photoId) {
+	public static File getDataFile(Integer photoId) {
 		return getFile(asString(photoId), "dat");
-	}
-	
-	public static File getImageFile(String photoId) {
-		return getFile(photoId, "png");
-	}
-
-	public static File getDataFile(String photoId) {
-		return getFile(photoId, "dat");
 	}
 	
 	private static File getFile(String photoId, String ext) {
@@ -65,8 +53,9 @@ public final class PhotoManager {
 		return file;
 	}
 
-	public static PhotoData getDataForId(String id) {
+	public static PhotoData getDataForId(Integer id) {
 		try {
+			// TODO broken
 			return PhotoData.fromFile(id, getDataFile(id));
 		} catch (IOException e) {
 			CrashReport cr = CrashReport.makeCrashReport(e, "Loading CameraCraft PhotoData");
@@ -75,10 +64,10 @@ public final class PhotoManager {
 		}
 	}
 	
-	public static List<ListenableFuture<Void>> applyFilterTo(final Iterable<String> photoIds, final ImageFilter filter) {
+	public static List<ListenableFuture<Void>> applyFilterTo(final Iterable<Integer> photoIds, final ImageFilter filter) {
 		ImmutableList.Builder<ListenableFuture<Void>> builder = ImmutableList.builder();
 		
-		for (final String photoId : photoIds) {
+		for (final Integer photoId : photoIds) {
 			builder.add(CameraCraft.executor.submit(new Callable<Void>() {
 				
 				@Override

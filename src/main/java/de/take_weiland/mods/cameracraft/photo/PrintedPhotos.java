@@ -16,9 +16,9 @@ public final class PrintedPhotos {
 	
 	public static PrintedPhoto fromNbt(final NBTTagCompound nbt) {
 		checkNotNull(nbt);
-		String id = nbt.getString("id");
+		Integer id = Integer.valueOf(nbt.getInteger("id"));
 		
-		checkArgument(Strings.isNullOrEmpty(id), "NBT doesn't have photoId!");
+		checkArgument(id.intValue() != 0, "NBT doesn't have photoId!");
 		
 		return new AbstractPrintedPhoto(id) {
 			

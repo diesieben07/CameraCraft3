@@ -27,7 +27,7 @@ public class PacketPrintJobs extends CCPacket {
 		buffer.putByte((byte) windowId);
 		buffer.putVarInt(jobs.size());
 		for (SimplePrintJob job : jobs) {
-			buffer.putVarInt(PhotoManager.asInt(job.getPhotoId()));
+			buffer.putVarInt(job.getPhotoId().intValue());
 			buffer.putVarInt(job.getAmount());
 		}
 	}
@@ -39,7 +39,7 @@ public class PacketPrintJobs extends CCPacket {
 			int len = buf.getVarInt();
 			SimplePrintJob[] jobs = new SimplePrintJob[len];
 			for (int i = 0; i < len; ++i) {
-				jobs[i] = new SimplePrintJob(PhotoManager.asString(buf.getVarInt()), buf.getVarInt());
+				jobs[i] = new SimplePrintJob(Integer.valueOf(buf.getVarInt()), buf.getVarInt());
 			}
 			((ContainerPrinter) player.openContainer).inventory().addJobs(Arrays.asList(jobs));
 		}

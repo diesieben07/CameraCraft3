@@ -75,13 +75,13 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	}
 	
 	@Override
-	public String getPhotoId(final ItemStack stack) {
-		return PhotoManager.asString(ItemStacks.getNbt(stack).getInteger(NBT_KEY));
+	public Integer getPhotoId(final ItemStack stack) {
+		return Integer.valueOf(ItemStacks.getNbt(stack).getInteger(NBT_KEY));
 	}
 	
 	@Override
-	public void setPhotoId(ItemStack stack, String photoId) {
-		ItemStacks.getNbt(stack).setInteger(NBT_KEY, PhotoManager.asInt(photoId));
+	public void setPhotoId(ItemStack stack, Integer photoId) {
+		ItemStacks.getNbt(stack).setInteger(NBT_KEY, photoId.intValue());
 	}
 
 	@Override
@@ -92,8 +92,8 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 		
 		return new AbstractPhotoStorage(true) {
 			
-			private final String photoId = getPhotoId(stack);
-			private final List<String> contents = ImmutableList.of(photoId); 
+			private final Integer photoId = getPhotoId(stack);
+			private final List<Integer> contents = ImmutableList.of(photoId);
 			
 			@Override
 			public int size() {
@@ -101,7 +101,7 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 			}
 			
 			@Override
-			public List<String> getPhotos() {
+			public List<Integer> getPhotos() {
 				return contents;
 			}
 			
@@ -111,7 +111,7 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 			}
 			
 			@Override
-			protected String getImpl(int index) {
+			protected Integer getImpl(int index) {
 				return photoId;
 			}
 			
@@ -119,12 +119,12 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 			
 			@Override
 			public int[] getRawPhotoIds() {
-				return raw == null ? (raw = new int[] { PhotoManager.asInt(photoId) }) : raw;
+				return raw == null ? (raw = new int[] { photoId.intValue() }) : raw;
 			}
 			
 			// photos are immutable
 			@Override
-			protected void storeImpl(String photoId) { }
+			protected void storeImpl(Integer photoId) { }
 			
 			@Override
 			protected void removeImpl(int index) { }
