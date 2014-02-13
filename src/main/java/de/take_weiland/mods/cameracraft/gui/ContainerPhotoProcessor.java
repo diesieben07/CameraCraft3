@@ -1,19 +1,18 @@
 package de.take_weiland.mods.cameracraft.gui;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
-
+import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
+import de.take_weiland.mods.commons.sync.Synced;
+import de.take_weiland.mods.commons.templates.AbstractContainer;
+import de.take_weiland.mods.commons.templates.AdvancedSlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
-import de.take_weiland.mods.commons.net.Packets;
-import de.take_weiland.mods.commons.templates.AbstractContainer;
-import de.take_weiland.mods.commons.templates.AdvancedSlot;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 
-public class ContainerPhotoProcessor extends AbstractContainer.Synced<TilePhotoProcessor> {
+@Synced
+public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcessor> {
 
 	public ContainerPhotoProcessor(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player);
@@ -30,20 +29,17 @@ public class ContainerPhotoProcessor extends AbstractContainer.Synced<TilePhotoP
 	public boolean canInteractWith(EntityPlayer player) {
 		return inventory.isUseableByPlayer(player);
 	}
+
+	@de.take_weiland.mods.commons.sync.Synced(setter = "tank")
+	private FluidStack getFluid() {
+		return inventory.tank.getFluid();
+	}
+
+	@de.take_weiland.mods.commons.sync.Synced.Setter("tank")
+	private void setFluid(FluidStack stack) {
+		inventory.tank.setFluid(stack);
+	}
 	
-	@Override
-	public boolean writeSyncData(DataOutputStream out) throws IOException {
-		Packets.writeFluidStack(out, inventory.tank.getFluid());
-		out.writeByte(inventory.getProcessProgress());
-		return true;
-	}
-
-	@Override
-	public void readSyncData(DataInputStream in) throws IOException {
-		inventory.tank.setFluid(Packets.readFluidStack(in));
-		inventory.setProcessProgress(in.readByte());
-	}
-
 	@Override
 	public int getSlotFor(ItemStack stack) {
 		if (FluidContainerRegistry.isFilledContainer(stack)) {
