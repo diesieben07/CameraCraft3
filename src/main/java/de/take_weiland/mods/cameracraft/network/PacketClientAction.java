@@ -1,10 +1,10 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.commons.net.DataBuf;
-import de.take_weiland.mods.commons.net.Packets;
+import de.take_weiland.mods.commons.net.DataBuffers;
 import de.take_weiland.mods.commons.net.WritableDataBuf;
+import net.minecraft.entity.player.EntityPlayer;
 
 public class PacketClientAction extends CCPacket {
 
@@ -21,12 +21,12 @@ public class PacketClientAction extends CCPacket {
 
 	@Override
 	protected void write(WritableDataBuf buffer) {
-		Packets.writeEnum(buffer, action);
+		DataBuffers.writeEnum(buffer, action);
 	}
 
 	@Override
 	protected void handle(DataBuf buffer, EntityPlayer player, Side side) {
-		switch (Packets.readEnum(buffer, Action.class)) {
+		switch (DataBuffers.readEnum(buffer, Action.class)) {
 		case TAKE_PHOTO:
 			break;
 		case NAME_PHOTO:

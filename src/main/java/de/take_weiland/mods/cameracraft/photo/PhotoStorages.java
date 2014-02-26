@@ -89,8 +89,9 @@ public final class PhotoStorages {
 
 		@Override
 		protected void storeImpl(Integer photoId) {
-			nbt.intArray = Arrays.copyOf(nbt.intArray, nbt.intArray.length + 1);
-			nbt.intArray[nbt.intArray.length] = photoId.intValue();
+			int len = nbt.intArray.length;
+			nbt.intArray = Arrays.copyOf(nbt.intArray, len + 1);
+			nbt.intArray[len] = photoId.intValue();
 
 		}
 
