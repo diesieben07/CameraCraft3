@@ -1,21 +1,14 @@
 package de.take_weiland.mods.cameracraft.gui;
 
-import de.take_weiland.mods.cameracraft.blocks.CCBlock;
-import de.take_weiland.mods.cameracraft.blocks.MachineType;
-import de.take_weiland.mods.commons.util.Multitypes;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.world.World;
 import cpw.mods.fml.common.network.IGuiHandler;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.client.gui.GuiCamera;
-import de.take_weiland.mods.cameracraft.client.gui.GuiCardReader;
-import de.take_weiland.mods.cameracraft.client.gui.GuiItemTranslator;
-import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoProcessor;
-import de.take_weiland.mods.cameracraft.client.gui.GuiScanner;
+import de.take_weiland.mods.cameracraft.client.gui.*;
 import de.take_weiland.mods.cameracraft.client.gui.printer.GuiPrinter;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.commons.util.JavaUtils;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.world.World;
 
 public enum CCGuis {
 
@@ -26,7 +19,8 @@ public enum CCGuis {
 	PRINTER,
 	PRINTER_ADVANCED,
 	PHOTO,
-	SCANNER;
+	SCANNER,
+	CAMERA_PLACED;
 	
 	public void open(EntityPlayer player) {
 		open(player, 0, 0, 0);

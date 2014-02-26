@@ -76,24 +76,12 @@ public enum CameraType implements ItemMeta {
 		}
 		
 	}
-	
-//	public boolean isValidStorage(ItemStack stack) {
-//		switch (this) {
-//		case DIGITAL:
-//			return PhotoStorageType.MEMORY_CARD.isThis(stack);
-//		case FILM:
-//			return Multitypes.is
-//		}
-//	}
-	
+
 	public boolean isItemValid(int slot, ItemStack stack) {
-		switch (this) {
-		case DIGITAL:
+		if (this == DIGITAL) {
 			return slot == 1 ? ItemStacks.is(stack, CCItem.battery) : ItemStacks.is(stack, PhotoStorageType.MEMORY_CARD);
-		case FILM:
+		} else {
 			return ItemStacks.isAny(stack, PhotoStorageType.FILM_B_W, PhotoStorageType.FILM_COLOR);
-		default:
-			throw new AssertionError();
 		}
 	}
 	

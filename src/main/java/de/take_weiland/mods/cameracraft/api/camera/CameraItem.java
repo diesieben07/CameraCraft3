@@ -7,7 +7,6 @@ public interface CameraItem {
 
 	/**
 	 * create a new Camera from the given slot in the Inventory
-	 * @param stack
 	 * @return
 	 */
 	CameraInventory getInventory(IInventory inventory, int slot);

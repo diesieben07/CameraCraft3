@@ -1,18 +1,14 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import cpw.mods.fml.common.registry.GameRegistry;
+import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
+import de.take_weiland.mods.cameracraft.gui.CCGuis;
+import de.take_weiland.mods.cameracraft.tileentity.*;
+import de.take_weiland.mods.commons.templates.Metadata.BlockMeta;
 import net.minecraft.block.Block;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraftforge.common.ForgeDirection;
-import cpw.mods.fml.common.registry.GameRegistry;
-import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
-import de.take_weiland.mods.cameracraft.gui.CCGuis;
-import de.take_weiland.mods.cameracraft.tileentity.TileCardReader;
-import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
-import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
-import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
-import de.take_weiland.mods.cameracraft.tileentity.TileScanner;
-import de.take_weiland.mods.commons.templates.Metadata.BlockMeta;
 
 public enum MachineType implements BlockMeta {
 	
@@ -21,7 +17,8 @@ public enum MachineType implements BlockMeta {
 	CARD_READER("cardReader", TileCardReader.class, CCGuis.CARD_READER),
 	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER),
 	PRINTER_ADVANCED("printerAdvanced", TilePrinter.class, CCGuis.PRINTER_ADVANCED),
-	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER);
+	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER),
+	CAMERA("camera", TileCamera.class, CCGuis.CAMERA_PLACED);
 
 	private final String name;
 	private final Class<? extends TileEntity> teClass;

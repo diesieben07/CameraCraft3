@@ -1,19 +1,7 @@
 package de.take_weiland.mods.cameracraft.inv;
 
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import net.minecraft.crash.CrashReport;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.util.ReportedException;
-
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import de.take_weiland.mods.cameracraft.CCPlayerData;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.camera.CameraInventory;
@@ -30,6 +18,16 @@ import de.take_weiland.mods.commons.templates.ItemInventory;
 import de.take_weiland.mods.commons.util.Listenable;
 import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.ReportedException;
+
+import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public abstract class InventoryCamera extends ItemInventory.WithPlayer<InventoryCamera> implements CameraInventory, Listenable.Listener<PhotoStorage> {
 
@@ -157,7 +155,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 				Item item = storageSlot.getItem();
 				if (item instanceof PhotoStorageItem) {
 					lastStorage = ((PhotoStorageItem)item).getPhotoStorage(storageSlot);
-					lastStorage.addListener(this);
+					lastStorage.registerListener(this);
 				} else {
 					lastStorage = null;
 				}

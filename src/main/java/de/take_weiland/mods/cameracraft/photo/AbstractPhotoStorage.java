@@ -1,15 +1,16 @@
 package de.take_weiland.mods.cameracraft.photo;
 
-import static com.google.common.base.Preconditions.checkPositionIndex;
-import static com.google.common.base.Preconditions.checkState;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
-import de.take_weiland.mods.commons.util.ListenerArrayList;
-import de.take_weiland.mods.commons.util.ListenerList;
+import de.take_weiland.mods.commons.trait.HasTrait;
+import de.take_weiland.mods.commons.trait.TraitMethod;
 
+import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.base.Preconditions.checkState;
+
+@HasTrait
 public abstract class AbstractPhotoStorage implements PhotoStorage {
 
-	private final ListenerList<PhotoStorage> listeners = ListenerArrayList.<PhotoStorage>create(this);
 	protected final boolean isSealed;
 	
 	protected AbstractPhotoStorage(boolean isSealed) {
@@ -87,24 +88,21 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	public boolean isSealed() {
 		return isSealed;
 	}
-	
-	protected final void onChange() {
-		listeners.onChange();
-	}
-
-	@Override
-	public void addListener(Listener<? super PhotoStorage> l) {
-		listeners.add(l);
-	}
-
-	@Override
-	public void removeListener(Listener<? super PhotoStorage> l) {
-		listeners.remove(l);
-	}
 
 	@Override
 	public ImageFilter getFilter() { // default to no filter
 		return null;
 	}
+
+	@TraitMethod
+	public final void onChange() { }
+
+	@Override
+	@TraitMethod
+	public void registerListener(Listener<? super PhotoStorage> l) { }
+
+	@Override
+	@TraitMethod
+	public void removeListener(Listener<? super PhotoStorage> l) { }
 
 }

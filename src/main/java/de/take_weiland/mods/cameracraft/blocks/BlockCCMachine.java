@@ -1,5 +1,6 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import de.take_weiland.mods.commons.util.JavaUtils;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
@@ -28,7 +29,7 @@ public class BlockCCMachine extends CCMultitypeBlock<MachineType> implements Cab
 
 	@Override
 	public MachineType[] getTypes() {
-		return MachineType.values();
+		return JavaUtils.getEnumConstantsShared(MachineType.class);
 	}
 
 	@Override

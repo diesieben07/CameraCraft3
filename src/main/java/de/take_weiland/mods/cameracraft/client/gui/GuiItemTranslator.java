@@ -1,24 +1,21 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
-import java.util.List;
-
-import net.minecraft.client.renderer.entity.RenderItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.ResourceLocation;
-
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
-
 import de.take_weiland.mods.cameracraft.gui.ContainerItemTranslator;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.util.JavaUtils;
 import de.take_weiland.mods.commons.util.Listenable;
+import net.minecraft.client.renderer.entity.RenderItem;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.MathHelper;
+import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+
+import java.util.List;
 
 public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, ContainerItemTranslator> implements Listenable.Listener<TileItemMutator> {
 
@@ -39,7 +36,7 @@ public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, Con
 	
 	public GuiItemTranslator(ContainerItemTranslator container) {
 		super(container);
-		container.inventory().addListener(this);
+		container.inventory().registerListener(this);
 	}
 
 	@Override

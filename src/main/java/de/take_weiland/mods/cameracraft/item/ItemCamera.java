@@ -1,17 +1,7 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import static de.take_weiland.mods.commons.util.Multitypes.getType;
-
-import java.awt.image.BufferedImage;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
-
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-
 import de.take_weiland.mods.cameracraft.CCSounds;
 import de.take_weiland.mods.cameracraft.PhotoRequestManager;
 import de.take_weiland.mods.cameracraft.api.camera.CameraInventory;
@@ -22,6 +12,14 @@ import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.util.Scheduler;
 import de.take_weiland.mods.commons.util.Sides;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.world.World;
+
+import java.awt.image.BufferedImage;
+
+import static de.take_weiland.mods.commons.util.Multitypes.getType;
 
 public class ItemCamera extends CCItemMultitype<CameraType> implements CameraItem {
 
@@ -32,6 +30,11 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 	@Override
 	public CameraType[] getTypes() {
 		return CameraType.values();
+	}
+
+	@Override
+	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
+		return false;
 	}
 
 	@Override
@@ -50,7 +53,7 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 
 						@Override
 						public void run() {
-							Integer photoId = null;
+							Integer photoId;
 							if (!inv.getPhotoStorage().isFull()) {
 								photoId = PhotoManager.nextPhotoId(world);
 								
@@ -76,7 +79,6 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 	
 	@Override
 	public CameraInventory getInventory(IInventory inventory, int slot) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 	
