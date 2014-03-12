@@ -1,17 +1,15 @@
 package de.take_weiland.mods.cameracraft.img;
 
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
-
-import javax.imageio.ImageIO;
-
+import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ReportedException;
-import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
-import de.take_weiland.mods.commons.util.Scheduler;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 
 public final class ImageUtil {
 
@@ -49,7 +47,7 @@ public final class ImageUtil {
 				} catch (IOException e) {
 					CrashReport cr = CrashReport.makeCrashReport(e, "Saving ImageFile");
 					cr.makeCategory("File being saved to").addCrashSection("Location", file);
-					Scheduler.server().throwInMainThread(new ReportedException(cr));
+					throw new ReportedException(cr);
 				}
 			}
 		});

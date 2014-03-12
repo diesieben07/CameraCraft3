@@ -5,9 +5,10 @@ import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import de.take_weiland.mods.cameracraft.gui.ContainerItemTranslator;
 import de.take_weiland.mods.cameracraft.tileentity.TileItemMutator;
+import de.take_weiland.mods.commons.Listenable;
+import de.take_weiland.mods.commons.Listenables;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.util.JavaUtils;
-import de.take_weiland.mods.commons.util.Listenable;
 import net.minecraft.client.renderer.entity.RenderItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.MathHelper;
@@ -36,7 +37,7 @@ public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, Con
 	
 	public GuiItemTranslator(ContainerItemTranslator container) {
 		super(container);
-		container.inventory().registerListener(this);
+		Listenables.register(container.inventory(), this);
 	}
 
 	@Override
@@ -181,7 +182,7 @@ public class GuiItemTranslator extends AbstractGuiContainer<TileItemMutator, Con
 
 	@Override
 	public void onGuiClosed() {
-		container.inventory().removeListener(this);
+		Listenables.unregister(container.inventory(), this);
 		super.onGuiClosed();
 	}
 	

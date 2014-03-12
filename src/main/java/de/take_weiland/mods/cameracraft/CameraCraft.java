@@ -1,19 +1,9 @@
 package de.take_weiland.mods.cameracraft;
 
-import java.util.concurrent.Executors;
-import java.util.logging.Logger;
-
-import cpw.mods.fml.common.registry.GameRegistry;
-import de.take_weiland.mods.cameracraft.network.CCPacket;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.item.ItemStack;
-import net.minecraftforge.common.Configuration;
-import net.minecraftforge.common.MinecraftForge;
-
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
-
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -26,6 +16,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
+import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.TickRegistry;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
@@ -35,11 +26,23 @@ import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
+import de.take_weiland.mods.cameracraft.network.CCPackets;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.config.ConfigInjector;
 import de.take_weiland.mods.commons.config.GetProperty;
 import de.take_weiland.mods.commons.net.Network;
 import de.take_weiland.mods.commons.util.ItemStacks;
+import de.take_weiland.mods.commons.util.Scheduler;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.ReportedException;
+import net.minecraftforge.common.Configuration;
+import net.minecraftforge.common.MinecraftForge;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.logging.Logger;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 @NetworkMod(serverSideRequired = true, clientSideRequired = true)
@@ -90,10 +93,10 @@ public final class CameraCraft {
 		logger = event.getModLog();
 		
 		ConfigInjector.inject(config, CameraCraft.class, false, false);
-		
-		executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(maxThreadCount));
-		
-		Network.simplePacketHandler("CameraCraft", CCPacket.Type.class);
+
+		setupThreads(event.getSide());
+
+		Network.simplePacketHandler("CameraCraft", CCPackets.class);
 		
 		CCBlock.createBlocks();
 		CCItem.createItems();
@@ -118,7 +121,32 @@ public final class CameraCraft {
 		
 		env.preInit();
 	}
-	
+
+	private static void setupThreads(final Side side) {
+		// let exceptions bubble up to the main thread as ReportedExceptions
+		final Thread.UncaughtExceptionHandler ueh = new Thread.UncaughtExceptionHandler() {
+			@Override
+			public void uncaughtException(Thread t, Throwable e) {
+				if (!(e instanceof ReportedException)) {
+					e = new ReportedException(new CrashReport("Unexpected exception thrown in CameraCraft Thread!", e));
+				}
+				(side.isClient() ? Scheduler.client() : Scheduler.server()).throwInMainThread(e);
+			}
+		};
+		ThreadFactory threadFactory = new ThreadFactoryBuilder()
+				.setNameFormat("CameraCraft %d")
+				.setThreadFactory(new ThreadFactory() {
+					@Override
+					public Thread newThread(Runnable r) {
+						Thread t = new Thread(r);
+						t.setUncaughtExceptionHandler(ueh);
+						return t;
+					}
+				}).build();
+
+		executor = MoreExecutors.listeningDecorator(Executors.newFixedThreadPool(maxThreadCount, threadFactory));
+	}
+
 	@EventHandler
 	public void init(FMLInitializationEvent event) {
 		

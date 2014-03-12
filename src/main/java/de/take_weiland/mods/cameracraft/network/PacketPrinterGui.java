@@ -3,11 +3,12 @@ package de.take_weiland.mods.cameracraft.network;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.ModPacket;
 import de.take_weiland.mods.commons.net.WritableDataBuf;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 
-public class PacketPrinterGui extends CCPacket {
+public class PacketPrinterGui extends ModPacket {
 
 	private ContainerPrinter container;
 

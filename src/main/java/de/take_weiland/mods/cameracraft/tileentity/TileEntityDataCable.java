@@ -3,7 +3,7 @@ package de.take_weiland.mods.cameracraft.tileentity;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
 import de.take_weiland.mods.cameracraft.networking.NetworkNodeImpl;
-import de.take_weiland.mods.commons.templates.AbstractTileEntity;
+import de.take_weiland.mods.commons.tileentity.AbstractTileEntity;
 
 public class TileEntityDataCable extends AbstractTileEntity implements NetworkTile {
 

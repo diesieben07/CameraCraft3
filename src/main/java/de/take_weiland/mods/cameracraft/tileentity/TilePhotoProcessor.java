@@ -1,25 +1,19 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
+import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.blocks.MachineType;
+import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
+import de.take_weiland.mods.commons.util.ItemStacks;
+import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
-import de.take_weiland.mods.cameracraft.blocks.CCBlock;
-import de.take_weiland.mods.cameracraft.blocks.MachineType;
-import de.take_weiland.mods.commons.templates.NameableTileEntity;
-import de.take_weiland.mods.commons.templates.TileEntityInventory;
-import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Multitypes;
-import de.take_weiland.mods.commons.util.Sides;
+import net.minecraftforge.fluids.*;
 
-public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> implements IFluidHandler, NameableTileEntity {
+public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> implements IFluidHandler {
 
 	private static final int FLUID_PER_PROCESS = 10;
 
@@ -41,7 +35,7 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 	}
 
 	@Override
-	protected String getDefaultName() {
+	protected String unlocalizedName() {
 		return Multitypes.name(MachineType.PHOTO_PROCESSOR);
 	}
 

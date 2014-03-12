@@ -1,9 +1,9 @@
 package de.take_weiland.mods.cameracraft.api.photo;
 
-import java.util.List;
-
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
-import de.take_weiland.mods.commons.util.Listenable;
+import de.take_weiland.mods.commons.Listenable;
+
+import java.util.List;
 
 /**
  * Represents something that can store photos

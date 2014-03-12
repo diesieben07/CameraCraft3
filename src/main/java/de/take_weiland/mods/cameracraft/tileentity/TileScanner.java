@@ -1,7 +1,5 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.cameracraft.api.PhotoStorageProvider;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
@@ -9,11 +7,12 @@ import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.cameracraft.networking.NetworkNodeImpl;
-import de.take_weiland.mods.commons.templates.NameableTileEntity;
-import de.take_weiland.mods.commons.templates.TileEntityInventory;
+import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import de.take_weiland.mods.commons.util.Multitypes;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
-public class TileScanner extends TileEntityInventory<TileScanner> implements NetworkTile, NameableTileEntity, PhotoStorageProvider {
+public class TileScanner extends TileEntityInventory<TileScanner> implements NetworkTile, PhotoStorageProvider {
 
 	private final NetworkNodeImpl node = new NetworkNodeImpl(this);
 	
@@ -29,7 +28,7 @@ public class TileScanner extends TileEntityInventory<TileScanner> implements Net
 	}
 
 	@Override
-	protected String getDefaultName() {
+	protected String unlocalizedName() {
 		return Multitypes.fullName(MachineType.SCANNER);
 	}
 

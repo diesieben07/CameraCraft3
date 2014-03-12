@@ -1,14 +1,15 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
 import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.ModPacket;
 import de.take_weiland.mods.commons.net.WritableDataBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
 
-public class PacketPhotoName extends CCPacket {
+public class PacketPhotoName extends ModPacket {
 
 	private String name;
 	

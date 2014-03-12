@@ -1,18 +1,18 @@
 package de.take_weiland.mods.cameracraft.network;
 
+import cpw.mods.fml.relauncher.Side;
+import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
+import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
+import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.ModPacket;
+import de.take_weiland.mods.commons.net.WritableDataBuf;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+
 import java.util.Arrays;
 import java.util.Collection;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.inventory.Container;
-import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
-import de.take_weiland.mods.cameracraft.photo.PhotoManager;
-import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
-import de.take_weiland.mods.commons.net.DataBuf;
-import de.take_weiland.mods.commons.net.WritableDataBuf;
-
-public class PacketPrintJobs extends CCPacket {
+public class PacketPrintJobs extends ModPacket {
 
 	private int windowId;
 	private Collection<SimplePrintJob> jobs;

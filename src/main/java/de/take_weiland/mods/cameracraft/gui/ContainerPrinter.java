@@ -11,12 +11,11 @@ import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.printer.InkItem;
 import de.take_weiland.mods.cameracraft.network.PacketPrinterGui;
-import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
+import de.take_weiland.mods.commons.inv.AbstractContainer;
+import de.take_weiland.mods.commons.inv.SimpleSlot;
 import de.take_weiland.mods.commons.net.DataBuf;
 import de.take_weiland.mods.commons.net.WritableDataBuf;
-import de.take_weiland.mods.commons.templates.AbstractContainer;
-import de.take_weiland.mods.commons.templates.AdvancedSlot;
 import de.take_weiland.mods.commons.util.Containers;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import de.take_weiland.mods.commons.util.JavaUtils;
@@ -78,7 +77,7 @@ public class ContainerPrinter extends AbstractContainer<TilePrinter> implements 
 	@Override
 	protected void addSlots() {
 		for (int x = 0; x < 5; ++x) {
-			addSlotToContainer(new AdvancedSlot(inventory, x, x * 27 + 44, 91));
+			addSlotToContainer(new SimpleSlot(inventory, x, x * 27 + 44, 91));
 		}
 	}
 	

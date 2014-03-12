@@ -1,16 +1,15 @@
 package de.take_weiland.mods.cameracraft.client;
 
-import java.util.EnumSet;
-import java.util.Queue;
-
 import com.google.common.collect.Queues;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
 import cpw.mods.fml.common.ITickHandler;
 import cpw.mods.fml.common.TickType;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
+
+import java.util.EnumSet;
+import java.util.Queue;
 
 public class RenderTickHandler implements ITickHandler {
 
@@ -44,14 +43,12 @@ public class RenderTickHandler implements ITickHandler {
 			mc.entityRenderer.renderWorld(0, 0);
 			
 			byte[] rawImage = ClientUtil.rawScreenshot(mc);
-			ScreenshotPostProcess postProcess = new ScreenshotPostProcess(transferId, mc.displayWidth, mc.displayHeight, rawImage);
-			CameraCraft.executor.execute(postProcess);
+			CameraCraft.executor.execute(new ScreenshotPostProcess(transferId, mc.displayWidth, mc.displayHeight, rawImage));
 			
 			gs.hideGUI = hideGuiState;
 			gs.thirdPersonView = thirdPersonState;
 			mc.displayHeight = heightState;
 			mc.displayWidth = widthState;
-			
 		}
 	}
 

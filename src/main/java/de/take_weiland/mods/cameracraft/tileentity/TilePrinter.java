@@ -1,11 +1,27 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.Queue;
-
+import com.google.common.base.Function;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterators;
+import com.google.common.collect.Queues;
+import com.google.common.primitives.Ints;
+import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
+import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
+import de.take_weiland.mods.cameracraft.api.printer.InkItem;
+import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
+import de.take_weiland.mods.cameracraft.api.printer.Printer;
+import de.take_weiland.mods.cameracraft.api.printer.QueuedPrintJob;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.item.CCItem;
+import de.take_weiland.mods.cameracraft.item.PhotoType;
+import de.take_weiland.mods.cameracraft.networking.NetworkNodeImpl;
+import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
+import de.take_weiland.mods.commons.net.Packets;
+import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
+import de.take_weiland.mods.commons.util.ItemStacks;
+import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.util.NBT;
+import de.take_weiland.mods.commons.util.UnsignedShorts;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
@@ -17,29 +33,10 @@ import net.minecraft.network.packet.Packet3Chat;
 import net.minecraft.util.ChatMessageComponent;
 import net.minecraftforge.common.ForgeDirection;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterators;
-import com.google.common.collect.Queues;
-import com.google.common.primitives.Ints;
-
-import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
-import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
-import de.take_weiland.mods.cameracraft.api.printer.InkItem;
-import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
-import de.take_weiland.mods.cameracraft.api.printer.Printer;
-import de.take_weiland.mods.cameracraft.api.printer.QueuedPrintJob;
-import de.take_weiland.mods.cameracraft.blocks.MachineType;
-import de.take_weiland.mods.cameracraft.item.CCItem;
-import de.take_weiland.mods.cameracraft.item.PhotoType;
-import de.take_weiland.mods.cameracraft.networking.NetworkNodeImpl;
-import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
-import de.take_weiland.mods.commons.net.Packets;
-import de.take_weiland.mods.commons.templates.TileEntityInventory;
-import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Multitypes;
-import de.take_weiland.mods.commons.util.NBT;
-import de.take_weiland.mods.commons.util.UnsignedShorts;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Queue;
 
 public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISidedInventory, NetworkTile, Printer {
 
@@ -173,7 +170,7 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 	}
 
 	@Override
-	protected String getDefaultName() {
+	protected String unlocalizedName() {
 		return Multitypes.fullName(Multitypes.getType(CCBlock.machines, getBlockMetadata()));
 	}
 	

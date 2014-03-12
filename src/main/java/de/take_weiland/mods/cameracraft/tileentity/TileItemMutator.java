@@ -1,21 +1,20 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
-import java.util.List;
-
+import de.take_weiland.mods.cameracraft.blocks.MachineType;
+import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
+import de.take_weiland.mods.commons.util.ItemStacks;
+import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.ForgeDirection;
 import net.minecraftforge.oredict.OreDictionary;
-import de.take_weiland.mods.cameracraft.blocks.MachineType;
-import de.take_weiland.mods.commons.templates.NameableTileEntity;
-import de.take_weiland.mods.commons.templates.TileEntityInventory;
-import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Multitypes;
-import de.take_weiland.mods.commons.util.Sides;
 
-public class TileItemMutator extends TileEntityInventory<TileItemMutator> implements ISidedInventory, NameableTileEntity {
+import java.util.List;
+
+public class TileItemMutator extends TileEntityInventory<TileItemMutator> implements ISidedInventory {
 
 	private static final int TRANSMUTE_DURATION = 200;
 	
@@ -28,7 +27,7 @@ public class TileItemMutator extends TileEntityInventory<TileItemMutator> implem
 	}
 
 	@Override
-	protected String getDefaultName() {
+	protected String unlocalizedName() {
 		return Multitypes.name(MachineType.ITEM_MUTATOR);
 	}
 	

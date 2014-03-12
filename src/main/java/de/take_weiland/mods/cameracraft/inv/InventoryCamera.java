@@ -14,8 +14,9 @@ import de.take_weiland.mods.cameracraft.gui.ContainerCamera;
 import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
-import de.take_weiland.mods.commons.templates.ItemInventory;
-import de.take_weiland.mods.commons.util.Listenable;
+import de.take_weiland.mods.commons.Listenable;
+import de.take_weiland.mods.commons.Listenables;
+import de.take_weiland.mods.commons.inv.ItemInventory;
 import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.crash.CrashReport;
@@ -29,16 +30,19 @@ import net.minecraft.util.ReportedException;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 
-public abstract class InventoryCamera extends ItemInventory.WithPlayer<InventoryCamera> implements CameraInventory, Listenable.Listener<PhotoStorage> {
+public abstract class InventoryCamera extends ItemInventory.WithInventory<InventoryCamera> implements CameraInventory, Listenable.Listener<PhotoStorage> {
 
 	private static final int COOLDOWN = 30;
 	public static final int LENS_SLOT = 0;
 	private static final String NBT_KEY = "cameracraft.camerainv";
 	
 	private boolean isLidClosed;
+
+	private final EntityPlayer player;
 	
 	protected InventoryCamera(EntityPlayer player) {
-		super(player, NBT_KEY);
+		super(player.inventory, player.inventory.currentItem, NBT_KEY);
+		this.player = player;
 	}
 	
 	public abstract CameraType getType();
@@ -61,7 +65,12 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 			convertTasks = PhotoManager.applyFilterTo(storage.getPhotos(), ImageFilters.OVEREXPOSE);
 		}
 	}
-	
+
+	@Override
+	public boolean isUseableByPlayer(EntityPlayer player) {
+		return this.player == player;
+	}
+
 	@Override
 	public void writeToNbt(NBTTagCompound nbt) {
 		super.writeToNbt(nbt);
@@ -103,15 +112,11 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 		dispose();
 	}
 
-	private boolean listening = true;
-	
 	@Override
 	public void onChange(PhotoStorage storage) {
-		if (listening) {
-			saveData();
-		}
+		onChange();
 	}
-	
+
 	private ItemStack lastStorageStack;
 	private PhotoStorage lastStorage;
 	
@@ -146,7 +151,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 			return lastStorage;
 		} else {
 			if (lastStorage != null) {
-				lastStorage.removeListener(this);
+				Listenables.unregister(lastStorage, this);
 			}
 			lastStorageStack = storageSlot;
 			if (storageSlot == null) {
@@ -155,7 +160,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 				Item item = storageSlot.getItem();
 				if (item instanceof PhotoStorageItem) {
 					lastStorage = ((PhotoStorageItem)item).getPhotoStorage(storageSlot);
-					lastStorage.registerListener(this);
+					Listenables.register(lastStorage, this);
 				} else {
 					lastStorage = null;
 				}
@@ -188,7 +193,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 
 	@Override
 	public ItemStack getCamera() {
-		return originalStack.copy();
+		return stack.copy();
 	}
 	
 	@Override
@@ -247,7 +252,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	@Override
 	public void dispose() {
 		if (lastStorage != null) {
-			lastStorage.removeListener(this);
+			Listenables.unregister(lastStorage, this);
 		}
 		waitForRemainingTasks();
 	}
@@ -255,7 +260,7 @@ public abstract class InventoryCamera extends ItemInventory.WithPlayer<Inventory
 	@Override
 	public void onTakePhoto() {
 		CCPlayerData.get(player).setCooldown(COOLDOWN);
-		ItemStack battery = getBattery();
+		ItemStack battery = getBattery(); // is null if we don't need battery
 		if (battery != null) {
 			BatteryHandler handler = CameraCraft.api.findBatteryHandler(battery);
 			handler.drain(battery, 10);

@@ -1,17 +1,17 @@
 package de.take_weiland.mods.cameracraft.network;
 
+import cpw.mods.fml.relauncher.Side;
+import de.take_weiland.mods.cameracraft.CCPlayerData;
+import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.ModPacket;
+import de.take_weiland.mods.commons.net.WritableDataBuf;
+import net.minecraft.entity.player.EntityPlayer;
+
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 
-import javax.imageio.ImageIO;
-
-import net.minecraft.entity.player.EntityPlayer;
-import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.cameracraft.PhotoRequestManager;
-import de.take_weiland.mods.commons.net.DataBuf;
-import de.take_weiland.mods.commons.net.WritableDataBuf;
-
-public class PacketTakenPhoto extends CCPacket {
+public class PacketTakenPhoto extends ModPacket {
 
 	private BufferedImage image;
 	private int transferId;
@@ -34,7 +34,7 @@ public class PacketTakenPhoto extends CCPacket {
 	@Override
 	protected void handle(DataBuf buf, EntityPlayer player, Side side) {
 		try {
-			PhotoRequestManager.incomingPhoto(player, buf.getVarInt(), ImageIO.read(buf.asInputStream()));
+			CCPlayerData.get(player).onPhoto(buf.getVarInt(), ImageIO.read(buf.asInputStream()));
 		} catch (IOException e) {
 			throw new AssertionError("Impossible!");
 		}

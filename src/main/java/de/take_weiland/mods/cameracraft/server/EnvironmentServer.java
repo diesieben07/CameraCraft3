@@ -1,8 +1,8 @@
 package de.take_weiland.mods.cameracraft.server;
 
-import java.io.InputStream;
-
 import de.take_weiland.mods.cameracraft.Environment;
+
+import java.io.InputStream;
 
 public class EnvironmentServer implements Environment {
 
@@ -10,7 +10,7 @@ public class EnvironmentServer implements Environment {
 	public void preInit() { }
 
 	@Override
-	public void onPhotoRequest(int transferId) { }
+	public void handleStandardPhotoRequest(int transferId) { }
 
 	@Override
 	public void displayNamePhotoGui(String oldName) { }

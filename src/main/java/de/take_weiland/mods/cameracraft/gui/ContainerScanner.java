@@ -1,10 +1,10 @@
 package de.take_weiland.mods.cameracraft.gui;
 
+import de.take_weiland.mods.cameracraft.tileentity.TileScanner;
+import de.take_weiland.mods.commons.inv.AbstractContainer;
+import de.take_weiland.mods.commons.inv.SimpleSlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
-import de.take_weiland.mods.cameracraft.tileentity.TileScanner;
-import de.take_weiland.mods.commons.templates.AbstractContainer;
-import de.take_weiland.mods.commons.templates.AdvancedSlot;
 
 public class ContainerScanner extends AbstractContainer<TileScanner> {
 
@@ -14,7 +14,7 @@ public class ContainerScanner extends AbstractContainer<TileScanner> {
 
 	@Override
 	protected void addSlots() {
-		addSlotToContainer(new AdvancedSlot(inventory, 0, 80, 35));
+		addSlotToContainer(new SimpleSlot(inventory, 0, 80, 35));
 	}
 
 }

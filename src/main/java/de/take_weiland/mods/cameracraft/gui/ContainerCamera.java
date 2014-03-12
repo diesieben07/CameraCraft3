@@ -1,14 +1,14 @@
 package de.take_weiland.mods.cameracraft.gui;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.camera.LensItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
-import de.take_weiland.mods.commons.templates.AbstractContainer;
-import de.take_weiland.mods.commons.templates.AdvancedSlot;
+import de.take_weiland.mods.commons.inv.AbstractContainer;
+import de.take_weiland.mods.commons.inv.SimpleSlot;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 
@@ -29,7 +29,7 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 		
 		for (int slot = 0; slot < slots; ++slot) {
 			if (slot == closedSlot) {
-				addSlotToContainer(new AdvancedSlot(inventory, slot, slotX, 31) {
+				addSlotToContainer(new SimpleSlot(inventory, slot, slotX, 31) {
 
 					@Override
 					public boolean func_111238_b() {
@@ -52,7 +52,7 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 					
 				});
 			} else {
-				addSlotToContainer(new AdvancedSlot(inventory, slot, slotX, 31));
+				addSlotToContainer(new SimpleSlot(inventory, slot, slotX, 31));
 			}
 			slotX += 25;
 		}

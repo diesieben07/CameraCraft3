@@ -1,20 +1,5 @@
 package de.take_weiland.mods.cameracraft.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.crash.CrashReport;
-import net.minecraft.network.INetworkManager;
-import net.minecraft.network.NetLoginHandler;
-import net.minecraft.network.packet.NetHandler;
-import net.minecraft.network.packet.Packet1Login;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.ReportedException;
-import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.sound.SoundLoadEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.ForgeSubscribe;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.network.IConnectionHandler;
 import cpw.mods.fml.common.network.NetworkRegistry;
@@ -31,7 +16,21 @@ import de.take_weiland.mods.cameracraft.client.render.RenderBlockCable;
 import de.take_weiland.mods.cameracraft.client.render.RenderPoster;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.commons.util.Consumer;
-import de.take_weiland.mods.commons.util.Scheduler;
+import net.minecraft.client.Minecraft;
+import net.minecraft.crash.CrashReport;
+import net.minecraft.network.INetworkManager;
+import net.minecraft.network.NetLoginHandler;
+import net.minecraft.network.packet.NetHandler;
+import net.minecraft.network.packet.Packet1Login;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.util.ReportedException;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.sound.SoundLoadEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.ForgeSubscribe;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 public class EnvironmentClient implements Environment, IConnectionHandler {
 
@@ -58,7 +57,7 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 	}
 
 	@Override
-	public void onPhotoRequest(int transferId) {
+	public void handleStandardPhotoRequest(int transferId) {
 		rth.schedulePhoto(transferId);
 	}
 
@@ -73,7 +72,7 @@ public class EnvironmentClient implements Environment, IConnectionHandler {
 				} catch (IOException e) {
 					CrashReport cr = new CrashReport("Receiving CameraCraft photodata", e);
 					cr.makeCategory("Photo being received").addCrashSection("photoId", photoId);
-					Scheduler.client().throwInMainThread(new ReportedException(cr));
+					throw new ReportedException(cr);
 				}
 			}
 		});

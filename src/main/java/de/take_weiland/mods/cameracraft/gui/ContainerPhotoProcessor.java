@@ -1,17 +1,15 @@
 package de.take_weiland.mods.cameracraft.gui;
 
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
+import de.take_weiland.mods.commons.inv.AbstractContainer;
+import de.take_weiland.mods.commons.inv.SimpleSlot;
 import de.take_weiland.mods.commons.sync.Synced;
-import de.take_weiland.mods.commons.templates.AbstractContainer;
-import de.take_weiland.mods.commons.templates.AdvancedSlot;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
 
-@Synced
 public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcessor> {
 
 	public ContainerPhotoProcessor(World world, int x, int y, int z, EntityPlayer player) {
@@ -20,9 +18,9 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 	
 	@Override
 	protected void addSlots() {
-		addSlotToContainer(new AdvancedSlot(inventory, 0, 128, 14));
-		addSlotToContainer(new AdvancedSlot(inventory, 1, 128, 49));
-		addSlotToContainer(new AdvancedSlot(inventory, 2, 100, 14));
+		addSlotToContainer(new SimpleSlot(inventory, 0, 128, 14));
+		addSlotToContainer(new SimpleSlot(inventory, 1, 128, 49));
+		addSlotToContainer(new SimpleSlot(inventory, 2, 100, 14));
 	}
 	
 	@Override
@@ -30,26 +28,6 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 		return inventory.isUseableByPlayer(player);
 	}
 
-	@de.take_weiland.mods.commons.sync.Synced(setter = "tank")
-	private FluidStack getFluid() {
-		return inventory.tank.getFluid();
-	}
-
-	@de.take_weiland.mods.commons.sync.Synced.Setter("tank")
-	private void setFluid(FluidStack stack) {
-		inventory.tank.setFluid(stack);
-	}
-
-	@de.take_weiland.mods.commons.sync.Synced(setter = "progress")
-	private int getProcessProgress() {
-		return inventory.getProcessProgress();
-	}
-
-	@de.take_weiland.mods.commons.sync.Synced.Setter("progress")
-	private void setProcessProgress(int progress) {
-		inventory.setProcessProgress(progress);
-	}
-	
 	@Override
 	public int getSlotFor(ItemStack stack) {
 		if (FluidContainerRegistry.isFilledContainer(stack)) {
@@ -66,4 +44,23 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 		return inventory.getSizeInventory();
 	}
 
+	@Synced(setter = "tank")
+	private FluidStack getFluid() {
+		return inventory.tank.getFluid();
+	}
+
+	@Synced.Setter("tank")
+	private void setFluid(FluidStack stack) {
+		inventory.tank.setFluid(stack);
+	}
+
+	@Synced(setter = "progress")
+	private int getProcessProgress() {
+		return inventory.getProcessProgress();
+	}
+
+	@Synced.Setter("progress")
+	private void setProcessProgress(int progress) {
+		inventory.setProcessProgress(progress);
+	}
 }

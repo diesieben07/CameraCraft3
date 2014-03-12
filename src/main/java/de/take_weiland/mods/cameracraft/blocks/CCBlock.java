@@ -1,13 +1,13 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.commons.util.Blocks;
+import de.take_weiland.mods.commons.util.Inventories;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
-import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.commons.util.Blocks;
-import de.take_weiland.mods.commons.util.Inventories;
 
 public class CCBlock extends Block {
 
@@ -16,7 +16,7 @@ public class CCBlock extends Block {
 	public static BlockCable cable;
 	public static BlockAlkaline alkaline;
 	
-	public static final void createBlocks() {
+	public static void createBlocks() {
 		alkalineFluid = new Fluid("cameracraft.alkaline").setLuminosity(7);
 		FluidRegistry.registerFluid(alkalineFluid);
 		
@@ -26,7 +26,7 @@ public class CCBlock extends Block {
 		(alkaline = new BlockAlkaline(3081)).lateInit();
 	}
 	
-	static final int getId(String name, int defaultId) {
+	static int getId(String name, int defaultId) {
 		return CameraCraft.config.getBlock(name, defaultId).getInt();
 	}
 	

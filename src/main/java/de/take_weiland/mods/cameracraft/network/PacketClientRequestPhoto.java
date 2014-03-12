@@ -1,15 +1,16 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import java.io.File;
-
-import net.minecraft.entity.player.EntityPlayer;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.net.DataBuf;
+import de.take_weiland.mods.commons.net.ModPacket;
 import de.take_weiland.mods.commons.net.WritableDataBuf;
+import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketClientRequestPhoto extends CCPacket {
+import java.io.File;
+
+public class PacketClientRequestPhoto extends ModPacket {
 
 	Integer photoId;
 	
