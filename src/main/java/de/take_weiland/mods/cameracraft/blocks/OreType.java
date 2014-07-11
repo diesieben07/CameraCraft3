@@ -1,9 +1,8 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
-import net.minecraft.block.Block;
-import de.take_weiland.mods.commons.templates.Metadata.BlockMeta;
+import de.take_weiland.mods.commons.meta.Subtype;
 
-public enum OreType implements BlockMeta {
+public enum OreType implements Subtype {
 	
 	TIN("tin"),
 	ALKALINE("alkaline"),
@@ -17,13 +16,8 @@ public enum OreType implements BlockMeta {
 	}
 	
 	@Override
-	public String unlocalizedName() {
+	public String subtypeName() {
 		return name;
 	}
 
-	@Override
-	public Block getBlock() {
-		return CCBlock.ores;
-	}
-	
 }

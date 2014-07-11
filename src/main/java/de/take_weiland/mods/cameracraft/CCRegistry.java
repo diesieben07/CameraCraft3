@@ -16,7 +16,6 @@ import net.minecraftforge.oredict.ShapedOreRecipe;
 import net.minecraftforge.oredict.ShapelessOreRecipe;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
-import de.take_weiland.mods.cameracraft.blocks.CableType;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.cameracraft.blocks.OreType;
 import de.take_weiland.mods.cameracraft.item.MiscItemType;

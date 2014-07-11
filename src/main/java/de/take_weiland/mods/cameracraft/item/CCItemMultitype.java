@@ -1,23 +1,21 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import java.util.List;
-
+import de.take_weiland.mods.commons.client.Icons;
+import de.take_weiland.mods.commons.meta.HasSubtypes;
+import de.take_weiland.mods.commons.meta.Subtype;
+import de.take_weiland.mods.commons.meta.Subtypes;
 import net.minecraft.client.renderer.texture.IconRegister;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Icon;
-import de.take_weiland.mods.commons.client.Icons;
-import de.take_weiland.mods.commons.templates.HasMetadata;
-import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
-import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.JavaUtils;
-import de.take_weiland.mods.commons.util.Multitypes;
 
-public abstract class CCItemMultitype<T extends ItemMeta> extends CCItem implements HasMetadata<T> {
+import java.util.List;
+import java.util.Map;
 
-	private Icon[] icons;
-	private List<ItemStack> subtypes;
-	
+public abstract class CCItemMultitype<T extends Subtype> extends CCItem implements HasSubtypes<T> {
+
+    private Map<T, Icon> icons;
+
 	public CCItemMultitype(String name, int defaultId) {
 		super(name, defaultId);
 	}
@@ -25,37 +23,26 @@ public abstract class CCItemMultitype<T extends ItemMeta> extends CCItem impleme
 	@Override
 	protected void lateInit() {
 		super.lateInit();
-		subtypes = provideSubtypes();
-	}
-
-	protected List<ItemStack> provideSubtypes() {
-		return ItemStacks.allOf(this);
-	}
-
-	@SuppressWarnings({ "rawtypes", "unchecked" })
-	@Override
-	public final void getSubItems(int itemId, CreativeTabs tab, List itemList) {
-		itemList.addAll(subtypes);
 	}
 
 	@Override
-	public T getDefault() {
-		return getTypes()[0];
-	}
+	public final void getSubItems(int itemId, CreativeTabs tab, List list) {
+        Subtypes.getSubItemsImpl(this, list);
+    }
 
 	@Override
 	public Icon getIconFromDamage(int meta) {
-		return JavaUtils.get(icons, meta);
+		return icons.get(subtypeProperty().value(meta));
 	}
 
 	@Override
 	public void registerIcons(IconRegister register) {
-		icons = Icons.registerMulti(register, getTypes());
+		icons = Icons.registerMulti(this, register);
 	}
 	
 	@Override
 	public String getUnlocalizedName(ItemStack stack) {
-		return Multitypes.name(Multitypes.getType(this, stack));
+		return Subtypes.name(this, stack);
 	}
 
 }

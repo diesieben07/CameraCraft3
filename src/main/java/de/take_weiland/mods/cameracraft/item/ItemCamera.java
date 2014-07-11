@@ -10,6 +10,8 @@ import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.img.ImageUtil;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
+import de.take_weiland.mods.commons.meta.MetaProperties;
+import de.take_weiland.mods.commons.meta.MetadataProperty;
 import de.take_weiland.mods.commons.util.Scheduler;
 import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,20 +21,20 @@ import net.minecraft.world.World;
 
 import java.awt.image.BufferedImage;
 
-import static de.take_weiland.mods.commons.util.Multitypes.getType;
-
 public class ItemCamera extends CCItemMultitype<CameraType> implements CameraItem {
+
+    private static final MetadataProperty<CameraType> subtypeProp = MetaProperties.newProperty(0, CameraType.class);
 
 	public ItemCamera(int defaultId) {
 		super("camera", defaultId);
 	}
 
-	@Override
-	public CameraType[] getTypes() {
-		return CameraType.values();
-	}
+    @Override
+    public MetadataProperty<CameraType> subtypeProperty() {
+        return subtypeProp;
+    }
 
-	@Override
+    @Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
 		return false;
 	}
@@ -83,7 +85,7 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 	}
 	
 	public InventoryCamera newInventory(EntityPlayer player, ItemStack stack) {
-		return isCamera(stack) ? getType(this, stack).newInventory(player) : null;
+		return isCamera(stack) ? subtypeProp.value(stack).newInventory(player) : null;
 	}
 	
 	public boolean isCamera(ItemStack stack) {

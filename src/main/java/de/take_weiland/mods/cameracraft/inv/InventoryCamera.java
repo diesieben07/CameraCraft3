@@ -12,12 +12,13 @@ import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.gui.ContainerCamera;
 import de.take_weiland.mods.cameracraft.img.ImageFilters;
+import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import de.take_weiland.mods.commons.Listenable;
 import de.take_weiland.mods.commons.Listenables;
 import de.take_weiland.mods.commons.inv.ItemInventory;
-import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.meta.Subtypes;
 import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.entity.player.EntityPlayer;
@@ -40,8 +41,8 @@ public abstract class InventoryCamera extends ItemInventory.WithInventory<Invent
 
 	private final EntityPlayer player;
 	
-	protected InventoryCamera(EntityPlayer player) {
-		super(player.inventory, player.inventory.currentItem, NBT_KEY);
+	protected InventoryCamera(int size, EntityPlayer player) {
+		super(size, player.inventory, player.inventory.currentItem, NBT_KEY);
 		this.player = player;
 	}
 	
@@ -89,7 +90,7 @@ public abstract class InventoryCamera extends ItemInventory.WithInventory<Invent
 
 	@Override
 	public String getInvName() {
-		return Multitypes.fullName(getType());
+		return Subtypes.fullName(CCItem.camera, getType());
 	}
 
 	@Override
@@ -114,7 +115,7 @@ public abstract class InventoryCamera extends ItemInventory.WithInventory<Invent
 
 	@Override
 	public void onChange(PhotoStorage storage) {
-		onChange();
+		onInventoryChanged();
 	}
 
 	private ItemStack lastStorageStack;
@@ -240,7 +241,7 @@ public abstract class InventoryCamera extends ItemInventory.WithInventory<Invent
 				openLid();
 			}
 					
-			onChange();
+			onInventoryChanged();
 		}
 	}
 	

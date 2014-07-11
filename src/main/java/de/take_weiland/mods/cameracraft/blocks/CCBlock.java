@@ -1,8 +1,8 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.commons.inv.Inventories;
 import de.take_weiland.mods.commons.util.Blocks;
-import de.take_weiland.mods.commons.util.Inventories;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
@@ -13,7 +13,6 @@ public class CCBlock extends Block {
 
 	public static BlockCCOre ores;
 	public static BlockCCMachine machines;
-	public static BlockCable cable;
 	public static BlockAlkaline alkaline;
 	
 	public static void createBlocks() {
@@ -22,7 +21,6 @@ public class CCBlock extends Block {
 		
 		(ores = new BlockCCOre(3078)).lateInit();
 		(machines = new BlockCCMachine(3079)).lateInit();
-		(cable = new BlockCable(3080)).lateInit();
 		(alkaline = new BlockAlkaline(3081)).lateInit();
 	}
 	

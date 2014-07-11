@@ -1,14 +1,14 @@
 package de.take_weiland.mods.cameracraft.item;
 
+import de.take_weiland.mods.commons.meta.Subtype;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
 import de.take_weiland.mods.commons.util.ItemStacks;
 
-public enum CameraType implements ItemMeta {
+public enum CameraType implements Subtype {
 
 	FILM("film", 2),
 	DIGITAL("digital", 3);
@@ -24,7 +24,7 @@ public enum CameraType implements ItemMeta {
 	}
 	
 	public InventoryCamera newInventory(EntityPlayer player) {
-		return this == FILM ? new InventoryCameraImpl(player) : new InventoryCameraImpl(player) {
+		return this == FILM ? new InventoryCameraImpl(this, player) : new InventoryCameraImpl(this, player) {
 
 			@Override
 			public boolean canTakePhoto() {
@@ -33,51 +33,8 @@ public enum CameraType implements ItemMeta {
 			
 		};
 	}
-	
-	public class InventoryCameraImpl extends InventoryCamera {
-		
-		InventoryCameraImpl(EntityPlayer player) {
-			super(player);
-		}
 
-		@Override
-		public int getSizeInventory() {
-			return slotCount;
-		}
-
-		@Override
-		public CameraType getType() {
-			return CameraType.this;
-		}
-
-		@Override
-		public int storageSlot() {
-			return CameraType.this == DIGITAL ? 2 : 1;
-		}
-
-		@Override
-		public boolean hasLid() {
-			return CameraType.this == FILM;
-		}
-
-		@Override
-		public boolean canRewind() {
-			return CameraType.this == FILM && storage[storageSlot()] != null;
-		}
-
-		@Override
-		public boolean needsBattery() {
-			return CameraType.this == DIGITAL;
-		}
-
-		@Override
-		public int batterySlot() {
-			return CameraType.this == DIGITAL ? 1 : -1;
-		}
-		
-	}
-
-	public boolean isItemValid(int slot, ItemStack stack) {
+    public boolean isItemValid(int slot, ItemStack stack) {
 		if (this == DIGITAL) {
 			return slot == 1 ? ItemStacks.is(stack, CCItem.battery) : ItemStacks.is(stack, PhotoStorageType.MEMORY_CARD);
 		} else {
@@ -88,15 +45,10 @@ public enum CameraType implements ItemMeta {
 	public ResourceLocation getGuiTexture() {
 		return texture;
 	}
-	
-	@Override
-	public String unlocalizedName() {
-		return name;
-	}
 
-	@Override
-	public Item getItem() {
-		return CCItem.camera;
-	}
-	
+    @Override
+    public String subtypeName() {
+        return name;
+    }
+
 }

@@ -1,20 +1,16 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
 import cpw.mods.fml.common.registry.GameRegistry;
-import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.tileentity.*;
-import de.take_weiland.mods.commons.templates.Metadata.BlockMeta;
-import net.minecraft.block.Block;
+import de.take_weiland.mods.commons.meta.Subtype;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
-import net.minecraftforge.common.ForgeDirection;
 
-public enum MachineType implements BlockMeta {
+public enum MachineType implements Subtype {
 	
 	PHOTO_PROCESSOR("processor", TilePhotoProcessor.class, CCGuis.PHOTO_PROCESSOR),
 	ITEM_MUTATOR("oreDictionary", TileItemMutator.class, CCGuis.ORE_DICTIONARY),
-	CARD_READER("cardReader", TileCardReader.class, CCGuis.CARD_READER),
 	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER),
 	PRINTER_ADVANCED("printerAdvanced", TilePrinter.class, CCGuis.PRINTER_ADVANCED),
 	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER),
@@ -35,15 +31,10 @@ public enum MachineType implements BlockMeta {
 	}
 	
 	@Override
-	public String unlocalizedName() {
+	public String subtypeName() {
 		return name;
 	}
 
-	@Override
-	public Block getBlock() {
-		return CCBlock.machines;
-	}
-	
 	public void openGui(EntityPlayer player, int x, int y, int z) {
 		if (gui != null) {
 			gui.open(player, x, y, z);
@@ -69,9 +60,4 @@ public enum MachineType implements BlockMeta {
 			}
 		}
 	}
-
-	public boolean canCableConnect(ForgeDirection side, de.take_weiland.mods.cameracraft.api.cable.CableType type) {
-		return type == CableType.POWER || (teClass != null && NetworkTile.class.isAssignableFrom(teClass));
-	}
-
 }

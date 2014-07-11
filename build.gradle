@@ -17,12 +17,12 @@ apply plugin: 'maven'
 repositories {
 	maven {
 		name = 'SevenCommons'
-		url = "http://take-weiland.de/maven/"
+		url = "http://maven.take-weiland.de"
 	}
 }
 
 dependencies {
-    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.110:deobf'
+    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.215:deobf'
 }
 
 

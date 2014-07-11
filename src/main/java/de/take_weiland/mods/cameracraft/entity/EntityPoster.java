@@ -1,20 +1,16 @@
 package de.take_weiland.mods.cameracraft.entity;
 
+import com.google.common.io.ByteArrayDataInput;
+import com.google.common.io.ByteArrayDataOutput;
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
-
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
-
-import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
-import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
-import de.take_weiland.mods.cameracraft.photo.PhotoManager;
-import de.take_weiland.mods.commons.util.NBT;
 
 public class EntityPoster extends EntityHanging implements IEntityAdditionalSpawnData {
 
@@ -78,7 +74,7 @@ public class EntityPoster extends EntityHanging implements IEntityAdditionalSpaw
 	@Override
 	public void writeEntityToNBT(NBTTagCompound nbt) {
 		super.writeEntityToNBT(nbt);
-		stack.writeToNBT(NBT.getOrCreateCompound(nbt, "photoStack"));
+		nbt.setTag("photoStack", stack.writeToNBT(new NBTTagCompound()));
 	}
 
 	@Override
