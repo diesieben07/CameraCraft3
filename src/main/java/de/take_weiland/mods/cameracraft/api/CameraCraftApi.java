@@ -1,20 +1,16 @@
 package de.take_weiland.mods.cameracraft.api;
 
+import com.google.common.util.concurrent.ListenableFuture;
+import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.IBlockAccess;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
-
-import com.google.common.util.concurrent.ListenableFuture;
-
-import de.take_weiland.mods.cameracraft.api.cable.CableType;
-import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 
 public interface CameraCraftApi {
 	
-	CableType getCableType(IBlockAccess world, int x, int y, int z);
-
 	GenerateMinable.EventType getTinMinableType();
 
 	GenerateMinable.EventType getAlkalineMinableType();
@@ -23,14 +19,16 @@ public interface CameraCraftApi {
 	
 	boolean isCamera(ItemStack stack);
 	
-	CableType getPowerCable();
-	
-	CableType getDataCable();
-	
 	ListenableFuture<String> takePhoto(EntityPlayer viewport);
-	
+
 	BatteryHandler findBatteryHandler(ItemStack stack);
 	
 	void registerBatteryHandler(Item battery, BatteryHandler handler);
-	
+
+    PhotoDatabase getCurrentPhotoDatabase();
+
+    static CameraCraftApi get() {
+        return CameraCraft.api;
+    }
+
 }

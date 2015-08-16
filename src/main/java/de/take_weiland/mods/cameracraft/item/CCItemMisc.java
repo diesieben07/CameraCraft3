@@ -1,57 +1,54 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import net.minecraft.block.Block;
+import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.printer.InkItem;
+import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.commons.meta.MetadataProperty;
+import de.take_weiland.mods.commons.util.ItemStacks;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.Item;
+import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumMovingObjectType;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
-import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.api.printer.InkItem;
-import de.take_weiland.mods.cameracraft.blocks.CCBlock;
-import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.JavaUtils;
-import de.take_weiland.mods.commons.util.Multitypes;
-import de.take_weiland.mods.commons.util.Sides;
-import de.take_weiland.mods.commons.util.UnsignedShorts;
+import net.minecraftforge.common.util.ForgeDirection;
+
+import static de.take_weiland.mods.commons.util.Sides.sideOf;
 
 public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem {
 
-	public CCItemMisc(int defaultId) {
-		super("misc", defaultId);
+    private static final MetadataProperty<MiscItemType> type = MetadataProperty.newProperty(0, MiscItemType.class);
+    public static final int MAX_AMOUNT = 100;
+
+    public CCItemMisc() {
+		super("misc");
 	}
 
-	@Override
-	public MiscItemType[] getTypes() {
-		return JavaUtils.getEnumConstantsShared(MiscItemType.class);
-	}
-	
-	@Override
-	public int getDisplayDamage(ItemStack stack) {
-		return isInk(stack) ? getAmount0(stack) : 0;
-	}
+    @Override
+    public MetadataProperty<MiscItemType> subtypeProperty() {
+        return type;
+    }
 
-	@Override
-	public boolean isDamaged(ItemStack stack) {
+    @Override
+	public boolean showDurabilityBar(ItemStack stack) {
 		return isInk(stack);
 	}
 
 	@Override
-	public int getMaxDamage(ItemStack stack) {
-		return isInk(stack) ? 100 : 0;
+	public double getDurabilityForDisplay(ItemStack stack) {
+		return isInk(stack) ? getAmount0(stack) / (float) MAX_AMOUNT : 0;
 	}
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-		if (Multitypes.getType(this, stack) == MiscItemType.ALKALINE_BUCKET) {
+		if (getType(stack) == MiscItemType.ALKALINE_BUCKET) {
 			MovingObjectPosition hit = getMovingObjectPositionFromPlayer(world, player, false);
 
-			if (hit != null && hit.typeOfHit == EnumMovingObjectType.TILE) {
+			if (hit != null && hit.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
 				int x = hit.blockX;
 				int y = hit.blockY;
 				int z = hit.blockZ;
@@ -59,34 +56,18 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
 				if (!world.canMineBlock(player, x, y, z)) {
 					return stack;
 				}
-				
-				switch (hit.sideHit) {
-				case 0:
-					--y;
-					break;
-				case 1:
-					++y;
-					break;
-				case 2:
-					--z;
-					break;
-				case 3:
-					++z;
-					break;
-				case 4:
-					--x;
-					break;
-				case 5:
-					++x;
-					break;
-				}
-				
+
+                ForgeDirection dir = ForgeDirection.getOrientation(hit.sideHit);
+                x += dir.offsetX;
+                y += dir.offsetY;
+                z += dir.offsetZ;
+
 				if (!player.canPlayerEdit(x, y, z, hit.sideHit, stack)) {
 					return stack;
 				}
 
 				if (placeAlkaline(world, x, y, z) && !player.capabilities.isCreativeMode) {
-					return new ItemStack(Item.bucketEmpty);
+					return new ItemStack(Items.bucket);
 				}
 			}
 		}
@@ -94,35 +75,40 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
 	}
 	
 	private static boolean placeAlkaline(World world, int x, int y, int z) {
-		Material material = world.getBlockMaterial(x, y, z);
+		Material material = world.getBlock(x, y, z).getMaterial();
 		boolean isSolid = material.isSolid();
 
 		if (!world.isAirBlock(x, y, z) && isSolid) {
 			return false;
 		} else {
-			if (Sides.logical(world).isServer() && !isSolid && !material.isLiquid()) {
-				world.destroyBlock(x, y, z, true);
+			if (sideOf(world).isServer() && !isSolid && !material.isLiquid()) {
+				world.func_147480_a(x, y, z, true);
 			}
 
-			world.setBlock(x, y, z, CCBlock.alkaline.blockID, 0, 3);
+			world.setBlock(x, y, z, CCBlock.alkaline, 0, 3);
 			return true;
 		}
 	}
-	
-	@Override
-	public ItemStack getContainerItemStack(ItemStack stack) {
-		return Multitypes.getType(this, stack) == MiscItemType.ALKALINE_BUCKET ? ItemStacks.of(Item.bucketEmpty) : null;
+
+    @Override
+    public boolean hasContainerItem(ItemStack stack) {
+        return getType(stack) == MiscItemType.ALKALINE_BUCKET;
+    }
+
+    @Override
+	public ItemStack getContainerItem(ItemStack stack) {
+		return new ItemStack(Items.bucket);
 	}
 	
 	@Override
 	public int getItemStackLimit(ItemStack stack) {
-		MiscItemType type = Multitypes.getType(this, stack);
+		MiscItemType type = getType(stack);
 		return type == MiscItemType.ALKALINE_BUCKET || type.isInk() ? 1 : 64;
 	}
 
 	@Override
 	public boolean hasCustomEntity(ItemStack stack) {
-		return Multitypes.getType(this, stack) == MiscItemType.ALKALINE_DUST;
+		return getType(stack) == MiscItemType.ALKALINE_DUST;
 	}
 
 	@Override
@@ -132,12 +118,12 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
 	
 	@Override
 	public boolean onEntityItemUpdate(EntityItem entity) { // can't do this in our custom entity class, because custom item entities don't work on the client
-		if (Sides.logical(entity).isClient()) {
+		if (sideOf(entity).isClient()) {
 			int x = MathHelper.floor_double(entity.posX);
 			int y = MathHelper.floor_double(entity.posY);
 			int z = MathHelper.floor_double(entity.posZ);
 			
-			if (entity.worldObj.getBlockId(x, y, z) == Block.waterStill.blockID && itemRand.nextInt(5) == 0) {
+			if (entity.worldObj.getBlock(x, y, z) == Blocks.water && itemRand.nextInt(5) == 0) {
 				float xRand = (itemRand.nextFloat() - 0.5f) * 0.6f;
 				float yRand = itemRand.nextFloat() * 0.5f;
 				float zRand = (itemRand.nextFloat() - 0.5f) * 0.6f;
@@ -169,15 +155,15 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
 		@Override
 		public void onUpdate() {
 			super.onUpdate();
-			if (Sides.logical(this).isServer()) {
+			if (sideOf(this).isServer()) {
 				int x = MathHelper.floor_double(posX);
 				int y = MathHelper.floor_double(posY);
 				int z = MathHelper.floor_double(posZ);
 				
-				if (worldObj.getBlockId(x, y, z) == Block.waterStill.blockID) {
+				if (worldObj.getBlock(x, y, z) == Blocks.water) {
 					if (inWaterTimer++ > 200) {
 						setDead();
-						worldObj.setBlock(x, y, z, CCBlock.alkaline.blockID);
+						worldObj.setBlock(x, y, z, CCBlock.alkaline);
 					}
 				}
 			}
@@ -188,32 +174,32 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
 	// InkItem
 	@Override
 	public boolean isInk(ItemStack stack) {
-		return Multitypes.getType(this, stack).isInk();
+		return getType(stack).isInk();
 	}
 
 	@Override
 	public int getAmount(ItemStack stack) {
 		if (isInk(stack)) {
-			return 100 - getAmount0(stack);
+			return MAX_AMOUNT - getAmount0(stack);
 		} else {
 			return -1;
 		}
 	}
 
 	private int getAmount0(ItemStack stack) {
-		return UnsignedShorts.toInt(ItemStacks.getNbt(stack).getShort("cameracraft_ink"));
+		return ItemStacks.getNbt(stack).getInteger("cameracraft_ink");
 	}
 
 	@Override
 	public void setAmount(ItemStack stack, int newAmount) {
 		if (isInk(stack)) {
-			ItemStacks.getNbt(stack).setShort("cameracraft_ink", UnsignedShorts.checkedCast(100 - newAmount));
+			ItemStacks.getNbt(stack).setInteger("cameracraft_ink", MAX_AMOUNT - newAmount);
 		}
 	}
 
 	@Override
 	public InkItem.Color getColor(ItemStack stack) {
-		return Multitypes.getType(this, stack).getInkColor();
+		return getType(stack).getInkColor();
 	}
 
 }

@@ -5,7 +5,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
-import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
 import de.take_weiland.mods.commons.util.ItemStacks;
 
 public enum CameraType implements Subtype {
@@ -17,7 +16,7 @@ public enum CameraType implements Subtype {
 	final int slotCount;
 	private final ResourceLocation texture;
 	
-	private CameraType(String name, int slotCount) {
+	CameraType(String name, int slotCount) {
 		this.name = name;
 		this.slotCount = slotCount;
 		texture = new ResourceLocation("cameracraft", "textures/gui/" + name + "Camera.png");
@@ -36,9 +35,12 @@ public enum CameraType implements Subtype {
 
     public boolean isItemValid(int slot, ItemStack stack) {
 		if (this == DIGITAL) {
-			return slot == 1 ? ItemStacks.is(stack, CCItem.battery) : ItemStacks.is(stack, PhotoStorageType.MEMORY_CARD);
+			return slot == 1
+					? ItemStacks.is(stack, CCItem.battery)
+					: CCItem.photoStorage.getType(stack) == PhotoStorageType.MEMORY_CARD;
 		} else {
-			return ItemStacks.isAny(stack, PhotoStorageType.FILM_B_W, PhotoStorageType.FILM_COLOR);
+            PhotoStorageType type = CCItem.photoStorage.getType(stack);
+            return type == PhotoStorageType.FILM_B_W || type == PhotoStorageType.FILM_COLOR;
 		}
 	}
 	

@@ -27,7 +27,7 @@ public interface Printer {
 	 * @param jobs
 	 * @return the amount of jobs actually added to the queue
 	 */
-	int addJobs(Collection<? extends PrintJob> jobs);
+	int addJobs(Iterable<? extends PrintJob> jobs);
 	
 	/**
 	 * get this printer's job queue

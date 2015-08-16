@@ -9,9 +9,9 @@ public interface PhotoItem extends PhotoStorageItem {
 	String getName(ItemStack stack);
 	
 	void setName(ItemStack stack, String name);
+
+	long getPhotoId(ItemStack stack);
 	
-	Integer getPhotoId(ItemStack stack);
-	
-	void setPhotoId(ItemStack stack, Integer photoId);
-	
+	void setPhotoId(ItemStack stack, long photoId);
+
 }

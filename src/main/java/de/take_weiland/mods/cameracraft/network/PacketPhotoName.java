@@ -2,29 +2,32 @@ package de.take_weiland.mods.cameracraft.network;
 
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
-import de.take_weiland.mods.commons.net.DataBuf;
-import de.take_weiland.mods.commons.net.ModPacket;
-import de.take_weiland.mods.commons.net.WritableDataBuf;
+import de.take_weiland.mods.commons.net.MCDataInput;
+import de.take_weiland.mods.commons.net.MCDataOutput;
+import de.take_weiland.mods.commons.net.Packet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
-public class PacketPhotoName extends ModPacket {
+@Packet.Receiver(Side.SERVER)
+public class PacketPhotoName implements Packet {
 
 	private String name;
 	
 	public PacketPhotoName(String name) {
 		this.name = name;
 	}
-	
-	@Override
-	protected void write(WritableDataBuf buf) {
-		buf.putString(name);
+
+	public PacketPhotoName(MCDataInput in) {
+		this.name = in.readString();
 	}
 
 	@Override
-	protected void handle(DataBuf buf, EntityPlayer player, Side side) {
-		String name = buf.getString();
+	public void writeTo(MCDataOutput out) {
+		out.writeString(name);
+	}
+
+	public void handle(EntityPlayer player) {
 		ItemStack current = player.getCurrentEquippedItem();
 		if (current != null) {
 			Item item = current.getItem();
@@ -33,10 +36,4 @@ public class PacketPhotoName extends ModPacket {
 			}
 		}
 	}
-
-	@Override
-	protected boolean validOn(Side side) {
-		return side.isServer();
-	}
-
 }

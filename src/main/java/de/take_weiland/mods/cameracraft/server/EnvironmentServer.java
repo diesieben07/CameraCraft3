@@ -2,6 +2,7 @@ package de.take_weiland.mods.cameracraft.server;
 
 import de.take_weiland.mods.cameracraft.Environment;
 
+import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
 public class EnvironmentServer implements Environment {
@@ -19,9 +20,12 @@ public class EnvironmentServer implements Environment {
 	public void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ) { }
 
 	@Override
-	public void handleClientPhotoData(Integer photoId, InputStream in) { }
+	public void handleClientPhotoData(long photoId, InputStream in) { }
 
 	@Override
-	public void displayPhotoGui(Integer photoId, String displayName, boolean canRename) { }
+	public void handleClientPhotoData(long photoId, BufferedImage img) { }
+
+	@Override
+	public void displayPhotoGui(long photoId, String displayName, boolean canRename) { }
 
 }

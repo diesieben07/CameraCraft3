@@ -1,49 +1,48 @@
 package de.take_weiland.mods.cameracraft.worldgen;
 
-import java.util.Random;
-
 import cpw.mods.fml.common.IWorldGenerator;
+import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.blocks.OreType;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.gen.feature.WorldGenMinable;
 import net.minecraft.world.gen.feature.WorldGenerator;
-import net.minecraftforge.common.EnumHelper;
-import net.minecraftforge.event.ForgeSubscribe;
+import net.minecraftforge.common.util.EnumHelper;
 import net.minecraftforge.event.terraingen.OreGenEvent;
-import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType;
 import net.minecraftforge.event.terraingen.TerrainGen;
-import de.take_weiland.mods.cameracraft.blocks.CCBlock;
-import de.take_weiland.mods.cameracraft.blocks.OreType;
+
+import java.util.Random;
 
 public class CCWorldGen implements IWorldGenerator {
 
-	public static final EventType TIN = EnumHelper.addEnum(EventType.class, "CAMERACRAFT_TIN", new Class[0], new Object[0]);
-	public static final EventType ALKALINE = EnumHelper.addEnum(EventType.class, "CAMERACRAFT_ALKALINE", new Class[0], new Object[0]);
-	public static final EventType PHOTONIC = EnumHelper.addEnum(EventType.class, "CAMERACRAFT_PHOTONIC", new Class[0], new Object[0]);
+	public static final OreGenEvent.GenerateMinable.EventType TIN = EnumHelper.addEnum(OreGenEvent.GenerateMinable.EventType.class, "CAMERACRAFT_TIN", new Class[0], new Object[0]);
+	public static final OreGenEvent.GenerateMinable.EventType ALKALINE = EnumHelper.addEnum(OreGenEvent.GenerateMinable.EventType.class, "CAMERACRAFT_ALKALINE", new Class[0], new Object[0]);
+	public static final OreGenEvent.GenerateMinable.EventType PHOTONIC = EnumHelper.addEnum(OreGenEvent.GenerateMinable.EventType.class, "CAMERACRAFT_PHOTONIC", new Class[0], new Object[0]);
 
-	private static enum Ore {
+	private enum Ore {
 
 		TIN(CCWorldGen.TIN, OreType.TIN, 20, 0, 64, 8),
 		ALKALINE(CCWorldGen.ALKALINE, OreType.ALKALINE, 10, 0, 30, 8),
-		PHOTONIC(CCWorldGen.PHOTONIC, OreType.PHOTONIC, 10, 0, 128, 5, Block.netherrack);
+		PHOTONIC(CCWorldGen.PHOTONIC, OreType.PHOTONIC, 10, 0, 128, 5, Blocks.netherrack);
 
-		final EventType type;
+		final OreGenEvent.GenerateMinable.EventType type;
 		final WorldGenerator gen;
 		final int amount;
 		final int minY;
 		final int maxY;
 
-		private Ore(EventType eventType, OreType oreType, int amount, int minY, int maxY, int diameter) {
-			this(eventType, oreType, amount, minY, maxY, diameter, Block.stone);
+		Ore(OreGenEvent.GenerateMinable.EventType eventType, OreType oreType, int amount, int minY, int maxY, int diameter) {
+			this(eventType, oreType, amount, minY, maxY, diameter, Blocks.stone);
 		}
 
-		private Ore(EventType eventType, OreType oreType, int amount, int minY, int maxY, int diameter, Block replace) {
+		Ore(OreGenEvent.GenerateMinable.EventType eventType, OreType oreType, int amount, int minY, int maxY, int diameter, Block replace) {
 			this.type = eventType;
 			this.amount = amount;
 			this.minY = minY;
 			this.maxY = maxY;
-			this.gen = new WorldGenMinable(CCBlock.ores.blockID, oreType.ordinal(), diameter, replace.blockID);
+			this.gen = new WorldGenMinable(CCBlock.ores, oreType.ordinal(), diameter, replace);
 		}
 
 	}

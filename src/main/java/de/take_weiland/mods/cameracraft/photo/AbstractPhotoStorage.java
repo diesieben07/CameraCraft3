@@ -2,34 +2,17 @@ package de.take_weiland.mods.cameracraft.photo;
 
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
-import de.take_weiland.mods.commons.Listenables;
 
 import static com.google.common.base.Preconditions.checkPositionIndex;
 import static com.google.common.base.Preconditions.checkState;
 
 public abstract class AbstractPhotoStorage implements PhotoStorage {
 
-	protected final boolean isSealed;
-	
-	protected AbstractPhotoStorage(boolean isSealed) {
-		this.isSealed = isSealed;
-	}
-
 	@Override
-	public boolean isFull() {
-		return size() >= capacity();
-	}
-
-	@Override
-	public boolean canAccept() {
-		return !isFull() && !isSealed();
-	}
-
-	@Override
-	public int getPosition(Integer photoId) {
+	public int indexOf(long photoId) {
 		int size = size();
 		for (int i = 0; i < size; ++i) {
-			if (getImpl(i).intValue() == photoId.intValue()) {
+			if (getImpl(i) == photoId) {
 				return i;
 			}
 		}
@@ -37,32 +20,30 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	}
 
 	@Override
-	public Integer get(int index) {
-		checkPositionIndex(index, capacity());
-		return index < size() ? getImpl(index) : null;
+	public long get(int index) {
+		checkPositionIndex(index, size());
+		return getImpl(index);
 	}
 	
-	protected abstract Integer getImpl(int index);
+	protected abstract long getImpl(int index);
 
 	@Override
-	public int store(Integer photoId) {
+	public int store(long photoId) {
 		checkNotSealed();
 		if (isFull()) {
 			return -1;
 		} else {
 			storeImpl(photoId);
-			Listenables.onChange(this);
 			return size() - 1;
 		}
 	}
 	
-	protected abstract void storeImpl(Integer photoId);
+	protected abstract void storeImpl(long photoId);
 
 	@Override
 	public void remove(int index) {
 		checkNotSealed();
 		removeImpl(index);
-		Listenables.onChange(this);
 	}
 	
 	protected abstract void removeImpl(int index);
@@ -71,20 +52,12 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	public void clear() {
 		boolean willChange = size() != 0;
 		clearImpl();
-		if (willChange) {
-			Listenables.onChange(this);
-		}
 	}
 	
 	protected abstract void clearImpl();
 	
 	protected final void checkNotSealed() {
-		checkState(!isSealed, "PhotoStorage is sealed!");
-	}
-
-	@Override
-	public boolean isSealed() {
-		return isSealed;
+		checkState(!isSealed(), "PhotoStorage is sealed!");
 	}
 
 	@Override
@@ -92,6 +65,4 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 		return null;
 	}
 
-	@Override
-	public void onChange() { }
 }

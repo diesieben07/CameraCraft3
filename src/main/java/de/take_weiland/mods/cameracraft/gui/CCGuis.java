@@ -5,7 +5,7 @@ import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.*;
 import de.take_weiland.mods.cameracraft.client.gui.printer.GuiPrinter;
 import de.take_weiland.mods.cameracraft.item.CCItem;
-import de.take_weiland.mods.commons.util.JavaUtils;
+import de.take_weiland.mods.commons.util.EnumUtils;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
@@ -13,7 +13,6 @@ import net.minecraft.world.World;
 public enum CCGuis {
 
 	PHOTO_PROCESSOR,
-	ORE_DICTIONARY,
 	CAMERA,
 	CARD_READER,
 	PRINTER,
@@ -38,7 +37,7 @@ public enum CCGuis {
 		
 		@Override
 		public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-			CCGuis gui = JavaUtils.byOrdinal(CCGuis.class, id);
+			CCGuis gui = EnumUtils.byOrdinal(CCGuis.class, id);
 
 			return gui == null ? null : getContainer0(gui, player, world, x, y, z);
 		}
@@ -47,8 +46,6 @@ public enum CCGuis {
 			switch (gui) {
 			case PHOTO_PROCESSOR:
 				return new ContainerPhotoProcessor(world, x, y, z, player);
-			case ORE_DICTIONARY:
-				return new ContainerItemTranslator(world, x, y, z, player);
 			case CAMERA:
 				return CCItem.camera.newInventory(player, player.getCurrentEquippedItem()).createContainer(player);
 			case CARD_READER:
@@ -66,7 +63,7 @@ public enum CCGuis {
 
 		@Override
 		public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-			CCGuis gui = JavaUtils.byOrdinal(CCGuis.class, id);
+			CCGuis gui = EnumUtils.byOrdinal(CCGuis.class, id);
 			if (gui == null) {
 				return null;
 			}
@@ -75,8 +72,6 @@ public enum CCGuis {
 			switch (gui) {
 			case PHOTO_PROCESSOR:
 				return new GuiPhotoProcessor((ContainerPhotoProcessor) c);
-			case ORE_DICTIONARY:
-				return new GuiItemTranslator((ContainerItemTranslator) c);
 			case CAMERA:
 				return new GuiCamera((ContainerCamera) c);
 			case CARD_READER:

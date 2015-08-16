@@ -1,48 +1,32 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
+import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.commons.util.Items;
+import net.minecraft.item.Item;
 
+@GameRegistry.ObjectHolder(CameraCraft.MOD_ID)
 public abstract class CCItem extends Item {
 
-	public static ItemBattery battery;
-	public static ItemCamera camera;
-	public static CCItemMisc miscItems;
-	public static ItemPhotoStorages photoStorage;
-	public static ItemPhoto photo;
-	public static ItemLens lenses;
-	
-	private final String baseName;
-	
-	public CCItem(String name, int defaultId) {
-		super(getId(name, defaultId));
-		this.baseName = name;
-	}
-	
-	protected void lateInit() {
-		Items.init(this, baseName);
-		
-		setCreativeTab(CameraCraft.tab);
-	}
-	
-	public static final void createItems() {
-		(battery = new ItemBattery(9876)).lateInit();
-		(camera = new ItemCamera(9877)).lateInit();
-		(miscItems = new CCItemMisc(9878)).lateInit();
-		(photoStorage = new ItemPhotoStorages(9879)).lateInit();
-		(lenses = new ItemLens(9880)).lateInit();
-		(photo = new ItemPhoto(9881)).lateInit();
-	}
+    public static final ItemBattery battery = new ItemBattery();
+    public static final ItemCamera camera = new ItemCamera();
+    public static final CCItemMisc misc = new CCItemMisc();
+    public static final ItemPhotoStorages photoStorage = new ItemPhotoStorages();
+    public static final ItemLens lens = new ItemLens();
+    public static final ItemPhoto photo = new ItemPhoto();
 
-	private static int getId(String name, int defaultId) {
-		return CameraCraft.config.getItem(name, defaultId).getInt();
-	}
+    private final String baseName;
 
-	@Override
-	public String getUnlocalizedNameInefficiently(ItemStack item) {
-		return getUnlocalizedName(item); // some optimization
-	}
-	
+    public CCItem(String name) {
+        this.baseName = name;
+    }
+
+    private String getBaseName() {
+        return baseName;
+    }
+
+    public static void init() {
+        Items.initAll(CCItem::getBaseName, battery, camera, misc, photoStorage, lens, photo)
+                .forEach((item) -> item.setCreativeTab(CameraCraft.tab));
+    }
 }

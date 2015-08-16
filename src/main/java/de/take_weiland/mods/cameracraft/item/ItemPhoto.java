@@ -1,56 +1,51 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import java.util.List;
-
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Direction;
-import net.minecraft.world.World;
-
 import com.google.common.base.Strings;
-import com.google.common.collect.ImmutableList;
-
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.cameracraft.photo.AbstractPhotoStorage;
-import de.take_weiland.mods.cameracraft.photo.PhotoManager;
+import de.take_weiland.mods.commons.meta.MetadataProperty;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Multitypes;
-import de.take_weiland.mods.commons.util.Sides;
+import gnu.trove.TCollections;
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TLongArrayList;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.Direction;
+import net.minecraft.world.World;
+
+import static de.take_weiland.mods.commons.util.Sides.sideOf;
 
 public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
+
+    private static final MetadataProperty<PhotoType> types = MetadataProperty.newProperty(0, PhotoType.class);
 
 	public static final String NBT_KEY = "cameracraft.photoId";
 	private static final String NBT_NAME_KEY = "cameracraft.photoname";
 
-	public ItemPhoto(int defaultId) {
-		super("photo", defaultId);
+	public ItemPhoto() {
+		super("photo");
 		setMaxStackSize(1);
 	}
 
-	@Override
-	public String getItemDisplayName(ItemStack stack) {
-		if (isNamed(stack)) {
-			return getNameImpl(stack);
-		}
-		return super.getItemDisplayName(stack);
-	}
+    @Override
+    public MetadataProperty<PhotoType> subtypeProperty() {
+        return types;
+    }
 
-	@Override
-	protected List<ItemStack> provideSubtypes() {
-		return ImmutableList.of();
-	}
-
-	@Override
-	public PhotoType[] getTypes() {
-		return PhotoType.VALUES;
-	}
+    @Override
+    public String getItemStackDisplayName(ItemStack stack) {
+        if (isNamed(stack)) {
+            return getNameImpl(stack);
+        }
+        return super.getItemStackDisplayName(stack);
+    }
 
 	@Override
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-		if (Sides.logical(world).isClient() && stack.hasTagCompound()) {
+		if (sideOf(world).isClient() && stack.hasTagCompound()) {
 			boolean isNamed = isNamed(stack);
 			CameraCraft.env.displayPhotoGui(getPhotoId(stack), isNamed ? getNameImpl(stack) : null, !isNamed);
 		}
@@ -59,12 +54,12 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 
 	@Override
 	public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
-		if (Multitypes.getType(this, stack) != PhotoType.POSTER || !stack.hasTagCompound() || side < 2 || !player.canPlayerEdit(x, y, z, side, stack)) {
-			return false;
-		}
+		if (getType(stack) != PhotoType.POSTER || !stack.hasTagCompound() || side < 2 || !player.canPlayerEdit(x, y, z, side, stack)) {
+            return false;
+        }
 		EntityPoster poster = new EntityPoster(world, x, y, z, Direction.facingToDirection[side], stack);
 		if (poster.onValidSurface()) {
-			if (Sides.logical(world).isServer()) {
+			if (sideOf(world).isServer()) {
 				world.spawnEntityInWorld(poster);
 			}
 			player.destroyCurrentEquippedItem();
@@ -75,13 +70,13 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	}
 	
 	@Override
-	public Integer getPhotoId(final ItemStack stack) {
-		return Integer.valueOf(ItemStacks.getNbt(stack).getInteger(NBT_KEY));
+	public long getPhotoId(final ItemStack stack) {
+        return ItemStacks.getNbt(stack).getLong(NBT_KEY);
 	}
 	
 	@Override
-	public void setPhotoId(ItemStack stack, Integer photoId) {
-		ItemStacks.getNbt(stack).setInteger(NBT_KEY, photoId.intValue());
+	public void setPhotoId(ItemStack stack, long photoId) {
+		ItemStacks.getNbt(stack).setLong(NBT_KEY, photoId);
 	}
 
 	@Override
@@ -90,18 +85,18 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 			return null;
 		}
 		
-		return new AbstractPhotoStorage(true) {
+		return new AbstractPhotoStorage() {
 			
-			private final Integer photoId = getPhotoId(stack);
-			private final List<Integer> contents = ImmutableList.of(photoId);
-			
-			@Override
+			private final long photoId = getPhotoId(stack);
+			private final TLongList contents = TCollections.unmodifiableList(TLongArrayList.wrap(new long[] { photoId }));
+
+            @Override
 			public int size() {
 				return 1;
 			}
 			
 			@Override
-			public List<Integer> getPhotos() {
+			public TLongList getPhotos() {
 				return contents;
 			}
 			
@@ -111,20 +106,18 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 			}
 			
 			@Override
-			protected Integer getImpl(int index) {
+			protected long getImpl(int index) {
 				return photoId;
 			}
 			
-			private int[] raw;
-			
-			@Override
-			public int[] getRawPhotoIds() {
-				return raw == null ? (raw = new int[] { photoId.intValue() }) : raw;
-			}
-			
 			// photos are immutable
-			@Override
-			protected void storeImpl(Integer photoId) { }
+            @Override
+            public boolean isSealed() {
+                return true;
+            }
+
+            @Override
+			protected void storeImpl(long photoId) { }
 			
 			@Override
 			protected void removeImpl(int index) { }

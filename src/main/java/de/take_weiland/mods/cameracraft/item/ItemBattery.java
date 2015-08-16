@@ -26,8 +26,8 @@ public class ItemBattery extends CCItem implements BatteryHandler {
 	
 	private final ItemStack[] subStacks;
 	
-	public ItemBattery(int defaultId) {
-		super("battery", defaultId);
+	public ItemBattery() {
+		super("battery");
 		setHasSubtypes(true);
 		
 		subStacks = new ItemStack[2];

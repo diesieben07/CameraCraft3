@@ -43,12 +43,11 @@ public class CCPlayerData implements IExtendedEntityProperties {
 	public void onPhoto(int transferId, BufferedImage image) {
 		PhotoRequest request = requests.remove(Integer.valueOf(transferId));
 		if (request == null) {
-			CameraCraft.logger.warning(String.format("Unknown transferId %d by %s!", transferId, player));
+			CameraCraft.logger.warn(String.format("Unknown transferId %d by %s!", transferId, player));
 		} else {
 			request.setImage(image);
 		}
 	}
-
 
 	public boolean isOnCooldown() {
 		return cooldown > 0;

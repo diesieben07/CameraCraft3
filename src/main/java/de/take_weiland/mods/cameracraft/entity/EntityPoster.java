@@ -1,10 +1,9 @@
 package de.take_weiland.mods.cameracraft.entity;
 
-import com.google.common.io.ByteArrayDataInput;
-import com.google.common.io.ByteArrayDataOutput;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.item.Item;
@@ -14,7 +13,7 @@ import net.minecraft.world.World;
 
 public class EntityPoster extends EntityHanging implements IEntityAdditionalSpawnData {
 
-	private Integer photoId;
+	private long photoId;
 	private ItemStack stack;
 	
 	public EntityPoster(World world) {
@@ -43,30 +42,25 @@ public class EntityPoster extends EntityHanging implements IEntityAdditionalSpaw
 		entityDropItem(stack, 0);
 	}
 
-	public Integer getPhotoId() {
+	public long getPhotoId() {
 		return photoId;
 	}
 
 	@Override
-	public boolean onValidSurface() {
-		return super.onValidSurface() && photoId != null;
-	}
-
-	@Override
-	public void writeSpawnData(ByteArrayDataOutput out) {
-		out.writeInt(photoId.intValue());
-		out.writeInt(xPosition);
-		out.writeInt(yPosition);
-		out.writeInt(zPosition);
+	public void writeSpawnData(ByteBuf out) {
+		out.writeLong(photoId);
+		out.writeInt(field_146063_b);
+		out.writeInt(field_146064_c);
+		out.writeInt(field_146062_d);
 		out.writeByte(hangingDirection);
 	}
 
 	@Override
-	public void readSpawnData(ByteArrayDataInput in) {
-		photoId = Integer.valueOf(in.readInt());
-		xPosition = in.readInt();
-		yPosition = in.readInt();
-		zPosition = in.readInt(); // setDirection needs these
+	public void readSpawnData(ByteBuf in) {
+		photoId = in.readLong();
+		field_146063_b = in.readInt();
+		field_146064_c = in.readInt();
+		field_146062_d = in.readInt(); // setDirection needs these
 		setDirection(in.readByte());
 		
 	}
@@ -85,7 +79,8 @@ public class EntityPoster extends EntityHanging implements IEntityAdditionalSpaw
 		if (item instanceof PhotoItem) {
 			photoId = ((PhotoItem)item).getPhotoId(stack);
 		} else {
-			CameraCraft.logger.warning("Invalid Item in EntityPoster at " + posX + ", " + posY + ", " + posZ);
+			CameraCraft.logger.warn("Invalid Item in EntityPoster at " + posX + ", " + posY + ", " + posZ);
+            setDead();
 		}
 	}
 

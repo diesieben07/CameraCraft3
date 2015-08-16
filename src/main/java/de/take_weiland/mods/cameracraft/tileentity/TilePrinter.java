@@ -1,12 +1,9 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterators;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Queues;
 import com.google.common.primitives.Ints;
-import de.take_weiland.mods.cameracraft.api.cable.NetworkNode;
-import de.take_weiland.mods.cameracraft.api.cable.NetworkTile;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.api.printer.InkItem;
 import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
 import de.take_weiland.mods.cameracraft.api.printer.Printer;
@@ -14,31 +11,29 @@ import de.take_weiland.mods.cameracraft.api.printer.QueuedPrintJob;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.PhotoType;
-import de.take_weiland.mods.cameracraft.networking.NetworkNodeImpl;
 import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
+import de.take_weiland.mods.commons.meta.HasSubtypes;
+import de.take_weiland.mods.commons.nbt.NBT;
 import de.take_weiland.mods.commons.net.Packets;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Multitypes;
-import de.take_weiland.mods.commons.util.NBT;
-import de.take_weiland.mods.commons.util.UnsignedShorts;
 import net.minecraft.entity.item.EntityItem;
+import net.minecraft.init.Items;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraft.network.packet.Packet;
-import net.minecraft.network.packet.Packet3Chat;
-import net.minecraft.util.ChatMessageComponent;
-import net.minecraftforge.common.ForgeDirection;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S02PacketChat;
+import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.common.util.ForgeDirection;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.Queue;
 
-public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISidedInventory, NetworkTile, Printer {
+public class TilePrinter extends TileEntityInventory implements ISidedInventory, Printer {
 
 	private static final int MAX_QUEUE_SIZE = 100;
 	public static final int SLOT_YELLOW = 0;
@@ -46,10 +41,10 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 	public static final int SLOT_MAGENTA = 2;
 	public static final int SLOT_BLACK = 3;
 	public static final int SLOT_PAPER = 4;
+    public static final int SLOT_STORAGE = 5;
 	
 	private static final int JOB_TIME = 40;
 	
-	private NetworkNodeImpl node = new NetworkNodeImpl(this);
 	private Queue<SimplePrintJob.Queued> jobs = Queues.newArrayDeque();
 	private SimplePrintJob.Queued currentJob;
 	
@@ -58,8 +53,7 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 	@Override
 	public void updateEntity() {
 		super.updateEntity();
-		node.update();
-		
+
 		if (canPrint()) { // TODO: maybe don't check every tick?
 			if (jobTimeout == 0) {
 				if (currentJob != null) {
@@ -82,11 +76,11 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 	}
 	
 	private void executeJob(SimplePrintJob.Queued job) {
-		Packet p = new Packet3Chat(ChatMessageComponent.createFromText("executing job: " + job.getPhotoId()));
-		Packets.sendPacketToAllTracking(p, this);
-		
+		Packet p = new S02PacketChat(new ChatComponentText("executing job: " + job.getPhotoId()));
+		Packets.sendToAllTracking(p, this);
+
 		job.decrease();
-		ItemStack photo = ItemStacks.of(PhotoType.PHOTO);
+		ItemStack photo = CCItem.photo.getStack(PhotoType.PHOTO);
 		CCItem.photo.setPhotoId(photo, job.getPhotoId());
 		
 		useSupplies();
@@ -108,7 +102,7 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 	}
 
 	public int getSizeInventory() {
-		return 5;
+		return 6;
 	}
 
 	public static final int[] INK_COLOR_TO_SLOT = new int[4];
@@ -120,15 +114,19 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 		INK_COLOR_TO_SLOT[InkItem.Color.YELLOW.ordinal()] = SLOT_YELLOW;
 	}
 	
-	@Override
+	@SuppressWarnings("SimplifiableIfStatement")
+    @Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		Item item;
 		if (slot == SLOT_PAPER) {
-			ItemStacks.is(stack, Item.paper);
+            return ItemStacks.is(stack, Items.paper);
+        } else if (slot == SLOT_STORAGE) {
+            return stack.getItem() instanceof PhotoStorageItem;
 		} else if ((item = stack.getItem()) instanceof InkItem) {
 			return INK_COLOR_TO_SLOT[((InkItem) item).getColor(stack).ordinal()] == slot;
-		}
-		return false;
+		} else {
+            return false;
+        }
 	}
 	
 	private static final int[] extractSlots = new int[] { }; // TODO
@@ -171,64 +169,33 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 
 	@Override
 	protected String unlocalizedName() {
-		return Multitypes.fullName(Multitypes.getType(CCBlock.machines, getBlockMetadata()));
-	}
-	
-	@Override
-	public void invalidate() {
-		super.invalidate();
-		node.shutdown();
-	}
-
-	@Override
-	public String getNetworkName() {
-		return "Printer [x=" + xCoord + ", y=" + yCoord + ", z=" + zCoord + "]";
-	}
-
-	@Override
-	public NetworkNode getNode() {
-		return node;
+        return HasSubtypes.name(CCBlock.machines, CCBlock.machines.getType(getBlockMetadata()));
 	}
 	
 	static NBTTagCompound encodeJob(SimplePrintJob.Queued job) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("id", job.getPhotoId().intValue());
-		nbt.setShort("amnt", (short) job.getAmount());
-		nbt.setShort("amntLeft", UnsignedShorts.checkedCast(job.getRemainingAmount()));
+		nbt.setInteger("id", job.getPhotoId());
+		nbt.setInteger("amnt", (short) job.getAmount());
+		nbt.setInteger("amntLeft", job.getRemainingAmount());
 		return nbt;
 	}
 	
 	static SimplePrintJob.Queued decodeJob(NBTTagCompound nbt) {
-		return new SimplePrintJob.Queued(Integer.valueOf(nbt.getInteger("id")), nbt.getShort("amnt"), nbt.getShort("amntLeft"));
+		return new SimplePrintJob.Queued(nbt.getInteger("id"), nbt.getInteger("amnt"), nbt.getInteger("amntLeft"));
 	}
 
-	private static final Function<NBTTagCompound, SimplePrintJob.Queued> JOB_DECODER = new Function<NBTTagCompound, SimplePrintJob.Queued>() {
-
-		@Override
-		public SimplePrintJob.Queued apply(NBTTagCompound input) {
-			return decodeJob(input);
-		}
-		
-	};
-	
-	private static final Function<SimplePrintJob.Queued, NBTTagCompound> JOB_ENCODER = new Function<SimplePrintJob.Queued, NBTTagCompound>() {
-
-		@Override
-		public NBTTagCompound apply(SimplePrintJob.Queued input) {
-			return encodeJob(input);
-		}
-	};
-	
-	@Override
+    @Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		NBTTagList encJobs = new NBTTagList();
-		NBT.asList(encJobs).addAll(Collections2.transform(jobs, JOB_ENCODER));
-		
+        for (SimplePrintJob.Queued job : jobs) {
+            encJobs.appendTag(encodeJob(job));
+        }
+
 		nbt.setTag("jobs", encJobs);
 		
 		if (currentJob != null) {
-			nbt.setCompoundTag("curJob", encodeJob(currentJob));
+			nbt.setTag("curJob", encodeJob(currentJob));
 		}
 		
 		nbt.setByte("timeout", (byte) jobTimeout);
@@ -237,7 +204,11 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 	@Override
 	public void readFromNBT(NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
-		jobs.addAll(Collections2.transform(NBT.<NBTTagCompound>asList(nbt.getTagList("jobs")), JOB_DECODER));
+
+        for (NBTTagCompound compound : NBT.<NBTTagCompound>asList(nbt.getTagList("jobs", NBT.TAG_COMPOUND))) {
+            jobs.add(decodeJob(compound));
+        }
+
 		if (nbt.hasKey("curJob")) {
 			currentJob = decodeJob(nbt.getCompoundTag("curJob"));
 		}
@@ -270,11 +241,9 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 		return false;
 	}
 
-	private Collection<QueuedPrintJob> immutableQueue;
-	
 	@Override
 	public Collection<QueuedPrintJob> getQueue() {
-		return immutableQueue == null ? (immutableQueue = Collections.<QueuedPrintJob>unmodifiableCollection(jobs)) : immutableQueue;
+        return Collections.unmodifiableCollection(jobs);
 	}
 
 	@Override
@@ -288,30 +257,13 @@ public class TilePrinter extends TileEntityInventory<TilePrinter> implements ISi
 	}
 
 	@Override
-	public int addJobs(Collection<? extends PrintJob> toAdd) {
-		int queueLen = this.jobs.size();
-		if (queueLen >= MAX_QUEUE_SIZE) {
-			return 0;
-		}
-		
-		Iterator<SimplePrintJob.Queued> transformed = Iterators.transform(toAdd.iterator(), ToQueuedFunction.INSTANCE);
-		int len = toAdd.size();
-		if (len + queueLen <= MAX_QUEUE_SIZE) {
-			Iterators.addAll(this.jobs, transformed);
-			return len;
-		}
-		int appendLen = MAX_QUEUE_SIZE - queueLen;
-		Iterators.addAll(this.jobs, Iterators.limit(transformed, appendLen));
-		return appendLen;
-	}
-	
-	private static enum ToQueuedFunction implements Function<PrintJob, SimplePrintJob.Queued> {
-		INSTANCE;
+	public int addJobs(Iterable<? extends PrintJob> toAdd) {
+        int appendLen = MAX_QUEUE_SIZE - jobs.size();
+        for (PrintJob job : Iterables.limit(toAdd, appendLen)) {
+            jobs.add(SimplePrintJob.makeQueued(job));
+        }
 
-		@Override
-		public SimplePrintJob.Queued apply(PrintJob input) {
-			return SimplePrintJob.makeQueued(input);
-		}
+        return appendLen;
 	}
 
 }

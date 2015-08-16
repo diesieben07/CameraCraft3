@@ -7,7 +7,7 @@ buildscript {
         }
     }
     dependencies {
-        classpath 'net.minecraftforge.gradle:ForgeGradle:1.0-SNAPSHOT'
+        classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
     }
 }
 
@@ -22,9 +22,12 @@ repositories {
 }
 
 dependencies {
-    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.215:deobf'
+    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.37:deobf'
 }
 
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+compileJava.options.encoding = 'UTF-8'
 
 version = "3.0a"
 
@@ -36,7 +39,9 @@ if (ENV.DRONE_BUILD_NUMBER) {
 }
 
 minecraft {
-	version = "1.6.4-9.11.1.964"
+	version = "1.7.10-10.13.3.1370-1.7.10"
+	runDir = "eclipse"
+	
 	replaceIn "cameracraft/CameraCraft.java"
 	replace "@VERSION@", project.version
 }
@@ -52,6 +57,10 @@ task deobfJar(type: Jar) {
 task sourceJar(type: Jar) {
     from sourceSets.main.allSource
     classifier = 'src'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.4'
 }
 
 tasks.build.dependsOn('sourceJar', 'deobfJar')

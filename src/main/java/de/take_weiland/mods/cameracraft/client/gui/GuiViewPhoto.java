@@ -1,28 +1,28 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
-import static org.lwjgl.opengl.GL11.glColor3f;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.item.Item;
-
-import org.lwjgl.input.Keyboard;
-
 import de.take_weiland.mods.cameracraft.client.EnvironmentClient;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.network.PacketPhotoName;
 import de.take_weiland.mods.commons.client.Guis;
+import de.take_weiland.mods.commons.client.I18n;
 import de.take_weiland.mods.commons.client.Rendering;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.init.Items;
+import net.minecraft.item.Item;
+import org.lwjgl.input.Keyboard;
+
+import static org.lwjgl.opengl.GL11.glColor3f;
 
 public class GuiViewPhoto extends GuiScreen {
 
 	private static final int BUTTON_RENAME = 0;
 	private static final int BUTTON_DONE = 1;
 	
-	private final Integer photoId;
+	private final long photoId;
 	private boolean isNameable;
 	private String displayName;
 	
@@ -32,7 +32,7 @@ public class GuiViewPhoto extends GuiScreen {
 	private GuiButton buttonDone;
 	private GuiButton buttonRename;
 	
-	public GuiViewPhoto(Integer photoId, String displayName, boolean isNameable) {
+	public GuiViewPhoto(long photoId, String displayName, boolean isNameable) {
 		this.photoId = photoId;
 		this.displayName = displayName;
 		this.isNameable = isNameable;
@@ -50,16 +50,19 @@ public class GuiViewPhoto extends GuiScreen {
 		buttonList.add(buttonRename);
 		
 		buttonDone = new GuiButtonDone(BUTTON_DONE, (width + photoDim) / 2 + 10, height - 30);
-		buttonDone.drawButton = isRenaming;
+		buttonDone.visible = isRenaming;
 		buttonList.add(buttonDone);
-		
-		GuiTextField oldTB = nameTextField;
-		int textFieldWidth = photoDim - 20;
-		nameTextField = new GuiTextField(fontRenderer, (width - textFieldWidth) / 2, height - 30, textFieldWidth, 20);
+
+        int textFieldWidth = photoDim - 20;
+
+        if (nameTextField == null) {
+            nameTextField = new GuiTextField(fontRendererObj, (width - textFieldWidth) / 2, height - 30, textFieldWidth, 20);
+        } else {
+            nameTextField.xPosition = (width - textFieldWidth) / 2;
+            nameTextField.yPosition = height - 30;
+            nameTextField.width = textFieldWidth;
+        }
 		nameTextField.setCanLoseFocus(false);
-		if (oldTB != null) {
-			Guis.copyState(oldTB, nameTextField);
-		}
 	}
 	
 	@Override
@@ -79,8 +82,8 @@ public class GuiViewPhoto extends GuiScreen {
 		if (isRenaming) {
 			nameTextField.drawTextBox();
 		} else {
-			String name = isNameable ? I18n.getString(CCItem.photo.getUnlocalizedName() + ".name") : displayName;
-			drawCenteredString(fontRenderer, name, width / 2, height - 14, 0xffff00);
+			String name = isNameable ? I18n.translate(CCItem.photo.getUnlocalizedName() + ".name") : displayName;
+			drawCenteredString(fontRendererObj, name, width / 2, height - 14, 0xffff00);
 		}
 		
 		super.drawScreen(mouseX, mouseY, partialTick);
@@ -115,8 +118,8 @@ public class GuiViewPhoto extends GuiScreen {
 			} else {
 				nameTextField.setFocused(true);
 			}
-			buttonDone.drawButton = isRenaming = !isRenaming;
-			buttonRename.drawButton = !buttonDone.drawButton;
+			buttonDone.visible = isRenaming = !isRenaming;
+			buttonRename.visible = !buttonDone.visible;
 			buttonRename.enabled = isNameable;
 		}
 	}
@@ -126,7 +129,6 @@ public class GuiViewPhoto extends GuiScreen {
 		return false;
 	}
 	
-
 	@Override
 	public void updateScreen() {
 		super.updateScreen();
@@ -164,8 +166,8 @@ public class GuiViewPhoto extends GuiScreen {
 		@Override
 		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
 			super.drawButton(mc, mouseX, mouseY);
-			if (drawButton) {
-				Item item = Item.nameTag;
+			if (visible) {
+				Item item = Items.name_tag;
 				mc.renderEngine.bindTexture(mc.renderEngine.getResourceLocation(item.getSpriteNumber()));
 				drawTexturedModelRectFromIcon(xPosition + 2, yPosition + 2, item.getIconFromDamage(0), 16, 16);
 			}
@@ -182,7 +184,7 @@ public class GuiViewPhoto extends GuiScreen {
 		@Override
 		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
 			super.drawButton(mc, mouseX, mouseY);
-			if (drawButton) {
+			if (visible) {
 				mc.renderEngine.bindTexture(EnvironmentClient.CONTROLS);
 				Rendering.drawTexturedQuad(xPosition + 3, yPosition + 5, 14, 10, 0, 0, 14, 10, 64);
 			}

@@ -1,7 +1,6 @@
 package de.take_weiland.mods.cameracraft.api.photo;
 
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
+import java.util.UUID;
 
 /**
  * 
@@ -11,27 +10,21 @@ import net.minecraft.world.World;
  * @author diesieben07
  *
  */
-public interface Photo {
+public interface PhotoData {
 
-	Integer getId();
-	
-	String getOwner();
-	
-	EntityPlayer getPlayerOwner();
-	
-	boolean hasLocationAndTime();
-	
-	int getX();
+    long getId();
+
+    UUID getOwner();
+
+    int getX();
 	
 	int getY();
 	
 	int getZ();
 	
 	int getDimension();
-	
-	World getWorld();
-	
-	TimeType getTimeType();
+
+    TimeType getTimeType();
 	
 	long getTime();
 	

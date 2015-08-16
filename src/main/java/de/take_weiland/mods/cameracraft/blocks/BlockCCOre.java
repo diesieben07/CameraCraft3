@@ -41,7 +41,7 @@ public class BlockCCOre extends CCMultitypeBlock<OreType> {
 			int dropMeta = subtypeProp.toMeta(OreType.ALKALINE, 0);
 
 			for (int i = 0; i < amount; ++i) {
-				result.add(new ItemStack(CCItem.miscItems, 1, dropMeta));
+				result.add(new ItemStack(CCItem.misc, 1, dropMeta));
 			}
 		} else {
 			result = Lists.newArrayListWithCapacity(1);

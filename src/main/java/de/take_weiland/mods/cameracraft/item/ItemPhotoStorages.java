@@ -1,99 +1,88 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import static de.take_weiland.mods.cameracraft.item.PhotoStorageType.FILM_B_W;
-import static de.take_weiland.mods.cameracraft.item.PhotoStorageType.FILM_COLOR;
-import static de.take_weiland.mods.cameracraft.item.PhotoStorageType.MEMORY_CARD;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
+import de.take_weiland.mods.cameracraft.photo.PhotoStorages;
+import de.take_weiland.mods.commons.client.I18n;
+import de.take_weiland.mods.commons.meta.MetadataProperty;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
-import de.take_weiland.mods.cameracraft.photo.PhotoStorages;
-import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Multitypes;
-
 public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> implements PhotoStorageItem {
 
-	public ItemPhotoStorages(int defaultId) {
-		super("photoStorage", defaultId);
+    private static final MetadataProperty<PhotoStorageType> typeProp = MetadataProperty.newProperty(0, PhotoStorageType.class);
+
+	public ItemPhotoStorages() {
+		super("photoStorage");
 		setMaxStackSize(1);
 	}
 
-	@SuppressWarnings({ "rawtypes", "unchecked", "boxing" })
+    @Override
+    public MetadataProperty<PhotoStorageType> subtypeProperty() {
+        return typeProp;
+    }
+
+    @SuppressWarnings({ "rawtypes", "unchecked", "boxing" })
 	@Override
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List text, boolean verbose) {
-		PhotoStorageType type = Multitypes.getType(this, stack);
+		PhotoStorageType type = getType(stack);
 		String key = type.isSealed() ? "item.CameraCraft.photoStorage.subtext" : "item.CameraCraft.photoStorage.subtext.sealed";
 		int size = PhotoStorages.fastSize(stack);
 		if (size == 1) {
 			key += ".single";
 		}
-		text.add(I18n.getStringParams(key, size, type.getCapacity()));
-	}
-
-	@Override
-	public PhotoStorageType[] getTypes() {
-		return PhotoStorageType.VALUES;
-	}
-
-	@Override
-	protected List<ItemStack> provideSubtypes() {
-		return ItemStacks.of(FILM_B_W, FILM_COLOR, MEMORY_CARD);
+		text.add(I18n.translate(key, size, type.getCapacity()));
 	}
 
 	@Override
 	public PhotoStorage getPhotoStorage(ItemStack stack) {
-		return Multitypes.getType(this, stack).getStorage(stack);
+		return getType(stack).getStorage(stack);
 	}
 
 	@Override
 	public boolean isSealed(ItemStack stack) {
-		return Multitypes.getType(this, stack).isSealed();
+		return getType(stack).isSealed();
 	}
 
 	@Override
 	public ItemStack unseal(ItemStack sealed) {
-		return applyMeta(sealed, Multitypes.getType(this, sealed).getUnsealed());
+		return applyType(sealed, getType(sealed).getUnsealed());
 	}
 	
 	@Override
 	public boolean canRewind(ItemStack stack) {
-		return Multitypes.getType(this, stack).canRewind();
+		return getType(stack).canRewind();
 	}
 
 	@Override
 	public ItemStack rewind(ItemStack stack) {
-		return applyMeta(stack, Multitypes.getType(this, stack).rewind());
+		return applyType(stack, getType(stack).rewind());
 	}
 	
 	@Override
 	public boolean canBeProcessed(ItemStack stack) {
-		return Multitypes.getType(this, stack).canProcess();
+		return getType(stack).canProcess();
 	}
 
 	@Override
 	public ItemStack process(ItemStack stack) {
-		return applyMeta(stack, Multitypes.getType(this, stack).getProcessed());
+		return applyType(stack, getType(stack).getProcessed());
 	}
 	
 	@Override
 	public boolean isScannable(ItemStack stack) {
-		return Multitypes.getType(this, stack).isScannable();
+		return getType(stack).isScannable();
 	}
 	
-	private static ItemStack applyMeta(ItemStack stack, PhotoStorageType meta) {
-		ItemStack n = ItemStacks.of(meta);
-		if (stack.hasTagCompound()) {
-			n.stackTagCompound = (NBTTagCompound) stack.stackTagCompound.copy();
-		}
-		return n;
+	private static ItemStack applyType(ItemStack stack, PhotoStorageType type) {
+		ItemStack result = stack.copy();
+        result.setItemDamage(typeProp.toMeta(type));
+		return result;
 	}
 
 }

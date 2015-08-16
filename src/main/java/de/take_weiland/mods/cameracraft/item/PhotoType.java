@@ -1,9 +1,8 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import net.minecraft.item.Item;
-import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
+import de.take_weiland.mods.commons.meta.Subtype;
 
-public enum PhotoType implements ItemMeta {
+public enum PhotoType implements Subtype {
 	PHOTO("photo"),
 	POSTER("poster");
 
@@ -11,18 +10,12 @@ public enum PhotoType implements ItemMeta {
 	
 	private final String name;
 	
-	private PhotoType(String name) {
+	PhotoType(String name) {
 		this.name = name;
 	}
-	
+
 	@Override
-	public String unlocalizedName() {
+	public String subtypeName() {
 		return name;
 	}
-
-	@Override
-	public Item getItem() {
-		return CCItem.photo;
-	}
-
 }

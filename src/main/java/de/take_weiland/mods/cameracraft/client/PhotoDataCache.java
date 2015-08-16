@@ -1,50 +1,59 @@
 package de.take_weiland.mods.cameracraft.client;
 
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.concurrent.TimeUnit;
-
-import javax.imageio.ImageIO;
-
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
+import com.google.common.cache.RemovalNotification;
+import de.take_weiland.mods.cameracraft.network.PacketClientRequestPhoto;
+import de.take_weiland.mods.commons.client.Rendering;
+import de.take_weiland.mods.commons.util.Scheduler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
-import com.google.common.cache.RemovalListener;
-import com.google.common.cache.RemovalNotification;
+import javax.annotation.ParametersAreNonnullByDefault;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.concurrent.TimeUnit;
 
-import de.take_weiland.mods.cameracraft.network.PacketClientRequestPhoto;
-import de.take_weiland.mods.commons.client.Rendering;
-
+@ParametersAreNonnullByDefault
 public class PhotoDataCache {
 
 	static final Minecraft mc = Minecraft.getMinecraft();
-	private static final LoadingCache<Integer, CacheElement> cache;
+	private static final LoadingCache<Long, CacheElement> cache;
 	
 	static {
 		cache = CacheBuilder.newBuilder()
 				.concurrencyLevel(2) // everything higher is unlikely to ever happen
 				.expireAfterAccess(3, TimeUnit.MINUTES) // TODO figure out the right value here
-				.removalListener(new PhotoTextureUnloader())
+				.removalListener(PhotoDataCache::onCacheRemove)
 				.build(new PhotoDataLoader());
 	}
 	
 	private PhotoDataCache() { }
-	
+
+    private static void onCacheRemove(RemovalNotification<Long, CacheElement> notification) {
+        CacheElement cacheElement = notification.getValue();
+        if (cacheElement != null) {
+            ResourceLocation location = cacheElement.loc;
+            if (location != null) {
+                Scheduler.client().execute(() -> Rendering.unloadTexture(location));
+            }
+        }
+    }
+
 	static void invalidate() {
 		cache.invalidateAll();
 	}
 	
-	public static void bindTexture(Integer photoId) {
+	public static void bindTexture(long photoId) {
 		cache.getUnchecked(photoId).bindTexture();
 	}
 
-	public static CacheElement get(Integer photoId) {
+	public static CacheElement get(long photoId) {
 		return cache.getUnchecked(photoId);
 	}
 	
@@ -54,6 +63,13 @@ public class PhotoDataCache {
 			element.img = ImageIO.read(in);
 		}
 	}
+
+	static void injectReceivedPhoto(Integer photoId, BufferedImage image) {
+        CacheElement element = cache.getIfPresent(photoId);
+        if (element != null) {
+            element.img = image;
+        }
+    }
 	
 	public static class CacheElement {
 		
@@ -82,24 +98,12 @@ public class PhotoDataCache {
 		}
 	}
 	
-	static class PhotoDataLoader extends CacheLoader<Integer, CacheElement> {
+	static class PhotoDataLoader extends CacheLoader<Long, CacheElement> {
 
 		@Override
-		public CacheElement load(Integer photoId) throws Exception {
+		public CacheElement load(Long photoId) throws Exception {
 			new PacketClientRequestPhoto(photoId).sendToServer();
 			return new CacheElement();
-		}
-		
-	}
-	
-	static class PhotoTextureUnloader implements RemovalListener<Integer, CacheElement> {
-		
-		@Override
-		public void onRemoval(RemovalNotification<Integer, CacheElement> notification) {
-			ResourceLocation loc = notification.getValue().loc;
-			if (loc != null) {
-				Rendering.unloadTexture(loc);
-			}
 		}
 		
 	}

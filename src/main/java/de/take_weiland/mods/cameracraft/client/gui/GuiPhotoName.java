@@ -1,14 +1,15 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
+import de.take_weiland.mods.commons.client.I18n;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.client.resources.I18n;
 
 import org.lwjgl.input.Keyboard;
 
 import de.take_weiland.mods.commons.client.Guis;
-import de.take_weiland.mods.commons.util.Consumer;
+
+import java.util.function.Consumer;
 
 public class GuiPhotoName extends GuiScreen {
 
@@ -42,22 +43,21 @@ public class GuiPhotoName extends GuiScreen {
 	}
 	
 	private void done() {
-		newNameHandler.apply(nameField.getText().trim());
+		newNameHandler.accept(nameField.getText().trim());
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
-		buttonList.add((buttonDone = new GuiButton(BUTTON_DONE, width / 2 - 75, height - 30, 150, 20, I18n.getString("gui.done"))));
-		
-		GuiTextField newNameField = new GuiTextField(fontRenderer, width / 2 - 100, 50, 200, 20);
+		buttonList.add((buttonDone = new GuiButton(BUTTON_DONE, width / 2 - 75, height - 30, 150, 20, I18n.translate("gui.done"))));
+
+
 		if (nameField != null) {
-			Guis.copyState(nameField, newNameField);
-		} else {
-			newNameField.setFocused(true);
+            nameField.xPosition = width / 2 - 100;
+        } else {
+            nameField = new GuiTextField(fontRendererObj, width / 2 - 100, 50, 200, 20);
+            nameField.setFocused(true);
 		}
-		
-		nameField = newNameField;
 		
 		updateButtonState();
 	}

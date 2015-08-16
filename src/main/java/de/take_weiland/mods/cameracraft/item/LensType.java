@@ -1,11 +1,10 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import net.minecraft.item.Item;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.img.ImageFilters;
-import de.take_weiland.mods.commons.templates.Metadata.ItemMeta;
+import de.take_weiland.mods.commons.meta.Subtype;
 
-public enum LensType implements ItemMeta {
+public enum LensType implements Subtype {
 
 	RED("red", ImageFilters.RED),
 	GREEN("green", ImageFilters.GREEN),
@@ -17,23 +16,18 @@ public enum LensType implements ItemMeta {
 	private final String name;
 	private final ImageFilter filter;
 	
-	private LensType(String name, ImageFilter filter) {
+	LensType(String name, ImageFilter filter) {
 		this.name = name;
 		this.filter = filter;
 	}
-	
-	public ImageFilter getFilter() {
-		return filter;
-	}
 
 	@Override
-	public String unlocalizedName() {
+	public String subtypeName() {
 		return name;
 	}
 
-	@Override
-	public Item getItem() {
-		return CCItem.lenses;
+	public ImageFilter getFilter() {
+		return filter;
 	}
 
 }

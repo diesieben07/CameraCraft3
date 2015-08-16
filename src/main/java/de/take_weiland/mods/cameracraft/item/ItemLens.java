@@ -1,24 +1,26 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import net.minecraft.item.ItemStack;
 import de.take_weiland.mods.cameracraft.api.camera.LensItem;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
-import de.take_weiland.mods.commons.util.Multitypes;
+import de.take_weiland.mods.commons.meta.MetadataProperty;
+import net.minecraft.item.ItemStack;
 
 public class ItemLens extends CCItemMultitype<LensType> implements LensItem {
 
-	public ItemLens(int defaultId) {
-		super("lens", defaultId);
+    private static final MetadataProperty<LensType> subtypeProp = MetadataProperty.newProperty(0, LensType.class);
+
+	public ItemLens() {
+		super("lens");
 	}
 
-	@Override
-	public LensType[] getTypes() {
-		return LensType.VALUES;
-	}
+    @Override
+    public MetadataProperty<LensType> subtypeProperty() {
+        return subtypeProp;
+    }
 
 	@Override
 	public ImageFilter getFilter(ItemStack stack) {
-		return Multitypes.getType(this, stack).getFilter();
+		return getType(stack).getFilter();
 	}
 
 }

@@ -1,33 +1,31 @@
 package de.take_weiland.mods.cameracraft.network;
 
 import cpw.mods.fml.relauncher.Side;
-import de.take_weiland.mods.commons.net.DataBuf;
-import de.take_weiland.mods.commons.net.DataBuffers;
-import de.take_weiland.mods.commons.net.ModPacket;
-import de.take_weiland.mods.commons.net.WritableDataBuf;
+import de.take_weiland.mods.commons.net.MCDataInput;
+import de.take_weiland.mods.commons.net.MCDataOutput;
+import de.take_weiland.mods.commons.net.Packet;
 import net.minecraft.entity.player.EntityPlayer;
 
-public class PacketClientAction extends ModPacket {
+@Packet.Receiver(Side.CLIENT)
+public class PacketClientAction implements Packet {
 
 	private Action action;
 	
 	public PacketClientAction(Action action) {
 		this.action = action;
 	}
-	
-	@Override
-	protected boolean validOn(Side side) {
-		return side.isClient();
-	}
 
-	@Override
-	protected void write(WritableDataBuf buffer) {
-		DataBuffers.writeEnum(buffer, action);
-	}
+	public PacketClientAction(MCDataInput in) {
+        this.action = in.readEnum(Action.class);
+    }
 
-	@Override
-	protected void handle(DataBuf buffer, EntityPlayer player, Side side) {
-		switch (DataBuffers.readEnum(buffer, Action.class)) {
+    @Override
+    public void writeTo(MCDataOutput out) {
+        out.writeEnum(action);
+    }
+
+    public void handle(EntityPlayer player, Side side) {
+		switch (action) {
 		case TAKE_PHOTO:
 			break;
 		case NAME_PHOTO:
@@ -35,7 +33,7 @@ public class PacketClientAction extends ModPacket {
 		}
 	}
 	
-	public static enum Action {
+	public enum Action {
 		
 		TAKE_PHOTO, NAME_PHOTO
 		

@@ -24,7 +24,7 @@ import de.take_weiland.mods.commons.client.ScrollPane;
 
 import static org.lwjgl.opengl.GL11.*;
 
-public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrinter> {
+public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 
 	private static final int BUTTON_OPEN_SCROLLER = 0;
 	public static final int BUTTON_PRINT = 1;
@@ -34,9 +34,6 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	int sliderToggleDelay = -1;
 	int scrollerOffsetX = isScrollerOpen ? 0 : getScrollerHiddenOffset();
 	private int scrollerMotion = 0;
-	
-	private NetworkListScroller networkScroller;
-	private PhotoSelectionScroller photoIdScroller;
 	
 	public GuiPrinter(ContainerPrinter container) {
 		super(container);
@@ -56,10 +53,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	public void initGui() {
 		ySize = 200;
 		super.initGui();
-		networkScroller = new NetworkListScroller(this, guiLeft + 8, guiTop + 15, xSize - 16, 70, 0);
-		photoIdScroller = new PhotoSelectionScroller(this, guiLeft + 8, guiTop + 15, xSize - 16, 70, 0);
-		photoIdScroller.setClip(true);
-		
+
 		buttonList.add(new ButtonOpenScroller(BUTTON_OPEN_SCROLLER, guiLeft + 4, guiTop + 15 + 30));
 		buttonList.add(new GuiButton(GuiPrinter.BUTTON_PRINT, 0, 40, 50, 20, "Print!"));
 	}
@@ -68,52 +62,7 @@ public class GuiPrinter extends AbstractGuiContainer<TilePrinter, ContainerPrint
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
 		glDisable(GL_LIGHTING);
-		
-		networkScroller.updateHeight();
-		
-		if (scrollerOffsetX != 0) {
-			if (scrollerOffsetX != getScrollerHiddenOffset()) {
-				networkScroller.setClip(false);
-				int scale = Guis.computeGuiScale();
-				glPushMatrix();
-				glEnable(GL_SCISSOR_TEST);
-				glScissor((guiLeft + 8) * scale, mc.displayHeight - (guiTop + 15 + 70) * scale, (xSize - 16 + guiLeft + 8) * scale, 70 * scale);
-				glTranslatef(scrollerOffsetX + (partialTicks * 40 * scrollerMotion), 0, 0);
-				
-				networkScroller.draw(mouseX, mouseY);
-				glDisable(GL_SCISSOR_TEST);
-				glPopMatrix();
-			}
-		} else {
-			networkScroller.setClip(true);
-			networkScroller.draw(mouseX, mouseY);
-			
-			if (networkScroller.overNode >= 0) {
-				String overlay = container.getNodes().get(networkScroller.overNode).displayName;
-				int overlayWidth = mc.fontRenderer.getStringWidth(overlay);
-				Rendering.drawColoredRect(mouseX, mouseY + 10, overlayWidth + 2, mc.fontRenderer.FONT_HEIGHT + 2, 0x55000000);
-				mc.fontRenderer.drawString(overlay, mouseX + 1, mouseY + 11, 0xffffff);
-			}
-		}
-		
-		if (shouldDrawIds()) {
-			Integer[] photoIds = container.getSelectedNode().photoIds;
-			photoIdScroller.setContentHeight(photoIds.length * 10);
-			photoIdScroller.draw(mouseX, mouseY);
 
-
-
-			int hovered;
-			if (container.isAdvanced() && (hovered = photoIdScroller.hoveredNode()) >= 0) {
-				PhotoDataCache.CacheElement ce = PhotoDataCache.get(photoIds[hovered]);
-				if (ce.isLoaded()) {
-					ce.bindTexture();
-					glColor3f(1, 1, 1);
-					Rendering.drawTexturedQuad(mouseX, mouseY, 64, 64, 0, 0, 256, 256, 256);
-				}
-			}
-		}
-		
 		glEnable(GL_LIGHTING);
 	}
 	

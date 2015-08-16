@@ -51,7 +51,7 @@ public final class PhotoStorages {
 		private final ImageFilter filter;
 
 		ItemStackPhotoStorage(boolean isSealed, int cap, NBTTagIntArray nbt, ImageFilter filter) {
-			super(isSealed);
+			super();
 			this.cap = cap;
 			this.nbt = nbt;
 			this.filter = filter;

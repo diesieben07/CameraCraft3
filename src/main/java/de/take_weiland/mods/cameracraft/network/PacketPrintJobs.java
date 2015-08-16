@@ -3,16 +3,17 @@ package de.take_weiland.mods.cameracraft.network;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
-import de.take_weiland.mods.commons.net.DataBuf;
-import de.take_weiland.mods.commons.net.ModPacket;
-import de.take_weiland.mods.commons.net.WritableDataBuf;
+import de.take_weiland.mods.commons.net.MCDataInput;
+import de.take_weiland.mods.commons.net.MCDataOutput;
+import de.take_weiland.mods.commons.net.Packet;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 
 import java.util.Arrays;
 import java.util.Collection;
 
-public class PacketPrintJobs extends ModPacket {
+@Packet.Receiver(Side.SERVER)
+public class PacketPrintJobs implements Packet {
 
 	private int windowId;
 	private Collection<SimplePrintJob> jobs;
@@ -22,32 +23,30 @@ public class PacketPrintJobs extends ModPacket {
 		this.jobs = jobs;
 	}
 
+	public PacketPrintJobs(MCDataInput in) {
+        windowId = in.readByte();
+        int len = in.readVarInt();
+        SimplePrintJob[] jobs = new SimplePrintJob[len];
+        for (int i = 0; i < len; ++i) {
+            jobs[i] = new SimplePrintJob(in.readInt(), in.readVarInt());
+        }
+        this.jobs = Arrays.asList(jobs);
+    }
+
 	@Override
-	protected void write(WritableDataBuf buffer) {
-		buffer.putByte((byte) windowId);
-		buffer.putVarInt(jobs.size());
+    public void writeTo(MCDataOutput put) {
+		put.writeByte((byte) windowId);
+		put.writeVarInt(jobs.size());
 		for (SimplePrintJob job : jobs) {
-			buffer.putVarInt(job.getPhotoId().intValue());
-			buffer.putVarInt(job.getAmount());
+			put.writeInt(job.getPhotoId());
+			put.writeVarInt(job.getAmount());
 		}
 	}
 
-	@Override
-	protected void handle(DataBuf buf, EntityPlayer player, Side side) {
-		windowId = buf.getByte();
+    public void handle(EntityPlayer player) {
 		if (player.openContainer.windowId == windowId && player.openContainer instanceof ContainerPrinter) {
-			int len = buf.getVarInt();
-			SimplePrintJob[] jobs = new SimplePrintJob[len];
-			for (int i = 0; i < len; ++i) {
-				jobs[i] = new SimplePrintJob(Integer.valueOf(buf.getVarInt()), buf.getVarInt());
-			}
-			((ContainerPrinter) player.openContainer).inventory().addJobs(Arrays.asList(jobs));
+			((ContainerPrinter) player.openContainer).inventory().addJobs(jobs);
 		}
 	}
 	
-	@Override
-	protected boolean validOn(Side side) {
-		return side.isServer();
-	}
-
 }

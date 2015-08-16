@@ -10,7 +10,6 @@ import net.minecraft.tileentity.TileEntity;
 public enum MachineType implements Subtype {
 	
 	PHOTO_PROCESSOR("processor", TilePhotoProcessor.class, CCGuis.PHOTO_PROCESSOR),
-	ITEM_MUTATOR("oreDictionary", TileItemMutator.class, CCGuis.ORE_DICTIONARY),
 	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER),
 	PRINTER_ADVANCED("printerAdvanced", TilePrinter.class, CCGuis.PRINTER_ADVANCED),
 	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER),

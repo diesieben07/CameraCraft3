@@ -12,7 +12,7 @@ public interface InkItem {
 	
 	InkItem.Color getColor(ItemStack stack);
 	
-	public static enum Color {
+	enum Color {
 		
 		CYAN,
 		MAGENTA,

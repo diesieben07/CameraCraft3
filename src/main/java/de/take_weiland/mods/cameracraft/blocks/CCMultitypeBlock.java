@@ -18,7 +18,7 @@ public abstract class CCMultitypeBlock<TYPE extends Subtype> extends CCBlock imp
 	protected Map<TYPE, Icon> icons;
 
 	public CCMultitypeBlock(String name, int defaultId, Material material) {
-		super(name, defaultId, material);
+		super(name, material);
 	}
 	
 	@Override

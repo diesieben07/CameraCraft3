@@ -1,31 +1,17 @@
 package de.take_weiland.mods.cameracraft;
 
-import java.util.EnumSet;
+import cpw.mods.fml.common.eventhandler.SubscribeEvent;
+import cpw.mods.fml.common.gameevent.TickEvent;
 
-import net.minecraft.entity.player.EntityPlayer;
-import cpw.mods.fml.common.ITickHandler;
-import cpw.mods.fml.common.TickType;
+import static de.take_weiland.mods.commons.util.Sides.sideOf;
 
-public class CCPlayerTickHandler implements ITickHandler {
+public class CCPlayerTickHandler {
 
-	@Override
-	public void tickStart(EnumSet<TickType> type, Object... tickData) {
-		CCPlayerData.get((EntityPlayer)tickData[0]).onUpdate();
-	}
-
-	@Override
-	public void tickEnd(EnumSet<TickType> type, Object... tickData) { }
-
-	private static final EnumSet<TickType> TICKS = EnumSet.of(TickType.PLAYER);
-	
-	@Override
-	public EnumSet<TickType> ticks() {
-		return TICKS;
-	}
-
-	@Override
-	public String getLabel() {
-		return "CCPlayerTicks";
-	}
+	@SubscribeEvent
+    public void playerTick(TickEvent.PlayerTickEvent event) {
+        if (event.phase == TickEvent.Phase.START && sideOf(event.player).isServer()) {
+            CCPlayerData.get(event.player).onUpdate();
+        }
+    }
 
 }
