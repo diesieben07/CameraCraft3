@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.51:deobf'
+    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.54:deobf'
 }
 
 sourceCompatibility = 1.8
