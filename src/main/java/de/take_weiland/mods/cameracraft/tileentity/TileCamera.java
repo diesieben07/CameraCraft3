@@ -1,27 +1,16 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
 import de.take_weiland.mods.cameracraft.CCSounds;
-import de.take_weiland.mods.commons.tileentity.AbstractTileEntity;
-import net.minecraft.nbt.NBTTagCompound;
+import de.take_weiland.mods.commons.nbt.ToNbt;
+import net.minecraft.tileentity.TileEntity;
 
 /**
  * @author diesieben07
  */
-public class TileCamera extends AbstractTileEntity {
+public class TileCamera extends TileEntity {
 
+	@ToNbt(key = "powered")
 	private boolean isPowered;
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		isPowered = nbt.getBoolean("powered");
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
-		nbt.setBoolean("powered", isPowered);
-	}
 
 	public boolean isPowered() {
 		return isPowered;

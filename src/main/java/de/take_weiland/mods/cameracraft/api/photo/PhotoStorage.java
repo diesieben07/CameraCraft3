@@ -1,22 +1,18 @@
 package de.take_weiland.mods.cameracraft.api.photo;
 
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
-import gnu.trove.list.TLongList;
+import gnu.trove.iterator.TLongIterator;
 
 /**
  * Represents something that can store photos
- * @author Take Weiland
+ * @author diesieben07
  *
  */
-public interface PhotoStorage {
+public interface PhotoStorage extends Iterable<Long> {
 
-	/**
-	 * get an unmodifiable List view of the photos in this Storage
-	 * @return
-	 */
-	TLongList getPhotos();
-	
-	/**
+    TLongIterator longIterator();
+
+    /**
 	 * @return the amount of photos this PhotoStorage can store
 	 */
 	int capacity();

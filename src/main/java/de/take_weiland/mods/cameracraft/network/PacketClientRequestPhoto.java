@@ -27,13 +27,13 @@ public class PacketClientRequestPhoto implements Packet {
         out.writeLong(photoId);
     }
 
-	public void handle(EntityPlayer player) {
+    public void handle(EntityPlayer player) {
         long photoId = this.photoId;
 
         File file = DatabaseImpl.instance.getImageFile(photoId);
         if (file.exists()) {
             new PacketPhotoData(photoId, file).sendTo(player);
         }
-	}
-	
+    }
+
 }

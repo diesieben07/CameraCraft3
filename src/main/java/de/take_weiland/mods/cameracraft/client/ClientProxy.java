@@ -4,9 +4,8 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
-import de.take_weiland.mods.cameracraft.CCSounds;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.Environment;
+import de.take_weiland.mods.cameracraft.CCProxy;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
 import de.take_weiland.mods.cameracraft.client.gui.GuiViewPhoto;
 import de.take_weiland.mods.cameracraft.client.render.RenderPoster;
@@ -15,7 +14,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.client.event.sound.SoundLoadEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.awt.image.BufferedImage;
@@ -23,7 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.ForkJoinPool;
 
-public class EnvironmentClient implements Environment {
+public class ClientProxy implements CCProxy {
 
 	public static final ResourceLocation CONTROLS = new ResourceLocation("cameracraft", "textures/gui/controls.png");
 	
@@ -79,12 +77,6 @@ public class EnvironmentClient implements Environment {
 		mc().effectRenderer.addEffect(new EntityAlkalineBubbleFX(mc().theWorld, x, y, z, motionX, motionY, motionZ));
 	}
 
-    @SubscribeEvent
-	public void onSoundLoad(SoundLoadEvent event) {
-		for (CCSounds sound : CCSounds.values()) {
-			sound.register(event.manager);
-		}
-	}
 
 	@SubscribeEvent
 	public void connectionOpened(FMLNetworkEvent.ClientConnectedToServerEvent event) {

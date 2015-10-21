@@ -1,6 +1,6 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
-import de.take_weiland.mods.cameracraft.client.EnvironmentClient;
+import de.take_weiland.mods.cameracraft.client.ClientProxy;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.network.PacketPhotoName;
@@ -185,7 +185,7 @@ public class GuiViewPhoto extends GuiScreen {
 		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
 			super.drawButton(mc, mouseX, mouseY);
 			if (visible) {
-				mc.renderEngine.bindTexture(EnvironmentClient.CONTROLS);
+				mc.renderEngine.bindTexture(ClientProxy.CONTROLS);
 				Rendering.drawTexturedQuad(xPosition + 3, yPosition + 5, 14, 10, 0, 0, 14, 10, 64);
 			}
 		}

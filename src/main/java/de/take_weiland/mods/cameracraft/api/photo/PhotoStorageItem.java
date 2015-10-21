@@ -11,7 +11,7 @@ public interface PhotoStorageItem {
 	ItemStack unseal(ItemStack sealed);
 	
 	/**
-	 * determine if this PhotoStorage can be rewinded (usually films)
+	 * determine if this PhotoStorage can be rewound (usually films)
 	 * @param stack
 	 * @return
 	 */

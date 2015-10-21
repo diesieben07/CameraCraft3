@@ -1,11 +1,11 @@
 package de.take_weiland.mods.cameracraft.server;
 
-import de.take_weiland.mods.cameracraft.Environment;
+import de.take_weiland.mods.cameracraft.CCProxy;
 
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
-public class EnvironmentServer implements Environment {
+public class ServerProxy implements CCProxy {
 
 	@Override
 	public void preInit() { }

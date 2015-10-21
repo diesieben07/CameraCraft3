@@ -5,7 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.primitives.Longs;
-import de.take_weiland.mods.cameracraft.api.photo.PhotoData;
+import de.take_weiland.mods.cameracraft.api.photo.Photo;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
 import gnu.trove.TCollections;
 import gnu.trove.iterator.TLongIterator;
@@ -13,6 +13,8 @@ import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
 
 import javax.annotation.Nonnull;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.Iterator;
@@ -22,14 +24,14 @@ import java.util.concurrent.TimeUnit;
 /**
  * @author diesieben07
  */
-public final class DatabaseImpl implements PhotoDatabase, Iterable<PhotoData> {
+public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
 
     public static final String IDS_DAT = "_ids.dat";
     public static DatabaseImpl current;
 
     private final File root;
 
-    private final LoadingCache<Long, PhotoDataImpl> cache = CacheBuilder.newBuilder()
+    private final LoadingCache<Long, PhotoImpl> cache = CacheBuilder.newBuilder()
             .concurrencyLevel(2)
             .expireAfterAccess(60, TimeUnit.SECONDS)
             .build(new DataLoader());
@@ -48,6 +50,14 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<PhotoData> {
         }
     }
 
+    public BufferedImage loadImage(long id) throws IOException {
+        return ImageIO.read(new File(root, fileName(id, ".png")));
+    }
+
+    private static String fileName(long id, String ext) {
+        return Long.toString(id, 36) + ext;
+    }
+
     private void loadIds() throws IOException {
         File idFile = new File(root, IDS_DAT);
         if (!idFile.isFile()) {
@@ -57,10 +67,8 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<PhotoData> {
             boolean foundFirst = false;
             byte[] buf = new byte[8];
             try (InputStream in = new BufferedInputStream(new FileInputStream(idFile))) {
-                int i;
                 do {
-                    i = readFullyOpt(buf, in);
-                    if (i < 0) {
+                    if (!readFullyOpt(buf, in)) {
                         break;
                     }
                     long l = Longs.fromByteArray(buf);
@@ -80,16 +88,16 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<PhotoData> {
         }
     }
 
-    private int readFullyOpt(byte[] b, InputStream in) throws IOException {
+    private boolean readFullyOpt(byte[] b, InputStream in) throws IOException {
         int len = b.length;
         int n = 0;
         while (n < len) {
             int count = in.read(b, n, len - n);
             if (count < 0)
-                return -1;
+                return false;
             n += count;
         }
-        return n;
+        return true;
     }
 
     @Override
@@ -98,36 +106,36 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<PhotoData> {
     }
 
     @Override
-    public Iterable<PhotoData> getPhotos() {
+    public Iterable<Photo> getPhotos() {
         return this;
     }
 
     @Override
-    public Iterator<PhotoData> iterator() {
+    public Iterator<Photo> iterator() {
         TLongIterator it = ids.iterator();
-        return new UnmodifiableIterator<PhotoData>() {
+        return new UnmodifiableIterator<Photo>() {
             @Override
             public boolean hasNext() {
                 return it.hasNext();
             }
 
             @Override
-            public PhotoData next() {
+            public Photo next() {
                 return getPhoto(it.next());
             }
         };
     }
 
     @Override
-    public PhotoData getPhoto(long id) {
+    public Photo getPhoto(long id) {
         return cache.getUnchecked(id);
     }
 
     @Override
-    public void store(long photoID, PhotoData data) {
+    public void store(long photoID, Photo data) {
         File file = fileFor(photoID);
         try (DataOutputStream out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file), 128))) {
-            PhotoDataImpl.write(data, out);
+            PhotoImpl.write(data, out);
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
@@ -170,10 +178,10 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<PhotoData> {
         }
     }
 
-    private final class DataLoader extends CacheLoader<Long, PhotoDataImpl> {
+    private final class DataLoader extends CacheLoader<Long, PhotoImpl> {
 
         @Override
-        public PhotoDataImpl load(@Nonnull Long id) throws Exception {
+        public PhotoImpl load(@Nonnull Long id) throws Exception {
             if (!ids.contains(id)) {
                 throw new NoSuchElementException("Unknown ID " + id);
             }
@@ -185,7 +193,7 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<PhotoData> {
                 throw new IOException("File " + file + " is not readable");
             }
             try (DataInputStream in = new DataInputStream(new FileInputStream(file))) {
-                return PhotoDataImpl.load(id, in);
+                return PhotoImpl.load(id, in);
             }
         }
     }

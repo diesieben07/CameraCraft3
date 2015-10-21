@@ -1,17 +1,24 @@
 package de.take_weiland.mods.cameracraft.photo;
 
-import com.google.common.primitives.Ints;
+import com.google.common.base.Throwables;
+import com.google.common.primitives.Longs;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
+import de.take_weiland.mods.commons.asm.MCPNames;
+import de.take_weiland.mods.commons.nbt.NBT;
 import de.take_weiland.mods.commons.util.ItemStacks;
+import gnu.trove.iterator.TLongIterator;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagIntArray;
 import org.apache.commons.lang3.ArrayUtils;
 
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 public final class PhotoStorages {
 
@@ -29,37 +36,46 @@ public final class PhotoStorages {
 	
 	public static PhotoStorage withCapacity(int cap, boolean sealed, ItemStack stack, ImageFilter filter) {
 		NBTTagCompound stackNbt = ItemStacks.getNbt(stack);
-		if (!stackNbt.hasKey(NBT_KEY)) {
-			stackNbt.setIntArray(NBT_KEY, ArrayUtils.EMPTY_INT_ARRAY);
-		}
-		NBTTagIntArray nbt = (NBTTagIntArray) ItemStacks.getNbt(stack).getTag(NBT_KEY);
+        NBTTagByteArray nbt = NBT.getOrCreate(stackNbt, NBT_KEY, NBTTagByteArray.class);
 		return withCapacity(cap, sealed, nbt, filter);
 	}
 	
-	public static PhotoStorage withCapacity(final int cap, boolean sealed, final NBTTagIntArray nbt) {
+	public static PhotoStorage withCapacity(final int cap, boolean sealed, final NBTTagByteArray nbt) {
 		return withCapacity(cap, sealed, nbt, null);
 	}
 	
-	public static PhotoStorage withCapacity(final int cap, boolean sealed, final NBTTagIntArray nbt, final ImageFilter filter) {
+	public static PhotoStorage withCapacity(final int cap, boolean sealed, final NBTTagByteArray nbt, final ImageFilter filter) {
 		return new ItemStackPhotoStorage(sealed, cap, nbt, filter);
 	}
 	
 	private static final class ItemStackPhotoStorage extends AbstractPhotoStorage {
-		
-		private final int cap;
-		private final NBTTagIntArray nbt;
+
+        private final boolean isSealed;
+        private final int cap;
+		private final NBTTagByteArray nbt;
 		private final ImageFilter filter;
 
-		ItemStackPhotoStorage(boolean isSealed, int cap, NBTTagIntArray nbt, ImageFilter filter) {
+		ItemStackPhotoStorage(boolean isSealed, int cap, NBTTagByteArray nbt, ImageFilter filter) {
 			super();
-			this.cap = cap;
+            this.isSealed = isSealed;
+            this.cap = cap;
 			this.nbt = nbt;
 			this.filter = filter;
 		}
 
-		@Override
+        @Override
+        public Iterator<Long> iterator() {
+            return new BoxedIterator(this);
+        }
+
+        @Override
+        public TLongIterator longIterator() {
+            return new UnboxedIterator(this);
+        }
+
+        @Override
 		public int size() {
-			return nbt.intArray.length;
+			return nbt.func_150292_c().length >> 3;
 		}
 
 		@Override
@@ -69,58 +85,131 @@ public final class PhotoStorages {
 
 		@Override
 		protected void removeImpl(int index) {
-			int newLen = nbt.intArray.length - 1;
+			int newLen = size() - 1;
 			if (newLen == 0) {
-				nbt.intArray = ArrayUtils.EMPTY_INT_ARRAY;
-			} else {
-				int[] arr = new int[newLen];
-				System.arraycopy(nbt.intArray, 0, arr, 0, index);
-				if (index != newLen) {
-					System.arraycopy(nbt.intArray, index + 1, arr, index, newLen - index);
+                clearImpl();
+            } else {
+				byte[] newArr = new byte[toArrayIndex(newLen)];
+                byte[] oldArr = nbt.func_150292_c();
+
+                System.arraycopy(oldArr, 0, newArr, 0, toArrayIndex(index));
+				if (index != newLen) { // not last was removed
+					System.arraycopy(oldArr, toArrayIndex(index + 1), newArr, toArrayIndex(index), toArrayIndex(newLen - index));
 				}
-				nbt.intArray = arr;
+				setNbtByteArray(nbt, newArr);
 			}
 		}
 
-		@Override
-		protected Integer getImpl(int index) {
-			return Integer.valueOf(nbt.intArray[index]);
-		}
+        private static int toArrayIndex(int i) {
+            return i << 3;
+        }
 
 		@Override
-		protected void storeImpl(Integer photoId) {
-			int len = nbt.intArray.length;
-			nbt.intArray = Arrays.copyOf(nbt.intArray, len + 1);
-			nbt.intArray[len] = photoId.intValue();
+		protected long getImpl(int index) {
+			int arrIdx = toArrayIndex(index);
+            byte[] arr = nbt.func_150292_c();
+            return Longs.fromBytes(arr[arrIdx], arr[arrIdx + 1], arr[arrIdx + 2], arr[arrIdx + 3],
+                    arr[arrIdx + 4], arr[arrIdx + 5], arr[arrIdx + 6], arr[arrIdx + 7]);
+        }
 
+		@Override
+		protected void storeImpl(long photoId) {
+            byte[] newArr = concat(nbt.func_150292_c(), Longs.toByteArray(photoId));
+            setNbtByteArray(nbt, newArr);
 		}
+
+        private static byte[] concat(byte[] a, byte[] b) {
+            int aLen = a.length;
+            int bLen = b.length;
+            byte[] result = Arrays.copyOf(a, aLen + bLen);
+            System.arraycopy(b, 0, a, aLen, bLen);
+            return result;
+        }
 
 		@Override
 		protected void clearImpl() {
-			nbt.intArray = ArrayUtils.EMPTY_INT_ARRAY;
+			setNbtByteArray(nbt, ArrayUtils.EMPTY_BYTE_ARRAY);
 		}
 
 		@Override
 		public ImageFilter getFilter() {
 			return filter;
 		}
-		
 
-		@Override
-		public int[] getRawPhotoIds() {
-			return nbt.intArray;
-		}
+        @Override
+        public boolean isSealed() {
+            return isSealed;
+        }
+    }
 
-		private List<Integer> listView;
-		
-		@Override
-		public List<Integer> getPhotos() {
-			return listView == null ? (listView = createListView()) : listView;
-		}
+    private static abstract class IteratorImpl {
 
-		private List<Integer> createListView() {
-			return Collections.unmodifiableList(Ints.asList(nbt.intArray));
-		}
-	}
+        final PhotoStorage storage;
+        int idx;
+
+        IteratorImpl(PhotoStorage storage) {
+            this.storage = storage;
+        }
+
+        public boolean hasNext() {
+            return idx < storage.size();
+        }
+
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    private static final class BoxedIterator extends IteratorImpl implements Iterator<Long> {
+
+        BoxedIterator(PhotoStorage storage) {
+            super(storage);
+        }
+
+        @Override
+        public Long next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return storage.get(idx++);
+        }
+    }
+
+    private static final class UnboxedIterator extends IteratorImpl implements TLongIterator {
+
+        UnboxedIterator(PhotoStorage storage) {
+            super(storage);
+        }
+
+        @Override
+        public long next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
+            return storage.get(idx++);
+        }
+
+    }
+
+    static void setNbtByteArray(NBTTagByteArray nbt, byte[] arr) {
+        try {
+            nbtByteArraySet.invokeExact(nbt, arr);
+        } catch (Throwable t) {
+            throw Throwables.propagate(t);
+        }
+    }
+
+	private static final MethodHandle nbtByteArraySet;
+
+    static {
+        try {
+            Field field = NBTTagByteArray.class.getDeclaredField(MCPNames.field("field_74754_a"));
+            field.setAccessible(true);
+            nbtByteArraySet = MethodHandles.publicLookup().unreflectSetter(field);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 
 }

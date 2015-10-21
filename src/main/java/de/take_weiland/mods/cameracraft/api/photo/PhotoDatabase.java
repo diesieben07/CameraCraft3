@@ -9,12 +9,12 @@ public interface PhotoDatabase {
 
     TLongSet getPhotoIDs();
 
-    Iterable<PhotoData> getPhotos();
+    Iterable<Photo> getPhotos();
 
-    PhotoData getPhoto(long id);
+    Photo getPhoto(long id);
 
     long nextId();
 
-    void store(long photoID, PhotoData data);
+    void store(long photoID, Photo data);
 
 }

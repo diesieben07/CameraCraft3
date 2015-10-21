@@ -1,31 +1,31 @@
 package de.take_weiland.mods.cameracraft.photo;
 
-import de.take_weiland.mods.cameracraft.api.photo.PhotoData;
-import de.take_weiland.mods.cameracraft.api.photo.TimeType;
+import de.take_weiland.mods.cameracraft.api.photo.Photo;
 
+import java.awt.image.BufferedImage;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 import java.util.UUID;
 
-public class PhotoDataImpl implements PhotoData {
+public class PhotoImpl implements Photo {
 	
 	private final long id;
 	private final UUID owner;
 	
 	private final long time;
-	private final TimeType timeType;
-	
+
 	private final int dimension;
 	private final int x;
 	private final int y;
 	private final int z;
+
+	private volatile BufferedImage image;
 	
-	public PhotoDataImpl(long id, UUID owner, long time, TimeType timeType, int dimension, int x, int y, int z) {
+	public PhotoImpl(long id, UUID owner, long time, int dimension, int x, int y, int z) {
 		this.id = id;
 		this.owner = owner;
 		this.time = time;
-		this.timeType = timeType;
 		this.dimension = dimension;
 		this.x = x;
 		this.y = y;
@@ -62,17 +62,27 @@ public class PhotoDataImpl implements PhotoData {
         return dimension;
 	}
 
-    @Override
-	public TimeType getTimeType() {
-        return timeType;
-	}
-
 	@Override
 	public long getTime() {
         return time;
 	}
 
-	public static PhotoDataImpl load(long id, DataInput in) throws IOException {
+    @Override
+    public BufferedImage getImage() throws IOException {
+        BufferedImage img = this.image; // volatile read
+        if (img == null) {
+            synchronized (this) {
+                img = this.image;
+                if (img == null) {
+                    img = DatabaseImpl.current.loadImage(id);
+                    this.image = img; // volatile write
+                }
+            }
+        }
+        return img;
+    }
+
+    public static PhotoImpl load(long id, DataInput in) throws IOException {
 		long lsb = in.readLong();
 		long msb = in.readLong();
 		UUID owner = new UUID(msb, lsb);
@@ -81,10 +91,10 @@ public class PhotoDataImpl implements PhotoData {
         int x = in.readInt();
         int y = in.readInt();
         int z = in.readInt();
-        return new PhotoDataImpl(id, owner, time, TimeType.INGAME, dim, x, y, z);
+        return new PhotoImpl(id, owner, time, dim, x, y, z);
 	}
 
-    public static void write(PhotoData data, DataOutput out) throws IOException {
+    public static void write(Photo data, DataOutput out) throws IOException {
         UUID owner = data.getOwner();
         out.writeLong(owner.getLeastSignificantBits());
         out.writeLong(owner.getMostSignificantBits());

@@ -50,7 +50,6 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	
 	@Override
 	public void clear() {
-		boolean willChange = size() != 0;
 		clearImpl();
 	}
 	

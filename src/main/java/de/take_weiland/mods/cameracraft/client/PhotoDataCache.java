@@ -3,10 +3,7 @@ package de.take_weiland.mods.cameracraft.client;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.google.common.cache.RemovalNotification;
 import de.take_weiland.mods.cameracraft.network.PacketClientRequestPhoto;
-import de.take_weiland.mods.commons.client.Rendering;
-import de.take_weiland.mods.commons.util.Scheduler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
@@ -29,28 +26,17 @@ public class PhotoDataCache {
 		cache = CacheBuilder.newBuilder()
 				.concurrencyLevel(2) // everything higher is unlikely to ever happen
 				.expireAfterAccess(3, TimeUnit.MINUTES) // TODO figure out the right value here
-				.removalListener(PhotoDataCache::onCacheRemove)
 				.build(new PhotoDataLoader());
 	}
 	
 	private PhotoDataCache() { }
 
-    private static void onCacheRemove(RemovalNotification<Long, CacheElement> notification) {
-        CacheElement cacheElement = notification.getValue();
-        if (cacheElement != null) {
-            ResourceLocation location = cacheElement.loc;
-            if (location != null) {
-                Scheduler.client().execute(() -> Rendering.unloadTexture(location));
-            }
-        }
-    }
-
 	static void invalidate() {
 		cache.invalidateAll();
 	}
 	
-	public static void bindTexture(long photoId) {
-		cache.getUnchecked(photoId).bindTexture();
+	public static ResourceLocation bindTexture(long photoId) {
+		return cache.getUnchecked(photoId).bindTexture();
 	}
 
 	public static CacheElement get(long photoId) {
@@ -79,18 +65,19 @@ public class PhotoDataCache {
 		ResourceLocation loc;
 		DynamicTexture tex;
 		
-		public void bindTexture() {
+		public ResourceLocation bindTexture() {
 			TextureManager engine = mc.renderEngine;
 			if (loc == null) {
 				if (img == null) {
 					engine.bindTexture(DUMMY);
-					return;
+					return null;
 				} else { 
 					tex = new DynamicTexture(img);
 					loc = engine.getDynamicTextureLocation("cameracraft.photo", tex);
 				}
 			}
 			engine.bindTexture(loc);
+            return loc;
 		}
 
 		public boolean isLoaded() {

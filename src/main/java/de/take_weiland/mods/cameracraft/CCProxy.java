@@ -3,7 +3,7 @@ package de.take_weiland.mods.cameracraft;
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
 
-public interface Environment {
+public interface CCProxy {
 
 	void preInit();
 

@@ -1,8 +1,6 @@
 package de.take_weiland.mods.cameracraft;
 
 import com.google.common.base.Throwables;
-import com.google.common.util.concurrent.ListeningExecutorService;
-import com.google.common.util.concurrent.MoreExecutors;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
@@ -30,6 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
+import java.util.concurrent.Executor;
 import java.util.concurrent.ForkJoinPool;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
@@ -45,7 +44,7 @@ public final class CameraCraft {
     public static CameraCraft instance;
 
     @SidedProxy(clientSide = CLIENT_ENV, serverSide = SERVER_ENV)
-    public static Environment env;
+    public static CCProxy env;
 
     public static Configuration config;
 
@@ -53,7 +52,7 @@ public final class CameraCraft {
 
     public static CameraCraftApi api;
 
-    public static ListeningExecutorService executor;
+    public static Executor executor;
 
     public static CreativeTabs tab = new CreativeTabs("cameracraft") {
 
@@ -119,7 +118,7 @@ public final class CameraCraft {
 
     private static void setupThreads() {
         // TODO
-        executor = MoreExecutors.listeningDecorator(ForkJoinPool.commonPool());
+        executor = ForkJoinPool.commonPool();
     }
 
     @EventHandler

@@ -1,10 +1,7 @@
 package de.take_weiland.mods.cameracraft;
 
-import net.minecraft.client.audio.SoundManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
 
 public enum CCSounds {
 
@@ -13,7 +10,7 @@ public enum CCSounds {
 
 	private final String name;
 	
-	private CCSounds(String name) {
+	CCSounds(String name) {
 		this.name = name;
 	}
 	
@@ -37,9 +34,4 @@ public enum CCSounds {
 		return "cameracraft:" + name;
 	}
 	
-	@SideOnly(Side.CLIENT)
-	public void register(SoundManager manager) {
-		manager.addSound(getName() + ".ogg");
-	}
-
 }
