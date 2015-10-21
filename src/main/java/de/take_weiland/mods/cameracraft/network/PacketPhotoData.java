@@ -37,14 +37,14 @@ public class PacketPhotoData implements Packet {
 
     public static PacketPhotoData read(MCDataInput in) {
         int photoId = in.readInt();
-        CameraCraft.env.handleClientPhotoData(photoId, in.asInputStream());
+        CameraCraft.proxy.handleClientPhotoData(photoId, in.asInputStream());
         return null;
     }
 
     public static void handle(PacketPhotoData packet, EntityPlayer player) {
         if (packet != null) {
             try {
-                CameraCraft.env.handleClientPhotoData(packet.photoId, new FileInputStream(packet.file));
+                CameraCraft.proxy.handleClientPhotoData(packet.photoId, new FileInputStream(packet.file));
             } catch (FileNotFoundException e) {
                 throw new IllegalStateException("Photo file was deleted unexpectedly!", e);
             }

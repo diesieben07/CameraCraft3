@@ -75,7 +75,7 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 	}
 	
 	@Override
-	public boolean isScannable(ItemStack stack) {
+	public boolean canBeScanned(ItemStack stack) {
 		return getType(stack).isScannable();
 	}
 	

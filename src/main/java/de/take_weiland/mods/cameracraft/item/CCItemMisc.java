@@ -130,7 +130,7 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
 				double motionX = (itemRand.nextDouble() - 0.5) * 0.3;
 				double motionY = itemRand.nextDouble() * 0.05;
 				double motionZ = (itemRand.nextDouble() - 0.5) * 0.3;
-				CameraCraft.env.spawnAlkalineBubbleFX(x + 0.5 + xRand, y + 1 + yRand, z + 0.5 + zRand, motionX, motionY, motionZ);
+				CameraCraft.proxy.spawnAlkalineBubbleFX(x + 0.5 + xRand, y + 1 + yRand, z + 0.5 + zRand, motionX, motionY, motionZ);
 			}
 		}
 		return false;

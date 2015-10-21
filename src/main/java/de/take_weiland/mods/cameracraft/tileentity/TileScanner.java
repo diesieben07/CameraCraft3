@@ -24,7 +24,7 @@ public class TileScanner extends TileEntityInventory<TileScanner> implements Net
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		Item item = stack.getItem();
-		return item instanceof PhotoStorageItem && ((PhotoStorageItem) item).isScannable(stack);
+		return item instanceof PhotoStorageItem && ((PhotoStorageItem) item).canBeScanned(stack);
 	}
 
 	@Override

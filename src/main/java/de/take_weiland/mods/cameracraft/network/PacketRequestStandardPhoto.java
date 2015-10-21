@@ -26,7 +26,7 @@ public class PacketRequestStandardPhoto implements Packet {
 	}
 
 	public void handle(EntityPlayer player) {
-		CameraCraft.env.handleStandardPhotoRequest(transferId);
+		CameraCraft.proxy.handleStandardPhotoRequest(transferId);
 	}
 	
 }

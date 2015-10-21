@@ -5,12 +5,9 @@ import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
-import de.take_weiland.mods.cameracraft.photo.AbstractPhotoStorage;
+import de.take_weiland.mods.cameracraft.photo.SinglePhotoStorage;
 import de.take_weiland.mods.commons.meta.MetadataProperty;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import gnu.trove.TCollections;
-import gnu.trove.list.TLongList;
-import gnu.trove.list.array.TLongArrayList;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Direction;
@@ -47,7 +44,7 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
 		if (sideOf(world).isClient() && stack.hasTagCompound()) {
 			boolean isNamed = isNamed(stack);
-			CameraCraft.env.displayPhotoGui(getPhotoId(stack), isNamed ? getNameImpl(stack) : null, !isNamed);
+			CameraCraft.proxy.displayPhotoGui(getPhotoId(stack), isNamed ? getNameImpl(stack) : null, !isNamed);
 		}
 		return stack;
 	}
@@ -80,52 +77,12 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	}
 
 	@Override
-	public PhotoStorage getPhotoStorage(final ItemStack stack) {
+	public PhotoStorage getPhotoStorage(ItemStack stack) {
 		if (!stack.hasTagCompound()) {
 			return null;
 		}
 		
-		return new AbstractPhotoStorage() {
-			
-			private final long photoId = getPhotoId(stack);
-			private final TLongList contents = TCollections.unmodifiableList(TLongArrayList.wrap(new long[] { photoId }));
-
-            @Override
-			public int size() {
-				return 1;
-			}
-			
-			@Override
-			public TLongList getPhotos() {
-				return contents;
-			}
-			
-			@Override
-			public int capacity() {
-				return 1;
-			}
-			
-			@Override
-			protected long getImpl(int index) {
-				return photoId;
-			}
-			
-			// photos are immutable
-            @Override
-            public boolean isSealed() {
-                return true;
-            }
-
-            @Override
-			protected void storeImpl(long photoId) { }
-			
-			@Override
-			protected void removeImpl(int index) { }
-			
-			@Override
-			protected void clearImpl() { }
-
-		};
+		return new SinglePhotoStorage(getPhotoId(stack));
 	}
 
 	@Override
@@ -159,7 +116,7 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	}
 
 	@Override
-	public boolean isScannable(ItemStack stack) {
+	public boolean canBeScanned(ItemStack stack) {
 		return false;
 	}
 

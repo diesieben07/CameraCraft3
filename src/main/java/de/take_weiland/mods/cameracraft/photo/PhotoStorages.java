@@ -7,7 +7,6 @@ import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.commons.asm.MCPNames;
 import de.take_weiland.mods.commons.nbt.NBT;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import gnu.trove.iterator.TLongIterator;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagByteArray;
 import net.minecraft.nbt.NBTTagCompound;
@@ -17,8 +16,6 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.util.Arrays;
-import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 public final class PhotoStorages {
 
@@ -62,16 +59,6 @@ public final class PhotoStorages {
 			this.nbt = nbt;
 			this.filter = filter;
 		}
-
-        @Override
-        public Iterator<Long> iterator() {
-            return new BoxedIterator(this);
-        }
-
-        @Override
-        public TLongIterator longIterator() {
-            return new UnboxedIterator(this);
-        }
 
         @Override
 		public int size() {
@@ -140,55 +127,6 @@ public final class PhotoStorages {
         public boolean isSealed() {
             return isSealed;
         }
-    }
-
-    private static abstract class IteratorImpl {
-
-        final PhotoStorage storage;
-        int idx;
-
-        IteratorImpl(PhotoStorage storage) {
-            this.storage = storage;
-        }
-
-        public boolean hasNext() {
-            return idx < storage.size();
-        }
-
-        public void remove() {
-            throw new UnsupportedOperationException();
-        }
-    }
-
-    private static final class BoxedIterator extends IteratorImpl implements Iterator<Long> {
-
-        BoxedIterator(PhotoStorage storage) {
-            super(storage);
-        }
-
-        @Override
-        public Long next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            return storage.get(idx++);
-        }
-    }
-
-    private static final class UnboxedIterator extends IteratorImpl implements TLongIterator {
-
-        UnboxedIterator(PhotoStorage storage) {
-            super(storage);
-        }
-
-        @Override
-        public long next() {
-            if (!hasNext()) {
-                throw new NoSuchElementException();
-            }
-            return storage.get(idx++);
-        }
-
     }
 
     static void setNbtByteArray(NBTTagByteArray nbt, byte[] arr) {

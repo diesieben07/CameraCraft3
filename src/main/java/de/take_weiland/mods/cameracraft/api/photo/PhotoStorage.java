@@ -4,33 +4,42 @@ import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import gnu.trove.iterator.TLongIterator;
 
 /**
- * Represents something that can store photos
+ * <p>A storage for photos.</p>
+ *
  * @author diesieben07
  *
  */
 public interface PhotoStorage extends Iterable<Long> {
 
+    /**
+     * <p>An unboxed iterator, should be used over {@link #iterator()}.</p>
+     * @return a new {@code TLongIterator}
+     */
     TLongIterator longIterator();
 
     /**
-	 * @return the amount of photos this PhotoStorage can store
+     * <p>Get the total capacity of this storage.</p>
+	 * @return the capacity of this storage
 	 */
 	int capacity();
 	
 	/**
-	 * @return the number of photos this PhotoStorage currently has stored
+     * <p>Get the current number of photos stored in this storage.</p>
+	 * @return the current number of stored photos
 	 */
 	int size();
 
     /**
-     * @return true if <code>{@link #size()} == {@link #capacity()}</code>
+     * <p>Whether this storage is full and cannot store any more photos. This is equivalent to checking
+     * {@code size() == capacity()}.</p>
+     * @return whether this storage is full
      */
     default boolean isFull() {
         return size() == capacity();
     }
 
     /**
-     * <p>Check if this PhotoStorage can store another photo.</p>
+     * <p>Whether this storage can store another photo.</p>
      *
      * @return true if this storage is neither sealed nor full
      */
@@ -39,47 +48,49 @@ public interface PhotoStorage extends Iterable<Long> {
     }
 
     /**
-	 * @return whether this PhotoStorage is sealed (cannot store new photos)
+     * <p>Whether this storage is sealed and cannot store new photos.</p>
+	 * @return whether this storage is sealed
 	 */
 	boolean isSealed();
 	
 	/**
-	 * Get an image filter to be applied to every photo getting stored into this storage
-	 * @return the ImageFilter to apply
+     * <p>Get any image filter to be applied to every photo getting stored into this storage.</p>
+	 * @return a filter to apply or null for no filter
 	 */
 	ImageFilter getFilter();
 	
 	// Query operations
 	
 	/**
-	 * gets the photoId at the given positionIndex
-	 * @param position
-	 * @return
+     * <p>Get the photo ID stored at the given index.</p>
+	 * @param index the index
+	 * @return the photo ID
 	 */
-	long get(int position);
+	long get(int index);
 	
 	/**
-	 * search for the given photoId
-	 * @param photoId the photoId to search for
-	 * @return the in index of the photoId (or -1 if not found)
+     * <p>Get the index of the given photo ID.</p>
+	 * @param photoId the photo ID
+	 * @return the in index of the photo ID or -1 if the given ID is not stored in this storage
 	 */
 	int indexOf(long photoId);
 
 	/**
-	 * sets the first free slot to the given photoId
-	 * @param photoId
-	 * @return the position the photoId was added or -1 if no free positions are available
+     * <p>Add the given photo ID to the end of this storage..</p>
+	 * @param photoId the photo ID
+	 * @return the index of the photo ID or -1 if the storage is full or sealed
 	 */
 	int store(long photoId);
 	
 	/**
-	 * remove the photo at the given position
-	 * @param position
+     * <p>Remove the photo at the given index, shifting any subsequent IDs to the front (subtracting one from their
+     * indices).</p>
+	 * @param index the index
 	 */
-	void remove(int position);
+	void remove(int index);
 	
 	/**
-	 * remove all photos from this storage
+     * <p>Remove all photos from this storage.</p>
 	 */
 	void clear();
 	

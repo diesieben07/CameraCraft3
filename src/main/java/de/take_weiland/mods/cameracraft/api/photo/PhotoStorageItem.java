@@ -2,44 +2,67 @@ package de.take_weiland.mods.cameracraft.api.photo;
 
 import net.minecraft.item.ItemStack;
 
+/**
+ * <p>An Item that stores photos.</p>
+ * <p>For all methods with an ItemStack parameter, the stack must be of this Item, otherwise the results are undefined.</p>
+ */
 public interface PhotoStorageItem {
-	
+
+    /**
+     * <p>Create a {@code PhotoStorage} pointing to the photos stored in the given ItemStack.</p>
+     * @param stack the ItemStack
+     * @return a PhotoStorage
+     */
 	PhotoStorage getPhotoStorage(ItemStack stack);
 
+    /**
+     * <p>Whether the given ItemStack is sealed. The result is equivalent to {@code getPhotoStorage(stack).isSealed()}.</p>
+     * @param stack the ItemStack
+     * @return whether the given ItemStack is sealed
+     */
 	boolean isSealed(ItemStack stack);
-	
+
+    /**
+     * <p>Forcibly unseal the given ItemStack. This operation may produce a new ItemStack or modify the existing one.</p>
+     * <p>This operation may not be supported by all Items.</p>
+     * @param sealed the sealed ItemStack
+     * @return a possibly new ItemStack
+     */
 	ItemStack unseal(ItemStack sealed);
 	
 	/**
-	 * determine if this PhotoStorage can be rewound (usually films)
-	 * @param stack
-	 * @return
+	 * <p>Whether the given ItemStack can be rewound (usually films).</p>
+	 * @param stack the ItemStack
+	 * @return true iif the given ItemStack can be rewound
 	 */
 	boolean canRewind(ItemStack stack);
 	
 	/**
-	 * rewind the given film, does nothing if it's not this item or already rewinded
-	 * @param stack the film to rewind
-	 * @return the rewinded film
+     * <p>Rewind the given ItemStack. This method does nothing if the operation is not supported or the ItemStack is already
+     * rewound.</p>
+	 * @param stack the ItemStack to rewind
+	 * @return a possibly new ItemStack
 	 */
 	ItemStack rewind(ItemStack stack);
 	
 	/**
-	 * @param stack
-	 * @return whether this PhotoStorage can be processed in the PhotoProcessor
+     * <p>Whether the given ItemStack can be processed in a PhotoProcessor.</p>
+	 * @param stack the ItemStack
+	 * @return whether this PhotoStorage can be processed in a PhotoProcessor
 	 */
 	boolean canBeProcessed(ItemStack stack);
 	
 	/**
-	 * get the result of processing this PhotoStorage in the PhotoProcessor
-	 * @param stack
-	 * @return
+	 * <p>Process the given ItemStack in a PhotoProcessor.</p>
+	 * @param stack the ItemStack
+	 * @return a possibly new ItemStack
 	 */
 	ItemStack process(ItemStack stack);
 
 	/**
-	 * @return whether this PhotoStorage can be scanned in a Scanner
+     * <p>Whether the given ItemStack can be scanned by a Scanner.</p>
+	 * @return whether the ItemStack can be scanned in a Scanner
 	 */
-	boolean isScannable(ItemStack stack);
+	boolean canBeScanned(ItemStack stack);
 	
 }

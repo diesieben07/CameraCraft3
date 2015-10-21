@@ -44,7 +44,7 @@ public final class CameraCraft {
     public static CameraCraft instance;
 
     @SidedProxy(clientSide = CLIENT_ENV, serverSide = SERVER_ENV)
-    public static CCProxy env;
+    public static CCProxy proxy;
 
     public static Configuration config;
 
@@ -113,7 +113,7 @@ public final class CameraCraft {
             config.save();
         }
 
-        env.preInit();
+        proxy.preInit();
     }
 
     private static void setupThreads() {
