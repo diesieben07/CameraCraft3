@@ -1,13 +1,15 @@
 package de.take_weiland.mods.cameracraft.api;
 
-import com.google.common.util.concurrent.ListenableFuture;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
+
+import java.util.concurrent.CompletionStage;
 
 public interface CameraCraftApi {
 	
@@ -18,8 +20,8 @@ public interface CameraCraftApi {
 	GenerateMinable.EventType getPhotonicMinableType();
 	
 	boolean isCamera(ItemStack stack);
-	
-	ListenableFuture<String> takePhoto(EntityPlayer viewport);
+
+    CompletionStage<Long> defaultTakePhoto(EntityPlayer player, ImageFilter filter);
 
 	BatteryHandler findBatteryHandler(ItemStack stack);
 	

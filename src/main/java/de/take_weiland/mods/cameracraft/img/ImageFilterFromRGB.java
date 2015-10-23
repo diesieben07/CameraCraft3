@@ -1,13 +1,12 @@
 package de.take_weiland.mods.cameracraft.img;
 
-import java.awt.image.BufferedImage;
-
 import com.google.common.collect.ObjectArrays;
-
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 
-class ImageFilterFromRGB implements ImageFilter {
+import java.awt.image.BufferedImage;
+
+final class ImageFilterFromRGB implements ImageFilter {
 	
 	final SimpleRgbFilter filter;
 

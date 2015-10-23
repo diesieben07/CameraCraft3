@@ -57,7 +57,16 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	public void clear() {
 		clearImpl();
 	}
-	
+
+	@Override
+	public long[] toLongArray() {
+		long[] result = new long[size()];
+        for (int i = 0, len = size(); i < len; i++) {
+            result[i] = getImpl(i);
+        }
+        return result;
+	}
+
 	protected abstract void clearImpl();
 	
 	protected final void checkNotSealed() {

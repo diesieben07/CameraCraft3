@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.primitives.Longs;
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.Photo;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
 import gnu.trove.TCollections;
@@ -52,6 +53,20 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
 
     public BufferedImage loadImage(long id) throws IOException {
         return ImageIO.read(new File(root, fileName(id, ".png")));
+    }
+
+    @Override
+    public void saveImage(long id, BufferedImage image, ImageFilter filter) throws IOException {
+        if (filter != null) {
+            image = filter.apply(image);
+        }
+        ImageIO.write(image, "PNG", new File(root, fileName(id, ".png")));
+    }
+
+    @Override
+    public void applyFilter(long id, ImageFilter filter) throws IOException {
+        File file = new File(root, fileName(id, ".png"));
+        ImageIO.write(filter.apply(ImageIO.read(file)), "PNG", file);
     }
 
     private static String fileName(long id, String ext) {

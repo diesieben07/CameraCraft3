@@ -5,7 +5,9 @@ import java.awt.image.BufferedImage;
 public interface ImageFilter {
 
 	BufferedImage apply(BufferedImage image);
-	
-	ImageFilter combine(ImageFilter other);
-	
+
+	default ImageFilter combine(ImageFilter other) {
+		return new ChainedImageFilter(this, other);
+	}
+
 }

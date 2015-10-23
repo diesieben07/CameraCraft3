@@ -7,26 +7,21 @@ import de.take_weiland.mods.commons.net.MCDataOutput;
 import de.take_weiland.mods.commons.net.Packet;
 import net.minecraft.entity.player.EntityPlayer;
 
+import java.util.concurrent.CompletionStage;
+
 @Packet.Receiver(Side.CLIENT)
-public class PacketRequestStandardPhoto implements Packet {
+public class PacketRequestStandardPhoto implements Packet.WithResponse<PacketTakenPhoto> {
 
-	private int transferId;
-	
-	public PacketRequestStandardPhoto(int transferId) {
-		this.transferId = transferId;
-	}
+	public PacketRequestStandardPhoto() {}
 
-	public PacketRequestStandardPhoto(MCDataInput in) {
-		this.transferId = in.readInt();
-	}
+	public PacketRequestStandardPhoto(MCDataInput in) {}
 
 	@Override
 	public void writeTo(MCDataOutput out) {
-		out.writeInt(transferId);
 	}
 
-	public void handle(EntityPlayer player) {
-		CameraCraft.proxy.handleStandardPhotoRequest(transferId);
+	public CompletionStage<PacketTakenPhoto> handle(EntityPlayer player) {
+		return CameraCraft.proxy.handleStandardPhotoRequest();
 	}
 	
 }

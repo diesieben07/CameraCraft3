@@ -1,20 +1,22 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import java.util.List;
-
-import net.minecraft.client.renderer.texture.IconRegister;
-import net.minecraft.creativetab.CreativeTabs;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Icon;
-import net.minecraft.util.MathHelper;
-import net.minecraft.world.World;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Sides;
+import net.minecraft.client.renderer.texture.IIconRegister;
+import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.IIcon;
+import net.minecraft.util.MathHelper;
+import net.minecraft.world.World;
+
+import java.util.List;
+
+import static de.take_weiland.mods.commons.util.Sides.sideOf;
 
 public class ItemBattery extends CCItem implements BatteryHandler {
 
@@ -22,18 +24,11 @@ public class ItemBattery extends CCItem implements BatteryHandler {
 
 	private static final String CHARGE_NBT_KEY = "cameracraft.charge";
 
-	private Icon[] icons = new Icon[7];
-	
-	private final ItemStack[] subStacks;
-	
-	public ItemBattery() {
+	private IIcon[] icons = new IIcon[7];
+
+    public ItemBattery() {
 		super("battery");
 		setHasSubtypes(true);
-		
-		subStacks = new ItemStack[2];
-		subStacks[0] = ItemStacks.of(this);
-		setCharge(subStacks[0], CAPACITY);
-		subStacks[1] = ItemStacks.of(this);
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
@@ -45,45 +40,41 @@ public class ItemBattery extends CCItem implements BatteryHandler {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void getSubItems(int itemId, CreativeTabs tab, List itemList) {
-		ItemStack charged = ItemStacks.of(this);
+	public void getSubItems(Item item, CreativeTabs tab, List itemList) {
+		ItemStack charged = new ItemStack(this);
 		setCharge(charged, CAPACITY);
 		itemList.add(charged);
-		itemList.add(ItemStacks.of(this));
+
+        itemList.add(new ItemStack(this));
 	}
 
 	@Override
 	@SideOnly(Side.CLIENT)
-	public void registerIcons(IconRegister register) {
+	public void registerIcons(IIconRegister register) {
 		for (int i = 0; i < 7; i++) {
 			icons[i] = register.registerIcon("cameracraft:battery" + i);
 		}
 	}
 	
 	@Override
-	public Icon getIconIndex(ItemStack stack) {
+	public IIcon getIconIndex(ItemStack stack) {
 		int charge = getCharge(stack);
 		return icons[MathHelper.floor_float(charge / (float)getCapacity(stack) * 6)];
 	}
-	
-	@Override
-	public int getDisplayDamage(ItemStack stack) {
-		return getCapacity(stack) - getCharge(stack);
-	}
+
+    @Override
+    public boolean showDurabilityBar(ItemStack stack) {
+        return true;
+    }
+
+    @Override
+    public double getDurabilityForDisplay(ItemStack stack) {
+        return (double) getCharge(stack) / (double) getCapacity(stack);
+    }
 
 	@Override
-	public int getMaxDamage(ItemStack stack) {
-		return getCapacity(stack);
-	}
-
-	@Override
-	public boolean isDamaged(ItemStack stack) {
-		return true;
-	}
-
-	@Override
-	public void onUpdate(ItemStack stack, World world, Entity player, int idx, boolean active) {
-		if (active && Sides.logical(world).isServer() && world.rand.nextInt(5) == 0) {
+	public void onUpdate(ItemStack stack, World world, Entity player, int idx, boolean selected) {
+		if (selected && sideOf(world).isServer() && world.rand.nextInt(5) == 0) {
 			charge(stack, 1);
 		}
 	}

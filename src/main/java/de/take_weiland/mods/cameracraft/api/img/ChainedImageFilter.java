@@ -1,16 +1,14 @@
-package de.take_weiland.mods.cameracraft.img;
-
-import java.awt.image.BufferedImage;
+package de.take_weiland.mods.cameracraft.api.img;
 
 import com.google.common.collect.ObjectArrays;
 
-import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
+import java.awt.image.BufferedImage;
 
-class ChainedImageFilter implements ImageFilter {
+final class ChainedImageFilter implements ImageFilter {
 
 	private final ImageFilter[] filters;
 	
-	public ChainedImageFilter(ImageFilter... filters) {
+	ChainedImageFilter(ImageFilter... filters) {
 		this.filters = filters;
 	}
 

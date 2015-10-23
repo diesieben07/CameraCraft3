@@ -10,6 +10,7 @@ import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
 import de.take_weiland.mods.cameracraft.client.gui.GuiViewPhoto;
 import de.take_weiland.mods.cameracraft.client.render.RenderPoster;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
+import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.ReportedException;
@@ -19,6 +20,8 @@ import net.minecraftforge.common.MinecraftForge;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ForkJoinPool;
 
 public class ClientProxy implements CCProxy {
@@ -38,8 +41,10 @@ public class ClientProxy implements CCProxy {
 	}
 
 	@Override
-	public void handleStandardPhotoRequest(int transferId) {
-		photoTicker.schedulePhoto(transferId);
+	public CompletionStage<PacketTakenPhoto> handleStandardPhotoRequest() {
+        CompletableFuture<PacketTakenPhoto> future = new CompletableFuture<>();
+		photoTicker.schedulePhoto(future);
+        return future;
 	}
 
 	@Override

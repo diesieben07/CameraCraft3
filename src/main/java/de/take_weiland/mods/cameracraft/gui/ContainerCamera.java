@@ -5,12 +5,13 @@ import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.camera.LensItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
-import de.take_weiland.mods.commons.inv.AbstractContainer;
-import de.take_weiland.mods.commons.inv.SimpleSlot;
+import de.take_weiland.mods.commons.inv.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
-public class ContainerCamera extends AbstractContainer<InventoryCamera> {
+import javax.annotation.Nonnull;
+
+public class ContainerCamera extends AbstractContainer<InventoryCamera> implements ButtonContainer, SpecialShiftClick {
 
 	public static final int BUTTON_TOGGLE_LID = 0;
 	public static final int BUTTON_REWIND_FILM = 1;
@@ -32,12 +33,12 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 				addSlotToContainer(new SimpleSlot(inventory, slot, slotX, 31) {
 
 					@Override
-					public boolean func_111238_b() {
+					public boolean canBeHovered() {
 						return isUsable();
 					}
 
 					@Override
-					public boolean isItemValid(ItemStack item) {
+					public boolean isItemValid(@Nonnull ItemStack item) {
 						return isUsable(); 
 					}
 
@@ -47,7 +48,7 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 					}
 					
 					private boolean isUsable() {
-						return !ContainerCamera.this.inventory().isLidClosed();
+						return !ContainerCamera.this.inventory.isLidClosed();
 					}
 					
 				});
@@ -59,12 +60,7 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 	}
 
 	@Override
-	public boolean handlesButton(EntityPlayer player, int buttonId) {
-		return buttonId == BUTTON_TOGGLE_LID || buttonId == BUTTON_REWIND_FILM;
-	}
-
-	@Override
-	public void onButtonClick(Side side, EntityPlayer player, int buttonId) {
+	public void onButtonClick(@Nonnull Side side, @Nonnull EntityPlayer player, int buttonId) {
 		switch (buttonId) {
 		case BUTTON_TOGGLE_LID:
 			inventory.toggleLid();
@@ -76,17 +72,18 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> {
 			break;
 		}
 	}
-	
-	@Override
-	protected int getSlotFor(ItemStack stack) {
-		if (stack.getItem() instanceof LensItem) {
-			return InventoryCamera.LENS_SLOT;
-		} else if (stack.getItem() instanceof PhotoStorageItem) {
-			return inventory.storageSlot();
-		} else if (CameraCraft.api.findBatteryHandler(stack).isBattery(stack)) {
-			return inventory.batterySlot();
-		}
-		return -1;
-	}
-	
+
+    @Override
+    public ShiftClickTarget getShiftClickTarget(ItemStack stack, EntityPlayer player) {
+        if (stack.getItem() instanceof LensItem) {
+            return ShiftClickTarget.of(InventoryCamera.LENS_SLOT);
+        } else if (stack.getItem() instanceof PhotoStorageItem) {
+            return ShiftClickTarget.of(inventory.storageSlot());
+        } else if (CameraCraft.api.findBatteryHandler(stack).isBattery(stack)) {
+            return ShiftClickTarget.of(inventory.batterySlot());
+        } else {
+            return ShiftClickTarget.standard();
+        }
+    }
+
 }

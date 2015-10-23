@@ -8,7 +8,7 @@ class OverexposeFilter implements SimpleRgbFilter {
 	private static final int FACTOR = 14;
 
 	@Override
-	public int modifiyRgb(int rgb) {
+	public int apply(int rgb) {
 		int r = (rgb >> 16) & 0xff;
     	int g = (rgb >> 8) & 0xff;
     	int b = rgb & 0xff;

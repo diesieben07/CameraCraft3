@@ -4,7 +4,7 @@ import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 
 class ColorFilter implements SimpleRgbFilter {
 
-	static enum Channel { RED, GREEN, BLUE }
+	enum Channel { RED, GREEN, BLUE }
 	
 	private int shift;
 	
@@ -23,9 +23,9 @@ class ColorFilter implements SimpleRgbFilter {
 	}
 	
 	@Override
-	public int modifiyRgb(int rgb) {
-		int r = (rgb >> 16) & 0xff;
-		int g = (rgb >> 8) & 0xff;
+	public int apply(int rgb) {
+		int r = rgb >> 16 & 0xff;
+		int g = rgb >> 8 & 0xff;
 		int b = rgb & 0xff;
 		int luminance = (int) (r * 0.3f + g * 0.59f + b * 0.11f);
 		

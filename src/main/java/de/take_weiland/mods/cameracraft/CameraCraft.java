@@ -1,7 +1,6 @@
 package de.take_weiland.mods.cameracraft;
 
 import com.google.common.base.Throwables;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -23,8 +22,11 @@ import de.take_weiland.mods.cameracraft.network.*;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.net.Network;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
@@ -85,12 +87,11 @@ public final class CameraCraft {
 
         Network.newSimpleChannel("CameraCraft")
                 .register(0, PacketClientAction::new, PacketClientAction::handle)
-                .register(1, PacketTakenPhoto::new, PacketTakenPhoto::handle)
-                .register(2, PacketPhotoName::new, PacketPhotoName::handle)
-                .register(3, PacketRequestStandardPhoto::new, PacketRequestStandardPhoto::handle)
-                .register(4, PacketClientRequestPhoto::new, PacketClientRequestPhoto::handle)
-                .register(5, PacketPhotoData::read, PacketPhotoData::handle)
-                .register(6, PacketPrintJobs::new, PacketPrintJobs::handle);
+                .register(1, PacketPhotoName::new, PacketPhotoName::handle)
+                .registerWithAsyncResponse(2, PacketRequestStandardPhoto::new, PacketTakenPhoto::new, PacketRequestStandardPhoto::handle)
+                .register(3, PacketClientRequestPhoto::new, PacketClientRequestPhoto::handle)
+                .register(4, PacketPhotoData::read, PacketPhotoData::handle)
+                .register(5, PacketPrintJobs::new, PacketPrintJobs::handle);
 
         CCBlock.createBlocks();
         CCItem.init();
@@ -107,7 +108,6 @@ public final class CameraCraft {
         CCRegistry.doMiscRegistering();
 
         MinecraftForge.EVENT_BUS.register(new CCEventHandler());
-        FMLCommonHandler.instance().bus().register(new CCPlayerTickHandler());
 
         if (config.hasChanged()) {
             config.save();
@@ -119,6 +119,13 @@ public final class CameraCraft {
     private static void setupThreads() {
         // TODO
         executor = ForkJoinPool.commonPool();
+    }
+
+    public static void printErrorMessage(EntityPlayer player, String msg, Throwable x) {
+        logger.error(msg, x);
+        ChatComponentText chatComponent = new ChatComponentText(msg);
+        chatComponent.getChatStyle().setColor(EnumChatFormatting.RED);
+        player.addChatComponentMessage(chatComponent);
     }
 
     @EventHandler

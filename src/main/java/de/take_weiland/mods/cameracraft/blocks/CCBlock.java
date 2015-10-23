@@ -9,7 +9,7 @@ import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidRegistry;
 
-public class CCBlock extends Block {
+public class CCBlock extends Block implements CCBlockName {
 
     public static BlockCCOre ores;
     public static BlockCCMachine machines;
@@ -19,9 +19,12 @@ public class CCBlock extends Block {
         alkalineFluid = new Fluid("cameracraft.alkaline").setLuminosity(7);
         FluidRegistry.registerFluid(alkalineFluid);
 
-        (ores = new BlockCCOre(3078)).lateInit();
-        (machines = new BlockCCMachine(3079)).lateInit();
+        (ores = new BlockCCOre()).lateInit();
+        (machines = new BlockCCMachine()).lateInit();
         (alkaline = new BlockAlkaline()).lateInit();
+
+        Blocks.initAll(CCBlockName::getBaseName, CameraCraft.tab,
+                ores, machines, alkaline);
     }
 
     private final String baseName;
@@ -36,6 +39,11 @@ public class CCBlock extends Block {
         lateInitBlock(this, baseName);
     }
 
+    @Override
+    public String getBaseName() {
+        return baseName;
+    }
+
     static void lateInitBlock(Block block, String baseName) {
         Blocks.init(block, baseName);
         block.setCreativeTab(CameraCraft.tab);
@@ -48,5 +56,12 @@ public class CCBlock extends Block {
         }
         super.breakBlock(world, x, y, z, block, metadata);
     }
+
+}
+
+interface CCBlockName {
+
+    String getBaseName();
+
 
 }

@@ -1,13 +1,16 @@
 package de.take_weiland.mods.cameracraft;
 
+import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
+
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.concurrent.CompletionStage;
 
 public interface CCProxy {
 
 	void preInit();
 
-	void handleStandardPhotoRequest(int transferId);
+	CompletionStage<PacketTakenPhoto> handleStandardPhotoRequest();
 
 	void handleClientPhotoData(long photoId, InputStream in);
 

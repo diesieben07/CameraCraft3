@@ -93,5 +93,6 @@ public interface PhotoStorage extends Iterable<Long> {
      * <p>Remove all photos from this storage.</p>
 	 */
 	void clear();
-	
+
+	long[] toLongArray();
 }

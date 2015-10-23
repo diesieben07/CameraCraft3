@@ -11,7 +11,7 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.BlockFluidClassic;
 
-public class BlockAlkaline extends BlockFluidClassic { // damn you java, we need multiple inheritance :D
+public class BlockAlkaline extends BlockFluidClassic implements CCBlockName {
 
 	private static class DamageSourceAlkaline extends DamageSource {
 
@@ -39,7 +39,12 @@ public class BlockAlkaline extends BlockFluidClassic { // damn you java, we need
 	public BlockAlkaline() {
 		super(CCBlock.alkalineFluid, ALKALINE_MATERIAL);
 	}
-	
+
+	@Override
+	public String getBaseName() {
+		return BASE_NAME;
+	}
+
 	void lateInit() {
 		CCBlock.lateInitBlock(this, BASE_NAME);
 	}
@@ -50,7 +55,7 @@ public class BlockAlkaline extends BlockFluidClassic { // damn you java, we need
 	}
 
 	@Override
-	public void registerBlockIcons(IIconRegister register) {
+	public void registerIcons(IIconRegister register) {
 		blockIcon = register.registerIcon("cameracraft:alkaline");
 		iconFlow = register.registerIcon("cameracraft:alkaline_flowing");
 		

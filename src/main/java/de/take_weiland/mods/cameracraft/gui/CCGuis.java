@@ -2,8 +2,12 @@ package de.take_weiland.mods.cameracraft.gui;
 
 import cpw.mods.fml.common.network.IGuiHandler;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.client.gui.*;
+import de.take_weiland.mods.cameracraft.client.gui.GuiCamera;
+import de.take_weiland.mods.cameracraft.client.gui.GuiCardReader;
+import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoProcessor;
+import de.take_weiland.mods.cameracraft.client.gui.GuiScanner;
 import de.take_weiland.mods.cameracraft.client.gui.printer.GuiPrinter;
+import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.commons.util.EnumUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -47,7 +51,8 @@ public enum CCGuis {
 			case PHOTO_PROCESSOR:
 				return new ContainerPhotoProcessor(world, x, y, z, player);
 			case CAMERA:
-				return CCItem.camera.newInventory(player, player.getCurrentEquippedItem()).createContainer(player);
+                InventoryCamera camera = (InventoryCamera) CCItem.camera.createCamera(player);
+                return new ContainerCamera(camera, player, camera.hasLid() ? camera.storageSlot() : -1);
 			case CARD_READER:
 				return new ContainerCardReader(world, x, y, z, player);
 			case PRINTER:

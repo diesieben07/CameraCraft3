@@ -1,9 +1,11 @@
 package de.take_weiland.mods.cameracraft.server;
 
 import de.take_weiland.mods.cameracraft.CCProxy;
+import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
 
 import java.awt.image.BufferedImage;
 import java.io.InputStream;
+import java.util.concurrent.CompletionStage;
 
 public class ServerProxy implements CCProxy {
 
@@ -11,7 +13,7 @@ public class ServerProxy implements CCProxy {
 	public void preInit() { }
 
 	@Override
-	public void handleStandardPhotoRequest(int transferId) { }
+	public CompletionStage<PacketTakenPhoto> handleStandardPhotoRequest() { }
 
 	@Override
 	public void displayNamePhotoGui(String oldName) { }

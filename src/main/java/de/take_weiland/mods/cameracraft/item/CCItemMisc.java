@@ -82,7 +82,7 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
 			return false;
 		} else {
 			if (sideOf(world).isServer() && !isSolid && !material.isLiquid()) {
-				world.func_147480_a(x, y, z, true);
+				world.breakBlock(x, y, z, true);
 			}
 
 			world.setBlock(x, y, z, CCBlock.alkaline, 0, 3);

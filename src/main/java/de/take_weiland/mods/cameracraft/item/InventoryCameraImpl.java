@@ -1,17 +1,21 @@
 package de.take_weiland.mods.cameracraft.item;
 
+import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+
+import java.util.function.Consumer;
 
 /**
-* Created by Take on 10.07.2014.
+* @author diesieben07
 */
 public class InventoryCameraImpl extends InventoryCamera {
 
-    private CameraType type;
+    private final CameraType type;
 
-    InventoryCameraImpl(CameraType type, EntityPlayer player) {
-        super(type.slotCount, player);
+    protected InventoryCameraImpl(int size, Consumer<ItemStack> stackCallback, EntityPlayer player, CameraType type) {
+        super(size, stackCallback, player);
         this.type = type;
     }
 
@@ -31,6 +35,11 @@ public class InventoryCameraImpl extends InventoryCamera {
     }
 
     @Override
+    public void setLidState(boolean close) {
+
+    }
+
+    @Override
     public boolean canRewind() {
         return type == CameraType.FILM && storage[storageSlot()] != null;
     }
@@ -45,4 +54,13 @@ public class InventoryCameraImpl extends InventoryCamera {
         return type == CameraType.DIGITAL ? 1 : -1;
     }
 
+    @Override
+    public void openGui(EntityPlayer player) {
+        CCGuis.CAMERA.open(player);
+    }
+
+    @Override
+    public boolean takePhoto() {
+        return false;
+    }
 }

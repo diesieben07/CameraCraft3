@@ -12,7 +12,7 @@ class SepiaFilter implements SimpleRgbFilter {
 	
 	// modified from http://stackoverflow.com/questions/5132015/how-to-convert-image-to-sepia-in-java
 	@Override
-	public int modifiyRgb(int rgb) {
+	public int apply(int rgb) {
 		int r = (rgb >> 16) & 0xff;
     	int g = (rgb >> 8) & 0xff;
     	int b = rgb & 0xff;

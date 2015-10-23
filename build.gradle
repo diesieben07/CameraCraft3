@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.56:deobf'
+    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.60:deobf'
 }
 
 sourceCompatibility = 1.8
@@ -44,6 +44,8 @@ minecraft {
 	
 	replaceIn "cameracraft/CameraCraft.java"
 	replace "@VERSION@", project.version
+
+	mappings = "stable_12"
 }
 
 group = "de.take_weiland.mods.cameracraft" // http://maven.apache.org/guides/mini/guide-naming-conventions.html

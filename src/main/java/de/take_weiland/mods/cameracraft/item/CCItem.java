@@ -26,7 +26,7 @@ public abstract class CCItem extends Item {
     }
 
     public static void init() {
-        Items.initAll(CCItem::getBaseName, battery, camera, misc, photoStorage, lens, photo)
-                .forEach((item) -> item.setCreativeTab(CameraCraft.tab));
+        Items.initAll(CCItem::getBaseName, CameraCraft.tab,
+                battery, camera, misc, photoStorage, lens, photo);
     }
 }

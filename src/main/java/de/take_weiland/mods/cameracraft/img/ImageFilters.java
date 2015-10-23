@@ -1,10 +1,10 @@
 package de.take_weiland.mods.cameracraft.img;
 
-import java.awt.image.BufferedImage;
-
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
 import de.take_weiland.mods.cameracraft.img.ColorFilter.Channel;
+
+import java.awt.image.BufferedImage;
 
 public final class ImageFilters {
 
@@ -23,16 +23,16 @@ public final class ImageFilters {
 		}
 	};
 	
-	public static final ImageFilter RED = fromRgbFilter(new ColorFilter(Channel.RED));
-	public static final ImageFilter GREEN = fromRgbFilter(new ColorFilter(Channel.GREEN));
-	public static final ImageFilter BLUE = fromRgbFilter(new ColorFilter(Channel.BLUE));
-	public static final ImageFilter YELLOW = fromRgbFilter(new YellowFilter());
-	
-	public static final ImageFilter SEPIA = fromRgbFilter(new SepiaFilter());
-	public static final ImageFilter GRAY = fromRgbFilter(new GrayscaleFilter());
-	public static final ImageFilter OVEREXPOSE = fromRgbFilter(new OverexposeFilter());
-	
-	public static BufferedImage apply(BufferedImage src, SimpleRgbFilter filter) {
+	public static final ImageFilter RED = new ColorFilter(Channel.RED);
+    public static final ImageFilter GREEN = new ColorFilter(Channel.GREEN);
+    public static final ImageFilter BLUE = new ColorFilter(Channel.BLUE);
+    public static final ImageFilter YELLOW = new YellowFilter();
+
+    public static final ImageFilter SEPIA = new SepiaFilter();
+    public static final ImageFilter GRAY = new GrayscaleFilter();
+    public static final ImageFilter OVEREXPOSE = new OverexposeFilter();
+
+    public static BufferedImage apply(BufferedImage src, SimpleRgbFilter filter) {
 		int w = src.getWidth();
 	    int h = src.getHeight();
 		
@@ -40,7 +40,7 @@ public final class ImageFilters {
 	    
 	    int len = rgbArr.length;
 	    for (int i = 0; i < len; ++i) {
-	    	rgbArr[i] = filter.modifiyRgb(rgbArr[i]);
+	    	rgbArr[i] = filter.apply(rgbArr[i]);
 	    }
 	    
 	    src.setRGB(0, 0, w, h, rgbArr, 0, w);
@@ -57,7 +57,7 @@ public final class ImageFilters {
 	    for (int i = 0; i < len; ++i) {
 	    	int rgb = rgbArr[i];
 	    	for (SimpleRgbFilter filter : filters) {
-	    		rgb = filter.modifiyRgb(rgb);
+	    		rgb = filter.apply(rgb);
 	    	}
 	    	rgbArr[i] = rgb;
 	    }
@@ -65,31 +65,28 @@ public final class ImageFilters {
 	    src.setRGB(0, 0, w, h, rgbArr, 0, w);
 	    return src;
 	}
-	
-	public static ImageFilter fromRgbFilter(final SimpleRgbFilter filter) {
-		return new ImageFilterFromRGB(filter);
-	}
-	
-	public static ImageFilter fromRgbFilters(final SimpleRgbFilter... filters) {
-		return new ImageFilterFromRGBChained(filters);
-	}
-	
-	public static ImageFilter combine(ImageFilter filter1, ImageFilter filter2) {
-		return filter1 == null ? (filter2 == null ? NO_FILTER : filter2) : (filter2 == null ? filter1 : filter1.combine(filter2));
+
+    public static ImageFilter combine(ImageFilter a, ImageFilter b) {
+        if (a == null) {
+            return b;
+        } else if (b == null) {
+            return a;
+        } else {
+            return a.combine(b);
+        }
 	}
 	
 	public static ImageFilter combine(ImageFilter... filters) {
 		ImageFilter result = null;
-		for (int i = 0; i < filters.length; ++i) {
-			ImageFilter current = filters[i];
-			if (current != null) {
-				if (result == null) {
-					result = current;
-				} else {
-					result = result.combine(current);
-				}
-			}
-		}
+        for (ImageFilter current : filters) {
+            if (current != null) {
+                if (result == null) {
+                    result = current;
+                } else {
+                    result = result.combine(current);
+                }
+            }
+        }
 		return result == null ? NO_FILTER : result;
 	}
 }
