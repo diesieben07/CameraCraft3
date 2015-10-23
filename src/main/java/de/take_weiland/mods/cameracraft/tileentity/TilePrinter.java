@@ -132,11 +132,6 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 	private static final int[] extractSlots = new int[] { }; // TODO
 	private static final int[] paperSlot = new int[] { SLOT_PAPER };
 	private static final int[] inkSlots = new int[] { SLOT_YELLOW, SLOT_CYAN, SLOT_MAGENTA, SLOT_BLACK };
-
-	@Override
-	public int[] getAccessibleSlotsFromSide(int side) {
-		return accessibleSlots0(ForgeDirection.VALID_DIRECTIONS[side]);
-	}
 	
 	private int[] accessibleSlots0(ForgeDirection side) {
 		switch (side) {
@@ -168,7 +163,7 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 	}
 
 	@Override
-	protected String unlocalizedName() {
+	public String getDefaultName() {
         return HasSubtypes.name(CCBlock.machines, CCBlock.machines.getType(getBlockMetadata()));
 	}
 	
@@ -264,6 +259,11 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
         }
 
         return appendLen;
+	}
+
+	@Override
+	public int[] getSlotsForFace(int side) {
+		return accessibleSlots0(ForgeDirection.VALID_DIRECTIONS[side]);
 	}
 
 }

@@ -53,7 +53,7 @@ public class BlockAlkaline extends BlockFluidClassic implements CCBlockName {
 	public IIcon getIcon(int side, int meta) {
 		return meta > 0 ? iconFlow : blockIcon;
 	}
-
+	
 	@Override
 	public void registerIcons(IIconRegister register) {
 		blockIcon = register.registerIcon("cameracraft:alkaline");
