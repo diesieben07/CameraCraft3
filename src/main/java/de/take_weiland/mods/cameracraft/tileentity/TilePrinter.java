@@ -29,6 +29,7 @@ import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.util.ForgeDirection;
 
+import javax.annotation.Nonnull;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Queue;
@@ -101,6 +102,7 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 		worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord, yCoord + 1, zCoord, photo));
 	}
 
+	@Override
 	public int getSizeInventory() {
 		return 6;
 	}
@@ -114,8 +116,8 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 		INK_COLOR_TO_SLOT[InkItem.Color.YELLOW.ordinal()] = SLOT_YELLOW;
 	}
 	
-	@SuppressWarnings("SimplifiableIfStatement")
-    @Override
+    @SuppressWarnings("SimplifiableIfStatement")
+	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		Item item;
 		if (slot == SLOT_PAPER) {
@@ -169,7 +171,7 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 	
 	static NBTTagCompound encodeJob(SimplePrintJob.Queued job) {
 		NBTTagCompound nbt = new NBTTagCompound();
-		nbt.setInteger("id", job.getPhotoId());
+		nbt.setLong("id", job.getPhotoId());
 		nbt.setInteger("amnt", (short) job.getAmount());
 		nbt.setInteger("amntLeft", job.getRemainingAmount());
 		return nbt;
@@ -180,7 +182,7 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 	}
 
     @Override
-	public void writeToNBT(NBTTagCompound nbt) {
+	public void writeToNBT(@Nonnull NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
 		NBTTagList encJobs = new NBTTagList();
         for (SimplePrintJob.Queued job : jobs) {
@@ -197,7 +199,7 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 	}
 	
 	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
+	public void readFromNBT(@Nonnull NBTTagCompound nbt) {
 		super.readFromNBT(nbt);
 
         for (NBTTagCompound compound : NBT.<NBTTagCompound>asList(nbt.getTagList("jobs", NBT.TAG_COMPOUND))) {
