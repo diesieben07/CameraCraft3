@@ -18,11 +18,9 @@ public enum CCGuis {
 
 	PHOTO_PROCESSOR,
 	CAMERA,
-	CARD_READER,
 	PRINTER,
 	PRINTER_ADVANCED,
 	PHOTO,
-	SCANNER,
 	CAMERA_PLACED;
 	
 	public void open(EntityPlayer player) {
@@ -53,14 +51,10 @@ public enum CCGuis {
 			case CAMERA:
                 InventoryCamera camera = (InventoryCamera) CCItem.camera.createCamera(player);
                 return new ContainerCamera(camera, player, camera.hasLid() ? camera.storageSlot() : -1);
-			case CARD_READER:
-				return new ContainerCardReader(world, x, y, z, player);
 			case PRINTER:
 				return new ContainerPrinter(world, x, y, z, player, false);
 			case PRINTER_ADVANCED:
 				return new ContainerPrinter(world, x, y, z, player, true);
-			case SCANNER:
-				return new ContainerScanner(world, x, y, z, player);
 			default:
 				throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}
@@ -79,13 +73,9 @@ public enum CCGuis {
 				return new GuiPhotoProcessor((ContainerPhotoProcessor) c);
 			case CAMERA:
 				return new GuiCamera((ContainerCamera) c);
-			case CARD_READER:
-				return new GuiCardReader((ContainerCardReader) c);
 			case PRINTER:
 			case PRINTER_ADVANCED:
 				return new GuiPrinter((ContainerPrinter) c);
-			case SCANNER:
-				return new GuiScanner((ContainerScanner) c);
 			default:
 				throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}

@@ -43,7 +43,7 @@ public class ContainerPrinter extends AbstractContainer<TilePrinter> implements 
 	@Override
 	protected void addSlots() {
 		for (int x = 0; x < 5; ++x) {
-			addSlotToContainer(new BasicSlot(inventory, x, x * 27 + 44, 91));
+			addSlotToContainer(new SimpleSlot(inventory, x, x * 27 + 44, 91));
 		}
 	}
 	

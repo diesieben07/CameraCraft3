@@ -5,15 +5,19 @@ import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Multitypes;
 import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.ForgeDirection;
-import net.minecraftforge.fluids.*;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.Fluid;
+import net.minecraftforge.fluids.FluidContainerRegistry;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
+import net.minecraftforge.fluids.FluidTankInfo;
+import net.minecraftforge.fluids.IFluidHandler;
 
-public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> implements IFluidHandler {
+public class TilePhotoProcessor extends TileEntityInventory implements IFluidHandler {
 
 	private static final int FLUID_PER_PROCESS = 10;
 
@@ -32,11 +36,6 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 	@Override
 	public int getSizeInventory() {
 		return 3;
-	}
-
-	@Override
-	protected String unlocalizedName() {
-		return Multitypes.name(MachineType.PHOTO_PROCESSOR);
 	}
 
 	// worldObj.getBlockLightValue(x, y, z));
@@ -182,6 +181,66 @@ public class TilePhotoProcessor extends TileEntityInventory<TilePhotoProcessor> 
 	
 	public boolean isProcessing() {
 		return processProgress >= 0;
+	}
+
+	@Override
+	public ItemStack decrStackSize(int index, int count) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ItemStack getStackInSlotOnClosing(int index) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void setInventorySlotContents(int index, ItemStack stack) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public String getInventoryName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean isCustomInventoryName() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public int getInventoryStackLimit() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public void openChest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void closeChest() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isItemValidForSlot(int index, ItemStack stack) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public String getDefaultName() {
+		return Multitypes.name(MachineType.PHOTO_PROCESSOR);
+
 	}
 
 }

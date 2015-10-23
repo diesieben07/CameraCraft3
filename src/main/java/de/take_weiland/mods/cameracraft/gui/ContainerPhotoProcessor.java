@@ -3,6 +3,7 @@ package de.take_weiland.mods.cameracraft.gui;
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
 import de.take_weiland.mods.commons.inv.AbstractContainer;
 import de.take_weiland.mods.commons.inv.SimpleSlot;
+import de.take_weiland.mods.commons.sync.Sync;
 import de.take_weiland.mods.commons.sync.Synced;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
@@ -44,22 +45,22 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 		return inventory.getSizeInventory();
 	}
 
-	@Synced(setter = "tank")
+	@Sync
 	private FluidStack getFluid() {
 		return inventory.tank.getFluid();
 	}
 
-	@Synced.Setter("tank")
+	@Sync
 	private void setFluid(FluidStack stack) {
 		inventory.tank.setFluid(stack);
 	}
 
-	@Synced(setter = "progress")
+	@Sync
 	private int getProcessProgress() {
 		return inventory.getProcessProgress();
 	}
 
-	@Synced.Setter("progress")
+	@Sync
 	private void setProcessProgress(int progress) {
 		inventory.setProcessProgress(progress);
 	}

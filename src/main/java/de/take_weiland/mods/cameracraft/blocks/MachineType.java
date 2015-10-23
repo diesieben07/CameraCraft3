@@ -12,7 +12,6 @@ public enum MachineType implements Subtype {
 	PHOTO_PROCESSOR("processor", TilePhotoProcessor.class, CCGuis.PHOTO_PROCESSOR),
 	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER),
 	PRINTER_ADVANCED("printerAdvanced", TilePrinter.class, CCGuis.PRINTER_ADVANCED),
-	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER),
 	CAMERA("camera", TileCamera.class, CCGuis.CAMERA_PLACED);
 
 	private final String name;
