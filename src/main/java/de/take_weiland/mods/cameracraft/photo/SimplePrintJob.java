@@ -7,20 +7,20 @@ import de.take_weiland.mods.cameracraft.api.printer.QueuedPrintJob;
 
 public final class SimplePrintJob implements PrintJob {
 
-	private final Integer photoId;
+	private final long photoId;
 	private final int amount;
 	
-	public SimplePrintJob(Integer photoId) {
+	public SimplePrintJob(long photoId) {
 		this(photoId, 1);
 	}
 	
-	public SimplePrintJob(Integer photoId, int amount) {
+	public SimplePrintJob(long photoId, int amount) {
 		this.photoId = Preconditions.checkNotNull(photoId);
 		this.amount = amount;
 	}
 
 	@Override
-	public Integer getPhotoId() {
+	public long getPhotoId() {
 		return photoId;
 	}
 	
@@ -39,22 +39,22 @@ public final class SimplePrintJob implements PrintJob {
 	
 	public static class Queued implements QueuedPrintJob {
 
-		private final Integer photoId;
+		private final long photoId;
 		private final int amount;
 		private int amountLeft;
 		
-		public Queued(Integer photoId, int amount) {
+		public Queued(long photoId, int amount) {
 			this(photoId, amount, amount);
 		}
 		
-		public Queued(Integer photoId, int amount, int amountLeft) {
+		public Queued(long photoId, int amount, int amountLeft) {
 			this.photoId = photoId;
 			this.amount = amount;
 			this.amountLeft = amountLeft;
 		}
 
 		@Override
-		public Integer getPhotoId() {
+		public long getPhotoId() {
 			return photoId;
 		}
 

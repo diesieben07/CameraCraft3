@@ -81,7 +81,7 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 	
 	private static ItemStack applyType(ItemStack stack, PhotoStorageType type) {
 		ItemStack result = stack.copy();
-        result.setItemDamage(typeProp.toMeta(type));
+        result.setMetadata(typeProp.toMeta(type));
 		return result;
 	}
 

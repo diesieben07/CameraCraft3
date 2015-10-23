@@ -14,6 +14,10 @@ public class InventoryCameraImpl extends InventoryCamera {
 
     private final CameraType type;
 
+    protected InventoryCameraImpl(int size, EntityPlayer player, CameraType type) {
+        this(size, stack -> player.setCurrentItemOrArmor(0, stack), player, type);
+    }
+
     protected InventoryCameraImpl(int size, Consumer<ItemStack> stackCallback, EntityPlayer player, CameraType type) {
         super(size, stackCallback, player);
         this.type = type;

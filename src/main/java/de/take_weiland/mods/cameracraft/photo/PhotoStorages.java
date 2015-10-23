@@ -62,7 +62,7 @@ public final class PhotoStorages {
 
         @Override
 		public int size() {
-			return nbt.func_150292_c().length >> 3;
+			return nbt.getByteArray().length >> 3;
 		}
 
 		@Override
@@ -77,7 +77,7 @@ public final class PhotoStorages {
                 clearImpl();
             } else {
 				byte[] newArr = new byte[toArrayIndex(newLen)];
-                byte[] oldArr = nbt.func_150292_c();
+                byte[] oldArr = nbt.getByteArray();
 
                 System.arraycopy(oldArr, 0, newArr, 0, toArrayIndex(index));
 				if (index != newLen) { // not last was removed
@@ -94,14 +94,14 @@ public final class PhotoStorages {
 		@Override
 		protected long getImpl(int index) {
 			int arrIdx = toArrayIndex(index);
-            byte[] arr = nbt.func_150292_c();
+            byte[] arr = nbt.getByteArray();
             return Longs.fromBytes(arr[arrIdx], arr[arrIdx + 1], arr[arrIdx + 2], arr[arrIdx + 3],
                     arr[arrIdx + 4], arr[arrIdx + 5], arr[arrIdx + 6], arr[arrIdx + 7]);
         }
 
 		@Override
 		protected void storeImpl(long photoId) {
-            byte[] newArr = concat(nbt.func_150292_c(), Longs.toByteArray(photoId));
+            byte[] newArr = concat(nbt.getByteArray(), Longs.toByteArray(photoId));
             setNbtByteArray(nbt, newArr);
 		}
 

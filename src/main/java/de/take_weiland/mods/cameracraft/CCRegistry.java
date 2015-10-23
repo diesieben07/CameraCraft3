@@ -9,7 +9,6 @@ import de.take_weiland.mods.cameracraft.item.MiscItemType;
 import de.take_weiland.mods.cameracraft.item.PhotoType;
 import de.take_weiland.mods.commons.util.Items;
 import net.minecraft.item.ItemStack;
-import net.minecraft.item.crafting.FurnaceRecipes;
 import net.minecraft.item.crafting.ShapedRecipes;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
@@ -25,8 +24,6 @@ public final class CCRegistry {
 	
 	@SuppressWarnings("boxing")
 	public static void addRecipes() {
-		FurnaceRecipes f = FurnaceRecipes.smelting();
-		
 		ItemStack tinIngot = CCItem.misc.getStack(MiscItemType.TIN_INGOT);
 		ItemStack tinIngot9 = CCItem.misc.getStack(MiscItemType.TIN_INGOT, 9);
 		ItemStack blockTin = CCBlock.ores.getStack(OreType.BLOCK_TIN);

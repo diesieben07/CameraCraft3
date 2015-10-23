@@ -23,7 +23,7 @@ public enum CameraType implements Subtype {
 	}
 	
 	public InventoryCamera newInventory(EntityPlayer player) {
-		return this == FILM ? new InventoryCameraImpl(this, player) : new InventoryCameraImpl(this, player) {
+		return this == FILM ? new InventoryCameraImpl(slotCount, player, this) : new InventoryCameraImpl(slotCount, player, this) {
 
 			@Override
 			public boolean canTakePhoto() {

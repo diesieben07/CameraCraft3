@@ -5,7 +5,6 @@ import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
-import de.take_weiland.mods.cameracraft.photo.PhotoManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 
@@ -14,7 +13,8 @@ import java.util.concurrent.CompletableFuture;
 
 public class PhotoTicker {
 
-	private final Queue<CompletableFuture<PacketTakenPhoto>> photoQueue = Queues.newArrayDeque();
+    public static final int PHOTO_SIZE = 256;
+    private final Queue<CompletableFuture<PacketTakenPhoto>> photoQueue = Queues.newArrayDeque();
 	
 	public void schedulePhoto(CompletableFuture<PacketTakenPhoto> future) {
 		photoQueue.offer(future);
@@ -38,7 +38,7 @@ public class PhotoTicker {
 
             gs.hideGUI = true;
             gs.thirdPersonView = 0;
-            mc.displayHeight = mc.displayWidth = PhotoManager.PHOTO_SIZE;
+            mc.displayHeight = mc.displayWidth = PHOTO_SIZE;
 
             mc.entityRenderer.renderWorld(0, 0);
 

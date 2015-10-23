@@ -41,7 +41,7 @@ public abstract class InventoryCamera extends ItemInventory implements Camera {
     private final EntityPlayer player;
 
     protected InventoryCamera(int size, Consumer<ItemStack> stackCallback, EntityPlayer player) {
-        super(size, player.getCurrentEquippedItem(), NBT_KEY);
+        super(size, player.getHeldItem(), stackCallback);
         this.stackCallback = stackCallback;
         this.player = player;
     }
