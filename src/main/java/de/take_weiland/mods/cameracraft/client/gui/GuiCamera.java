@@ -36,7 +36,12 @@ public class GuiCamera extends AbstractGuiContainer<ContainerCamera> implements 
 		}
 	}
 
-	@Override
+    @Override
+    protected void actionPerformed(GuiButton button) {
+        container.triggerButton(button.id);
+    }
+
+    @Override
 	protected ResourceLocation provideTexture() {
 		return container.inventory().getType().getGuiTexture();
 	}
