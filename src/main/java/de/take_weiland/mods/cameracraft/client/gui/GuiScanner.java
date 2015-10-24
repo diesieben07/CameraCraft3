@@ -1,11 +1,10 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
-import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.gui.ContainerScanner;
-import de.take_weiland.mods.cameracraft.tileentity.TileScanner;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
+import net.minecraft.util.ResourceLocation;
 
-public class GuiScanner extends AbstractGuiContainer<TileScanner, ContainerScanner> {
+public class GuiScanner extends AbstractGuiContainer<ContainerScanner> {
 
 	public GuiScanner(ContainerScanner container) {
 		super(container);

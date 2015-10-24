@@ -37,16 +37,12 @@ public class BlockAlkaline extends BlockFluidClassic implements CCBlockName {
 	private IIcon iconFlow;
 	
 	public BlockAlkaline() {
-		super(CCBlock.alkalineFluid, ALKALINE_MATERIAL);
+		super(CCBlock.getAlkaline(), ALKALINE_MATERIAL);
 	}
 
 	@Override
 	public String getBaseName() {
 		return BASE_NAME;
-	}
-
-	void lateInit() {
-		CCBlock.lateInitBlock(this, BASE_NAME);
 	}
 
 	@Override

@@ -1,5 +1,6 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
+import de.take_weiland.mods.commons.client.SlotDrawHooks;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.inventory.Slot;
 import net.minecraft.util.MathHelper;
@@ -10,7 +11,7 @@ import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.client.Rendering;
 
-public class GuiCamera extends AbstractGuiContainer<InventoryCamera, ContainerCamera> {
+public class GuiCamera extends AbstractGuiContainer<ContainerCamera> implements SlotDrawHooks {
 
 	private int lidXSize = 0;
 	private int lidMovement = 0;
@@ -40,19 +41,17 @@ public class GuiCamera extends AbstractGuiContainer<InventoryCamera, ContainerCa
 		return container.inventory().getType().getGuiTexture();
 	}
 
-	@Override
-	protected void drawSlotInventory(Slot slot) {
-		if (shouldDrawLid(slot)) {
-			if (lidXSize != 16) {
-				super.drawSlotInventory(slot);
-			}
-			int x = slot.xDisplayPosition;
-			int y = slot.yDisplayPosition;
-			Rendering.drawColoredRect(x, y, lidXSize, 16, 0xff000000, 101); // zlevel 101 to go above the itemstacks
-		} else {
-			super.drawSlotInventory(slot);
-		}
-	}
+    @Override
+    public boolean preDraw(Slot slot) {
+        if (shouldDrawLid(slot)) {
+            int x = slot.xDisplayPosition;
+            int y = slot.yDisplayPosition;
+            Rendering.drawColoredQuad(x, y, lidXSize, 16, 0xff000000, 101); // zlevel 101 to go above the itemstacks
+            return lidXSize != 16;
+        } else {
+            return true;
+        }
+    }
 
 	private boolean shouldDrawLid(Slot slot) {
 		InventoryCamera inv = container.inventory();

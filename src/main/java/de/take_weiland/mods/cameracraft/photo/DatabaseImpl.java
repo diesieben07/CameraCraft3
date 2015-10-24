@@ -55,6 +55,18 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
         return ImageIO.read(new File(root, fileName(id, ".png")));
     }
 
+    public InputStream openImageStream(long id) {
+        try {
+            return new BufferedInputStream(new FileInputStream(file(id, "png")));
+        } catch (FileNotFoundException e) {
+            throw new IllegalArgumentException("Unknown PhotoID", e);
+        }
+    }
+
+    private File file(long id, String ext) {
+        return new File(root, fileName(id) + '.' + ext);
+    }
+
     @Override
     public void saveImage(long id, BufferedImage image, ImageFilter filter) throws IOException {
         if (filter != null) {
@@ -71,6 +83,10 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
 
     private static String fileName(long id, String ext) {
         return Long.toString(id, 36) + ext;
+    }
+
+    private static String fileName(long id) {
+        return Long.toString(id, 36);
     }
 
     private void loadIds() throws IOException {

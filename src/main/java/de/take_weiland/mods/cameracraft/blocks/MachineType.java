@@ -12,17 +12,18 @@ public enum MachineType implements Subtype {
 	PHOTO_PROCESSOR("processor", TilePhotoProcessor.class, CCGuis.PHOTO_PROCESSOR),
 	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER),
 	PRINTER_ADVANCED("printerAdvanced", TilePrinter.class, CCGuis.PRINTER_ADVANCED),
-	CAMERA("camera", TileCamera.class, CCGuis.CAMERA_PLACED);
+	CAMERA("camera", TileCamera.class, CCGuis.CAMERA_PLACED),
+	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER);
 
 	private final String name;
 	private final Class<? extends TileEntity> teClass;
 	private final CCGuis gui;
 	
-	private MachineType(String name, CCGuis gui) {
+	MachineType(String name, CCGuis gui) {
 		this(name, null, gui);
 	}
 	
-	private MachineType(String name, Class<? extends TileEntity> teClass, CCGuis gui) {
+	MachineType(String name, Class<? extends TileEntity> teClass, CCGuis gui) {
 		this.name = name;
 		this.teClass = teClass;
 		this.gui = gui;

@@ -17,12 +17,10 @@ import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.ForkJoinPool;
 
 public class ClientProxy implements CCProxy {
 
@@ -58,11 +56,6 @@ public class ClientProxy implements CCProxy {
                 throw new ReportedException(cr);
             }
         });
-	}
-
-	@Override
-	public void handleClientPhotoData(long photoId, BufferedImage img) {
-		ForkJoinPool.commonPool().execute(() -> PhotoDataCache.injectReceivedPhoto(photoId, img));
 	}
 
 	@Override

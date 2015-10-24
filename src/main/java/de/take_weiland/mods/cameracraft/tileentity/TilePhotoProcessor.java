@@ -4,11 +4,11 @@ import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.commons.meta.HasSubtypes;
+import de.take_weiland.mods.commons.nbt.ToNbt;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
 
@@ -27,7 +27,8 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 	
 	private int fillCountdown = CHECKING_SCHEDULED;
 	private int processProgress;
-	
+
+    @ToNbt
 	public final FluidTank tank = new FluidTank(TANK_CAPACITY);
 	
 	@Override
@@ -152,18 +153,6 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 	@Override
 	public FluidTankInfo[] getTankInfo(ForgeDirection from) {
 		return new FluidTankInfo[] { tank.getInfo() };
-	}
-
-	@Override
-	public void readFromNBT(NBTTagCompound nbt) {
-		super.readFromNBT(nbt);
-		tank.readFromNBT(nbt.getCompoundTag("tank"));
-	}
-
-	@Override
-	public void writeToNBT(NBTTagCompound nbt) {
-		super.writeToNBT(nbt);
-		nbt.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
 	}
 
 	public int getProcessProgress() {

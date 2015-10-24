@@ -16,7 +16,7 @@ public final class CCEventHandler {
 	@SubscribeEvent
 	public void onEntityConstruct(EntityEvent.EntityConstructing event) {
 		if (event.entity instanceof EntityPlayer) {
-			event.entity.registerExtendedProperties(CCPlayerData.INDENTIFIER, new CCPlayerData());
+			event.entity.registerExtendedProperties(CCPlayerData.INDENTIFIER, new CCPlayerData((EntityPlayer) event.entity));
 		}
 	}
 	

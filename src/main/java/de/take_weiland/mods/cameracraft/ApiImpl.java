@@ -4,6 +4,7 @@ import com.google.common.collect.Maps;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.network.PacketRequestStandardPhoto;
 import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
@@ -45,7 +46,7 @@ public final class ApiImpl implements CameraCraftApi {
 	@Override
 	public CompletionStage<Long> defaultTakePhoto(EntityPlayer player, ImageFilter filter) {
 		return new PacketRequestStandardPhoto().sendTo(player)
-				.thenApplyAsync((packet) -> {
+				.thenApplyAsync(packet -> {
                     long id = DatabaseImpl.current.nextId();
                     try {
                         DatabaseImpl.current.saveImage(id, packet.image, filter);
@@ -54,6 +55,11 @@ public final class ApiImpl implements CameraCraftApi {
                     }
                     return id;
                 });
+	}
+
+	@Override
+	public PhotoDatabase getCurrentPhotoDatabase() {
+		return DatabaseImpl.current; // TODO?
 	}
 
 	@Override

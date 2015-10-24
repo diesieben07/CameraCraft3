@@ -15,8 +15,8 @@ import java.util.Collection;
 @Packet.Receiver(Side.SERVER)
 public class PacketPrintJobs implements Packet {
 
-	private int windowId;
-	private Collection<SimplePrintJob> jobs;
+	private final int windowId;
+	private final Collection<SimplePrintJob> jobs;
 	
 	public PacketPrintJobs(Container c, Collection<SimplePrintJob> jobs) {
 		this.windowId = c.windowId;
@@ -34,12 +34,12 @@ public class PacketPrintJobs implements Packet {
     }
 
 	@Override
-    public void writeTo(MCDataOutput put) {
-		put.writeByte((byte) windowId);
-		put.writeVarInt(jobs.size());
+    public void writeTo(MCDataOutput out) {
+		out.writeByte((byte) windowId);
+		out.writeVarInt(jobs.size());
 		for (SimplePrintJob job : jobs) {
-			put.writeInt(job.getPhotoId());
-			put.writeVarInt(job.getAmount());
+			out.writeLong(job.getPhotoId());
+			out.writeVarInt(job.getAmount());
 		}
 	}
 

@@ -2,24 +2,31 @@ package de.take_weiland.mods.cameracraft;
 
 import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
 
-import java.awt.image.BufferedImage;
 import java.io.InputStream;
 import java.util.concurrent.CompletionStage;
 
 public interface CCProxy {
 
-	void preInit();
+	default void preInit() { }
 
-	CompletionStage<PacketTakenPhoto> handleStandardPhotoRequest();
+	default CompletionStage<PacketTakenPhoto> handleStandardPhotoRequest() {
+		throw new IllegalStateException();
+	}
 
-	void handleClientPhotoData(long photoId, InputStream in);
+	default void handleClientPhotoData(long photoId, InputStream in) {
+		throw new IllegalStateException();
+	}
 
-	void handleClientPhotoData(long photoId, BufferedImage img);
+	default void displayNamePhotoGui(String oldName) {
+		throw new IllegalStateException();
+	}
 
-	void displayNamePhotoGui(String oldName);
-	
-	void displayPhotoGui(long photoId, String displayName, boolean canRename);
-	
-	void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ);
-	
+	default void displayPhotoGui(long photoId, String displayName, boolean canRename) {
+		throw new IllegalStateException();
+	}
+
+	default void spawnAlkalineBubbleFX(double x, double y, double z, double motionX, double motionY, double motionZ) {
+		throw new IllegalStateException();
+	}
+
 }

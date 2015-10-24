@@ -3,7 +3,6 @@ package de.take_weiland.mods.cameracraft.gui;
 import cpw.mods.fml.common.network.IGuiHandler;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.GuiCamera;
-import de.take_weiland.mods.cameracraft.client.gui.GuiCardReader;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoProcessor;
 import de.take_weiland.mods.cameracraft.client.gui.GuiScanner;
 import de.take_weiland.mods.cameracraft.client.gui.printer.GuiPrinter;
@@ -21,6 +20,7 @@ public enum CCGuis {
 	PRINTER,
 	PRINTER_ADVANCED,
 	PHOTO,
+	SCANNER,
 	CAMERA_PLACED;
 	
 	public void open(EntityPlayer player) {
@@ -45,39 +45,43 @@ public enum CCGuis {
 		}
 
 		private Container getContainer0(CCGuis gui, EntityPlayer player, World world, int x, int y, int z) {
-			switch (gui) {
-			case PHOTO_PROCESSOR:
-				return new ContainerPhotoProcessor(world, x, y, z, player);
-			case CAMERA:
-                InventoryCamera camera = (InventoryCamera) CCItem.camera.createCamera(player);
-                return new ContainerCamera(camera, player, camera.hasLid() ? camera.storageSlot() : -1);
-			case PRINTER:
-				return new ContainerPrinter(world, x, y, z, player, false);
-			case PRINTER_ADVANCED:
-				return new ContainerPrinter(world, x, y, z, player, true);
-			default:
-				throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
-			}
+            switch (gui) {
+                case PHOTO_PROCESSOR:
+                    return new ContainerPhotoProcessor(world, x, y, z, player);
+                case CAMERA:
+                    InventoryCamera camera = (InventoryCamera) CCItem.camera.createCamera(player);
+                    return new ContainerCamera(camera, player, camera.hasLid() ? camera.storageSlot() : -1);
+                case PRINTER:
+                    return new ContainerPrinter(world, x, y, z, player, false);
+                case PRINTER_ADVANCED:
+                    return new ContainerPrinter(world, x, y, z, player, true);
+                case SCANNER:
+                    return new ContainerScanner(world, x, y, z, player);
+                default:
+                    throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
+            }
 		}
 
 		@Override
 		public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-			CCGuis gui = EnumUtils.byOrdinal(CCGuis.class, id);
-			if (gui == null) {
-				return null;
-			}
-			Container c = getContainer0(gui, player, world, x, y, z);
+            CCGuis gui = EnumUtils.byOrdinal(CCGuis.class, id);
+            if (gui == null) {
+                return null;
+            }
+            Container c = getContainer0(gui, player, world, x, y, z);
 
-			switch (gui) {
-			case PHOTO_PROCESSOR:
-				return new GuiPhotoProcessor((ContainerPhotoProcessor) c);
-			case CAMERA:
-				return new GuiCamera((ContainerCamera) c);
-			case PRINTER:
-			case PRINTER_ADVANCED:
-				return new GuiPrinter((ContainerPrinter) c);
-			default:
-				throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
+            switch (gui) {
+                case PHOTO_PROCESSOR:
+                    return new GuiPhotoProcessor((ContainerPhotoProcessor) c);
+                case CAMERA:
+                    return new GuiCamera((ContainerCamera) c);
+                case PRINTER:
+                case PRINTER_ADVANCED:
+                    return new GuiPrinter((ContainerPrinter) c);
+                case SCANNER:
+                    return new GuiScanner((ContainerScanner) c);
+                default:
+                    throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}
 		}
 	}

@@ -1,9 +1,11 @@
 package de.take_weiland.mods.cameracraft.gui;
 
 import de.take_weiland.mods.cameracraft.api.printer.InkItem;
-import de.take_weiland.mods.cameracraft.api.printer.Printer;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
-import de.take_weiland.mods.commons.inv.*;
+import de.take_weiland.mods.commons.inv.AbstractContainer;
+import de.take_weiland.mods.commons.inv.ShiftClickTarget;
+import de.take_weiland.mods.commons.inv.SimpleSlot;
+import de.take_weiland.mods.commons.inv.SpecialShiftClick;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
@@ -47,8 +49,4 @@ public class ContainerPrinter extends AbstractContainer<TilePrinter> implements 
 		}
 	}
 	
-	public Printer inventory() {
-		return inventory;
-	}
-
 }

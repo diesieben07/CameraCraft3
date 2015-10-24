@@ -1,11 +1,9 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.commons.util.Items;
 import net.minecraft.item.Item;
 
-@GameRegistry.ObjectHolder(CameraCraft.MOD_ID)
 public abstract class CCItem extends Item {
 
     public static final ItemBattery battery = new ItemBattery();

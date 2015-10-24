@@ -11,42 +11,33 @@ import net.minecraftforge.fluids.FluidRegistry;
 
 public class CCBlock extends Block implements CCBlockName {
 
-    public static BlockCCOre ores;
-    public static BlockCCMachine machines;
-    public static BlockAlkaline alkaline;
+    public static final Fluid alkalineFluid = new Fluid("cameracraft.alkaline").setLuminosity(7);
+    public static final BlockCCOre ores = new BlockCCOre();
+    public static final BlockCCMachine machines = new BlockCCMachine();
+    public static final BlockAlkaline alkaline = new BlockAlkaline();
 
     public static void createBlocks() {
-        alkalineFluid = new Fluid("cameracraft.alkaline").setLuminosity(7);
-        FluidRegistry.registerFluid(alkalineFluid);
-
-        (ores = new BlockCCOre()).lateInit();
-        (machines = new BlockCCMachine()).lateInit();
-        (alkaline = new BlockAlkaline()).lateInit();
-
-        Blocks.initAll(CCBlockName::getBaseName, CameraCraft.tab,
+        Blocks.initAll((Block block) -> ((CCBlockName) block).getBaseName(), CameraCraft.tab,
                 ores, machines, alkaline);
     }
 
     private final String baseName;
-    public static Fluid alkalineFluid;
 
     protected CCBlock(String name, Material material) {
         super(material);
         this.baseName = name;
     }
 
-    protected void lateInit() {
-        lateInitBlock(this, baseName);
+    static Fluid getAlkaline() {
+        if (!FluidRegistry.isFluidRegistered(alkalineFluid)) {
+            FluidRegistry.registerFluid(alkalineFluid);
+        }
+        return alkalineFluid;
     }
 
     @Override
     public String getBaseName() {
         return baseName;
-    }
-
-    static void lateInitBlock(Block block, String baseName) {
-        Blocks.init(block, baseName);
-        block.setCreativeTab(CameraCraft.tab);
     }
 
     @Override

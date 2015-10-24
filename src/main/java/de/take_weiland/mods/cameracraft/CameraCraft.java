@@ -39,8 +39,8 @@ public final class CameraCraft {
     public static final String MOD_ID = CameraCraftApiHandler.CAMERACRAFT_MODID;
     static final String MOD_NAME = "CameraCraft";
     static final String VERSION = "@VERSION@";
-    private static final String CLIENT_ENV = "de.take_weiland.mods.cameracraft.client.EnvironmentClient";
-    private static final String SERVER_ENV = "de.take_weiland.mods.cameracraft.server.EnvironmentServer";
+    private static final String CLIENT_ENV = "de.take_weiland.mods.cameracraft.client.ClientProxy";
+    private static final String SERVER_ENV = "de.take_weiland.mods.cameracraft.server.ServerProxy";
 
     @Instance(MOD_ID)
     public static CameraCraft instance;
@@ -89,9 +89,8 @@ public final class CameraCraft {
                 .register(0, PacketClientAction::new, PacketClientAction::handle)
                 .register(1, PacketPhotoName::new, PacketPhotoName::handle)
                 .registerWithAsyncResponse(2, PacketRequestStandardPhoto::new, PacketTakenPhoto::new, PacketRequestStandardPhoto::handle)
-                .register(3, PacketClientRequestPhoto::new, PacketClientRequestPhoto::handle)
-                .register(4, PacketPhotoData::read, PacketPhotoData::handle)
-                .register(5, PacketPrintJobs::new, PacketPrintJobs::handle);
+                .register(3, PacketClientRequestPhoto::new, PacketPhotoData::read, PacketClientRequestPhoto::handle)
+                .register(4, PacketPrintJobs::new, PacketPrintJobs::handle);
 
         CCBlock.createBlocks();
         CCItem.init();

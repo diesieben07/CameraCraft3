@@ -1,32 +1,36 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
 import de.take_weiland.mods.commons.net.MCDataInput;
 import de.take_weiland.mods.commons.net.MCDataOutput;
 import de.take_weiland.mods.commons.net.Packet;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.ReportedException;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.UncheckedIOException;
 
-public class PacketPhotoData implements Packet {
+public class PacketPhotoData implements Packet.Response {
 
     private final long photoId;
-    private final File file;
+    private final BufferedImage image;
 
-    public PacketPhotoData(long photoId, File file) {
+    public PacketPhotoData(long photoId) {
+        this(photoId, null);
+    }
+
+    public PacketPhotoData(long photoId, BufferedImage image) {
         this.photoId = photoId;
-        this.file = file;
+        this.image = image;
     }
 
     @Override
     public void writeTo(MCDataOutput out) {
         out.writeLong(photoId);
-        try (FileInputStream in = new FileInputStream(file)) {
+        try (InputStream in = DatabaseImpl.current.openImageStream(photoId)) {
             out.copyFrom(in);
         } catch (IOException e) {
             CrashReport cr = new CrashReport("Reading CameraCraft Photo File", e);
@@ -36,19 +40,28 @@ public class PacketPhotoData implements Packet {
     }
 
     public static PacketPhotoData read(MCDataInput in) {
-        int photoId = in.readInt();
-        CameraCraft.proxy.handleClientPhotoData(photoId, in.asInputStream());
-        return null;
+        long photoId = in.readLong();
+        BufferedImage image;
+        try {
+            image = ImageIO.read(in.asInputStream());
+        } catch (IOException e) {
+            throw new UncheckedIOException(e);
+        }
+        return new PacketPhotoData(photoId, image);
     }
 
-    public static void handle(PacketPhotoData packet, EntityPlayer player) {
-        if (packet != null) {
+    public BufferedImage getImage() {
+        BufferedImage result;
+        if (image == null) {
             try {
-                CameraCraft.proxy.handleClientPhotoData(packet.photoId, new FileInputStream(packet.file));
-            } catch (FileNotFoundException e) {
-                throw new IllegalStateException("Photo file was deleted unexpectedly!", e);
+                result = DatabaseImpl.current.loadImage(photoId);
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
+        } else {
+            result = image;
         }
+        return result;
     }
 
 }
