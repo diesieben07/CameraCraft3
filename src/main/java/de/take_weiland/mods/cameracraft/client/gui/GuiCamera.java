@@ -6,7 +6,7 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.gui.ContainerCamera;
-import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
+import de.take_weiland.mods.cameracraft.inv.InventoryCameraImpl;
 import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.client.Rendering;
@@ -54,7 +54,7 @@ public class GuiCamera extends AbstractGuiContainer<ContainerCamera> implements 
     }
 
 	private boolean shouldDrawLid(Slot slot) {
-		InventoryCamera inv = container.inventory();
+		InventoryCameraImpl inv = container.inventory();
 		return (inv.isLidClosed() || lidXSize != 0) && slot.inventory == inv && slot.getHasStack() && inv.storageSlot() == slot.getSlotIndex();
 	}
 	

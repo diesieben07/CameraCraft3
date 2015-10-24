@@ -1,11 +1,9 @@
 package de.take_weiland.mods.cameracraft.item;
 
 import de.take_weiland.mods.commons.meta.Subtype;
-import net.minecraft.entity.player.EntityPlayer;
+import de.take_weiland.mods.commons.util.ItemStacks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
-import de.take_weiland.mods.commons.util.ItemStacks;
 
 public enum CameraType implements Subtype {
 
@@ -13,7 +11,7 @@ public enum CameraType implements Subtype {
 	DIGITAL("digital", 3);
 
 	private final String name;
-	final int slotCount;
+	public final int slotCount;
 	private final ResourceLocation texture;
 	
 	CameraType(String name, int slotCount) {
@@ -21,19 +19,8 @@ public enum CameraType implements Subtype {
 		this.slotCount = slotCount;
 		texture = new ResourceLocation("cameracraft", "textures/gui/" + name + "Camera.png");
 	}
-	
-	public InventoryCamera newInventory(EntityPlayer player) {
-		return this == FILM ? new InventoryCameraImpl(slotCount, player, this) : new InventoryCameraImpl(slotCount, player, this) {
 
-			@Override
-			public boolean canTakePhoto() {
-				return super.canTakePhoto(); // TODO batteries
-			}
-			
-		};
-	}
-
-    public boolean isItemValid(int slot, ItemStack stack) {
+	public boolean isItemValid(int slot, ItemStack stack) {
 		if (this == DIGITAL) {
 			return slot == 1
 					? ItemStacks.is(stack, CCItem.battery)

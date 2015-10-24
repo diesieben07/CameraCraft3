@@ -22,11 +22,11 @@ public enum CCSounds {
 		e.worldObj.playSoundAtEntity(e, getName(), volume, pitch);
 	}
 	
-	public void playAt(World world, float x, float y, float z) {
+	public void playAt(World world, double x, double y, double z) {
 		playAt(world, x, y, z, 1, 1);
 	}
 	
-	public void playAt(World world, float x, float y, float z, float volume, float pitch) {
+	public void playAt(World world, double x, double y, double z, float volume, float pitch) {
 		world.playSoundEffect(x, y, z, getName(), volume, pitch); // does nothing on client
 	}
 

@@ -4,21 +4,21 @@ import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.camera.LensItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
-import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
+import de.take_weiland.mods.cameracraft.inv.InventoryCameraImpl;
 import de.take_weiland.mods.commons.inv.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
 
-public class ContainerCamera extends AbstractContainer<InventoryCamera> implements ButtonContainer, SpecialShiftClick {
+public class ContainerCamera extends AbstractContainer<InventoryCameraImpl> implements ButtonContainer, SpecialShiftClick {
 
 	public static final int BUTTON_TOGGLE_LID = 0;
 	public static final int BUTTON_REWIND_FILM = 1;
 	
 	private final int closedSlot;
 	
-	public ContainerCamera(InventoryCamera upper, EntityPlayer player, int closedSlot) {
+	public ContainerCamera(InventoryCameraImpl upper, EntityPlayer player, int closedSlot) {
 		super(upper, player);
 		this.closedSlot = closedSlot;
 	}
@@ -76,7 +76,7 @@ public class ContainerCamera extends AbstractContainer<InventoryCamera> implemen
     @Override
     public ShiftClickTarget getShiftClickTarget(ItemStack stack, EntityPlayer player) {
         if (stack.getItem() instanceof LensItem) {
-            return ShiftClickTarget.of(InventoryCamera.LENS_SLOT);
+            return ShiftClickTarget.of(InventoryCameraImpl.LENS_SLOT);
         } else if (stack.getItem() instanceof PhotoStorageItem) {
             return ShiftClickTarget.of(inventory.storageSlot());
         } else if (CameraCraft.api.findBatteryHandler(stack).isBattery(stack)) {

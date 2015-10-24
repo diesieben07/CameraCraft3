@@ -9,6 +9,7 @@ import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
+import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.cameracraft.img.ImageUtil;
 import de.take_weiland.mods.cameracraft.item.CameraType;
@@ -20,6 +21,8 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ReportedException;
+import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 
 import java.util.Iterator;
 import java.util.Spliterator;
@@ -29,25 +32,68 @@ import java.util.function.Consumer;
 
 import static de.take_weiland.mods.commons.util.Sides.sideOf;
 
-public abstract class InventoryCamera extends ItemInventory implements Camera {
+public class InventoryCameraImpl extends ItemInventory implements Camera {
 
-    private static final int COOLDOWN = 30;
     public static final int LENS_SLOT = 0;
 
     private boolean isLidClosed;
 
-    private final EntityPlayer player;
+    private final CameraType type;
 
-    protected InventoryCamera(int size, Consumer<ItemStack> stackCallback, EntityPlayer player) {
-        super(size, player.getHeldItem(), stackCallback);
-        this.player = player;
+    private final World world;
+    private final Vec3 position;
+
+    public InventoryCameraImpl(CameraType type, ItemStack stack, Consumer<ItemStack> stackCallback, World world, Vec3 position) {
+        super(type.slotCount, stack, stackCallback);
+        this.type = type;
+        this.world = world;
+        this.position = position;
     }
 
-    public abstract CameraType getType();
+    public final CameraType getType() {
+        return type;
+    }
 
-    public abstract int storageSlot();
+    public final int storageSlot() {
+        return type == CameraType.DIGITAL ? 2 : 1;
+    }
 
-    public abstract int batterySlot();
+    public final int batterySlot() {
+        return type == CameraType.DIGITAL ? 1 : -1;
+    }
+
+    @Override
+    public boolean hasLid() {
+        return type == CameraType.FILM;
+    }
+
+    @Override
+    public boolean canRewind() {
+        return type == CameraType.FILM && storage[storageSlot()] != null;
+    }
+
+    @Override
+    public boolean needsBattery() {
+        return type == CameraType.DIGITAL;
+    }
+
+    @Override
+    public void setLidState(boolean close) {
+        if (hasLid()) {
+            isLidClosed = close;
+        }
+    }
+
+    @Override
+    public boolean takePhoto() {
+        // TODO
+        return false;
+    }
+
+    @Override
+    public void openGui(EntityPlayer player) {
+        CCGuis.CAMERA.open(player);
+    }
 
     private void closeLid() {
     }
@@ -55,7 +101,7 @@ public abstract class InventoryCamera extends ItemInventory implements Camera {
     private CompletionStage<Void>[] convertTasks;
 
     private void openLid() {
-        if (sideOf(player).isClient()) {
+        if (sideOf(world).isClient()) {
             return;
         }
         PhotoStorage storage = getPhotoStorage();
@@ -67,7 +113,7 @@ public abstract class InventoryCamera extends ItemInventory implements Camera {
 
     @Override
     public boolean isUseableByPlayer(EntityPlayer player) {
-        return this.player == player;
+        return position.squareDistanceTo(player.posX, player.posY, player.posZ) <= 64D;
     }
 
     @Override
@@ -223,7 +269,7 @@ public abstract class InventoryCamera extends ItemInventory implements Camera {
 
     @Override
     public boolean canTakePhoto() {
-        return !CCPlayerData.get(player).isOnCooldown() && getBatteryCharge() > 0 && hasStorage() && getPhotoStorage().canStore();
+        return getBatteryCharge() > 0 && hasStorage() && getPhotoStorage().canStore();
     }
 
     @Override
@@ -233,8 +279,7 @@ public abstract class InventoryCamera extends ItemInventory implements Camera {
 
     @Override
     public void onTakePhoto() {
-        CCSounds.CAMERA_CLICK.playAt(player);
-        CCPlayerData.get(player).setCooldown(COOLDOWN);
+        CCSounds.CAMERA_CLICK.playAt(world, position.xCoord, position.yCoord, position.zCoord);
         ItemStack battery = getBattery(); // is null if we don't need battery
         if (battery != null) {
             BatteryHandler handler = CameraCraft.api.findBatteryHandler(battery);
@@ -258,12 +303,34 @@ public abstract class InventoryCamera extends ItemInventory implements Camera {
         return false;
     }
 
+    public static class WithPlayer extends InventoryCameraImpl {
+
+        private static final int COOLDOWN = 30;
+        private final EntityPlayer player;
+
+        public WithPlayer(EntityPlayer player, CameraType type, ItemStack stack, Consumer<ItemStack> stackCallback, World world, Vec3 position) {
+            super(type, stack, stackCallback, world, position);
+            this.player = player;
+        }
+
+        @Override
+        public boolean canTakePhoto() {
+            return !CCPlayerData.get(player).isOnCooldown() && super.canTakePhoto();
+        }
+
+        @Override
+        public void onTakePhoto() {
+            super.onTakePhoto();
+            CCPlayerData.get(player).setCooldown(COOLDOWN);
+        }
+    }
+
     private static class WrappedPhotoStorage implements PhotoStorage {
 
         private final PhotoStorage delegate;
-        private final InventoryCamera camera;
+        private final InventoryCameraImpl camera;
 
-        WrappedPhotoStorage(PhotoStorage delegate, InventoryCamera camera) {
+        WrappedPhotoStorage(PhotoStorage delegate, InventoryCameraImpl camera) {
             this.delegate = delegate;
             this.camera = camera;
         }

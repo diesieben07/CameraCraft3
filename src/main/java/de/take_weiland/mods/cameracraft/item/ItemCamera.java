@@ -5,11 +5,12 @@ import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
 import de.take_weiland.mods.cameracraft.api.camera.Camera;
 import de.take_weiland.mods.cameracraft.api.camera.CameraItem;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
-import de.take_weiland.mods.cameracraft.inv.InventoryCamera;
+import de.take_weiland.mods.cameracraft.inv.InventoryCameraImpl;
 import de.take_weiland.mods.commons.meta.MetadataProperty;
 import de.take_weiland.mods.commons.util.Scheduler;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 
 import java.util.function.Consumer;
@@ -61,24 +62,16 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 		return stack;
 	}
 
-	@Override
-	public Camera createCamera(ItemStack stack, Consumer<ItemStack> stackSetter) {
-		return createCameraInternal(null); // TODO
-	}
+    @Override
+    public Camera createCamera(EntityPlayer player, ItemStack stack, Consumer<ItemStack> stackSetter, World world, double x, double y, double z) {
+        return new InventoryCameraImpl.WithPlayer(player, getType(stack), stack, stackSetter, world, Vec3.createVectorHelper(x, y, z));
+    }
 
-	public InventoryCamera createCameraInternal(EntityPlayer player) {
-		ItemStack stack = player.getCurrentEquippedItem();
-        if (isCamera(stack)) {
-            return getType(stack).newInventory(player);
-        } else {
-            return null;
-        }
-	}
+    @Override
+    public Camera createCamera(ItemStack stack, Consumer<ItemStack> stackSetter, World world, double x, double y, double z) {
+        return new InventoryCameraImpl(getType(stack), stack, stackSetter, world, Vec3.createVectorHelper(x, y, z));
+    }
 
-	public InventoryCamera newInventory(EntityPlayer player, ItemStack stack) {
-		return isCamera(stack) ? getType(stack).newInventory(player) : null;
-	}
-	
 	public boolean isCamera(ItemStack stack) {
 		return stack != null && stack.getItem() == this;
 	}
