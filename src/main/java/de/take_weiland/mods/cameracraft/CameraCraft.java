@@ -21,8 +21,6 @@ import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.network.*;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.net.Network;
-import de.take_weiland.mods.commons.net.PacketConstructor;
-import de.take_weiland.mods.commons.net.PacketHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -90,9 +88,9 @@ public final class CameraCraft {
         Network.newSimpleChannel("CameraCraft")
                 .register(0, PacketClientAction::new, PacketClientAction::handle)
                 .register(1, PacketPhotoName::new, PacketPhotoName::handle)
-                .registerWithAsyncResponse(2, (PacketConstructor<PacketRequestStandardPhoto>) PacketRequestStandardPhoto::new, (PacketConstructor<PacketTakenPhoto>) PacketTakenPhoto::new, (PacketHandler.WithAsyncResponse<PacketRequestStandardPhoto, PacketTakenPhoto>) PacketRequestStandardPhoto::handle)
-                .register(3, (PacketConstructor<PacketClientRequestPhoto>) PacketClientRequestPhoto::new, (PacketConstructor<PacketPhotoData>) PacketPhotoData::read, (PacketHandler.WithResponse<PacketClientRequestPhoto, PacketPhotoData>) PacketClientRequestPhoto::handle)
-                .register(4, (PacketConstructor<PacketPrintJobs>) PacketPrintJobs::new, (PacketHandler<PacketPrintJobs>) PacketPrintJobs::handle);
+                .registerWithAsyncResponse(2, PacketRequestStandardPhoto::new, PacketTakenPhoto::new, PacketRequestStandardPhoto::handle)
+                .register(3, PacketClientRequestPhoto::new, PacketPhotoData::read, PacketClientRequestPhoto::handle)
+                .register(4, PacketPrintJobs::new, PacketPrintJobs::handle);
 
         CCBlock.createBlocks();
         CCItem.init();
