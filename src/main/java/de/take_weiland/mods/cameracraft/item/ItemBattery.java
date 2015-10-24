@@ -69,7 +69,7 @@ public class ItemBattery extends CCItem implements BatteryHandler {
 
     @Override
     public double getDurabilityForDisplay(ItemStack stack) {
-        return (double) getCharge(stack) / (double) getCapacity(stack);
+        return 1-((double) getCharge(stack) / (double) getCapacity(stack));
     }
 
 	@Override
