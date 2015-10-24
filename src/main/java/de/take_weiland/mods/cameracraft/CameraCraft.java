@@ -8,6 +8,7 @@ import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -19,6 +20,7 @@ import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.network.*;
+import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.net.Network;
 import net.minecraft.creativetab.CreativeTabs;
@@ -125,6 +127,11 @@ public final class CameraCraft {
         ChatComponentText chatComponent = new ChatComponentText(msg);
         chatComponent.getChatStyle().setColor(EnumChatFormatting.RED);
         player.addChatComponentMessage(chatComponent);
+    }
+
+    @EventHandler
+    public void onServerStarting(FMLServerStartingEvent event) {
+        DatabaseImpl.onServerStart();
     }
 
     @EventHandler

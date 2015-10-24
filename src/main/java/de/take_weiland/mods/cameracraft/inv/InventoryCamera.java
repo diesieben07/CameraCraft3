@@ -33,16 +33,13 @@ public abstract class InventoryCamera extends ItemInventory implements Camera {
 
     private static final int COOLDOWN = 30;
     public static final int LENS_SLOT = 0;
-    private static final String NBT_KEY = "cameracraft.camerainv";
 
     private boolean isLidClosed;
 
-    private final Consumer<ItemStack> stackCallback;
     private final EntityPlayer player;
 
     protected InventoryCamera(int size, Consumer<ItemStack> stackCallback, EntityPlayer player) {
         super(size, player.getHeldItem(), stackCallback);
-        this.stackCallback = stackCallback;
         this.player = player;
     }
 

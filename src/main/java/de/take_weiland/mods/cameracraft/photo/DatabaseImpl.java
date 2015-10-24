@@ -12,12 +12,14 @@ import gnu.trove.TCollections;
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.TLongSet;
 import gnu.trove.set.hash.TLongHashSet;
+import net.minecraftforge.common.DimensionManager;
 
 import javax.annotation.Nonnull;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.concurrent.TimeUnit;
@@ -42,13 +44,18 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
     private long nextId;
     private boolean idsDirty = false;
 
-    public DatabaseImpl(File root) {
+    private DatabaseImpl(File root) {
         this.root = root;
         try {
             loadIds();
         } catch (IOException e) {
             throw new UncheckedIOException(e);
         }
+    }
+
+    public static void onServerStart() {
+        File root = new File(DimensionManager.getCurrentSaveRootDirectory(), "cameracraft");
+        current = new DatabaseImpl(root);
     }
 
     public BufferedImage loadImage(long id) throws IOException {
@@ -91,8 +98,12 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
 
     private void loadIds() throws IOException {
         File idFile = new File(root, IDS_DAT);
-        if (!idFile.isFile()) {
+        if (idFile.exists() && !idFile.isFile()) {
             Files.delete(idFile.toPath());
+        }
+        com.google.common.io.Files.createParentDirs(idFile);
+        if (!idFile.exists()) {
+            Files.write(idFile.toPath(), Longs.toByteArray(0), StandardOpenOption.CREATE);
         }
         if (idFile.canRead()) {
             boolean foundFirst = false;
