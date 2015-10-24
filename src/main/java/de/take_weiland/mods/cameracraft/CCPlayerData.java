@@ -22,7 +22,7 @@ public class CCPlayerData implements IExtendedEntityProperties {
     }
 
 	public boolean isOnCooldown() {
-		return player.worldObj.getTotalWorldTime() - cooldownEnd >= 0;
+		return player.worldObj.getTotalWorldTime() - cooldownEnd < 0;
 	}
 	
 	public void setCooldown(int cooldown) {

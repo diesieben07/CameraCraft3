@@ -24,7 +24,7 @@ public final class PhotoStorages {
 	private PhotoStorages() { }
 	
 	public static int fastSize(ItemStack stack) {
-		return ItemStacks.getNbt(stack).getIntArray(NBT_KEY).length;
+		return ItemStacks.getNbt(stack).getByteArray(NBT_KEY).length >> 3;
 	}
 	
 	public static PhotoStorage withCapacity(int cap, boolean sealed, ItemStack stack) {
