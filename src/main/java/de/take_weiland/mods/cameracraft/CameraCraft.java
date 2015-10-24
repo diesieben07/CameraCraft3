@@ -91,8 +91,8 @@ public final class CameraCraft {
                 .register(0, PacketClientAction::new, PacketClientAction::handle)
                 .register(1, PacketPhotoName::new, PacketPhotoName::handle)
                 .registerWithAsyncResponse(2, (PacketConstructor<PacketRequestStandardPhoto>) PacketRequestStandardPhoto::new, (PacketConstructor<PacketTakenPhoto>) PacketTakenPhoto::new, (PacketHandler.WithAsyncResponse<PacketRequestStandardPhoto, PacketTakenPhoto>) PacketRequestStandardPhoto::handle)
-                .register(3, PacketClientRequestPhoto::new, PacketPhotoData::read, PacketClientRequestPhoto::handle)
-                .register(4, PacketPrintJobs::new, PacketPrintJobs::handle);
+                .register(3, (PacketConstructor<PacketClientRequestPhoto>) PacketClientRequestPhoto::new, (PacketConstructor<PacketPhotoData>) PacketPhotoData::read, (PacketHandler.WithResponse<PacketClientRequestPhoto, PacketPhotoData>) PacketClientRequestPhoto::handle)
+                .register(4, (PacketConstructor<PacketPrintJobs>) PacketPrintJobs::new, (PacketHandler<PacketPrintJobs>) PacketPrintJobs::handle);
 
         CCBlock.createBlocks();
         CCItem.init();
