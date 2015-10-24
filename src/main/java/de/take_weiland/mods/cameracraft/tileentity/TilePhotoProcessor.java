@@ -3,19 +3,16 @@ package de.take_weiland.mods.cameracraft.tileentity;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
+import de.take_weiland.mods.commons.meta.HasSubtypes;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.FluidTank;
-import net.minecraftforge.fluids.FluidTankInfo;
-import net.minecraftforge.fluids.IFluidHandler;
+import net.minecraftforge.fluids.*;
+
+import static de.take_weiland.mods.commons.util.Sides.sideOf;
 
 public class TilePhotoProcessor extends TileEntityInventory implements IFluidHandler {
 
@@ -38,11 +35,9 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 		return 3;
 	}
 
-	// worldObj.getBlockLightValue(x, y, z));
-	
 	@Override
 	public void updateEntity() {
-		if (Sides.logical(this).isServer()) {
+		if (sideOf(this).isServer()) {
 			if (fillCountdown > 0) {
 				fillCountdown--;
 			} else if (fillCountdown == 0) {
@@ -76,7 +71,7 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 			return false;
 		}
 		FluidStack f = tank.getFluid();
-		return f != null && f.fluidID == CCBlock.alkalineFluid.getID() && f.amount > FLUID_PER_PROCESS;
+		return f != null && f.fluid == CCBlock.alkalineFluid && f.amount > FLUID_PER_PROCESS;
 	}
 
 	private void processFluidInput() {
@@ -87,10 +82,10 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 		
 		ItemStack origContainer = storage[0].copy();
 		ItemStack container = storage[0].splitStack(1);
-		ItemStack emptied = container.getItem().getContainerItemStack(container);
+		ItemStack emptied = FluidContainerRegistry.drainFluidContainer(container);
 		FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(container);
 		
-		if (ItemStacks.canMergeFully(emptied, storage[1]) && FluidContainerRegistry.isFilledContainer(container) && tank.fill(fluid, false) == fluid.amount) {
+		if (ItemStacks.fitsInto(emptied, storage[1]) && FluidContainerRegistry.isFilledContainer(container) && tank.fill(fluid, false) == fluid.amount) {
 			storage[0] = ItemStacks.emptyToNull(storage[0]);
 			storage[1] = ItemStacks.merge(emptied, storage[1], true);
 			
@@ -103,11 +98,11 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 		}
 	}
 
-	@Override
-	public void onChange() {
-		fillCountdown = CHECKING_SCHEDULED;
-		super.onChange();
-	}
+    @Override
+    public void markDirty() {
+        fillCountdown = CHECKING_SCHEDULED;
+        super.markDirty();
+    }
 
 	@Override
 	public boolean isItemValidForSlot(int slot, ItemStack item) {
@@ -168,7 +163,7 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 	@Override
 	public void writeToNBT(NBTTagCompound nbt) {
 		super.writeToNBT(nbt);
-		nbt.setCompoundTag("tank", tank.writeToNBT(new NBTTagCompound()));
+		nbt.setTag("tank", tank.writeToNBT(new NBTTagCompound()));
 	}
 
 	public int getProcessProgress() {
@@ -180,66 +175,12 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 	}
 	
 	public boolean isProcessing() {
-		return processProgress >= 0;
-	}
-
-	@Override
-	public ItemStack decrStackSize(int index, int count) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public ItemStack getStackInSlotOnClosing(int index) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void setInventorySlotContents(int index, ItemStack stack) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public String getInventoryName() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean isCustomInventoryName() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public int getInventoryStackLimit() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public void openChest() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void closeChest() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public boolean isItemValidForSlot(int index, ItemStack stack) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+        return processProgress >= 0;
+    }
 
 	@Override
 	public String getDefaultName() {
-		return Multitypes.name(MachineType.PHOTO_PROCESSOR);
+		return HasSubtypes.name(CCBlock.machines, MachineType.PHOTO_PROCESSOR);
 
 	}
 

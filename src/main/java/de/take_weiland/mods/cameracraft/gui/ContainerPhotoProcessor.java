@@ -2,16 +2,19 @@ package de.take_weiland.mods.cameracraft.gui;
 
 import de.take_weiland.mods.cameracraft.tileentity.TilePhotoProcessor;
 import de.take_weiland.mods.commons.inv.AbstractContainer;
+import de.take_weiland.mods.commons.inv.ShiftClickTarget;
 import de.take_weiland.mods.commons.inv.SimpleSlot;
+import de.take_weiland.mods.commons.inv.SpecialShiftClick;
 import de.take_weiland.mods.commons.sync.Sync;
-import de.take_weiland.mods.commons.sync.Synced;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidStack;
 
-public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcessor> {
+import javax.annotation.Nonnull;
+
+public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcessor> implements SpecialShiftClick {
 
 	public ContainerPhotoProcessor(World world, int x, int y, int z, EntityPlayer player) {
 		super(world, x, y, z, player);
@@ -25,32 +28,26 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 	}
 	
 	@Override
-	public boolean canInteractWith(EntityPlayer player) {
+	public boolean canInteractWith(@Nonnull EntityPlayer player) {
 		return inventory.isUseableByPlayer(player);
 	}
 
-	@Override
-	public int getSlotFor(ItemStack stack) {
-		if (FluidContainerRegistry.isFilledContainer(stack)) {
-			return 0;
-		} else if (inventory.isValidPhotoStorage(stack)) {
-			return 2;
-		} else {
-			return -1;
-		}
-	}
-
-	@Override
-	public int getFirstPlayerSlot() {
-		return inventory.getSizeInventory();
-	}
+    @Override
+    public ShiftClickTarget getShiftClickTarget(@Nonnull ItemStack stack, @Nonnull EntityPlayer player) {
+        if (FluidContainerRegistry.isFilledContainer(stack)) {
+            return ShiftClickTarget.of(0);
+        } else if (inventory.isValidPhotoStorage(stack)) {
+            return ShiftClickTarget.of(2);
+        } else {
+            return ShiftClickTarget.standard();
+        }
+    }
 
 	@Sync
 	private FluidStack getFluid() {
 		return inventory.tank.getFluid();
 	}
 
-	@Sync
 	private void setFluid(FluidStack stack) {
 		inventory.tank.setFluid(stack);
 	}
@@ -60,7 +57,6 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
 		return inventory.getProcessProgress();
 	}
 
-	@Sync
 	private void setProcessProgress(int progress) {
 		inventory.setProcessProgress(progress);
 	}
