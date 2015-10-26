@@ -1,15 +1,29 @@
 package de.take_weiland.mods.cameracraft.entity;
 
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
+import de.take_weiland.mods.cameracraft.img.ImageUtil;
 import de.take_weiland.mods.cameracraft.item.ItemPen;
+import de.take_weiland.mods.commons.util.Entities;
+import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
+
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
 /**
  * @author Intektor
@@ -18,16 +32,24 @@ public abstract class EntityPaintable extends EntityHanging {
 
     protected long photoId;
     protected ItemStack stack;
+    protected BufferedImage bufImage;
+    protected DynamicTexture dt;
+
+    protected int dimensionX, dimensionY;
 
     public EntityPaintable(World world) {
         super(world);
+        bufImage = new BufferedImage(265, 265, BufferedImage.TYPE_INT_ARGB);
     }
 
-    public EntityPaintable(World world, int x, int y, int z, int dir, ItemStack stack) {
+    public EntityPaintable(World world, int x, int y, int z, int dir, ItemStack stack, int dimX, int dimY) {
         super(world, x, y, z, dir);
-        this.photoId = ((PhotoItem)stack.getItem()).getPhotoId(stack);
+        this.photoId = ((PhotoItem) stack.getItem()).getPhotoId(stack);
         this.stack = stack;
+        bufImage = new BufferedImage(265, 265, BufferedImage.TYPE_INT_ARGB);
         setDirection(dir);
+        dimensionX = dimX;
+        dimensionY = dimY;
     }
 
     @Override
@@ -35,18 +57,29 @@ public abstract class EntityPaintable extends EntityHanging {
 
         ItemStack stack = player.getCurrentEquippedItem();
 
-        if(stack != null) {
-            if(stack. getItem() instanceof ItemPen) {
-                PhotoDataCache.bindTexture(photoId);
-            }
+        MovingObjectPosition mop = Entities.rayTrace(player, 10);
+
+        double x = this.posX - mop.hitVec.xCoord;
+        double y = this.posY - mop.hitVec.yCoord;
+
+        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
+            System.out.println(this.posY);
         }
 
         return false;
     }
+
     @Override
     public void writeEntityToNBT(NBTTagCompound nbt) {
         super.writeEntityToNBT(nbt);
         nbt.setTag("photoStack", stack.writeToNBT(new NBTTagCompound()));
+        try {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            byte[] image = new byte[stream.size()];
+            stream.write(image);
+            nbt.setByteArray("imageOverload", image);
+        } catch (IOException e) {
+        }
     }
 
     @Override
@@ -55,10 +88,54 @@ public abstract class EntityPaintable extends EntityHanging {
         stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("photoStack"));
         Item item = stack != null ? stack.getItem() : null;
         if (item instanceof PhotoItem) {
-            photoId = ((PhotoItem)item).getPhotoId(stack);
+            photoId = ((PhotoItem) item).getPhotoId(stack);
         } else {
-            CameraCraft.logger.warn("Invalid Item in EntityPoster at " + posX + ", " + posY + ", " + posZ);
+            CameraCraft.logger.warn("Invalid Item in EntityPaintable at " + posX + ", " + posY + ", " + posZ);
             setDead();
         }
+        try {
+            bufImage = ImageIO.read(new ByteArrayInputStream(nbt.getByteArray("imageOverload")));
+        } catch (Exception e) {
+        }
+    }
+
+    /**
+     * @param theClicker
+     * @param mop
+     * @param x
+     * @param y
+     * @param stack
+     */
+    public void rightClickEntity(Entity theClicker, MovingObjectPosition mop, double x, double y, ItemStack stack) {
+        System.out.println(x + "\t" + y);
+    }
+
+    public BufferedImage getBufImage() {
+        return bufImage;
+    }
+
+    public DynamicTexture getDynamicTexture() {
+        if (dt == null) {
+            dt = new DynamicTexture(bufImage);
+        }
+        return dt;
+    }
+
+    public int getDimensionX() {
+        return dimensionX;
+    }
+
+    public int getDimensionY() {
+        return dimensionY;
+    }
+
+    @Override
+    public int getWidthPixels() {
+        return dimensionX*16;
+    }
+
+    @Override
+    public int getHeightPixels() {
+        return dimensionY*16;
     }
 }

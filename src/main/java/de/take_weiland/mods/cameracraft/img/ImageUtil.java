@@ -5,6 +5,7 @@ import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
 import net.minecraft.util.MathHelper;
 
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -52,4 +53,12 @@ public final class ImageUtil {
         return futures;
     }
 
+	public static BufferedImage color(BufferedImage img, int posX, int posY, int r, int g, int b) {
+		int a = 255;
+		int col = (a << 24) | (r << 16) | (g << 8) | b;
+
+		img.setRGB(posX, posY, col);
+
+		return img;
+	}
 }
