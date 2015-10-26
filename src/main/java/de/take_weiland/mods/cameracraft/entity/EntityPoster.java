@@ -19,18 +19,8 @@ public class EntityPoster extends EntityPaintable implements IEntityAdditionalSp
 		super(world);
 	}
 
-	public EntityPoster(World world, int x, int y, int z, int dir, ItemStack stack) {
-		super(world, x, y, z, dir, stack);
-	}
-
-	@Override
-	public int getWidthPixels() {
-		return 64;
-	}
-
-	@Override
-	public int getHeightPixels() {
-		return 64;
+	public EntityPoster(World world, int x, int y, int z, int dir, ItemStack stack, int dimX, int dimY) {
+		super(world, x, y, z, dir, stack, dimX, dimY);
 	}
 
 	@Override
@@ -49,6 +39,8 @@ public class EntityPoster extends EntityPaintable implements IEntityAdditionalSp
 		out.writeInt(field_146064_c);
 		out.writeInt(field_146062_d);
 		out.writeByte(hangingDirection);
+		out.writeInt(dimensionX);
+		out.writeInt(dimensionY);
 	}
 
 	@Override
@@ -58,6 +50,7 @@ public class EntityPoster extends EntityPaintable implements IEntityAdditionalSp
 		field_146064_c = in.readInt();
 		field_146062_d = in.readInt(); // setDirection needs these
 		setDirection(in.readByte());
-		
+		dimensionX = in.readInt();
+		dimensionY = in.readInt();
 	}
 }

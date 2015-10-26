@@ -4,14 +4,19 @@ import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL12.GL_RESCALE_NORMAL;
 
 
+import de.take_weiland.mods.cameracraft.entity.EntityPaintable;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
+
+import java.awt.image.BufferedImage;
 
 public class RenderPoster extends Render {
 
@@ -108,7 +113,7 @@ public class RenderPoster extends Render {
 				t.draw();
 				
 				bindEntityTexture(poster);
-				
+
 				t.startDrawingQuads();
 
 				// front
@@ -117,7 +122,20 @@ public class RenderPoster extends Render {
 				t.addVertexWithUV((double)xStart, (double)yStart, (double)(-f2), (double)uStart, (double)vStart);
 				t.addVertexWithUV((double)xStart, (double)yEnd, (double)(-f2), (double)uStart, (double)vEnd);
 				t.addVertexWithUV((double)xEnd, (double)yEnd, (double)(-f2), (double)uEnd, (double)vEnd);
-				
+
+				t.draw();
+
+				bindOverloadPicture(poster);
+
+				t.startDrawingQuads();
+
+				// front
+				t.setNormal(0.0F, 0.0F, -1.0F);
+				t.addVertexWithUV((double)xEnd, (double)yStart, (double)(-f2), (double)uEnd, (double)vStart);
+				t.addVertexWithUV((double)xStart, (double)yStart, (double)(-f2), (double)uStart, (double)vStart);
+				t.addVertexWithUV((double)xStart, (double)yEnd, (double)(-f2), (double)uStart, (double)vEnd);
+				t.addVertexWithUV((double)xEnd, (double)yEnd, (double)(-f2), (double)uEnd, (double)vEnd);
+
 				t.draw();
 			}
 		}
@@ -160,4 +178,7 @@ public class RenderPoster extends Render {
 		return null;
 	}
 
+	protected void bindOverloadPicture(Entity entity){
+		Minecraft.getMinecraft().getTextureManager().bindTexture(Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("cameracraft.overlay",((EntityPaintable) entity).getDynamicTexture()));
+	}
 }
