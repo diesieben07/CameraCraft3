@@ -55,10 +55,7 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
             return false;
         }
 
-		int x1 = 4;
-		int y1 = 4;
-
-		EntityPoster poster = new EntityPoster(world, x, y, z, Direction.facingToDirection[side], stack, x1, y1);
+		EntityPoster poster = new EntityPoster(world, x, y, z, Direction.facingToDirection[side], stack, 4, 4);
 		if (poster.onValidSurface()) {
 			if (sideOf(world).isServer()) {
 				world.spawnEntityInWorld(poster);
