@@ -3,6 +3,7 @@ package de.take_weiland.mods.cameracraft.tileentity;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Queues;
 import com.google.common.primitives.Ints;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.api.printer.InkItem;
 import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
@@ -261,6 +262,15 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
         }
 
         return appendLen;
+	}
+
+	public PhotoStorage getStorage() {
+		ItemStack stack = getStackInSlot(SLOT_STORAGE);
+        if (stack != null && stack.getItem() instanceof PhotoStorageItem) {
+            return ((PhotoStorageItem) stack.getItem()).getPhotoStorage(stack);
+        } else {
+            return null;
+        }
 	}
 
 	@Override

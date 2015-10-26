@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.photo;
 
 import com.google.common.base.Throwables;
+import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
@@ -15,7 +16,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 public final class PhotoStorages {
 
@@ -106,12 +106,8 @@ public final class PhotoStorages {
 		}
 
         private static byte[] concat(byte[] a, byte[] b) {
-            int aLen = a.length;
-            int bLen = b.length;
-            byte[] result = Arrays.copyOf(a, aLen + bLen);
-            System.arraycopy(b, 0, a, aLen, bLen);
-            return result;
-        }
+            return Bytes.concat(a, b);
+		}
 
 		@Override
 		protected void clearImpl() {

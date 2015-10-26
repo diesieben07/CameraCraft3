@@ -9,7 +9,7 @@ import net.minecraft.entity.player.EntityPlayer;
 @Packet.Receiver(Side.SERVER)
 public class PacketClientRequestPhoto implements Packet.WithResponse<PacketPhotoData> {
 
-    long photoId;
+    private final long photoId;
 	
 	public PacketClientRequestPhoto(long photoId) {
 		this.photoId = photoId;
@@ -25,8 +25,7 @@ public class PacketClientRequestPhoto implements Packet.WithResponse<PacketPhoto
     }
 
     public PacketPhotoData handle(EntityPlayer player) {
-        long photoId = this.photoId;
-        return new PacketPhotoData(photoId);
+        return new PacketPhotoData(this.photoId);
     }
 
 }

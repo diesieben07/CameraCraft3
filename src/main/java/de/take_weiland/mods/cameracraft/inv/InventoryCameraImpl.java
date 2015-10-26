@@ -48,6 +48,8 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
         this.type = type;
         this.world = world;
         this.position = position;
+        loadData();
+
     }
 
     public final CameraType getType() {
@@ -81,6 +83,7 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
     public void setLidState(boolean close) {
         if (hasLid()) {
             isLidClosed = close;
+            markDirty();
         }
     }
 
@@ -126,6 +129,7 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
 
     @Override
     public void readFromNBT(NBTTagCompound nbt) {
+        if (type == null) return; // not yet initialized, call from super constructor
         super.readFromNBT(nbt);
         if (hasLid()) {
             isLidClosed = nbt.getBoolean("lid");
@@ -253,21 +257,6 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
     }
 
     @Override
-    public void toggleLid() {
-        if (hasLid()) {
-            isLidClosed = !isLidClosed;
-
-            if (isLidClosed) {
-                closeLid();
-            } else {
-                openLid();
-            }
-
-            markDirty();
-        }
-    }
-
-    @Override
     public boolean canTakePhoto() {
         return getBatteryCharge() > 0 && hasStorage() && getPhotoStorage().canStore();
     }
@@ -368,6 +357,7 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
 
         @Override
         public int store(long photoId) {
+            System.out.println(photoId);
             int result = delegate.store(photoId);
             camera.markDirty();
             return result;
