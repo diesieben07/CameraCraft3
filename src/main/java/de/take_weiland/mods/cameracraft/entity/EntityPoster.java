@@ -3,28 +3,24 @@ package de.take_weiland.mods.cameracraft.entity;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
+import de.take_weiland.mods.cameracraft.item.ItemPen;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class EntityPoster extends EntityHanging implements IEntityAdditionalSpawnData {
-
-	private long photoId;
-	private ItemStack stack;
+public class EntityPoster extends EntityPaintable implements IEntityAdditionalSpawnData {
 	
 	public EntityPoster(World world) {
 		super(world);
 	}
 
 	public EntityPoster(World world, int x, int y, int z, int dir, ItemStack stack) {
-		super(world, x, y, z, dir);
-		this.photoId = ((PhotoItem)stack.getItem()).getPhotoId(stack);
-		this.stack = stack;
-		setDirection(dir);
+		super(world, x, y, z, dir, stack);
 	}
 
 	@Override
@@ -64,24 +60,4 @@ public class EntityPoster extends EntityHanging implements IEntityAdditionalSpaw
 		setDirection(in.readByte());
 		
 	}
-
-	@Override
-	public void writeEntityToNBT(NBTTagCompound nbt) {
-		super.writeEntityToNBT(nbt);
-		nbt.setTag("photoStack", stack.writeToNBT(new NBTTagCompound()));
-	}
-
-	@Override
-	public void readEntityFromNBT(NBTTagCompound nbt) {
-		super.readEntityFromNBT(nbt);
-		stack = ItemStack.loadItemStackFromNBT(nbt.getCompoundTag("photoStack"));
-		Item item = stack != null ? stack.getItem() : null;
-		if (item instanceof PhotoItem) {
-			photoId = ((PhotoItem)item).getPhotoId(stack);
-		} else {
-			CameraCraft.logger.warn("Invalid Item in EntityPoster at " + posX + ", " + posY + ", " + posZ);
-            setDead();
-		}
-	}
-
 }

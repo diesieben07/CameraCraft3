@@ -25,6 +25,16 @@ dependencies {
     compile 'de.take_weiland.mods.commons:SevenCommons:0.1.71:deobf'
 }
 
+repositories {
+    maven {
+        name "xcompwiz"
+        url "http://maven.xcompwiz.com"
+    }
+}
+dependencies {
+    compile "com.xcompwiz.lookingglass:lookingglass:0.2.0.00:dev"
+}
+
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
 compileJava.options.encoding = 'UTF-8'

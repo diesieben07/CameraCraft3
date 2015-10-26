@@ -12,6 +12,9 @@ public abstract class CCItem extends Item {
     public static final ItemPhotoStorages photoStorage = new ItemPhotoStorages();
     public static final ItemLens lens = new ItemLens();
     public static final ItemPhoto photo = new ItemPhoto();
+    public static final ItemVideoCamera video_camera = new ItemVideoCamera();
+    public static final ItemScreen screen = new ItemScreen();
+    public static final ItemPen pen = new ItemPen();
 
     private final String baseName;
 
@@ -25,6 +28,6 @@ public abstract class CCItem extends Item {
 
     public static void init() {
         Items.initAll(CCItem::getBaseName, CameraCraft.tab,
-                battery, camera, misc, photoStorage, lens, photo);
+                battery, camera, misc, photoStorage, lens, photo, video_camera, screen, pen);
     }
 }

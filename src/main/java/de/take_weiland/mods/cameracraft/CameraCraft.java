@@ -16,7 +16,10 @@ import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApiHandler;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
+import de.take_weiland.mods.cameracraft.entity.EntityScreen;
+import de.take_weiland.mods.cameracraft.entity.EntityVideoCamera;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
+import de.take_weiland.mods.cameracraft.item.CCArmor;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.network.*;
@@ -96,8 +99,11 @@ public final class CameraCraft {
 
         CCBlock.createBlocks();
         CCItem.init();
+        CCArmor.init();
 
         EntityRegistry.registerModEntity(EntityPoster.class, "poster", 0, this, 160, Integer.MAX_VALUE, false);
+        EntityRegistry.registerModEntity(EntityVideoCamera.class, "video.camera", 1, this, 160, Integer.MAX_VALUE, false);
+        EntityRegistry.registerModEntity(EntityScreen.class, "screen", 2, this, 160, Integer.MAX_VALUE, false);
 
         if (enableOreGeneration) {
             GameRegistry.registerWorldGenerator(new CCWorldGen(), 0);
@@ -158,5 +164,6 @@ public final class CameraCraft {
             }
         }
     }
+
 
 }
