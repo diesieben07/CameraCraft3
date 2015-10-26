@@ -109,7 +109,7 @@ public final class PhotoStorages {
             int aLen = a.length;
             int bLen = b.length;
             byte[] result = Arrays.copyOf(a, aLen + bLen);
-            System.arraycopy(b, 0, a, aLen, bLen);
+            System.arraycopy(b, 0, result, aLen, bLen);
             return result;
         }
 

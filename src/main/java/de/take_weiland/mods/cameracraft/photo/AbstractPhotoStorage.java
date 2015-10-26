@@ -35,7 +35,7 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	@Override
 	public int store(long photoId) {
 		checkNotSealed();
-		if (isFull()) {
+        if (isFull()) {
 			return -1;
 		} else {
 			storeImpl(photoId);

@@ -49,12 +49,24 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
 
                 CameraCraftApi.get().defaultTakePhoto(player, inv.getFilter())
                         .whenCompleteAsync((photoId, x) -> {
+                            Throwable ex = null;
                             if (x != null) {
-                                CameraCraft.printErrorMessage(player, "Failed to write image for photoID " + photoId, x);
+                                ex = x;
                             } else {
-                                inv.getPhotoStorage().store(photoId);
+                                try {
+                                    inv.getPhotoStorage().store(photoId);
+                                } catch (Throwable t) {
+                                    ex = t;
+                                }
                             }
-                            inv.dispose();
+                            try {
+                                inv.dispose();
+                            } catch (Throwable t) {
+                                ex = t;
+                            }
+                            if (ex != null) {
+                                CameraCraft.printErrorMessage(player, "Failed to write image for photoID " + photoId, ex);
+                            }
                         }, Scheduler.server());
             }
         }
