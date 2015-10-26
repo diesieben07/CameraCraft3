@@ -5,9 +5,11 @@ import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
+import de.take_weiland.mods.cameracraft.api.printer.InkItem;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.img.ImageUtil;
 import de.take_weiland.mods.cameracraft.item.ItemPen;
+import de.take_weiland.mods.cameracraft.network.PacketPaint;
 import de.take_weiland.mods.commons.util.Entities;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -21,6 +23,7 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -61,11 +64,27 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
 
         MovingObjectPosition mop = Entities.rayTrace(player, 10);
 
-        double x = this.posX - mop.hitVec.xCoord;
-        double y = this.posY - mop.hitVec.yCoord;
+        double x = 0;
+        double y = 0;
+        System.out.println("Direction :" + hangingDirection);
+        switch(hangingDirection){
+            case 0:
+                x = mop.hitVec.xCoord - boundingBox.minX;
+                break;
+            case 1:
+                x = mop.hitVec.zCoord - boundingBox.minZ;
+                break;
+            case 2:
+                x = boundingBox.maxX - mop.hitVec.xCoord;
+                break;
+            case 3:
+                x = boundingBox.maxZ - mop.hitVec.zCoord;
+                break;
+        }
 
-        if(FMLCommonHandler.instance().getEffectiveSide() == Side.CLIENT) {
-            System.out.println(this.posY);
+        if(worldObj.isRemote) {
+            new PacketPaint(this.getEntityId(), x, y, Color.RED.getRGB()).sendToServer();
+            paint(player, x, y, Color.RED.getRGB(), player.getCurrentEquippedItem());
         }
 
         return false;
@@ -104,10 +123,6 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         dimensionY = nbt.getInteger("dimY");
         dimensionX = nbt.getInteger("dimX");
 
-    }
-
-    public void rightClickEntity(Entity theClicker, MovingObjectPosition mop, double x, double y, ItemStack stack) {
-        System.out.println(x + "\t" + y);
     }
 
     public BufferedImage getBufImage() {
@@ -165,8 +180,12 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
     public void onUpdate() {
         super.onUpdate();
 
-        System.out.println(dimensionX + "\t" + dimensionY + "\t" + FMLCommonHandler.instance().getEffectiveSide());
+    }
 
-
+    public void paint(EntityPlayer painter, double y, double x, int colorCode, ItemStack stack) {
+        System.out.println(bufImage);
+        if(bufImage != null) {
+            bufImage.setRGB((int)x, (int) y, Color.black.getTransparency());
+        }
     }
 }

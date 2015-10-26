@@ -61,4 +61,14 @@ public final class ImageUtil {
 
 		return img;
 	}
+
+	public static BufferedImage color(BufferedImage img, int posX, int posY, int col) {
+		int a = 255;
+
+		int col2  = (a << 24) | (255 << 16) | (0 << 8) | 255;
+
+		img.setRGB(posX, posY, col);
+
+		return img;
+	}
 }

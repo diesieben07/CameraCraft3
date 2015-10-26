@@ -31,15 +31,4 @@ public class EntityPoster extends EntityPaintable {
 	public long getPhotoId() {
 		return photoId;
 	}
-
-
-//	@Override
-//	public int getWidthPixels() {
-//		return 64;
-//	}
-//
-//	@Override
-//	public int getHeightPixels() {
-//		return 64;
-//	}
 }
