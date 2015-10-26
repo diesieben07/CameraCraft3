@@ -54,7 +54,8 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
         PhotoStorage storage = container.inventory().getStorage();
         if (storage != null) {
             for (Long id : storage) {
-                fontRendererObj.drawString(Long.toHexString(id), guiLeft + 10, y, 0xffffff);
+                String name = String.format("DCIM_%04d", id);
+                fontRendererObj.drawString(name, guiLeft + 10, y, 0xffffff);
                 y += fontRendererObj.FONT_HEIGHT + 3;
             }
         }
