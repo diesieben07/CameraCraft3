@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.entity;
 
 import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import cpw.mods.fml.relauncher.Side;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
@@ -8,6 +9,7 @@ import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.img.ImageUtil;
 import de.take_weiland.mods.cameracraft.item.ItemPen;
 import de.take_weiland.mods.commons.util.Entities;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
@@ -19,7 +21,6 @@ import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.world.World;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,7 +29,7 @@ import java.io.IOException;
 /**
  * @author Intektor
  */
-public abstract class EntityPaintable extends EntityHanging {
+public abstract class EntityPaintable extends EntityHanging implements IEntityAdditionalSpawnData {
 
     protected long photoId;
     protected ItemStack stack;
@@ -36,6 +37,7 @@ public abstract class EntityPaintable extends EntityHanging {
     protected DynamicTexture dt;
 
     protected int dimensionX, dimensionY;
+    private int offsetX, offsetY;
 
     public EntityPaintable(World world) {
         super(world);
@@ -47,9 +49,9 @@ public abstract class EntityPaintable extends EntityHanging {
         this.photoId = ((PhotoItem) stack.getItem()).getPhotoId(stack);
         this.stack = stack;
         bufImage = new BufferedImage(265, 265, BufferedImage.TYPE_INT_ARGB);
-        setDirection(dir);
         dimensionX = dimX;
         dimensionY = dimY;
+        setDirection(dir);
     }
 
     @Override
@@ -80,6 +82,8 @@ public abstract class EntityPaintable extends EntityHanging {
             nbt.setByteArray("imageOverload", image);
         } catch (IOException e) {
         }
+        nbt.setInteger("dimX", dimensionX);
+        nbt.setInteger("dimY", dimensionY);
     }
 
     @Override
@@ -97,15 +101,11 @@ public abstract class EntityPaintable extends EntityHanging {
             bufImage = ImageIO.read(new ByteArrayInputStream(nbt.getByteArray("imageOverload")));
         } catch (Exception e) {
         }
+        dimensionY = nbt.getInteger("dimY");
+        dimensionX = nbt.getInteger("dimX");
+
     }
 
-    /**
-     * @param theClicker
-     * @param mop
-     * @param x
-     * @param y
-     * @param stack
-     */
     public void rightClickEntity(Entity theClicker, MovingObjectPosition mop, double x, double y, ItemStack stack) {
         System.out.println(x + "\t" + y);
     }
@@ -131,11 +131,42 @@ public abstract class EntityPaintable extends EntityHanging {
 
     @Override
     public int getWidthPixels() {
-        return dimensionX*16;
+        return 64;
     }
 
     @Override
     public int getHeightPixels() {
-        return dimensionY*16;
+        return 64;
+    }
+
+    @Override
+    public void writeSpawnData(ByteBuf out) {
+        out.writeLong(photoId);
+        out.writeInt(field_146063_b);
+        out.writeInt(field_146064_c);
+        out.writeInt(field_146062_d);
+        out.writeInt(dimensionX);
+        out.writeInt(dimensionY);
+        out.writeByte(hangingDirection);
+    }
+
+    @Override
+    public void readSpawnData(ByteBuf in) {
+        photoId = in.readLong();
+        field_146063_b = in.readInt();
+        field_146064_c = in.readInt();
+        field_146062_d = in.readInt(); // setDirection needs these
+        dimensionX = in.readInt();
+        dimensionY = in.readInt();
+        setDirection(in.readByte());
+    }
+
+    @Override
+    public void onUpdate() {
+        super.onUpdate();
+
+        System.out.println(dimensionX + "\t" + dimensionY + "\t" + FMLCommonHandler.instance().getEffectiveSide());
+
+
     }
 }

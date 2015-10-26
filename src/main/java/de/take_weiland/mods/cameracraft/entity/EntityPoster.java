@@ -13,7 +13,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
-public class EntityPoster extends EntityPaintable implements IEntityAdditionalSpawnData {
+public class EntityPoster extends EntityPaintable {
 	
 	public EntityPoster(World world) {
 		super(world);
@@ -32,25 +32,14 @@ public class EntityPoster extends EntityPaintable implements IEntityAdditionalSp
 		return photoId;
 	}
 
-	@Override
-	public void writeSpawnData(ByteBuf out) {
-		out.writeLong(photoId);
-		out.writeInt(field_146063_b);
-		out.writeInt(field_146064_c);
-		out.writeInt(field_146062_d);
-		out.writeByte(hangingDirection);
-		out.writeInt(dimensionX);
-		out.writeInt(dimensionY);
-	}
 
-	@Override
-	public void readSpawnData(ByteBuf in) {
-		photoId = in.readLong();
-		field_146063_b = in.readInt();
-		field_146064_c = in.readInt();
-		field_146062_d = in.readInt(); // setDirection needs these
-		setDirection(in.readByte());
-		dimensionX = in.readInt();
-		dimensionY = in.readInt();
-	}
+//	@Override
+//	public int getWidthPixels() {
+//		return 64;
+//	}
+//
+//	@Override
+//	public int getHeightPixels() {
+//		return 64;
+//	}
 }
