@@ -1,13 +1,13 @@
 package de.take_weiland.mods.cameracraft.client.gui.printer;
 
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-
-import static org.lwjgl.opengl.GL11.*;
 
 public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 
@@ -22,6 +22,7 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 	
 	public GuiPrinter(ContainerPrinter container) {
 		super(container);
+        ySize = 200;
 	}
 
 	int getScrollerHiddenOffset() {
@@ -36,7 +37,6 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public void initGui() {
-		ySize = 200;
 		super.initGui();
 
 		buttonList.add(new ButtonOpenScroller(BUTTON_OPEN_SCROLLER, guiLeft + 4, guiTop + 15 + 30));
@@ -46,10 +46,19 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 	@Override
 	public void drawScreen(int mouseX, int mouseY, float partialTicks) {
 		super.drawScreen(mouseX, mouseY, partialTicks);
-		glDisable(GL_LIGHTING);
 
-		glEnable(GL_LIGHTING);
-	}
+        RenderHelper.disableStandardItemLighting();
+
+        int y = guiTop + 10;
+
+        PhotoStorage storage = container.inventory().getStorage();
+        if (storage != null) {
+            for (Long id : storage) {
+                fontRendererObj.drawString(Long.toHexString(id), guiLeft + 10, y, 0xffffff);
+                y += fontRendererObj.FONT_HEIGHT + 3;
+            }
+        }
+    }
 	
 	@Override
 	protected void actionPerformed(GuiButton button) {

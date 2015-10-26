@@ -200,24 +200,17 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
         if (idsDirty) {
             File ids = new File(root, IDS_DAT);
             try {
-                try (OutputStream out = new BufferedOutputStream(new FileOutputStream(ids))) {
-                    writeLong(out, nextId);
+                try (DataOutputStream out = new DataOutputStream(new FileOutputStream(ids))) {
+                    out.writeLong(nextId);
                     TLongIterator it = this.ids.iterator();
                     while (it.hasNext()) {
-                        writeLong(out, it.next());
+                        out.writeLong(it.next());
                     }
                 }
             } catch (IOException e) {
                 throw new UncheckedIOException(e);
             }
             idsDirty = false;
-        }
-    }
-
-    private static void writeLong(OutputStream out, long l) throws IOException {
-        for (int i = 7; i >= 0; i--) {
-          out.write((int) (l & 0xffL));
-          l >>= 8;
         }
     }
 
