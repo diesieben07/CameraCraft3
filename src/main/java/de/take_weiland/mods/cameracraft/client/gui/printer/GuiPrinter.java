@@ -4,6 +4,7 @@ import com.google.common.collect.FluentIterable;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
+import de.take_weiland.mods.cameracraft.network.PacketRequestPrintJob;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.client.Guis;
@@ -95,8 +96,10 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
         hoveredID = null;
 
         if (currentIDs != null) {
+            int idx = listOffset + 1;
             for (Long id : currentIDs) {
-                String name = String.format("DCIM_%04d", id);
+                String name = String.format("DCIM_%04d", idx);
+                idx++;
 
                 int x = guiLeft + 10;
                 int width = fontRendererObj.getStringWidth(name);
@@ -117,7 +120,7 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
                     hoveredID = id;
                 }
 
-                int color = selected ? 0xff3333 : hover ? 0x000000 : 0xffffff;
+                int color = selected ? 0xaa3333 : hover ? 0x000000 : 0xffffff;
                 fontRendererObj.drawString(name, x, y, color);
                 y += height + 3;
             }
@@ -149,6 +152,9 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 		super.actionPerformed(button);
 		switch (button.id) {
             case BUTTON_PRINT:
+                if (selectedID != null) {
+                    new PacketRequestPrintJob(container.windowId, selectedID, 1).sendToServer();
+                }
                 break;
             case BUTTON_NEXT:
                 listOffset += LIST_SIZE;
