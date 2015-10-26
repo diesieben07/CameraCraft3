@@ -18,19 +18,11 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class ContainerPrinter extends AbstractContainer<TilePrinter> implements SpecialShiftClick {
 
-
-	private final boolean isAdvanced;
-
-	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player, boolean isAdvanced) {
-		super(world, x, y, z, player, 84, 118);
-		this.isAdvanced = isAdvanced;
+	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player) {
+		super(world, x, y, z, player, 8, 118);
 	}
 
-	public boolean isAdvanced() {
-		return isAdvanced;
-	}
-
-    @Override
+	@Override
     public ShiftClickTarget getShiftClickTarget(ItemStack stack, EntityPlayer player) {
         Item item;
         if (ItemStacks.is(stack, Items.paper)) {
@@ -47,6 +39,8 @@ public class ContainerPrinter extends AbstractContainer<TilePrinter> implements 
 		for (int x = 0; x < 5; ++x) {
 			addSlotToContainer(new SimpleSlot(inventory, x, x * 27 + 44, 91));
 		}
+
+        addSlotToContainer(new SimpleSlot(inventory, TilePrinter.SLOT_STORAGE, 17, 91));
 	}
 	
 }

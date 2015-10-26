@@ -52,9 +52,9 @@ public enum CCGuis {
                     InventoryCameraImpl camera = (InventoryCameraImpl) CCItem.camera.createCamera(player);
                     return new ContainerCamera(camera, player, camera.hasLid() ? camera.storageSlot() : -1);
                 case PRINTER:
-                    return new ContainerPrinter(world, x, y, z, player, false);
+                    return new ContainerPrinter(world, x, y, z, player);
                 case PRINTER_ADVANCED:
-                    return new ContainerPrinter(world, x, y, z, player, true);
+                    return new ContainerPrinter(world, x, y, z, player);
                 case SCANNER:
                     return new ContainerScanner(world, x, y, z, player);
                 default:
