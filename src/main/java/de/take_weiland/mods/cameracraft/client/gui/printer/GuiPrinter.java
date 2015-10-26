@@ -2,15 +2,19 @@ package de.take_weiland.mods.cameracraft.client.gui.printer;
 
 import com.google.common.collect.FluentIterable;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
+import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
 import de.take_weiland.mods.commons.client.Guis;
 import de.take_weiland.mods.commons.client.Rendering;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
+
+import static org.lwjgl.opengl.GL11.glColor3f;
 
 public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 
@@ -19,12 +23,17 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
     private static final int BUTTON_PREV = 2;
     public static final int LIST_SIZE = 4;
 
-    private GuiButton buttonPrint, buttonNext, buttonPrev;
+    private GuiButton buttonPrint;
+    private GuiButton buttonNext;
+    private GuiButton buttonPrev;
 
     private ItemStack currentStorageStack;
     private PhotoStorage currentStorage;
+    private Iterable<Long> currentIDs;
 
     private int listOffset = 0;
+    private Long selectedID;
+    private Long hoveredID;
 	
 	public GuiPrinter(ContainerPrinter container) {
 		super(container);
@@ -52,9 +61,15 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
         PhotoStorage storage = getStorage();
         if (storage == null) {
             buttonPrev.enabled = buttonNext.enabled = false;
+
+            currentIDs = null;
+            selectedID = null;
+            hoveredID = null;
         } else {
             buttonPrev.enabled = listOffset != 0;
             buttonNext.enabled = storage.size() > listOffset + LIST_SIZE;
+
+            currentIDs = FluentIterable.from(storage).skip(listOffset).limit(LIST_SIZE);
         }
     }
 
@@ -77,9 +92,10 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 
         int y = guiTop + 10;
 
-        PhotoStorage storage = getStorage();
-        if (storage != null) {
-            for (Long id : FluentIterable.from(storage).skip(listOffset).limit(LIST_SIZE)) {
+        hoveredID = null;
+
+        if (currentIDs != null) {
+            for (Long id : currentIDs) {
                 String name = String.format("DCIM_%04d", id);
 
                 int x = guiLeft + 10;
@@ -91,14 +107,36 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
                 int hovWidth = width + 1;
                 int hovHeight = height;
 
+                boolean selected = id.equals(selectedID);
                 boolean hover = Guis.isPointInRegion(hovX, hovY, hovWidth, hovHeight, mouseX, mouseY);
-                if (hover) {
+                if (hover || selected) {
                     Rendering.drawColoredQuad(hovX, hovY, hovWidth, hovHeight, 0xf0f0f0);
                 }
 
-                fontRendererObj.drawString(name, x, y, hover ? 0x000000 : 0xffffff);
+                if (hover) {
+                    hoveredID = id;
+                }
+
+                int color = selected ? 0xff3333 : hover ? 0x000000 : 0xffffff;
+                fontRendererObj.drawString(name, x, y, color);
                 y += height + 3;
             }
+        }
+
+        if (selectedID != null) {
+            glColor3f(1, 1, 1);
+            PhotoDataCache.bindTexture(selectedID);
+            Rendering.drawTexturedQuadFit(guiLeft + xSize - 70, guiTop + 10, 60, 60);
+        }
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        if (mouseButton == 0 && hoveredID != null) {
+            selectedID = hoveredID;
+            mc.getSoundHandler().playSound(PositionedSoundRecord.createPositionedSoundRecord(new ResourceLocation("gui.button.press"), 1));
+        } else {
+            super.mouseClicked(mouseX, mouseY, mouseButton);
         }
     }
 
