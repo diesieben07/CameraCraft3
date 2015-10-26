@@ -186,6 +186,7 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
     @Override
     public long nextId() {
         long id = nextId++;
+        ids.add(id);
         idsDirty = true;
         return id;
     }
@@ -197,7 +198,7 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
 
     public void save() {
         if (idsDirty) {
-            File ids = new File(IDS_DAT);
+            File ids = new File(root, IDS_DAT);
             try {
                 try (OutputStream out = new BufferedOutputStream(new FileOutputStream(ids))) {
                     writeLong(out, nextId);
