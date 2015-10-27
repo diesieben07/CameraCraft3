@@ -25,4 +25,9 @@ public class ItemPen extends CCItem{
     public String getItemStackDisplayName(ItemStack stack) {
         return "Pen";
     }
+
+    @Override
+    public int getMaxItemUseDuration(ItemStack stack) {
+        return 0;
+    }
 }
