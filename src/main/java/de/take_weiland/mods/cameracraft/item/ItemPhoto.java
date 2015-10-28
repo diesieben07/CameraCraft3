@@ -10,6 +10,7 @@ import de.take_weiland.mods.commons.meta.MetadataProperty;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.Direction;
 import net.minecraft.world.World;
 
@@ -19,8 +20,11 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 
     private static final MetadataProperty<PhotoType> types = MetadataProperty.newProperty(0, PhotoType.class);
 
-	public static final String NBT_KEY = "cameracraft.photoId";
-	private static final String NBT_NAME_KEY = "cameracraft.photoname";
+    private static final String NBT_KEY_BASE = CameraCraft.MOD_ID;
+	public static final String NBT_KEY_ID = "photo";
+	private static final String NBT_KEY_NAME = "name";
+    private static final String NBT_KEY_WIDTH = "width";
+    private static final String NBT_KEY_HEIGHT = "height";
 
 	public ItemPhoto() {
 		super("photo");
@@ -69,15 +73,28 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	
 	@Override
 	public long getPhotoId(final ItemStack stack) {
-        return ItemStacks.getNbt(stack).getLong(NBT_KEY);
+        return getNbt(stack).getLong(NBT_KEY_ID);
 	}
 	
 	@Override
 	public void setPhotoId(ItemStack stack, long photoId) {
-		ItemStacks.getNbt(stack).setLong(NBT_KEY, photoId);
+		getNbt(stack).setLong(NBT_KEY_ID, photoId);
 	}
 
 	@Override
+	public Size getSize(ItemStack stack) {
+		NBTTagCompound nbt = getNbt(stack);
+        return new PhotoItem.Size(nbt.getInteger(NBT_KEY_WIDTH), nbt.getInteger(NBT_KEY_HEIGHT));
+	}
+
+    @Override
+    public void setSize(ItemStack stack, Size size) {
+        NBTTagCompound nbt = getNbt(stack);
+        nbt.setInteger(NBT_KEY_WIDTH, size.getWidth());
+        nbt.setInteger(NBT_KEY_HEIGHT, size.getHeight());
+    }
+
+    @Override
 	public PhotoStorage getPhotoStorage(ItemStack stack) {
 		if (!stack.hasTagCompound()) {
 			return null;
@@ -123,7 +140,7 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 
 	@Override
 	public boolean isNamed(ItemStack stack) {
-		return ItemStacks.getNbt(stack).hasKey(NBT_NAME_KEY);
+		return getNbt(stack).hasKey(NBT_KEY_NAME);
 	}
 
 	@Override
@@ -132,14 +149,18 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	}
 
 	private String getNameImpl(ItemStack stack) {
-		return ItemStacks.getNbt(stack).getString(NBT_NAME_KEY);
+		return getNbt(stack).getString(NBT_KEY_NAME);
 	}
 
 	@Override
 	public void setName(ItemStack stack, String name) {
 		if (!isNamed(stack)) {
-			ItemStacks.getNbt(stack).setString(NBT_NAME_KEY, Strings.nullToEmpty(name));
+			getNbt(stack).setString(NBT_KEY_NAME, Strings.nullToEmpty(name));
 		}
 	}
+
+    private static NBTTagCompound getNbt(ItemStack stack) {
+        return ItemStacks.getNbt(stack, NBT_KEY_BASE);
+    }
 
 }
