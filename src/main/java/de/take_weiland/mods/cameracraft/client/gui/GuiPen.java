@@ -1,6 +1,8 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
+import de.take_weiland.mods.cameracraft.item.ItemDraw;
 import de.take_weiland.mods.cameracraft.network.PacketGuiPenButton;
+import de.take_weiland.mods.commons.client.Rendering;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiScreen;
@@ -49,6 +51,8 @@ public class GuiPen extends GuiScreen {
             drawCenteredString(mc.fontRendererObj, "Green: " + nbt.getInteger("Green"), width / 2, height / 2, Color.green.getRGB());
             drawCenteredString(mc.fontRendererObj, "Blue: " + nbt.getInteger("Blue"), width / 2, height / 2 + 20, Color.blue.getRGB());
         }
+        ItemDraw item = (ItemDraw) mc.thePlayer.getCurrentEquippedItem().getItem();
+        Rendering.drawColoredQuad(width/2 - 5, height/2 + 40, 10, 10, item.getColorCode(nbt));
     }
 
     @Override

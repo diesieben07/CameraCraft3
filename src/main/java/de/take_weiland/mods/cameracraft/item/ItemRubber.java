@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.item;
 
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
 
 /**
  * @author Intektor
@@ -12,7 +13,7 @@ public class ItemRubber extends ItemDraw {
     }
 
     @Override
-    public int getColorCode(ItemStack stack) {
+    public int getColorCode(NBTTagCompound nbt) {
         return 0;
     }
 }

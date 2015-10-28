@@ -53,15 +53,17 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         super(world, x, y, z, dir);
         this.photoId = ((PhotoItem) stack.getItem()).getPhotoId(stack);
         this.stack = stack;
-        if(stack.getTagCompound().hasKey("imageOverload")) {
-            try {
-                InputStream in = new ByteArrayInputStream(stack.getTagCompound().getByteArray("imageOverload"));
-                bufImage = ImageIO.read(in);
-            } catch (Exception e) {
-                e.printStackTrace();
+        if (stack.hasTagCompound()) {
+            if (stack.getTagCompound().hasKey("imageOverload")) {
+                try {
+                    InputStream in = new ByteArrayInputStream(stack.getTagCompound().getByteArray("imageOverload"));
+                    bufImage = ImageIO.read(in);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                bufImage = new BufferedImage(dimX * resolution / scale, dimY * resolution / scale, BufferedImage.TYPE_INT_ARGB);
             }
-        }else{
-            bufImage = new BufferedImage(dimX * resolution/scale, dimY * resolution/scale, BufferedImage.TYPE_INT_ARGB);
         }
         dimensionX = dimX;
         dimensionY = dimY;
@@ -73,7 +75,7 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         return false;
     }
 
-    public void handlePaintPreCalc(EntityPlayer player, MovingObjectPosition mop){
+    public void handlePaintPreCalc(EntityPlayer player, MovingObjectPosition mop) {
         double x = 0;
         double y = boundingBox.maxY - mop.hitVec.yCoord;
         switch (hangingDirection) {
@@ -92,9 +94,9 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         }
 
         if (worldObj.isRemote) {
-            ItemDraw item = (ItemDraw)player.getCurrentEquippedItem().getItem();
-            new PacketPaint(this.getEntityId(), x, y, item.getColorCode(player.getCurrentEquippedItem())).sendToServer();
-            paint(player, x, y, item.getColorCode(player.getCurrentEquippedItem()), player.getCurrentEquippedItem());
+            ItemDraw item = (ItemDraw) player.getCurrentEquippedItem().getItem();
+            new PacketPaint(this.getEntityId(), x, y, item.getColorCode(player.getCurrentEquippedItem().getTagCompound())).sendToServer();
+            paint(player, x, y, item.getColorCode(player.getCurrentEquippedItem().getTagCompound()), player.getCurrentEquippedItem());
         }
     }
 
@@ -209,7 +211,7 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
     }
 
     public void paint(EntityPlayer painter, double x, double y, int colorCode, ItemStack stack) {
-        int resolution = this.resolution/scale;
+        int resolution = this.resolution / scale;
         int pixelX = (int) (x * resolution);
         int pixelY = (int) (y * resolution);
         if (bufImage != null) {

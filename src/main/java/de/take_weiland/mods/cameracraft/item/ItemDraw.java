@@ -16,17 +16,10 @@ public abstract class ItemDraw extends CCItem {
         this.setMaxStackSize(1);
     }
 
-    public abstract int getColorCode(ItemStack stack);
+    public abstract int getColorCode(NBTTagCompound nbt);
 
     @Override
     public void onCreated(ItemStack stack, World world, EntityPlayer player) {
         stack.setTagCompound(new NBTTagCompound());
-    }
-
-    @Override
-    public void onUpdate(ItemStack stack, World worldIn, Entity entityIn, int p_77663_4_, boolean p_77663_5_) {
-        if(!stack.hasTagCompound()) {
-            stack.setTagCompound(new NBTTagCompound());
-        }
     }
 }

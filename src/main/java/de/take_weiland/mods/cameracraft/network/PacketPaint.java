@@ -36,9 +36,10 @@ public class PacketPaint implements Packet {
         out.writeInt(colorCode);
     }
 
-    public void handle(EntityPlayer player){
-        EntityPaintable entity = (EntityPaintable)player.worldObj.getEntityByID(id);
-
-        entity.paint(player, x, y, colorCode, player.getCurrentEquippedItem());
+    public void handle(EntityPlayer player) {
+        EntityPaintable entity = (EntityPaintable) player.worldObj.getEntityByID(id);
+        if (entity != null) {
+            entity.paint(player, x, y, colorCode, player.getCurrentEquippedItem());
+        }
     }
 }
