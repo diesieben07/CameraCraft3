@@ -3,11 +3,13 @@ package de.take_weiland.mods.cameracraft.entity;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
-import de.take_weiland.mods.cameracraft.client.render.MoreDynamicTexture;
+import de.take_weiland.mods.cameracraft.item.ItemDraw;
 import de.take_weiland.mods.cameracraft.network.PacketPaint;
-import de.take_weiland.mods.commons.util.Entities;
 import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufInputStream;
+import io.netty.buffer.ByteBufOutputStream;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -23,6 +25,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
@@ -38,6 +41,7 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
     protected DynamicTexture dt;
     private final int resolution = 64;
     protected int dimensionX, dimensionY;
+    protected final int scale = 8;
 
     private boolean forceUpdate;
 
@@ -49,7 +53,16 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         super(world, x, y, z, dir);
         this.photoId = ((PhotoItem) stack.getItem()).getPhotoId(stack);
         this.stack = stack;
-        bufImage = new BufferedImage(dimX * resolution, dimY * resolution, BufferedImage.TYPE_INT_ARGB);
+        if(stack.getTagCompound().hasKey("imageOverload")) {
+            try {
+                InputStream in = new ByteArrayInputStream(stack.getTagCompound().getByteArray("imageOverload"));
+                bufImage = ImageIO.read(in);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            bufImage = new BufferedImage(dimX * resolution/scale, dimY * resolution/scale, BufferedImage.TYPE_INT_ARGB);
+        }
         dimensionX = dimX;
         dimensionY = dimY;
         setDirection(dir);
@@ -57,16 +70,10 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
 
     @Override
     public boolean interactFirst(EntityPlayer player) {
+        return false;
+    }
 
-        ItemStack stack = player.getCurrentEquippedItem();
-
-        float distance = 10;
-        MovingObjectPosition mop;
-        Vec3 vec3 = Vec3.createVectorHelper(player.posX, player.posY, player.posZ);
-        Vec3 vec31 = player.getLook(0);
-        Vec3 vec32 = vec3.addVector(vec31.xCoord * distance, vec31.yCoord * distance, vec31.zCoord * distance);
-        mop = player.worldObj.rayTraceBlocks(vec3, vec32, false, false, true);
-
+    public void handlePaintPreCalc(EntityPlayer player, MovingObjectPosition mop){
         double x = 0;
         double y = boundingBox.maxY - mop.hitVec.yCoord;
         switch (hangingDirection) {
@@ -85,11 +92,10 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         }
 
         if (worldObj.isRemote) {
-            new PacketPaint(this.getEntityId(), x, y, Color.RED.getRGB()).sendToServer();
-            paint(player, x, y, Color.RED.getRGB(), player.getCurrentEquippedItem());
+            ItemDraw item = (ItemDraw)player.getCurrentEquippedItem().getItem();
+            new PacketPaint(this.getEntityId(), x, y, item.getColorCode(player.getCurrentEquippedItem())).sendToServer();
+            paint(player, x, y, item.getColorCode(player.getCurrentEquippedItem()), player.getCurrentEquippedItem());
         }
-
-        return false;
     }
 
     @Override
@@ -98,10 +104,11 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         nbt.setTag("photoStack", stack.writeToNBT(new NBTTagCompound()));
         try {
             ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            byte[] image = new byte[stream.size()];
-            stream.write(image);
+            ImageIO.write(bufImage, "png", stream);
+            byte[] image = stream.toByteArray();
             nbt.setByteArray("imageOverload", image);
         } catch (IOException e) {
+            e.printStackTrace();
         }
         nbt.setInteger("dimX", dimensionX);
         nbt.setInteger("dimY", dimensionY);
@@ -119,8 +126,10 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
             setDead();
         }
         try {
-            bufImage = ImageIO.read(new ByteArrayInputStream(nbt.getByteArray("imageOverload")));
+            InputStream in = new ByteArrayInputStream(nbt.getByteArray("imageOverload"));
+            bufImage = ImageIO.read(in);
         } catch (Exception e) {
+            e.printStackTrace();
         }
         dimensionY = nbt.getInteger("dimY");
         dimensionX = nbt.getInteger("dimX");
@@ -168,6 +177,12 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         out.writeInt(dimensionX);
         out.writeInt(dimensionY);
         out.writeByte(hangingDirection);
+        ByteBufOutputStream bb = new ByteBufOutputStream(out);
+        try {
+            ImageIO.write(bufImage, "png", bb);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -179,7 +194,12 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         dimensionX = in.readInt();
         dimensionY = in.readInt();
         setDirection(in.readByte());
-        bufImage = new BufferedImage(dimensionX * resolution, dimensionY * resolution, BufferedImage.TYPE_INT_ARGB);
+        ByteBufInputStream bi = new ByteBufInputStream(in);
+        try {
+            bufImage = ImageIO.read(bi);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -189,12 +209,11 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
     }
 
     public void paint(EntityPlayer painter, double x, double y, int colorCode, ItemStack stack) {
-        System.out.println("Y: " + y*resolution + "\t" + (int)(y*resolution));
-        System.out.println("X: " + x*resolution + "\t" + (int)(x*resolution));
+        int resolution = this.resolution/scale;
         int pixelX = (int) (x * resolution);
         int pixelY = (int) (y * resolution);
         if (bufImage != null) {
-            if (pixelX >= 0 && pixelY >= 0 && pixelX <= dimensionX * resolution && pixelY <= dimensionY * resolution) {
+            if (pixelX >= 0 && pixelY >= 0 && pixelX < bufImage.getWidth() && pixelY < bufImage.getHeight()) {
                 bufImage.setRGB(pixelX, pixelY, colorCode);
                 forceUpdate = true;
                 int[] theDATA = new int[bufImage.getWidth() * bufImage.getHeight()];
@@ -221,4 +240,16 @@ public abstract class EntityPaintable extends EntityHanging implements IEntityAd
         }
     }
 
+    @Override
+    public void onBroken(Entity entity) {
+        try {
+            ByteArrayOutputStream stream = new ByteArrayOutputStream();
+            ImageIO.write(bufImage, "png", stream);
+            byte[] image = stream.toByteArray();
+            stack.getTagCompound().setByteArray("imageOverload", image);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        entityDropItem(stack, 0);
+    }
 }

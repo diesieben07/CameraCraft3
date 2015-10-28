@@ -41,7 +41,7 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
             return stack;
         }
 		if (player.isSneaking()) {
-			CCGuis.CAMERA.open(player);
+			CCGuis.CAMERA.open(player, (int)player.posX, (int)player.posY, (int)player.posZ);
 		} else {
             final Camera inv = createCamera(player);
             if (inv.canTakePhoto()) {

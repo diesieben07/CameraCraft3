@@ -3,6 +3,7 @@ package de.take_weiland.mods.cameracraft.gui;
 import cpw.mods.fml.common.network.IGuiHandler;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.GuiCamera;
+import de.take_weiland.mods.cameracraft.client.gui.GuiPen;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoProcessor;
 import de.take_weiland.mods.cameracraft.client.gui.GuiScanner;
 import de.take_weiland.mods.cameracraft.client.gui.printer.GuiPrinter;
@@ -21,7 +22,8 @@ public enum CCGuis {
 	PRINTER_ADVANCED,
 	PHOTO,
 	SCANNER,
-	CAMERA_PLACED;
+	CAMERA_PLACED,
+    PEN;
 	
 	public void open(EntityPlayer player) {
 		open(player, 0, 0, 0);
@@ -57,6 +59,8 @@ public enum CCGuis {
                     return new ContainerPrinter(world, x, y, z, player);
                 case SCANNER:
                     return new ContainerScanner(world, x, y, z, player);
+                case PEN:
+                    return null;
                 default:
                     throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
             }
@@ -80,6 +84,8 @@ public enum CCGuis {
                     return new GuiPrinter((ContainerPrinter) c);
                 case SCANNER:
                     return new GuiScanner((ContainerScanner) c);
+                case PEN:
+                    return new GuiPen();
                 default:
                     throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}

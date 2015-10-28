@@ -23,11 +23,6 @@ public class EntityPoster extends EntityPaintable {
 		super(world, x, y, z, dir, stack, dimX, dimY);
 	}
 
-	@Override
-	public void onBroken(Entity entity) {
-		entityDropItem(stack, 0);
-	}
-
 	public long getPhotoId() {
 		return photoId;
 	}

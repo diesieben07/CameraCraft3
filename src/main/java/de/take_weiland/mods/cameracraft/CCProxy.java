@@ -29,4 +29,5 @@ public interface CCProxy {
 		throw new IllegalStateException();
 	}
 
+
 }
