@@ -13,12 +13,12 @@ import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.PhotoType;
 import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
+import de.take_weiland.mods.commons.inv.Inventories;
 import de.take_weiland.mods.commons.meta.HasSubtypes;
 import de.take_weiland.mods.commons.nbt.NBT;
 import de.take_weiland.mods.commons.net.Packets;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.Item;
@@ -99,8 +99,7 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 	}
 
 	private void tryStore(ItemStack photo) {
-		// TODO
-		worldObj.spawnEntityInWorld(new EntityItem(worldObj, xCoord, yCoord + 1, zCoord, photo));
+		Inventories.tryStore(photo, worldObj, xCoord, yCoord, zCoord, ForgeDirection.UP);
 	}
 
 	@Override
@@ -179,7 +178,7 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 	}
 	
 	static SimplePrintJob.Queued decodeJob(NBTTagCompound nbt) {
-		return new SimplePrintJob.Queued(nbt.getInteger("id"), nbt.getInteger("amnt"), nbt.getInteger("amntLeft"));
+		return new SimplePrintJob.Queued(nbt.getLong("id"), nbt.getInteger("amnt"), nbt.getInteger("amntLeft"));
 	}
 
     @Override

@@ -1,6 +1,8 @@
 package de.take_weiland.mods.cameracraft.client.gui.printer;
 
+import com.google.common.base.Objects;
 import com.google.common.collect.FluentIterable;
+import com.google.common.primitives.Ints;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
@@ -11,6 +13,7 @@ import de.take_weiland.mods.commons.client.Guis;
 import de.take_weiland.mods.commons.client.Rendering;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiTextField;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -27,6 +30,7 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
     private GuiButton buttonPrint;
     private GuiButton buttonNext;
     private GuiButton buttonPrev;
+    private GuiTextField textFieldAmount;
 
     private ItemStack currentStorageStack;
     private PhotoStorage currentStorage;
@@ -54,6 +58,9 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
         buttonList.add(buttonPrint = new GuiButton(GuiPrinter.BUTTON_PRINT, 0, 40, 50, 20, "Print!"));
         buttonList.add(buttonPrev = new GuiButton(GuiPrinter.BUTTON_PREV, guiLeft + 10, guiTop + 60, 10, 20, "<"));
         buttonList.add(buttonNext = new GuiButton(GuiPrinter.BUTTON_NEXT, guiLeft + 50, guiTop + 60, 10, 20, ">"));
+
+        textFieldAmount = Guis.addTextField(this, new GuiTextField(fontRendererObj, guiLeft + 22, guiTop + 62, 26, 16));
+        textFieldAmount.setMaxStringLength(2);
 
         updateButtonState();
 	}
@@ -153,7 +160,8 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 		switch (button.id) {
             case BUTTON_PRINT:
                 if (selectedID != null) {
-                    new PacketRequestPrintJob(container.windowId, selectedID, 1).sendToServer();
+                    int amount = Objects.firstNonNull(Ints.tryParse(textFieldAmount.getText()), 0);
+                    new PacketRequestPrintJob(container.windowId, selectedID, amount).sendToServer();
                 }
                 break;
             case BUTTON_NEXT:
