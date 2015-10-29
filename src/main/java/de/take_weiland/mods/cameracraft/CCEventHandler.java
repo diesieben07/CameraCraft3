@@ -7,8 +7,10 @@ import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.MiscItemType;
 import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
 import de.take_weiland.mods.commons.SaveWorldsEvent;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.event.entity.EntityEvent;
+import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 
 public final class CCEventHandler {
@@ -37,5 +39,12 @@ public final class CCEventHandler {
         DatabaseImpl.current.save();
     }
 
+	@SubscribeEvent
+	public void onEntityInteract(EntityInteractEvent event) {
+		Entity entity = event.target;
+		if(event.entityPlayer != null) {
+			CCPlayerData.get(event.entityPlayer).setLastClickedEntityID(entity.getEntityId());
+		}
+	}
 
 }

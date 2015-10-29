@@ -1,30 +1,27 @@
 package de.take_weiland.mods.cameracraft.client.render;
 
-import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL12.GL_RESCALE_NORMAL;
-
-
+import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.entity.EntityPaintable;
+import de.take_weiland.mods.cameracraft.entity.EntityScreen;
+import de.take_weiland.mods.cameracraft.video.camera.StreamHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
-import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 
-import java.awt.image.BufferedImage;
+import static org.lwjgl.opengl.GL11.*;
+import static org.lwjgl.opengl.GL12.GL_RESCALE_NORMAL;
 
 public class RenderPoster extends Render {
 
-	private static final ResourceLocation vanillaPainting = new ResourceLocation("textures/painting/paintings_kristoffer_zetterstrand.png");
+	public static final ResourceLocation vanillaPainting = new ResourceLocation("textures/painting/paintings_kristoffer_zetterstrand.png");
 	
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float posYaw, float partialTickTime) {
-		EntityPoster poster = (EntityPoster) entity;
+		EntityScreen screen = (EntityScreen) entity;
 
 		glPushMatrix();
 		glTranslated(x, y, z);
@@ -34,13 +31,13 @@ public class RenderPoster extends Render {
 		float f2 = 1/(16f * 4f);
 		glScalef(f2, f2, f2);
 
-		drawPoster(poster);
+		drawPoster(screen);
 
 		glDisable(GL_RESCALE_NORMAL);
 		glPopMatrix();
 	}
 
-	private void drawPoster(EntityPoster poster) {
+	private void drawPoster(EntityScreen screen) {
 		int sizeX = 256; // sizex
 		int sizeY = 256; // sizeY
 
@@ -67,7 +64,7 @@ public class RenderPoster extends Render {
 				float yEnd = f1 + (float)((tileY + 1) * 64);
 				float yStart = f1 + (float)(tileY * 64);
 
-				setupLightmap(poster, (xEnd + xStart) / 2.0F, (yEnd + yStart) / 2.0F);
+				setupLightmap(screen, (xEnd + xStart) / 2.0F, (yEnd + yStart) / 2.0F);
 
 				float uStart = (float)(0 + sizeX - tileX * 64) / 256.0F;
 				float uEnd = (float)(0 + sizeX - (tileX + 1) * 64) / 256.0F;
@@ -112,7 +109,7 @@ public class RenderPoster extends Render {
 
 				t.draw();
 				
-				bindEntityTexture(poster);
+				bindEntityTexture(screen);
 
 				t.startDrawingQuads();
 
@@ -125,7 +122,7 @@ public class RenderPoster extends Render {
 
 				t.draw();
 
-				bindOverloadPicture(poster);
+				bindOverloadPicture(screen);
 
 				t.startDrawingQuads();
 
@@ -141,23 +138,23 @@ public class RenderPoster extends Render {
 		}
 	}
 	
-	private void setupLightmap(EntityPoster poster, float par2, float par3) {
-		int x = MathHelper.floor_double(poster.posX);
-		int y = MathHelper.floor_double(poster.posY + (par3 / 64.0F));
-		int z = MathHelper.floor_double(poster.posZ);
+	private void setupLightmap(EntityScreen screen, float par2, float par3) {
+		int x = MathHelper.floor_double(screen.posX);
+		int y = MathHelper.floor_double(screen.posY + (par3 / 64.0F));
+		int z = MathHelper.floor_double(screen.posZ);
 
-		switch (poster.hangingDirection) {
+		switch (screen.hangingDirection) {
 		case 2:
-			x = MathHelper.floor_double(poster.posX + (par2 / 64.0F));
+			x = MathHelper.floor_double(screen.posX + (par2 / 64.0F));
 			break;
 		case 1:
-			z = MathHelper.floor_double(poster.posZ - (par2 / 64.0F));
+			z = MathHelper.floor_double(screen.posZ - (par2 / 64.0F));
 			break;
 		case 0:
-			x = MathHelper.floor_double(poster.posX - (par2 / 64.0F));
+			x = MathHelper.floor_double(screen.posX - (par2 / 64.0F));
 			break;
 		case 3:
-			z = MathHelper.floor_double(poster.posZ + (par2 / 64.0F));
+			z = MathHelper.floor_double(screen.posZ + (par2 / 64.0F));
 			break;
 		}
 
@@ -170,7 +167,7 @@ public class RenderPoster extends Render {
 
 	@Override
 	protected void bindEntityTexture(Entity entity) {
-		PhotoDataCache.bindTexture(((EntityPoster) entity).getPhotoId());
+		PhotoDataCache.bindTexture(StreamHandler.getStreamByID(((EntityScreen) entity).getStreamID()).getView().getTexture());
 	}
 
 	@Override
