@@ -13,7 +13,8 @@ public enum MachineType implements Subtype {
 	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER),
 	PRINTER_ADVANCED("printerAdvanced", TilePrinter.class, CCGuis.PRINTER_ADVANCED),
 	CAMERA("camera", TileCamera.class, CCGuis.CAMERA_PLACED),
-	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER);
+	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER),
+	DRAWING_BOARD("drawing.board", TileDrawingBoard.class, CCGuis.DRAWING_BOARD);
 
 	private final String name;
 	private final Class<? extends TileEntity> teClass;

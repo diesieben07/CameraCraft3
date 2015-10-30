@@ -2,8 +2,7 @@ package de.take_weiland.mods.cameracraft.client.render;
 
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.entity.EntityPaintable;
-import de.take_weiland.mods.cameracraft.entity.EntityScreen;
-import de.take_weiland.mods.cameracraft.video.camera.StreamHandler;
+import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -21,7 +20,7 @@ public class RenderPoster extends Render {
 	
 	@Override
 	public void doRender(Entity entity, double x, double y, double z, float posYaw, float partialTickTime) {
-		EntityScreen screen = (EntityScreen) entity;
+		EntityPoster poster = (EntityPoster) entity;
 
 		glPushMatrix();
 		glTranslated(x, y, z);
@@ -31,13 +30,13 @@ public class RenderPoster extends Render {
 		float f2 = 1/(16f * 4f);
 		glScalef(f2, f2, f2);
 
-		drawPoster(screen);
+		drawPoster(poster);
 
 		glDisable(GL_RESCALE_NORMAL);
 		glPopMatrix();
 	}
 
-	private void drawPoster(EntityScreen screen) {
+	private void drawPoster(EntityPoster poster) {
 		int sizeX = 256; // sizex
 		int sizeY = 256; // sizeY
 
@@ -64,7 +63,7 @@ public class RenderPoster extends Render {
 				float yEnd = f1 + (float)((tileY + 1) * 64);
 				float yStart = f1 + (float)(tileY * 64);
 
-				setupLightmap(screen, (xEnd + xStart) / 2.0F, (yEnd + yStart) / 2.0F);
+				setupLightmap(poster, (xEnd + xStart) / 2.0F, (yEnd + yStart) / 2.0F);
 
 				float uStart = (float)(0 + sizeX - tileX * 64) / 256.0F;
 				float uEnd = (float)(0 + sizeX - (tileX + 1) * 64) / 256.0F;
@@ -109,7 +108,7 @@ public class RenderPoster extends Render {
 
 				t.draw();
 				
-				bindEntityTexture(screen);
+				bindEntityTexture(poster);
 
 				t.startDrawingQuads();
 
@@ -122,7 +121,7 @@ public class RenderPoster extends Render {
 
 				t.draw();
 
-				bindOverloadPicture(screen);
+				bindOverloadPicture(poster);
 
 				t.startDrawingQuads();
 
@@ -138,7 +137,7 @@ public class RenderPoster extends Render {
 		}
 	}
 	
-	private void setupLightmap(EntityScreen screen, float par2, float par3) {
+	private void setupLightmap(EntityPoster screen, float par2, float par3) {
 		int x = MathHelper.floor_double(screen.posX);
 		int y = MathHelper.floor_double(screen.posY + (par3 / 64.0F));
 		int z = MathHelper.floor_double(screen.posZ);
@@ -167,7 +166,7 @@ public class RenderPoster extends Render {
 
 	@Override
 	protected void bindEntityTexture(Entity entity) {
-		PhotoDataCache.bindTexture(StreamHandler.getStreamByID(((EntityScreen) entity).getStreamID()).getView().getTexture());
+		PhotoDataCache.bindTexture(((EntityPoster)entity).getPhotoId());
 	}
 
 	@Override

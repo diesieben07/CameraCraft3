@@ -22,7 +22,7 @@ public class ItemVideoCamera extends CCItem {
     public boolean onItemUse(ItemStack stack, EntityPlayer player, World world, int x, int y, int z, int side, float hitX, float hitY, float hitZ) {
         System.out.println("use");
         if (!world.isRemote) {
-            EntityVideoCamera camera = new EntityVideoCamera(world, x, y, z);
+            EntityVideoCamera camera = new EntityVideoCamera(world, x, y, z, player.rotationYaw, player.rotationPitch);
             world.spawnEntityInWorld(camera);
             return true;
         }

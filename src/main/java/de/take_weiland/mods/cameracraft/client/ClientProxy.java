@@ -4,25 +4,25 @@ import cpw.mods.fml.client.registry.RenderingRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
-import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.CCProxy;
+import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
 import de.take_weiland.mods.cameracraft.client.gui.GuiViewPhoto;
 import de.take_weiland.mods.cameracraft.client.render.RenderPoster;
+import de.take_weiland.mods.cameracraft.client.render.RenderScreen;
 import de.take_weiland.mods.cameracraft.entity.EntityPaintable;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
+import de.take_weiland.mods.cameracraft.entity.EntityScreen;
 import de.take_weiland.mods.cameracraft.item.ItemDraw;
 import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
-import net.minecraft.entity.EntityHanging;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.MinecraftForge;
 
-import javax.swing.text.html.parser.Entity;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
@@ -44,6 +44,7 @@ public class ClientProxy implements CCProxy {
         MinecraftForge.EVENT_BUS.register(this);
 
         RenderingRegistry.registerEntityRenderingHandler(EntityPoster.class, new RenderPoster());
+        RenderingRegistry.registerEntityRenderingHandler(EntityScreen.class, new RenderScreen());
     }
 
     @Override

@@ -21,7 +21,8 @@ public enum CCGuis {
 	SCANNER,
 	CAMERA_PLACED,
     SET_STREAM_ID,
-    PEN;
+    PEN,
+    DRAWING_BOARD;
 	
 	public void open(EntityPlayer player) {
 		open(player, 0, 0, 0);
@@ -61,6 +62,8 @@ public enum CCGuis {
                     return null;
                 case SET_STREAM_ID:
                     return null;
+                case DRAWING_BOARD:
+                    return new ContainerDrawingBoard(world, x, y, z, player);
                 default:
                     throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
             }
@@ -88,6 +91,8 @@ public enum CCGuis {
                     return new GuiPen();
                 case SET_STREAM_ID:
                     return new GuiStreamID();
+                case DRAWING_BOARD:
+                    return new GuiDrawingBoard((ContainerDrawingBoard) c);
                 default:
                     throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}

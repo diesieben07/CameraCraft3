@@ -30,9 +30,18 @@ public class EntityVideoCamera extends Entity implements IEntityAdditionalSpawnD
         this.setSize(1, 1);
     }
 
+    public EntityVideoCamera(World world, double posX, double posY, double posZ, float yaw, float pitch) {
+        super(world);
+        this.posX = posX + 0.5;
+        this.posY = posY + 1;
+        this.posZ = posZ + 0.5;
+        this.setSize(1, 1);
+        this.setRotation(yaw, pitch);
+    }
+
     @Override
     protected void entityInit() {
-//        IWorldView view = ItemVideoCamera.view2.createWorldView(worldObj.provider.dimensionId, null, 10, 10);
+
     }
 
     @Override
@@ -86,6 +95,5 @@ public class EntityVideoCamera extends Entity implements IEntityAdditionalSpawnD
     public void readSpawnData(ByteBuf buffer) {
         streamID = ByteBufUtils.readUTF8String(buffer);
     }
-
 }
 
