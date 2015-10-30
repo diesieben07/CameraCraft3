@@ -10,6 +10,7 @@ import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
 import de.take_weiland.mods.cameracraft.api.printer.Printer;
 import de.take_weiland.mods.cameracraft.api.printer.QueuedPrintJob;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.PhotoType;
 import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
@@ -28,6 +29,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S02PacketChat;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.MathHelper;
 import net.minecraftforge.common.util.ForgeDirection;
 
 import javax.annotation.Nonnull;
@@ -75,6 +77,14 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 				jobTimeout--;
 			}
 		}
+	}
+
+	public int getJobProgress() {
+        if (jobTimeout <= 0) {
+            return 0;
+        }
+        int curjobDone = JOB_TIME - jobTimeout;
+        return MathHelper.ceiling_double_int(ContainerPrinter.PROGRESSBAR_WIDTH * ((double) curjobDone / JOB_TIME));
 	}
 	
 	private void executeJob(SimplePrintJob.Queued job) {
@@ -217,7 +227,8 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 	
 	@Override
 	public boolean canPrint() {
-		if (getStackInSlot(SLOT_PAPER) == null) {
+		if (true) return true;
+        if (getStackInSlot(SLOT_PAPER) == null) {
 			return false;
 		}
 		for (int slot : inkSlots) {

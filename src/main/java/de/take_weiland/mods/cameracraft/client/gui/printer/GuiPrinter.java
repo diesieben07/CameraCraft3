@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.client.gui.printer;
 
 import com.google.common.base.Objects;
+import com.google.common.base.Strings;
 import com.google.common.collect.FluentIterable;
 import com.google.common.primitives.Ints;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
@@ -9,6 +10,7 @@ import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.cameracraft.network.PacketRequestPrintJob;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.client.AbstractGuiContainer;
+import de.take_weiland.mods.commons.client.GuiButtonImage;
 import de.take_weiland.mods.commons.client.Guis;
 import de.take_weiland.mods.commons.client.Rendering;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -55,7 +57,7 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 	public void initGui() {
 		super.initGui();
 
-        buttonList.add(buttonPrint = new GuiButton(GuiPrinter.BUTTON_PRINT, 0, 40, 50, 20, "Print!"));
+        buttonList.add(buttonPrint = new GuiButtonImage(GuiPrinter.BUTTON_PRINT, 0, 40, 20, 20, new ResourceLocation("cameracraft:textures/gui/controls.png"), 44, 0));
         buttonList.add(buttonPrev = new GuiButton(GuiPrinter.BUTTON_PREV, guiLeft + 10, guiTop + 60, 10, 20, "<"));
         buttonList.add(buttonNext = new GuiButton(GuiPrinter.BUTTON_NEXT, guiLeft + 50, guiTop + 60, 10, 20, ">"));
 
@@ -66,8 +68,7 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
 	}
 
     private void updateButtonState() {
-        PhotoStorage storage = getStorage();
-        if (storage == null) {
+        if (currentStorage == null) {
             buttonPrev.enabled = buttonNext.enabled = false;
 
             currentIDs = null;
@@ -75,9 +76,22 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
             hoveredID = null;
         } else {
             buttonPrev.enabled = listOffset != 0;
-            buttonNext.enabled = storage.size() > listOffset + LIST_SIZE;
+            buttonNext.enabled = currentStorage.size() > listOffset + LIST_SIZE;
 
-            currentIDs = FluentIterable.from(storage).skip(listOffset).limit(LIST_SIZE);
+            currentIDs = FluentIterable.from(currentStorage).skip(listOffset).limit(LIST_SIZE);
+        }
+        updatePrintBtnState();
+    }
+
+    private void updatePrintBtnState() {
+        buttonPrint.enabled = currentStorage != null && selectedID != null && !Strings.isNullOrEmpty(textFieldAmount.getText());
+    }
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        super.keyTyped(typedChar, keyCode);
+        if (textFieldAmount.isFocused()) {
+            updatePrintBtnState();
         }
     }
 
@@ -138,6 +152,11 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
             PhotoDataCache.bindTexture(selectedID);
             Rendering.drawTexturedQuadFit(guiLeft + xSize - 70, guiTop + 10, 60, 60);
         }
+
+        if (container.printProgress > 0) {
+            zLevel = -2;
+            Rendering.drawColoredQuad(guiLeft + 5, guiTop + 85, container.printProgress, 2, 0xff0000);
+        }
     }
 
     @Override
@@ -145,13 +164,10 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
         if (mouseButton == 0 && hoveredID != null) {
             selectedID = hoveredID;
             mc.getSoundHandler().playSound(PositionedSoundRecord.createPositionedSoundRecord(new ResourceLocation("gui.button.press"), 1));
+            updatePrintBtnState();
         } else {
             super.mouseClicked(mouseX, mouseY, mouseButton);
         }
-    }
-
-    private PhotoStorage getStorage() {
-        return currentStorage;
     }
 
     @Override

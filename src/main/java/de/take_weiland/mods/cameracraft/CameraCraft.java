@@ -97,7 +97,8 @@ public final class CameraCraft {
                 .register(3, PacketClientRequestPhoto::new, PacketPhotoData::read, PacketClientRequestPhoto::handle)
                 .register(4, PacketPrintJobs::new, PacketPrintJobs::handle)
                 .register(5, PacketPaint::new, PacketPaint::handle)
-                .register(6, PacketGuiPenButton::new, PacketGuiPenButton::handle);
+                .register(6, PacketGuiPenButton::new, PacketGuiPenButton::handle)
+                .register(7, PacketRequestPrintJob::new, PacketRequestPrintJob::handle);
 
         CCBlock.createBlocks();
         CCItem.init();
