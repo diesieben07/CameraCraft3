@@ -1,10 +1,16 @@
 package de.take_weiland.mods.cameracraft;
 
 import com.google.common.base.Throwables;
+import com.xcompwiz.lookingglass.api.APIInstanceProvider;
+import com.xcompwiz.lookingglass.api.APIUndefined;
+import com.xcompwiz.lookingglass.api.APIVersionRemoved;
+import com.xcompwiz.lookingglass.api.APIVersionUndefined;
+import com.xcompwiz.lookingglass.api.hook.WorldViewAPI2;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInterModComms;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.event.FMLPreInitializationEvent;
@@ -22,6 +28,7 @@ import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.item.CCArmor;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
+import de.take_weiland.mods.cameracraft.item.ItemVideoCamera;
 import de.take_weiland.mods.cameracraft.network.*;
 import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
@@ -98,7 +105,8 @@ public final class CameraCraft {
                 .register(4, PacketPrintJobs::new, PacketPrintJobs::handle)
                 .register(5, PacketPaint::new, PacketPaint::handle)
                 .register(6, PacketGuiPenButton::new, PacketGuiPenButton::handle)
-                .register(7, PacketRequestPrintJob::new, PacketRequestPrintJob::handle);
+                .register(7, PacketRequestPrintJob::new, PacketRequestPrintJob::handle)
+                .register(7, PacketStreamID::new, PacketStreamID::handle);
 
         CCBlock.createBlocks();
         CCItem.init();
@@ -124,6 +132,9 @@ public final class CameraCraft {
         }
 
         proxy.preInit();
+
+        FMLInterModComms.sendMessage("LookingGlass", "API", "de.take_weiland.mods.cameracraft.CameraCraft.register");
+
     }
 
     private static void setupThreads() {
@@ -168,5 +179,18 @@ public final class CameraCraft {
         }
     }
 
+    public static void register(APIInstanceProvider provider) {
+        try {
+            Object inst = provider.getAPIInstance("view-2");
+            WorldViewAPI2 api = (WorldViewAPI2) inst;
+            ItemVideoCamera.view2 = api;
+        } catch (APIUndefined e) {
+            e.printStackTrace();
+        } catch (APIVersionUndefined e) {
+            e.printStackTrace();
+        } catch (APIVersionRemoved e) {
+            e.printStackTrace();
+        }
+    }
 
 }

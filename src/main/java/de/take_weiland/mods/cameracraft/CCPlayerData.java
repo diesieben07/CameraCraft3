@@ -16,6 +16,7 @@ public class CCPlayerData implements IExtendedEntityProperties {
 
     private final EntityPlayer player;
     private long cooldownEnd = 0;
+	private int lastClickedEntityID;
 
 	CCPlayerData(EntityPlayer player) {
         this.player = player;
@@ -28,17 +29,28 @@ public class CCPlayerData implements IExtendedEntityProperties {
 	public void setCooldown(int cooldown) {
 		cooldownEnd = player.worldObj.getTotalWorldTime() + cooldown;
 	}
-	
+
+	public int getLastClickedEntityID() {
+		return lastClickedEntityID;
+	}
+
+	public void setLastClickedEntityID(int id) {
+		lastClickedEntityID = id;
+	}
+
 	private static final String COOLDOWN = "cooldown";
+	private static final String LAST_CLICKED = "last.clicked.entity.id";
 
 	@Override
 	public void saveNBTData(NBTTagCompound nbt) {
 		nbt.setLong(COOLDOWN, cooldownEnd);
+		nbt.setInteger(LAST_CLICKED, lastClickedEntityID);
 	}
 
 	@Override
 	public void loadNBTData(NBTTagCompound nbt) {
         cooldownEnd = nbt.getLong(COOLDOWN);
+		lastClickedEntityID = nbt.getInteger(LAST_CLICKED);
 	}
 	
 	@Override

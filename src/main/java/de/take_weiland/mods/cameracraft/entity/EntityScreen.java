@@ -1,16 +1,21 @@
 package de.take_weiland.mods.cameracraft.entity;
 
+import cpw.mods.fml.common.network.ByteBufUtils;
+import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
+import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.item.CCItem;
+import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.world.World;
 
 /**
  * @author Intektor
  */
-public class EntityScreen extends EntityHanging{
+public class EntityScreen extends EntityHanging implements IEntityAdditionalSpawnData{
 
-    private int streamID;
+    private String streamID = "cam";
 
     public EntityScreen(World world) {
         super(world);
@@ -36,11 +41,32 @@ public class EntityScreen extends EntityHanging{
         dropItem(CCItem.screen, 1);
     }
 
-    public int getStreamID() {
+    public String getStreamID() {
         return streamID;
     }
 
-    public void setStreamID(int streamID) {
+    public void setStreamID(String streamID) {
         this.streamID = streamID;
+    }
+
+    @Override
+    protected void entityInit() {
+        super.entityInit();
+    }
+
+    @Override
+    public boolean interactFirst(EntityPlayer player) {
+        CCGuis.SET_STREAM_ID.open(player, (int) player.posX, (int) player.posY, (int) player.posZ);
+        return true;
+    }
+
+    @Override
+    public void writeSpawnData(ByteBuf buffer) {
+        ByteBufUtils.writeUTF8String(buffer, streamID);
+    }
+
+    @Override
+    public void readSpawnData(ByteBuf buffer) {
+        streamID = ByteBufUtils.readUTF8String(buffer);
     }
 }
