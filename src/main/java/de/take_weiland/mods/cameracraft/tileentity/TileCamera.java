@@ -19,7 +19,7 @@ public class TileCamera extends TileEntity {
 	public void onPowerStateChange(boolean isPowered) {
 		this.isPowered = isPowered;
 		if (isPowered) {
-			CCSounds.CAMERA_CLICK.playAt(worldObj, xCoord, yCoord, zCoord);
+			CCSounds.CAMERA_CLICK.play(worldObj, xCoord, yCoord, zCoord);
 		}
 	}
 }
