@@ -1,3 +1,4 @@
 {
-  "camera_click": {"sounds": ["camera_click"]}
+  "camera_click": {"sounds": ["camera_click"]},
+  "camera_rewind": {"sounds": ["camera_rewind"]}
 }

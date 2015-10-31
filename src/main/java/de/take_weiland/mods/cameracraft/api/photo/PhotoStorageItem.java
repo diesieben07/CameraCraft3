@@ -64,5 +64,12 @@ public interface PhotoStorageItem {
 	 * @return whether the ItemStack can be scanned in a Scanner
 	 */
 	boolean canBeScanned(ItemStack stack);
+
+    /**
+     * <p>Whether the given ItemStack's photo storage is random access, meaning it can be read and written freely.</p>
+     * @param stack the ItemStack
+     * @return whether the ItemStack is random access
+     */
+	boolean isRandomAccess(ItemStack stack);
 	
 }

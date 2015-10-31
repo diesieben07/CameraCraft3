@@ -10,7 +10,7 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
-import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.FluidTank;
 
 import javax.annotation.Nonnull;
 
@@ -44,13 +44,9 @@ public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcesso
     }
 
 	@Sync
-	private FluidStack getFluid() {
-		return inventory.tank.getFluid();
-	}
-
-	private void setFluid(FluidStack stack) {
-		inventory.tank.setFluid(stack);
-	}
+    private FluidTank getTank() {
+        return inventory.tank;
+    }
 
 	@Sync
 	private int getProcessProgress() {

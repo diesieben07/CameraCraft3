@@ -1,5 +1,6 @@
 package de.take_weiland.mods.cameracraft.gui;
 
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.api.printer.InkItem;
 import de.take_weiland.mods.cameracraft.tileentity.TilePrinter;
 import de.take_weiland.mods.commons.inv.AbstractContainer;
@@ -32,6 +33,8 @@ public class ContainerPrinter extends AbstractContainer<TilePrinter> implements 
             return ShiftClickTarget.of(4);
         } else if ((item = stack.getItem()) instanceof InkItem) {
             return ShiftClickTarget.of(TilePrinter.INK_COLOR_TO_SLOT[((InkItem) item).getColor(stack).ordinal()]);
+        } else if (item instanceof PhotoStorageItem && ((PhotoStorageItem) item).isRandomAccess(stack)) {
+            return ShiftClickTarget.of(5);
         } else {
             return ShiftClickTarget.none();
         }

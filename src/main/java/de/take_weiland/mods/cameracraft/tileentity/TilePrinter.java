@@ -227,7 +227,6 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 	
 	@Override
 	public boolean canPrint() {
-		if (true) return true;
         if (getStackInSlot(SLOT_PAPER) == null) {
 			return false;
 		}

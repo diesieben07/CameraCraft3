@@ -139,6 +139,11 @@ public class ItemPhoto extends CCItemMultitype<PhotoType> implements PhotoItem {
 	}
 
 	@Override
+	public boolean isRandomAccess(ItemStack stack) {
+		return false;
+	}
+
+	@Override
 	public boolean isNamed(ItemStack stack) {
 		return getNbt(stack).hasKey(NBT_KEY_NAME);
 	}

@@ -78,7 +78,12 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 	public boolean canBeScanned(ItemStack stack) {
 		return getType(stack).isScannable();
 	}
-	
+
+	@Override
+	public boolean isRandomAccess(ItemStack stack) {
+		return getType(stack) == PhotoStorageType.MEMORY_CARD;
+	}
+
 	private static ItemStack applyType(ItemStack stack, PhotoStorageType type) {
 		ItemStack result = stack.copy();
         result.setMetadata(typeProp.toMeta(type));

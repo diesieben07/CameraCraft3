@@ -1,8 +1,11 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
+import de.take_weiland.mods.cameracraft.img.ImageFilters;
+import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
 import de.take_weiland.mods.commons.meta.HasSubtypes;
 import de.take_weiland.mods.commons.nbt.ToNbt;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
@@ -11,6 +14,9 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
+
+import java.io.IOException;
+import java.io.UncheckedIOException;
 
 import static de.take_weiland.mods.commons.util.Sides.sideOf;
 
@@ -24,6 +30,8 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 	private static final int INVALID_ITEM = -2;
 	
 	private static final int FILL_DELAY = 10;
+
+    private static final int MAX_LIGHT_LEVEL = 2;
 	
 	private int fillCountdown = CHECKING_SCHEDULED;
 	private int processProgress;
@@ -64,8 +72,23 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 	
 	private void finishProcessing() {
 		processProgress = -1;
-		storage[2] = ((PhotoStorageItem) storage[2].getItem()).process(storage[2]);
+        PhotoStorageItem item = (PhotoStorageItem) storage[2].getItem();
+        storage[2] = item.process(storage[2]);
+        if (!isInDarkness()) {
+            PhotoStorage photoStorage = item.getPhotoStorage(storage[2]);
+            for (long photoId : photoStorage) {
+                try {
+                    DatabaseImpl.current.applyFilter(photoId, ImageFilters.OVEREXPOSE);
+                } catch (IOException e) {
+                    throw new UncheckedIOException(e);
+                }
+            }
+        }
 	}
+
+    private boolean isInDarkness() {
+        return worldObj.getBlockLightValue(xCoord, yCoord, zCoord) <= MAX_LIGHT_LEVEL;
+    }
 
 	private boolean canProcess() {
 		if (!isValidPhotoStorage(storage[2])) {

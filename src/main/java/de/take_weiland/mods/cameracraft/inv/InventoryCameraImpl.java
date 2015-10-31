@@ -82,6 +82,9 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
     @Override
     public void setLidState(boolean close) {
         if (hasLid()) {
+            if (!close) {
+                openLid();
+            }
             isLidClosed = close;
             markDirty();
         }
@@ -96,9 +99,6 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
     @Override
     public void openGui(EntityPlayer player) {
         CCGuis.CAMERA.open(player);
-    }
-
-    private void closeLid() {
     }
 
     private CompletionStage<Void>[] convertTasks;
@@ -285,6 +285,7 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
                 if (filmItem instanceof PhotoStorageItem) {
                     storage[storageSlot()] = ((PhotoStorageItem) filmItem).rewind(film);
                     setLidState(OPEN);
+                    CCSounds.CAMERA_REWIND.playAt(world, position.xCoord, position.yCoord, position.zCoord);
                     return true;
                 }
             }
