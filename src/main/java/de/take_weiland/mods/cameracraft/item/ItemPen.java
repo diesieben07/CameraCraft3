@@ -38,15 +38,20 @@ public class ItemPen extends ItemDraw {
 
     @Override
     public int getColorCode(NBTTagCompound nbt) {
-        int red = ((int) (nbt.getInteger("Red") * 25.5) << 16) & 0x00FF0000;
-        int green = ((int) (nbt.getInteger("Green") * 25.5) << 8) & 0x0000FF00;
-        int blue = (int) (nbt.getInteger("Blue") * 25.5) & 0x000000FF;
-        return 0xFF000000 | red | green | blue;
+        if(nbt != null) {
+            int red = ((int) (nbt.getInteger("Red") * 25.5) << 16) & 0x00FF0000;
+            int green = ((int) (nbt.getInteger("Green") * 25.5) << 8) & 0x0000FF00;
+            int blue = (int) (nbt.getInteger("Blue") * 25.5) & 0x000000FF;
+            return 0xFF000000 | red | green | blue;
+        }else{
+            return Color.black.getRGB();
+        }
     }
 
     @Override
     public ItemStack onItemRightClick(ItemStack itemStack, World world, EntityPlayer player) {
         if (player.isSneaking() && !player.capabilities.isFlying) {
+            ItemStacks.getNbt(itemStack);
             if (itemStack.hasTagCompound()) {
                 CCGuis.PEN.open(player);
             }

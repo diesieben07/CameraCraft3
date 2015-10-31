@@ -1,5 +1,6 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
+import de.take_weiland.mods.cameracraft.item.ItemPhoto;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
@@ -10,10 +11,12 @@ import net.minecraft.item.ItemStack;
 public class TileDrawingBoard extends TileEntityInventory implements ISidedInventory {
 
     public TileDrawingBoard() {
+        super(2);
     }
 
-    public TileDrawingBoard(int size) {
-        super(size);
+    @Override
+    public void updateEntity() {
+        storage[1] = storage[0];
     }
 
     @Override
@@ -34,5 +37,21 @@ public class TileDrawingBoard extends TileEntityInventory implements ISidedInven
     @Override
     public String getDefaultName() {
         return "drawing.board";
+    }
+
+    @Override
+    public boolean isItemValidForSlot(int slot, ItemStack stack) {
+        switch(slot) {
+            case 0:
+                if(stack != null) {
+                    if(stack.getItem() instanceof ItemPhoto) {
+                        return true;
+                    }
+                }
+                break;
+            default:
+                return false;
+        }
+        return false;
     }
 }
