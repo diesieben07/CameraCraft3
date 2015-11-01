@@ -6,33 +6,56 @@ import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.commons.meta.HasSubtypes;
+import de.take_weiland.mods.commons.sync.Sync;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+
+import static de.take_weiland.mods.commons.util.Sides.sideOf;
 
 public class TileScanner extends TileEntityInventory implements PhotoStorageProvider {
 
     public static final int SLOT_SOURCE = 0;
     public static final int SLOT_TARGET = 1;
 
-    private static final int WAITING = -1;
     private static final int TIME_PER_PHOTO = 30;
 
-    private int counter = WAITING;
+    private boolean isScanning = false;
+    @Sync(inContainer = true)
+    private int photoIndex, scanTimer;
 
     public void requestScan() {
-        if (counter == WAITING) {
-            counter = getScanDuration();
+        if (!isScanning && canScan()) {
+            isScanning = true;
+            photoIndex = 0;
+            scanTimer = TIME_PER_PHOTO;
         }
+    }
+
+    public int getPhotoIndex() {
+        return photoIndex;
+    }
+
+    public int getScanTimer() {
+        return scanTimer;
+    }
+
+    private boolean canScan() {
+        PhotoStorage source = getSource();
+        PhotoStorage target = getTarget();
+
+        return source != null && target != null && source.size() > 0 && target.canStore();
     }
 
     @Override
     public void updateEntity() {
-        if (counter > 0) {
-            counter--;
-        } else if (counter == 0) {
-            doScan();
-            counter = WAITING;
+        if (sideOf(this).isServer() && isScanning) {
+            if (scanTimer > 0) {
+                scanTimer--;
+            } else {
+                doScan();
+                scanTimer = TIME_PER_PHOTO;
+            }
         }
     }
 
@@ -40,40 +63,41 @@ public class TileScanner extends TileEntityInventory implements PhotoStorageProv
         PhotoStorage source = getSource();
         PhotoStorage target = getTarget();
 
-        if (source != null && target != null) {
-            for (long photoId : source) {
-                target.store(photoId);
-            }
+        if (target.store(source.get(photoIndex)) == -1
+                || ++photoIndex == source.size()) {
+            isScanning = false;
         }
     }
 
-    private int getScanDuration() {
-        ItemStack source = storage[SLOT_SOURCE];
-        ItemStack target = storage[SLOT_TARGET];
-        if (source == null || !(source.getItem() instanceof PhotoStorageItem) || !((PhotoStorageItem) source.getItem()).canBeScanned(source)) {
-            return WAITING;
-        } else if (target == null || !(target.getItem() instanceof PhotoStorageItem) || !((PhotoStorageItem) target.getItem()).isRandomAccess(target)) {
-            return WAITING;
-        } else {
-            return ((PhotoStorageItem) target.getItem()).getPhotoStorage(target).size() * TIME_PER_PHOTO;
-        }
-    }
+    private ItemStack[] lastStorageStackCache = new ItemStack[2];
+    private PhotoStorage[] storageCache = new PhotoStorage[2];
 
     private PhotoStorage getSource() {
-        return getStorage(storage[SLOT_SOURCE]);
+        return getStorage(SLOT_SOURCE);
     }
 
     private PhotoStorage getTarget() {
-        return getStorage(storage[SLOT_TARGET]);
+        return getStorage(SLOT_TARGET);
     }
 
-    private PhotoStorage getStorage(ItemStack stack) {
-        Item item;
-        if (stack == null || !((item = stack.getItem()) instanceof PhotoStorageItem)) {
-            return null;
+    private PhotoStorage getStorage(int slot) {
+        ItemStack stack = getStackInSlot(slot);
+        ItemStack cached = lastStorageStackCache[slot];
+        PhotoStorage storage;
+
+        if (stack != cached) {
+            Item item;
+            if (stack == null || !((item = stack.getItem()) instanceof PhotoStorageItem)) {
+                storage = null;
+            } else {
+                storage = ((PhotoStorageItem) item).getPhotoStorage(stack);
+            }
+            storageCache[slot] = storage;
+            lastStorageStackCache[slot] = stack;
         } else {
-            return ((PhotoStorageItem) item).getPhotoStorage(stack);
+            storage = storageCache[slot];
         }
+        return storage;
     }
 
     @Override
