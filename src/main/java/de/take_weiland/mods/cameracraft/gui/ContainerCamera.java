@@ -10,7 +10,9 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
 
 import javax.annotation.Nonnull;
+import javax.annotation.ParametersAreNonnullByDefault;
 
+@ParametersAreNonnullByDefault
 public class ContainerCamera extends AbstractContainer<InventoryCameraImpl> implements ButtonContainer, SpecialShiftClick {
 
 	public static final int BUTTON_TOGGLE_LID = 0;
@@ -60,17 +62,19 @@ public class ContainerCamera extends AbstractContainer<InventoryCameraImpl> impl
 	}
 
 	@Override
-	public void onButtonClick(@Nonnull Side side, @Nonnull EntityPlayer player, int buttonId) {
-		switch (buttonId) {
-		case BUTTON_TOGGLE_LID:
-			inventory.toggleLid();
-			break;
-		case BUTTON_REWIND_FILM:
-			if (inventory.canRewind()) {
-				inventory.rewind();
-			}
-			break;
-		}
+	public void onButtonClick(Side side, EntityPlayer player, int buttonId) {
+		if (side.isServer()) {
+            switch (buttonId) {
+                case BUTTON_TOGGLE_LID:
+                    inventory.toggleLid();
+                    break;
+                case BUTTON_REWIND_FILM:
+                    if (inventory.canRewind()) {
+                        inventory.rewind();
+                    }
+                    break;
+            }
+        }
 	}
 
     @Override
