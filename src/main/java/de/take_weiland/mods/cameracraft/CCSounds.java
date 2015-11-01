@@ -1,9 +1,8 @@
 package de.take_weiland.mods.cameracraft;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.world.World;
+import de.take_weiland.mods.commons.util.Sound;
 
-public enum CCSounds {
+public enum CCSounds implements Sound {
 
 	CAMERA_CLICK("camera_click"),
 	CAMERA_REWIND("camera_rewind");
@@ -13,25 +12,15 @@ public enum CCSounds {
 	CCSounds(String name) {
 		this.name = name;
 	}
-	
-	public void playAt(Entity e) {
-		playAt(e, 1, 1);
-	}
-	
-	public void playAt(Entity e, float volume, float pitch) {
-		e.worldObj.playSoundAtEntity(e, getName(), volume, pitch);
-	}
-	
-	public void playAt(World world, double x, double y, double z) {
-		playAt(world, x, y, z, 1, 1);
-	}
-	
-	public void playAt(World world, double x, double y, double z, float volume, float pitch) {
-		world.playSoundEffect(x, y, z, getName(), volume, pitch); // does nothing on client
+
+	@Override
+	public String getDomain() {
+		return CameraCraft.MOD_ID;
 	}
 
-	private String getName() {
-		return "cameracraft:" + name;
+	@Override
+	public String getName() {
+		return name;
 	}
 	
 }

@@ -268,7 +268,7 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
 
     @Override
     public void onTakePhoto() {
-        CCSounds.CAMERA_CLICK.playAt(world, position.xCoord, position.yCoord, position.zCoord);
+        CCSounds.CAMERA_CLICK.play(world, position.xCoord, position.yCoord, position.zCoord);
         ItemStack battery = getBattery(); // is null if we don't need battery
         if (battery != null) {
             BatteryHandler handler = CameraCraft.api.findBatteryHandler(battery);
@@ -285,7 +285,7 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
                 if (filmItem instanceof PhotoStorageItem) {
                     storage[storageSlot()] = ((PhotoStorageItem) filmItem).rewind(film);
                     setLidState(OPEN);
-                    CCSounds.CAMERA_REWIND.playAt(world, position.xCoord, position.yCoord, position.zCoord);
+                    CCSounds.CAMERA_REWIND.play(world, position.xCoord, position.yCoord, position.zCoord);
                     return true;
                 }
             }
