@@ -51,7 +51,7 @@ public class GuiCamera extends AbstractGuiContainer<ContainerCamera> implements 
         if (shouldDrawLid(slot)) {
             int x = slot.xDisplayPosition;
             int y = slot.yDisplayPosition;
-            Rendering.drawColoredQuad(x, y, lidXSize, 16, 0xff000000, 101); // zlevel 101 to go above the itemstacks
+            Rendering.drawColoredQuad(x, y, lidXSize, 16, 0x000000, 0xff, 201); // zlevel 201 to go above the itemstacks
             return lidXSize != 16;
         } else {
             return true;
@@ -60,7 +60,7 @@ public class GuiCamera extends AbstractGuiContainer<ContainerCamera> implements 
 
 	private boolean shouldDrawLid(Slot slot) {
 		InventoryCameraImpl inv = container.inventory();
-		return (inv.isLidClosed() || lidXSize != 0) && slot.inventory == inv && slot.getHasStack() && inv.storageSlot() == slot.getSlotIndex();
+		return (inv.isLidClosed() || lidXSize != 0) && slot.inventory == inv && inv.storageSlot() == slot.getSlotIndex();
 	}
 	
 	@Override

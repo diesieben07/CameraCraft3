@@ -30,8 +30,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import java.util.function.Consumer;
 
-import static de.take_weiland.mods.commons.util.Sides.sideOf;
-
 public class InventoryCameraImpl extends ItemInventory implements Camera {
 
     public static final int LENS_SLOT = 0;
@@ -82,11 +80,14 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
     @Override
     public void setLidState(boolean close) {
         if (hasLid()) {
-            if (!close) {
-                openLid();
-            }
             isLidClosed = close;
-            markDirty();
+            if (!world.isRemote) {
+                if (!close) {
+                    openLid();
+                }
+
+                markDirty();
+            }
         }
     }
 
@@ -104,9 +105,6 @@ public class InventoryCameraImpl extends ItemInventory implements Camera {
     private CompletionStage<Void>[] convertTasks;
 
     private void openLid() {
-        if (sideOf(world).isClient()) {
-            return;
-        }
         PhotoStorage storage = getPhotoStorage();
         if (storage != null && !storage.isSealed()) {
             waitForRemainingTasks();
