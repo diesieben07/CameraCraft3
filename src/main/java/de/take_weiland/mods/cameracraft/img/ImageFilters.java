@@ -2,7 +2,6 @@ package de.take_weiland.mods.cameracraft.img;
 
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.img.SimpleRgbFilter;
-import de.take_weiland.mods.cameracraft.img.ColorFilter.Channel;
 
 import java.awt.image.BufferedImage;
 
@@ -23,10 +22,10 @@ public final class ImageFilters {
 		}
 	};
 	
-	public static final ImageFilter RED = new ColorFilter(Channel.RED);
-    public static final ImageFilter GREEN = new ColorFilter(Channel.GREEN);
-    public static final ImageFilter BLUE = new ColorFilter(Channel.BLUE);
-    public static final ImageFilter YELLOW = new YellowFilter();
+	public static final ImageFilter RED = new ColorFilter(0xff0000);
+    public static final ImageFilter GREEN = new ColorFilter(0x00ff00);
+    public static final ImageFilter BLUE = new ColorFilter(0x0000ff);
+    public static final ImageFilter YELLOW = new ColorFilter(0xffff00);
 
     public static final ImageFilter SEPIA = new SepiaFilter();
     public static final ImageFilter GRAY = new GrayscaleFilter();
