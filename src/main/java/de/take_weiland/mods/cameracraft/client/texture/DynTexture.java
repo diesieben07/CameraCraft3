@@ -12,11 +12,13 @@ public class DynTexture extends DynamicTexture {
 
     protected int width, height;
     protected int[] textureData;
+    protected BufferedImage image;
 
     public DynTexture(BufferedImage img) {
         this(img.getWidth(), img.getHeight());
         img.getRGB(0, 0, img.getWidth(), img.getHeight(), textureData, 0, img.getWidth());
         this.updateDynamicTexture();
+        this.image = img;
     }
 
     public DynTexture(int width, int height) {
@@ -40,5 +42,10 @@ public class DynTexture extends DynamicTexture {
     public void updateBufferedImage(BufferedImage img) {
         img.getRGB(0, 0, img.getWidth(), img.getHeight(), textureData, 0, img.getWidth());
         this.updateDynamicTexture();
+        this.image = img;
+    }
+
+    public BufferedImage getImage() {
+        return image;
     }
 }

@@ -3,11 +3,11 @@ package de.take_weiland.mods.cameracraft.client;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import de.take_weiland.mods.cameracraft.client.texture.DynTexture;
 import de.take_weiland.mods.cameracraft.network.PacketClientRequestPhoto;
 import de.take_weiland.mods.cameracraft.network.PacketPhotoData;
 import de.take_weiland.mods.commons.util.Scheduler;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.util.ResourceLocation;
 
@@ -43,6 +43,10 @@ public class PhotoDataCache {
 		return cache.getUnchecked(photoId).bindTexture();
 	}
 
+    public static DynTexture getDynTexture(long photoId) {
+        return cache.getUnchecked(photoId).getDynTexture();
+    }
+
     public static CompletableFuture<CacheElement> get(long photoId) {
         CacheElement element = cache.getIfPresent(photoId);
         if (element != null) {
@@ -65,7 +69,7 @@ public class PhotoDataCache {
 
         private BufferedImage img;
         private ResourceLocation loc;
-        private DynamicTexture tex;
+        private DynTexture tex;
 		
 		public ResourceLocation bindTexture() {
 			TextureManager engine = mc.renderEngine;
@@ -74,7 +78,7 @@ public class PhotoDataCache {
 					engine.bindTexture(DUMMY);
 					return null;
 				} else { 
-					tex = new DynamicTexture(img);
+					tex = new DynTexture(img);
 					loc = engine.getDynamicTextureLocation("cameracraft.photo", tex);
 				}
 			}
@@ -90,6 +94,10 @@ public class PhotoDataCache {
         public boolean isLoaded() {
 			return img != null;
 		}
+
+		public DynTexture getDynTexture() {
+            return tex;
+        }
 	}
 	
 	static class PhotoDataLoader extends CacheLoader<Long, CacheElement> {
