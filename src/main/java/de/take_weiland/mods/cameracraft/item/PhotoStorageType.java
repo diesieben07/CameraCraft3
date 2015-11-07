@@ -14,7 +14,7 @@ public enum PhotoStorageType implements Subtype {
 	FILM_B_W_PROCESSED("filmBwProcessed", 24),
 	FILM_COLOR("filmColor", 32),
 	FILM_COLOR_SEALED("filmColorSealed", 32),
-	FILM_COLOR_PROCESSED("filmBwProcessed", 32),
+	FILM_COLOR_PROCESSED("filmColorProcessed", 32),
 	MEMORY_CARD("memoryCard", 50);
 	
 	public static final PhotoStorageType[] VALUES = values();
