@@ -153,9 +153,9 @@ public class GuiPrinter extends AbstractGuiContainer<ContainerPrinter> {
             Rendering.drawTexturedQuadFit(guiLeft + xSize - 70, guiTop + 10, 60, 60);
         }
 
-        if (container.printProgress > 0) {
+        if (container.inventory().jobProgressClient > 0) {
             zLevel = -2;
-            Rendering.drawColoredQuad(guiLeft + 5, guiTop + 85, container.printProgress, 2, 0xff0000);
+            Rendering.drawColoredQuad(guiLeft + 5, guiTop + 85, container.inventory().jobProgressClient, 2, 0xff0000);
         }
     }
 

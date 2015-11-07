@@ -18,6 +18,7 @@ import de.take_weiland.mods.commons.inv.Inventories;
 import de.take_weiland.mods.commons.meta.HasSubtypes;
 import de.take_weiland.mods.commons.nbt.NBT;
 import de.take_weiland.mods.commons.net.Packets;
+import de.take_weiland.mods.commons.sync.Sync;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import net.minecraft.init.Items;
@@ -79,6 +80,9 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 		}
 	}
 
+    public int jobProgressClient;
+
+	@Sync(inContainer = true)
 	public int getJobProgress() {
         if (jobTimeout <= 0) {
             return 0;
@@ -86,6 +90,10 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
         int curjobDone = JOB_TIME - jobTimeout;
         return MathHelper.ceiling_double_int(ContainerPrinter.PROGRESSBAR_WIDTH * ((double) curjobDone / JOB_TIME));
 	}
+
+    private void setJobProgress(int progress) {
+        jobProgressClient = progress;
+    }
 	
 	private void executeJob(SimplePrintJob.Queued job) {
 		Packet p = new S02PacketChat(new ChatComponentText("executing job: " + job.getPhotoId()));

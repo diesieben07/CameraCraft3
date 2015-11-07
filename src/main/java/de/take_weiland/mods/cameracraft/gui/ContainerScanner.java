@@ -22,8 +22,8 @@ public class ContainerScanner extends AbstractContainer<TileScanner> implements 
 
     @Override
     protected void addSlots() {
-        addSlotToContainer(new SimpleSlot(inventory, 0, 0, 20));
-        addSlotToContainer(new SimpleSlot(inventory, 1, 20, 20));
+        addSlotToContainer(new SimpleSlot(inventory, 0, 59, 35));
+        addSlotToContainer(new SimpleSlot(inventory, 1, 101, 35));
     }
 
     @Override

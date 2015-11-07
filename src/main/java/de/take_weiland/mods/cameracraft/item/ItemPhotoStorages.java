@@ -31,7 +31,7 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 	@SideOnly(Side.CLIENT)
 	public void addInformation(ItemStack stack, EntityPlayer player, List text, boolean verbose) {
 		PhotoStorageType type = getType(stack);
-		String key = type.isSealed() ? "item.CameraCraft.photoStorage.subtext" : "item.CameraCraft.photoStorage.subtext.sealed";
+		String key = type.isSealed() ? "item.cameracraft.photoStorage.subtext" : "item.cameracraft.photoStorage.subtext.sealed";
 		int size = PhotoStorages.fastSize(stack);
 		if (size == 1) {
 			key += ".single";

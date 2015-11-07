@@ -18,11 +18,14 @@ public class TileScanner extends TileEntityInventory implements PhotoStorageProv
     public static final int SLOT_SOURCE = 0;
     public static final int SLOT_TARGET = 1;
 
-    private static final int TIME_PER_PHOTO = 30;
+    public static final int TIME_PER_PHOTO = 30;
 
     private boolean isScanning = false;
+
+    private int photoIndex;
+
     @Sync(inContainer = true)
-    private int photoIndex, scanTimer;
+    private int scanTimer;
 
     public void requestScan() {
         if (!isScanning && canScan()) {
