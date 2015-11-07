@@ -90,4 +90,10 @@ public class GuiStateContainer {
     public int getGuiTop() {
         return guiTop;
     }
+
+    public void enableAllButtons(boolean enable) {
+        for(GuiButton button : buttonList) {
+            button.enabled = enable;
+        }
+    }
 }

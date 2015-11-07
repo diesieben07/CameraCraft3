@@ -6,9 +6,11 @@ import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.client.gui.state.GuiContainerGuiState;
 import de.take_weiland.mods.cameracraft.client.gui.state.GuiStateContainer;
 import de.take_weiland.mods.cameracraft.gui.ContainerDrawingBoard;
+import de.take_weiland.mods.cameracraft.img.ImageUtil;
 import de.take_weiland.mods.cameracraft.item.ItemPhoto;
 import de.take_weiland.mods.commons.client.Guis;
 import de.take_weiland.mods.commons.client.Rendering;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.inventory.Slot;
@@ -20,6 +22,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -27,13 +30,20 @@ import java.io.InputStream;
  */
 public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard> {
 
-    protected BufferedImage  image;
+    protected BufferedImage image;
+    protected BufferedImage colorCircle;
     protected DynamicTexture texture;
+    protected DynamicTexture colorTexture;
     protected final int scale = 8;
-    private int red, blue, green;
+    private int color = 0;
+    protected int tool = 0;
+    protected final int DRAWING_TOOL = 0, PIPETTE_TOOL = 1;
+    private boolean rainbowMode = false;
+    private int rainbowColorX, rainbowColorY;
 
     public GuiDrawingBoard(ContainerDrawingBoard container) {
         super(container);
+        System.out.println("new Gui");
     }
 
     @Override
@@ -44,17 +54,22 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
         GuiButton[] buttons1 = new GuiButton[]{
                 new GuiButton(0, 0, 20, 75, 20, "Finish Drawing"),
 
-                new GuiButton(1, width - 90, 5, 20, 20, "-"),
-                new GuiButton(2, width - 25, 5, 20, 20, "+"),
+                new GuiButton(1, 0, 60, 75, 20, "Drawing Tool"),
+                new GuiButton(2, 0, 80, 75, 20, "Pipette"),
 
-                new GuiButton(3, width - 90, 30, 20, 20, "-"),
-                new GuiButton(4, width - 25, 30, 20, 20, "+"),
-
-                new GuiButton(5, width - 90, 55, 20, 20, "-"),
-                new GuiButton(6, width - 25, 55, 20, 20, "+"),
+                new GuiButton(3, width - 40, 100, 40, 20, "White"),
+                new GuiButton(4, width - 40, 120, 40, 20, "Rainbow Mode"),
 
                 new GuiButton(7, width - 40, height - 20, 40, 20, "Clear"),
         };
+
+
+        try (InputStream stream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("cameracraft:textures/gui/Farbkreis.png")).getInputStream()) {
+            colorCircle = ImageIO.read(stream);
+            colorTexture = new DynamicTexture(colorCircle);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         guiStates.add(new GuiStateContainer(container, this, null, new int[]{1}, buttons1, false, 0, 0));
         initGuiState();
@@ -64,24 +79,10 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         super.drawScreen(mouseX, mouseY, partialTicks);
         if (getActiveGuiStateNumber() == 1) {
-
-            drawCenteredString(mc.fontRendererObj, "Red: " + red, ((width - 90) + (width - 25)) / 2 + 10, 5 + 6, Color.red.getRGB());
-            drawCenteredString(mc.fontRendererObj, "Green: " + green, ((width - 90) + (width - 25)) / 2 + 10, 30 + 6, Color.green.getRGB());
-            drawCenteredString(mc.fontRendererObj, "Blue: " + blue, ((width - 90) + (width - 25)) / 2 + 10, 55 + 6, Color.blue.getRGB());
-
-            int red2 = ((int) (red * 25.5) << 16) & 0x00FF0000;
-            int green2 = ((int) (green * 25.5) << 8) & 0x0000FF00;
-            int blue2 = (int) (blue * 25.5) & 0x000000FF;
-            int color = 0xFF000000 | red2 | green2 | blue2;
-
-
             Rendering.drawColoredQuad(((width - 90) + (width - 25)) / 2 + 2, 80, 15, 15, color);
-
             int size = Math.min(height, width) - 4;
-
             int x = (width - size) / 2;
             int y = (height - size) / 2;
-
             drawRect(x, y, x + size, y + size, Color.black.getRGB());
             ItemPhoto photo = (ItemPhoto) container.getSlot(1).getStack().getItem();
             PhotoDataCache.bindTexture(photo.getPhotoId(container.getSlot(1).getStack()));
@@ -90,9 +91,10 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
 
             mc.renderEngine.bindTexture(mc.renderEngine.getDynamicTextureLocation("camera.craft", texture));
             Rendering.drawTexturedQuadFit(x + 2, y + 2, size - 4, size - 4);
+            mc.renderEngine.bindTexture(mc.renderEngine.getDynamicTextureLocation("camera.craft", colorTexture));
+            Rendering.drawTexturedQuadFit(width - x + x / 2 - colorCircle.getWidth() / 2, 5, colorCircle.getWidth(), colorCircle.getHeight());
         }
     }
-
 
     @Override
     public void onGuiClosed() {
@@ -127,36 +129,17 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                     setGuiState(0);
                     break;
                 case 1:
-                    if (red > 0) {
-                        red--;
-                    }
+                    getCurrentGuiState().enableAllButtons(true);
+                    button.enabled = false;
+                    tool = DRAWING_TOOL;
                     break;
                 case 2:
-                    if (red < 10) {
-                        red++;
-                    }
-                    break;
-                case 3:
-                    if (green > 0) {
-                        green--;
-                    }
-                    break;
-                case 4:
-                    if (green < 10) {
-                        green++;
-                    }
-                    break;
-                case 5:
-                    if (blue > 0) {
-                        blue--;
-                    }
-                    break;
-                case 6:
-                    if (blue < 10) {
-                        blue++;
-                    }
+                    getCurrentGuiState().enableAllButtons(true);
+                    button.enabled = false;
+                    tool = PIPETTE_TOOL;
                     break;
                 case 7:
+                    ImageUtil.resetImage(image);
                     initState(1);
                     break;
             }
@@ -188,10 +171,22 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
     @Override
     protected void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         super.mouseClickMove(mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-
-        if ((clickedMouseButton == 0 || clickedMouseButton == 1) && getActiveGuiStateNumber() == 1) {
+        int size = Math.min(height, width) - 8;
+        int x = (width - size) / 2;
+        int y = (height - size) / 2;
+        if ((clickedMouseButton == 0 || clickedMouseButton == 1) && getActiveGuiStateNumber() == 1 && Guis.isPointInRegion(x, y, size, size, mouseX, mouseY) && tool == DRAWING_TOOL) {
             drawLine(mouseX, mouseY, clickedMouseButton);
         }
+        selectColor(mouseX, mouseY, clickedMouseButton);
+    }
+
+    @Override
+    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
+        super.mouseClicked(mouseX, mouseY, mouseButton);
+        if ((originX > -1 && originY > -1) && getActiveGuiStateNumber() == 1 && tool == DRAWING_TOOL) {
+            draw(mouseX, mouseY, mouseButton);
+        }
+        selectColor(mouseX, mouseY, mouseButton);
     }
 
     @Override
@@ -199,23 +194,41 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
         return new ResourceLocation("cameracraft:textures/gui/drawing_board.png");
     }
 
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        if ((originX != -1 && originY != -1) && getActiveGuiStateNumber() == 1) {
-            draw(mouseX, mouseY, mouseButton);
+    protected void selectColor(int mouseX, int mouseY, int mouseButton) {
+        int size = Math.min(height, width) - 4;
+        int x = (width - size) / 2;
+        int y = (height - size) / 2;
+        if (getActiveGuiStateNumber() == 1 && mouseButton == 0) {
+            if (Guis.isPointInRegion(width - x + x / 2 - colorCircle.getWidth() / 2, 5, colorCircle.getWidth(), colorCircle.getHeight(), mouseX, mouseY)) {
+                int pointX = mouseX - (width - x + x / 2 - colorCircle.getWidth() / 2);
+                int pointY = mouseY - 5;
+                System.out.println(pointX + "\t" + pointY);
+                color = colorCircle.getRGB(pointX, pointY);
+            }
+            if (Guis.isPointInRegion(x, y, size, size, mouseX, mouseY) && tool == PIPETTE_TOOL) {
+                if (image.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY)) != 0) {
+                    color = image.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
+                } else {
+//                    ItemPhoto photo = (ItemPhoto) container.getSlot(1).getStack().getItem();
+//                    DynamicTexture text = PhotoDataCache.getDynTexture(photo.getPhotoId(container.getSlot(1).getStack()));
+//                    BufferedImage copy = ClientUtil.getBufferedImagefromDynamicTexture(text);
+//                    color = copy.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
+                }
+            }
         }
+
     }
 
     private int originX = -1, originY = -1;
 
     protected void drawLine(int mouseX, int mouseY, int mouseButton) {
-        if (Math.abs(originX - mouseX) > 1 || Math.abs(originY - mouseY) > 1 && originX != -1 && originY != 0) {
-            int resolutionX = 265;
-            int resolutionY = 265;
+        System.out.println(originX + "\t" + originY);
+        if (Math.abs(originX - mouseX) > 1 || Math.abs(originY - mouseY) > 1 && originX > -1 && originY > -1) {
+            int resolutionX = 256;
+            int resolutionY = 256;
             Graphics2D g = (Graphics2D) image.getGraphics();
-            if(mouseButton == 0) {
-                g.setColor(new Color(getColor()));
+            if (mouseButton == 0) {
+                g.setColor(new Color(color));
                 g.drawLine(getMouseXinImage(resolutionX, mouseX), getMouseYinImage(resolutionY, mouseY), originX, originY);
             } else {
                 g.setColor(new Color(0, 0, 0, 0));
@@ -240,7 +253,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
             double scaleY = (double) size / (double) resolutionY;
             int pixelX = (int) (mouseXinFrame / scaleX);
             int pixelY = (int) (mouseYinFrame / scaleY);
-            image.setRGB(pixelX, pixelY, mouseButton == 0 ? getColor() : 0);
+            image.setRGB(pixelX, pixelY, mouseButton == 0 ? color : 0);
             ClientUtil.updateDynamicTexture(texture, image);
             originX = pixelX;
             originY = pixelY;
@@ -250,53 +263,51 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
     @Override
     protected void initState(int state) {
         if (state == 1) {
+
+            getCurrentGuiState().enableAllButtons(true);
+            getCurrentGuiState().buttonList.get(1).enabled = false;
+
             ItemStack stack = container.getSlot(0).getStack();
             ItemPhoto photo = (ItemPhoto) stack.getItem();
             PhotoItem.Size size = photo.getSize(stack);
             if (stack.getTagCompound().hasKey("imageOverload")) {
-                try {
-                    InputStream in = new ByteArrayInputStream(stack.getTagCompound().getByteArray("imageOverload"));
-                    image = ImageIO.read(in);
-                } catch (Exception e) {
-                    e.printStackTrace();
+                if (image == null) {
+                    try {
+                        InputStream in = new ByteArrayInputStream(stack.getTagCompound().getByteArray("imageOverload"));
+                        image = ImageIO.read(in);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                 }
             } else {
                 int sizeZ = Math.min(height, width) - 4;
-                if (size.getWidth() != 0) {
+                if (size.getWidth() != 0 && image == null) {
                     image = new BufferedImage(size.getWidth(), size.getHeight(), BufferedImage.TYPE_INT_ARGB);
                 } else {
-                    image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+                    if (image == null) {
+                        image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+                    }
                 }
             }
             texture = new DynamicTexture(image);
         }
     }
 
-    public int getMouseXinImage(int reolutionX, int mouseX) {
+    public int getMouseXinImage(int resolutionX, int mouseX) {
         int size = Math.min(height, width) - 8;
         int x = (width - size) / 2;
-        int resolutionX = 256;
         int mouseXinFrame = mouseX - x;
         double scaleX = (double) size / (double) resolutionX;
         int pixelX = (int) (mouseXinFrame / scaleX);
         return pixelX;
     }
 
-    public int getMouseYinImage(int reolutionY, int mouseY) {
+    public int getMouseYinImage(int resolutionY, int mouseY) {
         int size = Math.min(height, width) - 8;
         int y = (height - size) / 2;
-        int resolutionY = 256;
         int mouseYinFrame = mouseY - y;
         double scaleY = (double) size / (double) resolutionY;
         int pixelY = (int) (mouseYinFrame / scaleY);
         return pixelY;
-    }
-
-    protected int getColor() {
-        int red2 = ((int) (red * 25.5) << 16) & 0x00FF0000;
-        int green2 = ((int) (green * 25.5) << 8) & 0x0000FF00;
-        int blue2 = (int) (blue * 25.5) & 0x000000FF;
-        int color = 0xFF000000 | red2 | green2 | blue2;
-        return color;
     }
 }
