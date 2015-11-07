@@ -18,18 +18,18 @@ public class TileScanner extends TileEntityInventory implements PhotoStorageProv
     public static final int SLOT_SOURCE = 0;
     public static final int SLOT_TARGET = 1;
 
+    public static final int NOT_SCANNING = -1;
+
     public static final int TIME_PER_PHOTO = 30;
 
-    private boolean isScanning = false;
-
-    private int photoIndex;
+    @Sync(inContainer = true)
+    private int photoIndex = NOT_SCANNING;
 
     @Sync(inContainer = true)
     private int scanTimer;
 
     public void requestScan() {
-        if (!isScanning && canScan()) {
-            isScanning = true;
+        if (photoIndex == NOT_SCANNING && canScan()) {
             photoIndex = 0;
             scanTimer = TIME_PER_PHOTO;
         }
@@ -52,7 +52,7 @@ public class TileScanner extends TileEntityInventory implements PhotoStorageProv
 
     @Override
     public void updateEntity() {
-        if (sideOf(this).isServer() && isScanning) {
+        if (sideOf(this).isServer() && photoIndex != NOT_SCANNING) {
             if (scanTimer > 0) {
                 scanTimer--;
             } else {
@@ -66,20 +66,19 @@ public class TileScanner extends TileEntityInventory implements PhotoStorageProv
         PhotoStorage source = getSource();
         PhotoStorage target = getTarget();
 
-        if (target.store(source.get(photoIndex)) == -1
-                || ++photoIndex == source.size()) {
-            isScanning = false;
+        if (target.store(source.get(photoIndex)) == -1 || ++photoIndex == source.size()) {
+            photoIndex = NOT_SCANNING;
         }
     }
 
     private ItemStack[] lastStorageStackCache = new ItemStack[2];
     private PhotoStorage[] storageCache = new PhotoStorage[2];
 
-    private PhotoStorage getSource() {
+    public PhotoStorage getSource() {
         return getStorage(SLOT_SOURCE);
     }
 
-    private PhotoStorage getTarget() {
+    public PhotoStorage getTarget() {
         return getStorage(SLOT_TARGET);
     }
 
