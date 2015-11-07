@@ -15,6 +15,8 @@ public class GuiScanner extends AbstractGuiContainer<ContainerScanner> {
 
     private static final int BUTTON_SCAN = 0;
 
+    private GuiButton buttonScan;
+
     public GuiScanner(ContainerScanner container) {
         super(container);
     }
@@ -23,12 +25,18 @@ public class GuiScanner extends AbstractGuiContainer<ContainerScanner> {
     @Override
     public void initGui() {
         super.initGui();
-        buttonList.add(new GuiButtonImage(BUTTON_SCAN, 0, 0, 20, 20, new ResourceLocation(CameraCraft.MOD_ID, "textures/gui/controls.png"), 24, 0));
+        buttonList.add(buttonScan = new GuiButtonImage(BUTTON_SCAN, guiLeft + 125, guiTop + 33, 20, 20, new ResourceLocation(CameraCraft.MOD_ID, "textures/gui/controls.png"), 24, 0));
     }
 
     @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
+    public void updateScreen() {
+        super.updateScreen();
+        buttonScan.enabled = container.inventory().getPhotoIndex() == TileScanner.NOT_SCANNING;
+    }
+
+    @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
 
         int scanTimer = container.inventory().getScanTimer();
         int photoIndex = container.inventory().getPhotoIndex();
