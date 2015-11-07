@@ -1,15 +1,16 @@
 package de.take_weiland.mods.cameracraft.client.gui;
 
 import de.take_weiland.mods.cameracraft.api.photo.PhotoItem;
+import de.take_weiland.mods.cameracraft.client.ClientUtil;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.client.gui.state.GuiContainerGuiState;
 import de.take_weiland.mods.cameracraft.client.gui.state.GuiStateContainer;
-import de.take_weiland.mods.cameracraft.client.texture.DynTexture;
 import de.take_weiland.mods.cameracraft.gui.ContainerDrawingBoard;
 import de.take_weiland.mods.cameracraft.item.ItemPhoto;
 import de.take_weiland.mods.commons.client.Guis;
 import de.take_weiland.mods.commons.client.Rendering;
 import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
@@ -26,8 +27,8 @@ import java.io.InputStream;
  */
 public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard> {
 
-    protected BufferedImage image;
-    protected DynTexture texture;
+    protected BufferedImage  image;
+    protected DynamicTexture texture;
     protected final int scale = 8;
     private int red, blue, green;
 
@@ -220,7 +221,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                 g.setColor(new Color(0, 0, 0, 0));
                 g.drawLine(getMouseXinImage(resolutionX, mouseX), getMouseYinImage(resolutionY, mouseY), originX, originY);
             }
-            texture.updateBufferedImage(image);
+            ClientUtil.updateDynamicTexture(texture, image);
         }
         draw(mouseX, mouseY, mouseButton);
     }
@@ -240,7 +241,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
             int pixelX = (int) (mouseXinFrame / scaleX);
             int pixelY = (int) (mouseYinFrame / scaleY);
             image.setRGB(pixelX, pixelY, mouseButton == 0 ? getColor() : 0);
-            texture.updateBufferedImage(image);
+            ClientUtil.updateDynamicTexture(texture, image);
             originX = pixelX;
             originY = pixelY;
         }
@@ -267,7 +268,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                     image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
                 }
             }
-            texture = new DynTexture(image);
+            texture = new DynamicTexture(image);
         }
     }
 

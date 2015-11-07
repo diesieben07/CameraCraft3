@@ -1,11 +1,16 @@
 package de.take_weiland.mods.cameracraft.client;
 
-import java.nio.ByteBuffer;
-
+import de.take_weiland.mods.commons.asm.MCPNames;
 import net.minecraft.client.Minecraft;
-
+import net.minecraft.client.renderer.texture.DynamicTexture;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL11;
+
+import java.awt.image.BufferedImage;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles;
+import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 
 public final class ClientUtil {
 
@@ -37,5 +42,28 @@ public final class ClientUtil {
 		
 		return bytes;
 	}
+
+    private static final MethodHandle dynTexDataGet;
+
+    static {
+        try {
+            Field field = DynamicTexture.class.getDeclaredField(MCPNames.field("field_110566_b"));
+            field.setAccessible(true);
+            dynTexDataGet = MethodHandles.publicLookup().unreflectGetter(field);
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+	public static void updateDynamicTexture(DynamicTexture texture, BufferedImage image) {
+        int[] textureData;
+        try {
+            textureData = (int[]) dynTexDataGet.invokeExact(texture);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+        image.getRGB(0, 0, image.getWidth(), image.getHeight(), textureData, 0, image.getWidth());
+        texture.updateDynamicTexture();
+    }
 
 }
