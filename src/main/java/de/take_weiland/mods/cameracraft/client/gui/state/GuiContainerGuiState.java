@@ -26,6 +26,7 @@ public abstract class GuiContainerGuiState<C extends Container> extends Abstract
     }
 
     public void setGuiState(int i) {
+        exitState(activeGuiState, false);
         activeGuiState = i;
         initGuiState(i);
     }
@@ -71,5 +72,22 @@ public abstract class GuiContainerGuiState<C extends Container> extends Abstract
         initState(state);
     }
 
+
+    @Override
+    public void onGuiClosed() {
+        super.onGuiClosed();
+    }
+
     protected abstract void initState(int state);
+
+    protected abstract void exitState(int state, boolean exitGui);
+
+    @Override
+    protected void keyTyped(char typedChar, int keyCode) {
+        if (keyCode != 1) {
+            super.keyTyped(typedChar, keyCode);
+        }else{
+            exitState(activeGuiState, true);
+        }
+    }
 }
