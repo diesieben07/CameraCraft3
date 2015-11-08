@@ -5,6 +5,7 @@ import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.common.primitives.Longs;
+import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.Photo;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
@@ -58,8 +59,13 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
         current = new DatabaseImpl(root);
     }
 
-    public BufferedImage loadImage(long id) throws IOException {
-        return ImageIO.read(new File(root, fileName(id, ".png")));
+    public BufferedImage loadImage(long id) {
+        try {
+            return ImageIO.read(new File(root, fileName(id, ".png")));
+        } catch (IOException e) {
+            CameraCraft.logger.error("Failed to load Image with ID " + id, e);
+            throw new RuntimeException(e);
+        }
     }
 
     public InputStream openImageStream(long id) {
@@ -72,6 +78,16 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
 
     private File file(long id, String ext) {
         return new File(root, fileName(id) + '.' + ext);
+    }
+
+    public long saveNewImage(BufferedImage image) {
+        long id = nextId();
+        try {
+            saveImage(id, image, null);
+        } catch (IOException e) {
+            CameraCraft.logger.error("Failed to write Database Entry " + id, e);
+        }
+        return id;
     }
 
     @Override

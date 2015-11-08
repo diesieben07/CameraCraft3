@@ -57,7 +57,7 @@ public class PhotoDataCache {
 		}
 	}
 
-    public static CacheElement getCacheElement(long photoID) {
+    public static CacheElement get(long photoID) {
         return cache.getUnchecked(photoID);
     }
 
@@ -95,6 +95,10 @@ public class PhotoDataCache {
 
 		public DynamicTexture getTexture() {
             return tex;
+        }
+
+		public BufferedImage getImage() {
+            return img;
         }
 
         void unload() {

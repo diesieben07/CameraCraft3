@@ -9,6 +9,7 @@ import de.take_weiland.mods.cameracraft.client.gui.state.GuiStateContainer;
 import de.take_weiland.mods.cameracraft.gui.ContainerDrawingBoard;
 import de.take_weiland.mods.cameracraft.img.ImageUtil;
 import de.take_weiland.mods.cameracraft.item.ItemPhoto;
+import de.take_weiland.mods.cameracraft.network.PacketDrawingBoard;
 import de.take_weiland.mods.commons.client.Guis;
 import de.take_weiland.mods.commons.client.Rendering;
 import net.minecraft.client.Minecraft;
@@ -368,18 +369,8 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
     }
 
     private void saveImage() {
-        ItemStack stack = container.getSlot(1).getStack();
-        ItemPhoto photo = (ItemPhoto) stack.getItem();
-
-        BufferedImage normal = ClientUtil.getBufferedImagefromDynamicTexture(PhotoDataCache.getCacheElement(photo.getPhotoId(stack)).getTexture());
-
-        Graphics g = normal.getGraphics();
-        g.drawImage(overlay, 0, 0, null);
-
-        g.dispose();
-
-        //TODO: SAVE IMAGE HERE
-
+        new PacketDrawingBoard(container.windowId, overlay).sendToServer();
+        mc.thePlayer.closeScreen();
     }
 
     public int getMouseXinImage(int resolutionX, int mouseX) {
