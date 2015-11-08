@@ -7,7 +7,7 @@ class SepiaFilter implements SimpleRgbFilter {
 	private static final int sepiaIntensity = 20;
 
 	// Play around with this. 20 works well and was recommended
-    // by another developer. 0 produces black/white image
+    // by another developer. 0 produces black/white overlay
 	private static final int sepiaDepth = 20;
 	
 	// modified from http://stackoverflow.com/questions/5132015/how-to-convert-image-to-sepia-in-java

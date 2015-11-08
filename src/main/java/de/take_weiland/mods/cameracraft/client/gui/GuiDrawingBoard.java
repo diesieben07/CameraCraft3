@@ -16,13 +16,15 @@ import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
 
 import static org.lwjgl.opengl.GL11.*;
 
@@ -31,10 +33,12 @@ import static org.lwjgl.opengl.GL11.*;
  */
 public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard> {
 
-    protected BufferedImage image;
+    protected BufferedImage overlay;
     protected BufferedImage colorCircle;
-    protected DynamicTexture texture;
-    protected DynamicTexture colorTexture;
+    protected DynamicTexture overDynText;
+    protected DynamicTexture colorDynText;
+    protected ResourceLocation overDynRsc;
+    protected ResourceLocation colorDynRsc;
     protected final int scale = 8;
     private int color = 0;
     protected int tool = 0;
@@ -75,7 +79,8 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
 
         try (InputStream stream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("cameracraft:textures/gui/Farbkreis.png")).getInputStream()) {
             colorCircle = ImageIO.read(stream);
-            colorTexture = new DynamicTexture(colorCircle);
+            colorDynText = new DynamicTexture(colorCircle);
+            colorDynRsc = mc.renderEngine.getDynamicTextureLocation("camera.craft", colorDynText);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -111,12 +116,12 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            mc.renderEngine.bindTexture(mc.renderEngine.getDynamicTextureLocation("camera.craft", texture));
+            mc.renderEngine.bindTexture(overDynRsc);
             Rendering.drawTexturedQuadFit(x + 2, y + 2, size - 4, size - 4);
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            mc.renderEngine.bindTexture(mc.renderEngine.getDynamicTextureLocation("camera.craft", colorTexture));
+            mc.renderEngine.bindTexture(colorDynRsc);
             Rendering.drawTexturedQuadFit(width - x + x / 2 - colorCircle.getWidth() / 2, 5, colorCircle.getWidth(), colorCircle.getHeight());
 
         } else if (getActiveGuiStateNumber() == 2) {
@@ -132,7 +137,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
 
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            mc.renderEngine.bindTexture(mc.renderEngine.getDynamicTextureLocation("camera.craft", texture));
+            mc.renderEngine.bindTexture(mc.renderEngine.getDynamicTextureLocation("camera.craft", overDynText));
             Rendering.drawTexturedQuadFit(x + 2, y + 2, size - 4, size - 4);
         }
     }
@@ -177,6 +182,9 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                     break;
                 case 3:
                     color = new Color(255, 255, 255, 255).getRGB();
+                    ccolor = new CColor(new Color(color));
+                    rainbowMode = false;
+                    getCurrentGuiState().buttonList.get(4).displayString = "Rainbow Mode";
                     break;
                 case 4:
                     rainbowMode = !rainbowMode;
@@ -185,7 +193,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                     ccolor = new CColor(new Color(color));
                     break;
                 case 7:
-                    ImageUtil.resetImage(image);
+                    ImageUtil.resetImage(overlay);
                     initState(1);
                     break;
             }
@@ -253,9 +261,9 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                 ccolor = new CColor(new Color(color));
             }
             if (Guis.isPointInRegion(x, y, size, size, mouseX, mouseY) && tool == PIPETTE_TOOL) {
-                if (image.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY)) != 0) {
+                if (overlay.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY)) != 0) {
 
-                    color = image.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
+                    color = overlay.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
                     ccolor = new CColor(new Color(color));
                 } else {
 //                    ItemPhoto photo = (ItemPhoto) container.getSlot(1).getStack().getItem();
@@ -275,14 +283,14 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
             int resolutionX = 256;
             int resolutionY = 256;
 
-            Graphics2D g = (Graphics2D) image.getGraphics();
+            Graphics2D g = (Graphics2D) overlay.getGraphics();
 
             g.setColor(mouseButton == 0 ? ccolor.getColor() : new Color(0, 0, 0, 0));
             g.drawLine(getMouseXinImage(resolutionX, mouseX), getMouseYinImage(resolutionY, mouseY), originX, originY);
 
             g.dispose();
 
-            ClientUtil.updateDynamicTexture(texture, image);
+            ClientUtil.updateDynamicTexture(overDynText, overlay);
         }
 
         draw(mouseX, mouseY, mouseButton);
@@ -307,9 +315,9 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
             int pixelX = (int) (mouseXinFrame / scaleX);
             int pixelY = (int) (mouseYinFrame / scaleY);
 
-            image.setRGB(pixelX, pixelY, mouseButton == 0 ? ccolor.getColor().getRGB() : 0);
+            overlay.setRGB(pixelX, pixelY, mouseButton == 0 ? ccolor.getColor().getRGB() : 0);
 
-            ClientUtil.updateDynamicTexture(texture, image);
+            ClientUtil.updateDynamicTexture(overDynText, overlay);
 
             originX = pixelX;
             originY = pixelY;
@@ -329,10 +337,13 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
 
             PhotoItem.Size size = photo.getSize(stack);
 
-            if (image == null) {
-                image = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
+            if (overlay == null) {
+                overlay = new BufferedImage(256, 256, BufferedImage.TYPE_INT_ARGB);
             }
-            texture = new DynamicTexture(image);
+            overDynText = new DynamicTexture(overlay);
+            overDynRsc = mc.renderEngine.getDynamicTextureLocation("camera.craft", overDynText);
+
+            tool = DRAWING_TOOL;
         }
     }
 
@@ -351,21 +362,19 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                 break;
         }
         if (exitGui && state != 1 && state != 2) {
+            overlay.flush();
             this.mc.thePlayer.closeScreen();
         }
     }
 
     private void saveImage() {
-        BufferedImage underlay = ClientUtil.getBufferedImagefromDynamicTexture(texture);
+        ItemStack stack = container.getSlot(1).getStack();
+        ItemPhoto photo = (ItemPhoto) stack.getItem();
 
-        int w = Math.max(image.getWidth(), underlay.getWidth());
-        int h = Math.max(image.getHeight(), underlay.getHeight());
+        BufferedImage normal = ClientUtil.getBufferedImagefromDynamicTexture(PhotoDataCache.getCacheElement(photo.getPhotoId(stack)).getTexture());
 
-        BufferedImage combined = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
-
-        Graphics g = combined.getGraphics();
-        g.drawImage(underlay, 0, 0, null);
-        g.drawImage(image, 0, 0, null);
+        Graphics g = normal.getGraphics();
+        g.drawImage(overlay, 0, 0, null);
 
         g.dispose();
 

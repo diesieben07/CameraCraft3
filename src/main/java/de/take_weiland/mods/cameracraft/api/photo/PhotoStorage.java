@@ -54,7 +54,7 @@ public interface PhotoStorage extends Iterable<Long> {
 	boolean isSealed();
 	
 	/**
-     * <p>Get any image filter to be applied to every photo getting stored into this storage.</p>
+     * <p>Get any overlay filter to be applied to every photo getting stored into this storage.</p>
 	 * @return a filter to apply or null for no filter
 	 */
 	ImageFilter getFilter();

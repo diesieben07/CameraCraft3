@@ -27,7 +27,7 @@ public class PhotoDataCache {
 
 	static final Minecraft mc = Minecraft.getMinecraft();
 	private static final LoadingCache<Long, CacheElement> cache;
-	
+
 	static {
         CacheManager manager = new CacheManager();
         cache = CacheBuilder.newBuilder()
@@ -36,7 +36,7 @@ public class PhotoDataCache {
                 .removalListener(manager)
 				.build(manager);
 	}
-	
+
 	private PhotoDataCache() { }
 
     /**
@@ -45,7 +45,7 @@ public class PhotoDataCache {
 	public static void invalidate() {
 		cache.invalidateAll();
 	}
-	
+
 	public static ResourceLocation bindTexture(long photoId) {
 		return cache.getUnchecked(photoId).bindTexture();
 	}
@@ -57,21 +57,25 @@ public class PhotoDataCache {
 		}
 	}
 
+    public static CacheElement getCacheElement(long photoID) {
+        return cache.getUnchecked(photoID);
+    }
+
     public static class CacheElement implements Consumer<PacketPhotoData> {
-		
+
 		private static final ResourceLocation DUMMY = new ResourceLocation("cameracraft", "textures/gui/loadingPhoto.png");
 
         private BufferedImage    img;
         private ResourceLocation loc;
         private DynamicTexture   tex;
-		
+
 		public ResourceLocation bindTexture() {
 			TextureManager engine = mc.renderEngine;
 			if (loc == null) {
 				if (img == null) {
 					engine.bindTexture(DUMMY);
 					return null;
-				} else { 
+				} else {
 					tex = new DynamicTexture(img);
 					loc = engine.getDynamicTextureLocation("cameracraft.photo", tex);
 				}
@@ -100,7 +104,7 @@ public class PhotoDataCache {
             }
         }
 	}
-	
+
 	static class CacheManager extends CacheLoader<Long, CacheElement> implements RemovalListener<Long, CacheElement> {
 
 		@Override
@@ -117,7 +121,7 @@ public class PhotoDataCache {
             if (element != null) {
                 Scheduler.client().execute(element::unload);
             } else {
-                CameraCraft.logger.warn("Tried to unload null client texture cache");
+                CameraCraft.logger.warn("Tried to unload null client overDynText cache");
             }
         }
     }

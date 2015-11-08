@@ -34,7 +34,7 @@ public final class ClientUtil {
         }
 
         ssBuffer.clear();
-        // read the BGR values into the image
+        // read the BGR values into the overlay
         GL11.glReadPixels(0, 0, width, height, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, ssBuffer);
 
         ssBuffer.rewind();

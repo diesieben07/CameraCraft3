@@ -65,7 +65,7 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
                                 ex = t;
                             }
                             if (ex != null) {
-                                CameraCraft.printErrorMessage(player, "Failed to write image for photoID " + photoId, ex);
+                                CameraCraft.printErrorMessage(player, "Failed to write overlay for photoID " + photoId, ex);
                             }
                         }, Scheduler.server());
             }
