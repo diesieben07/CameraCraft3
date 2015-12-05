@@ -3,8 +3,10 @@ package de.take_weiland.mods.cameracraft.gui;
 import cpw.mods.fml.common.network.IGuiHandler;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.*;
+import de.take_weiland.mods.cameracraft.client.gui.memory.handler.GuiMemoryHandler;
 import de.take_weiland.mods.cameracraft.client.gui.printer.GuiPrinter;
 import de.take_weiland.mods.cameracraft.inv.InventoryCameraImpl;
+import de.take_weiland.mods.cameracraft.inv.InventoryMemoryHandler;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.commons.util.EnumUtils;
 import net.minecraft.entity.player.EntityPlayer;
@@ -22,7 +24,10 @@ public enum CCGuis {
 	CAMERA_PLACED,
     SET_STREAM_ID,
     PEN,
-    DRAWING_BOARD;
+    DRAWING_BOARD,
+    MEMORY_HANDLER,
+
+    ;
 	
 	public void open(EntityPlayer player) {
 		open(player, 0, 0, 0);
@@ -64,6 +69,8 @@ public enum CCGuis {
                     return null;
                 case DRAWING_BOARD:
                     return new ContainerDrawingBoard(world, x, y, z, player);
+                case MEMORY_HANDLER:
+                    return new ContainerMemoryHandler(new InventoryMemoryHandler(), x, y, z, player);
                 default:
                     throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
             }
@@ -93,6 +100,8 @@ public enum CCGuis {
                     return new GuiStreamID();
                 case DRAWING_BOARD:
                     return new GuiDrawingBoard((ContainerDrawingBoard) c);
+                case MEMORY_HANDLER:
+                    return new GuiMemoryHandler((ContainerMemoryHandler)c);
                 default:
                     throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}

@@ -55,7 +55,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
     public void initGui() {
         super.initGui();
 
-        guiStates.add(new GuiStateContainer(container, this, new ResourceLocation("cameracraft:textures/gui/drawing_board.png"), new int[]{0}, new GuiButton[]{new GuiButton(0, width / 2 - 60, height / 2 - guiTop / 2 - 5, 120, 20, "Use this for drawing")}, true, guiTop, guiLeft));
+        guiStates.add(new GuiStateContainer(0, container, this, new ResourceLocation("cameracraft:textures/gui/drawing_board.png"), new int[]{0}, new GuiButton[]{new GuiButton(0, width / 2 - 60, height / 2 - guiTop / 2 - 5, 120, 20, "Use this for drawing")}, true, guiTop, guiLeft));
 
         GuiButton[] buttons1 = new GuiButton[]{
                 new GuiButton(0, 0, 20, 75, 20, "Finish Drawing"),
@@ -69,14 +69,14 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                 new GuiButton(7, width - 40, height - 20, 40, 20, "Clear"),
         };
 
-        guiStates.add(new GuiStateContainer(container, this, null, new int[]{1}, buttons1, false, 0, 0));
+        guiStates.add(new GuiStateContainer(1, container, this, null, new int[]{1}, buttons1, false, 0, 0));
 
         GuiButton[] buttons2 = new GuiButton[]{
                 new GuiButton(0, width / 2 - 170, height / 2 - 10, 20, 20, EnumChatFormatting.GREEN + "OK"),
                 new GuiButton(1, width / 2 - 150, height / 2 - 10, 300, 20, EnumChatFormatting.RED + "CANCEL"),
         };
 
-        guiStates.add(new GuiStateContainer(container, this, null, new int[]{}, buttons2, false, 0, 0));
+        guiStates.add(new GuiStateContainer(2, container, this, null, new int[]{}, buttons2, false, 0, 0));
 
         try (InputStream stream = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("cameracraft:textures/gui/Farbkreis.png")).getInputStream()) {
             colorCircle = ImageIO.read(stream);
@@ -244,6 +244,11 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
     }
 
     @Override
+    protected boolean shouldExitOnKeyboardType(char typedChar, int keyCode) {
+        return keyCode == 1 || keyCode == 18;
+    }
+
+    @Override
     protected ResourceLocation provideTexture() {
         return new ResourceLocation("cameracraft:textures/gui/drawing_board.png");
     }
@@ -363,14 +368,14 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                 break;
         }
         if (exitGui && state != 1 && state != 2) {
-            overlay.flush();
+            Rendering.unloadTexture(colorDynRsc);
+            Rendering.unloadTexture(overDynRsc);
             this.mc.thePlayer.closeScreen();
         }
     }
 
     private void saveImage() {
         new PacketDrawingBoard(container.windowId, overlay).sendToServer();
-        mc.thePlayer.closeScreen();
     }
 
     public int getMouseXinImage(int resolutionX, int mouseX) {

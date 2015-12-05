@@ -53,11 +53,7 @@ public class PacketPhotoData implements Packet.Response {
     public BufferedImage getImage() {
         BufferedImage result;
         if (image == null) {
-            try {
-                result = DatabaseImpl.current.loadImage(photoId);
-            } catch (IOException e) {
-                throw new UncheckedIOException(e);
-            }
+            result = DatabaseImpl.current.loadImage(photoId);
         } else {
             result = image;
         }

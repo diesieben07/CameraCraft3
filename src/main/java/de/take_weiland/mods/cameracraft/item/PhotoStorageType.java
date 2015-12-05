@@ -58,7 +58,7 @@ public enum PhotoStorageType implements Subtype {
 	}
 	
 	public PhotoStorage getStorage(ItemStack stack) {
-		return PhotoStorages.withCapacity(capacity, isSealed(), stack, filter);
+		return PhotoStorages.withCapacity(capacity, isSealed(), stack, filter, this == MEMORY_CARD);
 	}
 	
 	public boolean canRewind() {

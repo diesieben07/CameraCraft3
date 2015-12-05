@@ -22,7 +22,7 @@ repositories {
 }
 
 dependencies {
-    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.98:deobf'
+    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.103:deobf'
 }
 
 repositories {
@@ -49,7 +49,7 @@ if (ENV.DRONE_BUILD_NUMBER) {
 }
 
 minecraft {
-	version = "1.7.10-10.13.3.1370-1.7.10"
+	version = "1.7.10-10.13.4.1566-1.7.10"
 	runDir = "eclipse"
 	
 	replaceIn "cameracraft/CameraCraft.java"

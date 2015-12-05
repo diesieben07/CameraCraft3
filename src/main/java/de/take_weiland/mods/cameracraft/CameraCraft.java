@@ -49,6 +49,8 @@ import java.util.concurrent.ForkJoinPool;
 public final class CameraCraft {
 
     public static final String MOD_ID = CameraCraftApiHandler.CAMERACRAFT_MODID;
+    public static final String modid = CameraCraftApiHandler.CAMERACRAFT_MODID;
+    public static final String MODID = modid;
     static final String MOD_NAME = "CameraCraft";
     static final String VERSION = "@VERSION@";
     private static final String CLIENT_ENV = "de.take_weiland.mods.cameracraft.client.ClientProxy";
@@ -107,7 +109,10 @@ public final class CameraCraft {
                 .register(6, PacketGuiPenButton::new, PacketGuiPenButton::handle)
                 .register(7, PacketRequestPrintJob::new, PacketRequestPrintJob::handle)
                 .register(8, PacketStreamID::new, PacketStreamID::handle)
-                .register(9, PacketDrawingBoard::new, PacketDrawingBoard::handle);
+                .register(9, PacketDrawingBoard::new, PacketDrawingBoard::handle)
+                .register(10, PacketMemoryHandlerDeletePicture::new, PacketMemoryHandlerDeletePicture::handle)
+                .register(11, PacketMemoryHandlerRename::new, PacketMemoryHandlerRename::handle);
+
 
         CCBlock.createBlocks();
         CCItem.init();

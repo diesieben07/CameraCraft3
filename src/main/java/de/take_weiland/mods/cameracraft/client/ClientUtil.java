@@ -109,60 +109,7 @@ public final class ClientUtil {
     private static Random r = new Random();
 
     public static EnumChatFormatting getRandomFontColor() {
-        EnumChatFormatting e = null;
-        int i = r.nextInt(16);
-        switch(i){
-            case 0:
-                e = EnumChatFormatting.AQUA;
-                break;
-            case 1:
-                e = EnumChatFormatting.BLACK;
-                break;
-            case 2:
-                e = EnumChatFormatting.BLUE;
-                break;
-            case 3:
-                e = EnumChatFormatting.DARK_AQUA;
-                break;
-            case 4:
-                e = EnumChatFormatting.DARK_BLUE;
-                break;
-            case 5:
-                e = EnumChatFormatting.DARK_GRAY;
-                break;
-            case 6:
-                e = EnumChatFormatting.DARK_GREEN;
-                break;
-            case 7:
-                e = EnumChatFormatting.DARK_PURPLE;
-                break;
-
-            case 8:
-                e = EnumChatFormatting.DARK_RED;
-                break;
-            case 9:
-                e = EnumChatFormatting.GOLD;
-                break;
-            case 10:
-                e = EnumChatFormatting.GRAY;
-                break;
-            case 11:
-                e = EnumChatFormatting.GREEN;
-                break;
-            case 12:
-                e = EnumChatFormatting.LIGHT_PURPLE;
-                break;
-            case 13:
-                e = EnumChatFormatting.RED;
-                break;
-            case 14:
-                e = EnumChatFormatting.WHITE;
-                break;
-            case 15:
-                e = EnumChatFormatting.YELLOW;
-                break;
-        }
-        return e;
+        return EnumChatFormatting.values()[r.nextInt(15)];
     }
 
     public static String colorEveryCharacterInString(String string) {
@@ -172,5 +119,15 @@ public final class ClientUtil {
             randString += getRandomFontColor() + (sub + "");
         }
         return randString;
+    }
+
+
+    public static void drawCenteredString(String text, int x, int y) {
+        drawCenteredString(text, x, y, 0);
+    }
+
+    public static void drawCenteredString(String text, int x, int y, int color) {
+        Minecraft mc = Minecraft.getMinecraft();
+        mc.fontRendererObj.drawString(text, x - mc.fontRendererObj.getStringWidth(text)/2, y, color);
     }
 }

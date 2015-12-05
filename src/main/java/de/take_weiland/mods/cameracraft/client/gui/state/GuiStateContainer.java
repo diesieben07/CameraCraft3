@@ -1,5 +1,6 @@
 package de.take_weiland.mods.cameracraft.client.gui.state;
 
+import de.take_weiland.mods.commons.inv.SimpleGuiButton;
 import de.take_weiland.mods.commons.inv.SimpleSlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
@@ -18,17 +19,27 @@ public class GuiStateContainer {
 
     private int[] slotIDs;
     private ResourceLocation texture;
-    public ArrayList<GuiButton> buttonList = new ArrayList<GuiButton>();
+    public ArrayList<GuiButton> buttonList = new ArrayList<>();
     private GuiContainer gui;
     private Container container;
     private boolean allowInvSlots;
     private int guiTop, guiLeft;
+    private int ID, xSize, ySize;
+    private final int[] standardHideButtons, standardHideSlots;
 
-    public GuiStateContainer(Container container, GuiContainer gui, ResourceLocation texture, int[] slotIDs, GuiButton[] buttonIDs, boolean allowInvSlots) {
-        this(container, gui, texture, slotIDs, buttonIDs, allowInvSlots, (gui.width - 176) / 2, (gui.height - 166) / 2);
+    public GuiStateContainer(int id, Container container, GuiContainer gui, ResourceLocation texture, int[] slotIDs, GuiButton[] buttonIDs, boolean allowInvSlots) {
+        this(id, container, gui, texture, slotIDs, buttonIDs, allowInvSlots, -1, -1);
     }
 
-    public GuiStateContainer(Container container, GuiContainer gui, ResourceLocation texture, int[] slotIDs, GuiButton[] buttonIDs, boolean allowInvSlots, int guiTop, int guiLeft) {
+    public GuiStateContainer(int id, Container container, GuiContainer gui, ResourceLocation texture, int[] slotIDs, GuiButton[] buttonIDs, boolean allowInvSlots, int guiTop, int guiLeft) {
+        this(id, container, gui, texture, slotIDs, buttonIDs, allowInvSlots, guiTop, guiLeft, new int[0], new int[0]);
+    }
+
+    public GuiStateContainer(int id, Container container, GuiContainer gui, ResourceLocation texture, int[] slotIDs, GuiButton[] buttonIDs, boolean allowInvSlots, int guiTop, int guiLeft, int[] standardHideButtons, int[] standardHideSlots) {
+        this(id, container, gui, texture, slotIDs, buttonIDs, allowInvSlots, guiTop, guiLeft, standardHideButtons, standardHideSlots, 176, 166);
+    }
+
+    public GuiStateContainer(int id, Container container, GuiContainer gui, ResourceLocation texture, int[] slotIDs, GuiButton[] buttonIDs, boolean allowInvSlots, int guiTop, int guiLeft, int[] standardHideButtons, int[] standardHideSlots, int textureWidth, int textureHeight) {
         this.texture = texture;
         for (GuiButton button : buttonIDs) {
             buttonList.add(button);
@@ -39,6 +50,11 @@ public class GuiStateContainer {
         this.allowInvSlots = allowInvSlots;
         this.guiTop = guiTop;
         this.guiLeft = guiLeft;
+        this.ID = id;
+        this.standardHideButtons = standardHideButtons;
+        this.standardHideSlots = standardHideSlots;
+        this.xSize = textureWidth;
+        this.ySize = textureHeight;
     }
 
 
@@ -58,13 +74,28 @@ public class GuiStateContainer {
                 } else {
                     if (((Slot) container.inventorySlots.get(x)).inventory instanceof InventoryPlayer) {
                         ((SimpleSlot) container.inventorySlots.get(x)).setNormalPosition();
-                    }else{
+                    } else {
                         ((SimpleSlot) container.inventorySlots.get(x)).setDisplayPosition(-1000000, -1000000);
+                    }
+                }
+            }
+            for (int i : standardHideSlots) {
+                if (x == i) {
+                    ((SimpleSlot) container.inventorySlots.get(x)).setDisplayPosition(-1000000, -1000000);
+                }
+            }
+        }
+        for (int x = 0; x < buttonList.size(); x++) {
+            if (buttonList.get(x) instanceof SimpleGuiButton) {
+                for (int i : standardHideButtons) {
+                    if (i == x) {
+                        ((SimpleGuiButton) buttonList.get(x)).hideButton();
                     }
                 }
             }
         }
     }
+
 
     protected boolean matchSlot(int id) {
         for (int i = 0; i < slotIDs.length; i++) {
@@ -92,8 +123,32 @@ public class GuiStateContainer {
     }
 
     public void enableAllButtons(boolean enable) {
-        for(GuiButton button : buttonList) {
+        for (GuiButton button : buttonList) {
             button.enabled = enable;
         }
+    }
+
+    public int getID() {
+        return ID;
+    }
+
+    public int getUniqueButtonID(int buttonID) {
+        return (ID << 16) | (buttonID);
+    }
+
+    public void hideButton(int x, boolean hide) {
+        if (hide) {
+            ((SimpleGuiButton) buttonList.get(x)).hideButton();
+        } else {
+            ((SimpleGuiButton) buttonList.get(x)).setNormalPosition();
+        }
+    }
+
+    public int getxSize() {
+        return xSize;
+    }
+
+    public int getySize() {
+        return ySize;
     }
 }
