@@ -19,7 +19,6 @@ import org.apache.commons.lang3.ArrayUtils;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
-import java.util.Arrays;
 
 import static com.google.common.base.Preconditions.checkPositionIndex;
 
@@ -197,8 +196,8 @@ public final class PhotoStorages {
             }
 
             for (int i = 0; i < nameList.tagCount(); i++) {
-                if (name.equals(nameList.getStringTagAt(i))) {
-                    setName(index, name + (duplID > 0 ? "(" + duplID + ")" : ""), duplID++);
+                if ((name + (duplID > 0 ? "(" + (duplID) + ")" : "")).equals(nameList.getStringTagAt(i))) {
+                    setName(index, name, duplID+1);
                     return;
                 }
             }
@@ -208,16 +207,7 @@ public final class PhotoStorages {
 
         @Override
         public void orderName() {
-            String[] list = new String[nameList.tagCount()];
-            for (int i = 0; i < nameList.tagCount(); i++) {
-                list[i] = nameList.getStringTagAt(i);
-            }
 
-            Arrays.sort(list);
-
-            for (int i = 0; i < list.length; i++) {
-                nameList.setTag(i, new NBTTagString(list[i]));
-            }
         }
 
         public String getDefaultName(int index) {

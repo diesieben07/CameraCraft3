@@ -3,7 +3,7 @@ package de.take_weiland.mods.cameracraft.gui;
 import cpw.mods.fml.common.network.IGuiHandler;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.*;
-import de.take_weiland.mods.cameracraft.client.gui.memory.handler.GuiMemoryHandler;
+import de.take_weiland.mods.cameracraft.client.gui.memory.handler.FolderGuiMemoryHandler;
 import de.take_weiland.mods.cameracraft.client.gui.printer.GuiPrinter;
 import de.take_weiland.mods.cameracraft.inv.InventoryCameraImpl;
 import de.take_weiland.mods.cameracraft.inv.InventoryMemoryHandler;
@@ -101,7 +101,7 @@ public enum CCGuis {
                 case DRAWING_BOARD:
                     return new GuiDrawingBoard((ContainerDrawingBoard) c);
                 case MEMORY_HANDLER:
-                    return new GuiMemoryHandler((ContainerMemoryHandler)c);
+                    return new FolderGuiMemoryHandler((ContainerMemoryHandler)c);
                 default:
                     throw new IncompatibleClassChangeError("Unexpected CCGui Enum!");
 			}

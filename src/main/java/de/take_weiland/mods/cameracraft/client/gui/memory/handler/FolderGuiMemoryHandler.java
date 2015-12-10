@@ -1,16 +1,15 @@
 package de.take_weiland.mods.cameracraft.client.gui.memory.handler;
 
 import de.take_weiland.mods.cameracraft.CameraCraft;
+import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageRenamable;
-import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
-import de.take_weiland.mods.cameracraft.client.gui.state.GuiContainerGuiState;
+import de.take_weiland.mods.cameracraft.client.gui.FolderGui;
 import de.take_weiland.mods.cameracraft.client.gui.state.GuiStateContainer;
 import de.take_weiland.mods.cameracraft.gui.ContainerMemoryHandler;
 import de.take_weiland.mods.cameracraft.item.ItemPhotoStorages;
 import de.take_weiland.mods.cameracraft.network.PacketMemoryHandlerDeletePicture;
 import de.take_weiland.mods.cameracraft.network.PacketMemoryHandlerRename;
 import de.take_weiland.mods.commons.client.Guis;
-import de.take_weiland.mods.commons.client.Rendering;
 import de.take_weiland.mods.commons.inv.SimpleGuiButton;
 import de.take_weiland.mods.commons.inv.SimpleSlot;
 import de.take_weiland.mods.commons.util.ItemStacks;
@@ -21,35 +20,26 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
 import java.util.ArrayList;
-
-import static org.lwjgl.opengl.GL11.glColor3f;
+import java.util.List;
 
 /**
  * @author Intektor
  */
-public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandler> {
-
-    protected ArrayList<ImageFile> files1 = new ArrayList<>();
-    protected ArrayList<ImageFile> files2 = new ArrayList<>();
-    private ItemStack[] prevStack = new ItemStack[2];
-
-    private static ResourceLocation singleFolder = new ResourceLocation(CameraCraft.MODID + ":textures/gui/memory-handler1.png");
-    private static ResourceLocation dualFolder = new ResourceLocation(CameraCraft.MODID + ":textures/gui/memory-handler2.png");
-
-    private int startFile1 = 0;
-    private int startFile2 = 0;
+public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
 
     protected GuiTextField renameField;
 
-    private int showingPhotoFile, requestedSide;
+    private ItemStack[] prevStack = new ItemStack[2];
+    private int requestedSide;
+    private int showingPhotoFile;
 
-    public GuiMemoryHandler(ContainerMemoryHandler container) {
+    private List<Folder> helpFolders = new ArrayList<>();
+
+    public FolderGuiMemoryHandler(ContainerMemoryHandler container) {
         super(container);
     }
 
-    @Override
     public void initGui() {
         super.initGui();
 
@@ -76,7 +66,7 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
                 new SimpleGuiButton(7, width / 2 - 25, height / 2 + 10, 50, 20, "Rename!"),
         };
 
-        guiStates.add(new GuiStateContainer(1, container, this, singleFolder, new int[]{0}, buttons2, false, -1, -1, new int[]{5, 6, 7}, new int[]{}));
+        guiStates.add(new GuiStateContainer(1, container, this, null, new int[]{0}, buttons2, false, -1, -1, new int[]{5, 6, 7}, new int[]{}));
 
         SimpleGuiButton[] buttons20 = new SimpleGuiButton[]{
                 new SimpleGuiButton(0, guiLeft - 20, guiTop + 126, 20, 20, "^"),
@@ -97,7 +87,7 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
                 new SimpleGuiButton(10, width / 2 - 25, height / 2 + 10, 50, 20, "Rename!"),
         };
 
-        guiStates.add(new GuiStateContainer(2, container, this, dualFolder, new int[]{0, 1}, buttons20, false, -1, -1, new int[]{8, 9, 10}, new int[]{}, 229, 166));
+        guiStates.add(new GuiStateContainer(2, container, this, null, new int[]{0, 1}, buttons20, false, -1, -1, new int[]{8, 9, 10}, new int[]{}, 229, 166));
 
         SimpleGuiButton[] button3 = new SimpleGuiButton[]{
                 new SimpleGuiButton(0, (width - computePhotoDim()) / 2 - 50, height / 2 - 10, 50, 20, "Prev"),
@@ -135,46 +125,8 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
-        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
-        if (getActiveGuiStateNumber() == 1) {
-            int y = 0;
-            for (int z = startFile1; z < startFile1 + 8 && z < files1.size(); z++) {
-                files1.get(z).renderFile(mouseX, mouseY, 3, y * ImageFile.height + 2, guiTop, guiLeft, getActiveGuiStateNumber(), container.getSlot(0).getStack(), xSize, ySize);
-                y++;
-            }
-        } else if (activeGuiState == 3) {
-            int size = computePhotoDim();
-
-            int x = (width - size) / 2;
-            int y = (height - size) / 2;
-
-            drawRect(x, y, x + size, y + size, 0xffffff00);
-
-            if (files1.size() - 1 >= showingPhotoFile) {
-                PhotoDataCache.bindTexture(files1.get(showingPhotoFile).photoID);
-                glColor3f(1, 1, 1);
-                Rendering.drawTexturedQuadFit(x + 2, y + 2, size - 4, size - 4);
-                drawCenteredString(fontRendererObj, files1.get(showingPhotoFile).getPhotoName(container.getSlot(0).getStack()), width / 2, 4, Color.red.getRGB());
-            } else {
-                setGuiState(1);
-            }
-        } else if (getActiveGuiStateNumber() == 2) {
-            int y = 0;
-            for (int z = startFile1; z < startFile1 + 8 && z < files1.size(); z++) {
-                files1.get(z).renderFile(mouseX, mouseY, 3, y * ImageFile.height + 2, guiTop, guiLeft, getActiveGuiStateNumber(), container.getSlot(0).getStack(), xSize, ySize);
-                y++;
-            }
-            y = 0;
-            for (int z = startFile2; z < startFile2 + 8 && z < files2.size(); z++) {
-                files2.get(z).renderFile(mouseX, mouseY, 116 + 3, y * ImageFile.height + 2, guiTop, guiLeft, getActiveGuiStateNumber(), container.getSlot(1).getStack(), xSize, ySize);
-                y++;
-            }
-        }
-    }
-
-    @Override
     protected void buttonPressed(int activeGuiState, GuiButton button) {
+        updateFolders();
         if (activeGuiState == 0) {
             if (button.id == 0) {
                 if (container.getSlot(0).getStack() != null && container.getSlot(1).getStack() != null) {
@@ -184,127 +136,112 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
                 }
             }
         } else if (activeGuiState == 1) {
-            int selected = getSelectedFile1() != null ? getSelectedFile1().position : -10;
+            System.out.println(button.id);
             Slot slot = (Slot) container.inventorySlots.get(0);
             ItemStack stack = slot.getStack();
             ItemPhotoStorages itemStorage = (ItemPhotoStorages) stack.getItem();
             PhotoStorageRenamable storage = (PhotoStorageRenamable) itemStorage.getPhotoStorage(stack);
             switch (button.id) {
                 case 0:
-                    if (startFile1 > 0) {
-                        startFile1 += -1;
-                        selectAllFiles(false, 1);
-                        if (getFileAtPosition1(selected) != null) {
-                            getFileAtPosition1(selected).setSelected(true);
-                        }
+                    if (getStartFileID(0) > 0) {
+                        setStartFileID(0, getStartFileID(0) - 1);
                     }
                     break;
                 case 1:
-                    if (startFile1 < files1.size() - 8) {
-                        startFile1 += 1;
-                        selectAllFiles(false, 1);
-                        if (getFileAtPosition1(selected) != null) {
-                            getFileAtPosition1(selected).setSelected(true);
-                        }
+                    if (getStartFileID(0) < folders.get(0).size() - 8) {
+                        setStartFileID(0, getStartFileID(0) + 1);
                     }
                     break;
                 case 2:
-                    showingPhotoFile = getSelectedFile1().getPositionInArray();
+                    showingPhotoFile = getSelectedFile(0).getIndex();
                     setGuiState(3);
                     break;
                 case 3:
                     getCurrentGuiState().hideButton(7, false);
-                    renameField.setText(getSelectedFile1().getPhotoName(container.getSlot(0).getStack()));
+                    allowClicks(false);
+                    renameField.setText(getSelectedFile(0).getPhotoName(container.getSlot(0).getStack()));
                     break;
                 case 4:
+                    allowClicks(false);
                     getCurrentGuiState().hideButton(5, false);
                     getCurrentGuiState().hideButton(6, false);
                     break;
                 case 5:
-                    new PacketMemoryHandlerDeletePicture(getSelectedFile1().getIndex(), container.windowId, 1).sendToServer();
+                    new PacketMemoryHandlerDeletePicture(getSelectedFile(0).getIndex(), container.windowId, 1).sendToServer();
                     getCurrentGuiState().hideButton(5, true);
                     getCurrentGuiState().hideButton(6, true);
+                    allowClicks(true);
                     break;
                 case 6:
                     getCurrentGuiState().hideButton(5, true);
                     getCurrentGuiState().hideButton(6, true);
+                    allowClicks(true);
                     break;
                 case 7:
                     getCurrentGuiState().hideButton(7, true);
-                    new PacketMemoryHandlerRename(getSelectedFile1().getIndex(), renameField.getText(), container.windowId, 1).sendToServer();
+                    allowClicks(true);
+                    new PacketMemoryHandlerRename(getSelectedFile(0).getIndex(), renameField.getText(), container.windowId, 1).sendToServer();
                     break;
             }
-
+            storage.orderName();
         } else if (activeGuiState == 2) {
-            int selected1 = getSelectedFile1() != null ? getSelectedFile1().position : -10;
-            int selected2 = getSelectedFile2() != null ? getSelectedFile2().position : -10;
             switch (button.id) {
                 case 0:
-                    if (startFile1 > 0) {
-                        startFile1 += -1;
-                        selectAllFiles(false, 1);
-                        if (getFileAtPosition1(selected1) != null) {
-                            getFileAtPosition1(selected1).setSelected(true);
-                        }
+                    if (getStartFileID(0) > 0) {
+                        setStartFileID(0, getStartFileID(0) - 1);
                     }
                     break;
                 case 1:
-                    if (startFile1 < files1.size() - 8) {
-                        startFile1 += 1;
-                        selectAllFiles(false, 1);
-                        if (getFileAtPosition1(selected1) != null) {
-                            getFileAtPosition1(selected1).setSelected(true);
-                        }
+                    if (getStartFileID(0) < folders.get(0).size() - 8) {
+                        setStartFileID(0, getStartFileID(0) + 1);
                     }
                     break;
                 case 2:
-                    if (startFile2 > 0) {
-                        startFile2 += -1;
-                        selectAllFiles(false, 2);
-                        if (getFileAtPosition2(selected2) != null) {
-                            getFileAtPosition2(selected2).setSelected(true);
-                        }
+                    if (getStartFileID(1) > 0) {
+                        setStartFileID(0, getStartFileID(0) - 1);
                     }
                     break;
                 case 3:
-                    if (startFile2 < files2.size() - 8) {
-                        startFile2 += 1;
-                        selectAllFiles(false, 2);
-                        if (getFileAtPosition2(selected2) != null) {
-                            getFileAtPosition2(selected2).setSelected(true);
-                        }
+                    if (getStartFileID(1) < folders.get(1).size() - 8) {
+                        setStartFileID(1, getStartFileID(1) - 1);
                     }
                     break;
                 case 4:
+                    allowClicks(false);
                     getCurrentGuiState().hideButton(10, false);
                     requestedSide = 1;
                     break;
                 case 5:
+                    allowClicks(false);
                     getCurrentGuiState().hideButton(8, false);
                     getCurrentGuiState().hideButton(9, false);
                     requestedSide = 1;
                     break;
                 case 6:
+                    allowClicks(false);
                     getCurrentGuiState().hideButton(10, false);
                     requestedSide = 2;
                     break;
                 case 7:
+                    allowClicks(false);
                     getCurrentGuiState().hideButton(8, false);
                     getCurrentGuiState().hideButton(9, false);
                     requestedSide = 2;
                     break;
                 case 8:
+                    allowClicks(true);
                     getCurrentGuiState().hideButton(8, true);
                     getCurrentGuiState().hideButton(9, true);
-                    new PacketMemoryHandlerDeletePicture(requestedSide == 1 ? getSelectedFile1().getIndex() : getSelectedFile2().getIndex(), container.windowId, requestedSide).sendToServer();
+                    new PacketMemoryHandlerDeletePicture(requestedSide == 1 ? getSelectedFile(0).getIndex() : getSelectedFile(1).getIndex(), container.windowId, requestedSide).sendToServer();
                     break;
                 case 9:
+                    allowClicks(true);
                     getCurrentGuiState().hideButton(8, true);
                     getCurrentGuiState().hideButton(9, true);
                     break;
                 case 10:
                     getCurrentGuiState().hideButton(10, true);
-                    new PacketMemoryHandlerRename(requestedSide == 1 ? getSelectedFile1().getIndex() : getSelectedFile2().getIndex(), renameField.getText(), container.windowId, requestedSide).sendToServer();
+                    new PacketMemoryHandlerRename(requestedSide == 1 ? getSelectedFile(0).getIndex() : getSelectedFile(1).getIndex(), renameField.getText(), container.windowId, requestedSide).sendToServer();
                     break;
             }
 
@@ -316,7 +253,7 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
                     }
                     break;
                 case 1:
-                    if (showingPhotoFile < files1.size() - 1) {
+                    if (showingPhotoFile < folders.get(0).size() - 1) {
                         showingPhotoFile++;
                     }
                     break;
@@ -328,18 +265,18 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
                     break;
                 case 3:
                     getCurrentGuiState().hideButton(7, false);
-                    renameField.setText(files1.get(showingPhotoFile).getPhotoName(container.getSlot(0).getStack()));
+                    renameField.setText(folders.get(0).getFileAt(showingPhotoFile).getPhotoName(container.getSlot(0).getStack()));
                     break;
                 case 4:
                     setGuiState(1);
                     break;
                 case 5:
-                    new PacketMemoryHandlerDeletePicture(files1.get(showingPhotoFile).getIndex(), container.windowId, 1).sendToServer();
+                    new PacketMemoryHandlerDeletePicture(folders.get(0).getFileAt(showingPhotoFile).getIndex(), container.windowId, 1).sendToServer();
                     getCurrentGuiState().hideButton(0, false);
                     getCurrentGuiState().hideButton(1, false);
                     getCurrentGuiState().hideButton(5, true);
                     getCurrentGuiState().hideButton(6, true);
-                    if (files1.size() == 0) {
+                    if (folders.get(0).size() == 0) {
                         setGuiState(1);
                     }
                     break;
@@ -351,7 +288,7 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
                     break;
                 case 7:
                     getCurrentGuiState().hideButton(7, true);
-                    new PacketMemoryHandlerRename(files1.get(showingPhotoFile).getIndex(), renameField.getText(), container.windowId, 1).sendToServer();
+                    new PacketMemoryHandlerRename(folders.get(0).getFileAt(showingPhotoFile).getIndex(), renameField.getText(), container.windowId, 1).sendToServer();
                     break;
             }
         }
@@ -359,19 +296,16 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
 
     @Override
     protected void initState(int state) {
+        folders.clear();
         if (state == 0) {
 
         } else if (state == 1) {
+            folders.add(new Folder(width/2 - 176/2, height/2 - 160/2, 176, 160, 20, container.getSlot(0).getStack(), 8).setFiles(helpFolders.get(0).getFiles()));
             SimpleSlot slot0 = (SimpleSlot) container.getSlot(0);
             slot0.setDisplayPosition(-18, -18);
             slot0.allowPickUp(false);
 
-            startFile1 = 0;
         } else if (state == 2) {
-
-            startFile1 = 0;
-            startFile2 = 0;
-
             SimpleSlot slot0 = (SimpleSlot) container.getSlot(0);
             SimpleSlot slot1 = (SimpleSlot) container.getSlot(1);
 
@@ -391,19 +325,6 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
             if (exitGui) {
                 this.mc.thePlayer.closeScreen();
             }
-        }
-    }
-
-    @Override
-    protected ResourceLocation provideTexture() {
-        return new ResourceLocation(CameraCraft.MOD_ID + ":textures/gui/memory-handler.png");
-    }
-
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        super.drawScreen(mouseX, mouseY, partialTicks);
-        for (ImageFile file : files1) {
-            file.updateFile(mouseX, mouseY, guiTop, guiLeft, getActiveGuiStateNumber(), xSize, ySize);
         }
     }
 
@@ -429,22 +350,23 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
             guiStates.get(0).buttonList.get(0).displayString = prevStack[0] != null && prevStack[1] != null ? "Use these Memory Cards" : "Use this Memory Card";
         } else if (activeGuiState == 1) {
             for (int i = 2; i <= 4; i++) {
-                if (getSelectedFile1() != null) {
+                if (getSelectedFile(0) != null) {
                     ((SimpleGuiButton) getCurrentGuiState().buttonList.get(i)).setNormalPosition();
                 } else {
                     ((SimpleGuiButton) getCurrentGuiState().buttonList.get(i)).hideButton();
                 }
             }
             if (getCurrentGuiState().buttonList.get(7).xPosition > 0) {
+
                 renameField.xPosition = width / 2 - 50;
                 renameField.yPosition = height / 2 - 10;
             }
         } else if (activeGuiState == 2) {
 
-            getCurrentGuiState().hideButton(4, getSelectedFile1() == null);
-            getCurrentGuiState().hideButton(5, getSelectedFile1() == null);
-            getCurrentGuiState().hideButton(6, getSelectedFile2() == null);
-            getCurrentGuiState().hideButton(7, getSelectedFile2() == null);
+            getCurrentGuiState().hideButton(4, getSelectedFile(0) == null);
+            getCurrentGuiState().hideButton(5, getSelectedFile(0) == null);
+            getCurrentGuiState().hideButton(6, getSelectedFile(1) == null);
+            getCurrentGuiState().hideButton(7, getSelectedFile(1) == null);
 
             if (getCurrentGuiState().buttonList.get(10).xPosition > 0) {
                 renameField.xPosition = width / 2 - 50;
@@ -460,104 +382,33 @@ public class GuiMemoryHandler extends GuiContainerGuiState<ContainerMemoryHandle
 
     public void updateScreenCard() {
         ItemStack stack = container.getSlot(0).getStack();
-        files1.clear();
-        files2.clear();
+        helpFolders.clear();
+        helpFolders.add(new Folder(0, 0, 0, 0, 20, null, 8));
+        helpFolders.add(new Folder(0, 0, 0, 0, 20, null, 8));
+        clearFiles();
         if (stack != null) {
-            ItemPhotoStorages storage = (ItemPhotoStorages) stack.getItem();
-            int posina = 0;
-            for (long l : storage.getPhotoStorage(stack)) {
-                files1.add(new ImageFile(this, l, 0, 0, storage.getPhotoStorage(stack).indexOf(l), posina++, true));
+            PhotoStorageItem item = (PhotoStorageItem) stack.getItem();
+            for (int index = 0; index < item.getPhotoStorage(stack).size(); index++) {
+                helpFolders.get(0).getFiles().add(new ImageFile(item.getPhotoStorage(stack).get(index), index));
             }
         }
         stack = container.getSlot(1).getStack();
         if (stack != null) {
-            ItemPhotoStorages storage = (ItemPhotoStorages) stack.getItem();
-            int posina = 0;
-            for (long l : storage.getPhotoStorage(stack)) {
-                files2.add(new ImageFile(this, l, 0, 0, storage.getPhotoStorage(stack).indexOf(l), posina++, false));
+            PhotoStorageItem item = (PhotoStorageItem) stack.getItem();
+            for (int index = 0; index < item.getPhotoStorage(stack).size(); index++) {
+                helpFolders.get(0).getFiles().add(new ImageFile(item.getPhotoStorage(stack).get(index), index));
             }
-        }
-    }
-
-    @Override
-    protected void mouseClicked(int mouseX, int mouseY, int mouseButton) {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        if (getActiveGuiStateNumber() == 1) {
-            if (getCurrentGuiState().buttonList.get(5).xPosition < 0 && getCurrentGuiState().buttonList.get(7).xPosition < 0) {
-                for (ImageFile file : files1) {
-                    file.click(mouseX, mouseY, mouseButton, guiTop, guiLeft, getActiveGuiStateNumber(), xSize, ySize);
-                }
-            }
-        } else if (getActiveGuiStateNumber() == 2) {
-            if (getCurrentGuiState().buttonList.get(10).xPosition < 0) {
-                for (ImageFile file : files1) {
-                    file.click(mouseX, mouseY, mouseButton, guiTop, guiLeft, getActiveGuiStateNumber(), xSize, ySize);
-                }
-                for (ImageFile file : files2) {
-                    file.click(mouseX, mouseY, mouseButton, guiTop, guiLeft, getActiveGuiStateNumber(), xSize, ySize);
-                }
-            }
-        }
-    }
-
-    @Override
-    protected void doubleClick(int mouseX, int mouseY, int mouseButton) {
-        for (ImageFile file : files1) {
-            file.doubleClick(mouseX, mouseY, mouseButton, guiTop, guiLeft, getActiveGuiStateNumber());
         }
     }
 
     @Override
     protected boolean shouldExitOnKeyboardType(char typedChar, int keyCode) {
-        return !renameField.isFocused();
+        return false;
     }
 
-    public void selectAllFiles(boolean select, int side) {
-        if (side == 1) {
-            for (ImageFile file : files1) {
-                file.setSelected(select);
-            }
-        } else {
-            for (ImageFile file : files2) {
-                file.setSelected(select);
-            }
-        }
-    }
-
-    public ImageFile getFileAtPosition1(int position) {
-        for (ImageFile file : files1) {
-            if (file.getPosition() == position) {
-                return file;
-            }
-        }
-        return null;
-    }
-
-    public ImageFile getFileAtPosition2(int position) {
-        for (ImageFile file : files2) {
-            if (file.getPosition() == position) {
-                return file;
-            }
-        }
-        return null;
-    }
-
-    public ImageFile getSelectedFile1() {
-        for (ImageFile file : files1) {
-            if (file.isSelected()) {
-                return file;
-            }
-        }
-        return null;
-    }
-
-    public ImageFile getSelectedFile2() {
-        for (ImageFile file : files2) {
-            if (file.isSelected()) {
-                return file;
-            }
-        }
-        return null;
+    @Override
+    protected ResourceLocation provideTexture() {
+        return new ResourceLocation(CameraCraft.MOD_ID + ":textures/gui/memory-handler.png");
     }
 
     private int computePhotoDim() {

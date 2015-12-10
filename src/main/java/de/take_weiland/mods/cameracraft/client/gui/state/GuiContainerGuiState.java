@@ -96,7 +96,7 @@ public abstract class GuiContainerGuiState<C extends Container> extends Abstract
     @Override
     protected void keyTyped(char typedChar, int keyCode) {
         System.out.println(keyCode);
-        if (shouldExitOnKeyboardType(typedChar, keyCode)) {
+        if (!shouldExitOnKeyboardType(typedChar, keyCode)) {
             super.keyTyped(typedChar, keyCode);
         } else {
             exitState(activeGuiState, true);
