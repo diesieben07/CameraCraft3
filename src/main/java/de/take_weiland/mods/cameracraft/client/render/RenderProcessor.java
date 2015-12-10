@@ -9,7 +9,10 @@ import net.minecraft.block.Block;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.util.IIcon;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.EnumSkyBlock;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 import net.minecraftforge.fluids.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -25,19 +28,19 @@ public class RenderProcessor implements ISimpleBlockRenderingHandler {
 
         RotatedDirection front = ((CCRotatedBlock) block).getFront(world.getBlockMetadata(x, y, z));
 
+        Tessellator.instance.setColorOpaque(255, 255, 255);
+
         if (fluidStack != null) {
             Fluid fluid = fluidStack.getFluid();
             IIcon fluidIcon = fluid.getIcon(fluidStack);
 
-            Tessellator.instance.setColorOpaque(255, 255, 255);
-
             double fluidIconHeight = (double) fluidStack.amount / tile.tank.getCapacity();
 
+            // top face of fluid
             renderer.setRenderBounds(0, 0, 0, 1, fluidIconHeight, 1);
             renderer.renderFaceYPos(block, x, y, z, fluidIcon);
 
-            double jitterCorrect = 0.001;
-
+            // fluid front face
             switch (front.getDirection()) {
                 case WEST:
                     renderer.setRenderBounds(0, 4/16d, 3/16d, 1, fluidIconHeight, 7/16d);
@@ -76,15 +79,42 @@ public class RenderProcessor implements ISimpleBlockRenderingHandler {
             renderer.setRenderBoundsFromBlock(block);
         }
 
-        renderer.renderStandardBlock(block, x, y, z);
+        // inside of the block
 
+        IIcon icon = ((CCRotatedBlock) block).iconTop;
         renderer.renderFromInside = true;
-        renderer.setRenderAllFaces(true);
-        renderer.setOverrideBlockTexture(((CCRotatedBlock) block).iconTop);
-        renderer.renderStandardBlock(block, x, y, z);
+//        renderer.setRenderAllFaces(true);
+//        renderer.setOverrideBlockTexture(((CCRotatedBlock) block).iconTop);
+
+        int skyLight, blockLight;
+        if (world instanceof World) {
+            skyLight = ((World) world).getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
+            blockLight = ((World) world).getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
+        } else if (world instanceof ChunkCache) {
+            skyLight = ((ChunkCache) world).getSkyBlockTypeBrightness(EnumSkyBlock.Sky, x, y, z);
+            blockLight = ((ChunkCache) world).getSkyBlockTypeBrightness(EnumSkyBlock.Block, x, y, z);
+        } else {
+            skyLight = 7;
+            blockLight = 0;
+        }
+
+        int brightness = Math.max(0, skyLight - 6) << 20 | Math.max(0, blockLight - 6) << 4;
+        Tessellator.instance.setBrightness(brightness);
+
+        renderer.renderFaceXNeg(block, x, y, z, icon);
+        renderer.renderFaceXPos(block, x, y, z, icon);
+        renderer.renderFaceYNeg(block, x, y, z, icon);
+        renderer.renderFaceYPos(block, x, y, z, icon);
+        renderer.renderFaceZNeg(block, x, y, z, icon);
+        renderer.renderFaceZPos(block, x, y, z, icon);
+
+//        renderer.renderStandardBlock(block, x, y, z);
         renderer.renderFromInside = false;
-        renderer.setRenderAllFaces(false);
-        renderer.clearOverrideBlockTexture();
+//        renderer.setRenderAllFaces(false);
+//        renderer.clearOverrideBlockTexture();
+
+        // normal block
+        renderer.renderStandardBlock(block, x, y, z);
 
         return true;
     }

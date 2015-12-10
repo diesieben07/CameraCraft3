@@ -9,6 +9,7 @@ import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.commons.nbt.ToNbt;
 import de.take_weiland.mods.commons.sync.Sync;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
+import de.take_weiland.mods.commons.util.Fluids;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -39,7 +40,9 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
     @ToNbt
 	@Sync
 	public final FluidTank tank = new FluidTank(TANK_CAPACITY);
-	
+
+    private FluidStack oldTankFluid;
+
 	@Override
 	public int getSizeInventory() {
 		return 3;
@@ -68,7 +71,12 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 			} else {
 				processProgress = -1;
 			}
-		}
+		} else {
+            if (!Fluids.identical(oldTankFluid, tank.getFluid())) {
+                oldTankFluid = Fluids.clone(tank.getFluid());
+                worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
+            }
+        }
 	}
 	
 	private void finishProcessing() {
