@@ -1,45 +1,46 @@
 package de.take_weiland.mods.cameracraft.blocks;
 
+import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.tileentity.TileCamera;
-import de.take_weiland.mods.commons.meta.MetadataProperty;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.world.World;
 
-public class BlockCCMachine extends CCMultitypeBlock<MachineType> {
+public class BlockCCMachine extends CCRotatedBlock {
 
-	private static final MetadataProperty<MachineType> subtypeProp = MetadataProperty.newProperty(0, MachineType.class);
+	private final MachineType type;
 
-	public BlockCCMachine() {
-		super("machines", Material.iron);
+	public BlockCCMachine(MachineType type) {
+		super("machines." + type.subtypeName(), Material.iron);
+		this.type = type;
 	}
 
-	@Override
-	public MetadataProperty<MachineType> subtypeProperty() {
-		return subtypeProp;
-	}
+    @Override
+    public int getRenderType() {
+        return type == MachineType.PHOTO_PROCESSOR ? CameraCraft.proxy.getProcessorRenderId() : 0;
+    }
 
-	@Override
+    @Override
 	public boolean hasTileEntity(int meta) {
-		return getType(meta).hasTileEntity();
+		return type.hasTileEntity();
 	}
 
 	@Override
 	public TileEntity createTileEntity(World world, int meta) {
-		return getType(meta).createTileEntity();
+		return type.createTileEntity();
 	}
 
 	@Override
 	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-		getType(world.getBlockMetadata(x, y, z)).openGui(player, x, y, z);
+		type.openGui(player, x, y, z);
 		return true;
 	}
 
 	@Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
-		if (getType(world.getBlockMetadata(x, y, z)) == MachineType.CAMERA) {
+		if (type == MachineType.CAMERA) {
 			boolean isPowered = world.isBlockIndirectlyGettingPowered(x, y, z);
 			TileCamera tile = (TileCamera) world.getTileEntity(x, y, z);
 			if (tile.isPowered() != isPowered) {
@@ -48,4 +49,13 @@ public class BlockCCMachine extends CCMultitypeBlock<MachineType> {
 		}
 	}
 
+    @Override
+    protected String textureSides() {
+        return "machines.generic.sides";
+    }
+
+    @Override
+    protected String textureTop() {
+        return "machines.generic.top";
+    }
 }

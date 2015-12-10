@@ -21,6 +21,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApiHandler;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.cameracraft.entity.EntityScreen;
 import de.take_weiland.mods.cameracraft.entity.EntityVideoCamera;
@@ -30,9 +31,9 @@ import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.item.ItemVideoCamera;
 import de.take_weiland.mods.cameracraft.network.*;
-import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.net.Network;
+import de.take_weiland.mods.commons.net.PacketHandler;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -102,8 +103,9 @@ public final class CameraCraft {
         Network.newSimpleChannel("CameraCraft")
                 .register(0, PacketClientAction::new, PacketClientAction::handle)
                 .register(1, PacketPhotoName::new, PacketPhotoName::handle)
-                .registerWithAsyncResponse(2, PacketRequestStandardPhoto::new, PacketTakenPhoto::new, PacketRequestStandardPhoto::handle)
-                .register(3, PacketClientRequestPhoto::new, PacketPhotoData::read, PacketClientRequestPhoto::handle)
+                // TODO WAT
+                .registerWithAsyncResponse(2, PacketRequestStandardPhoto::new, PacketTakenPhoto::new, (PacketHandler.WithAsyncResponse<PacketRequestStandardPhoto, PacketTakenPhoto>) PacketRequestStandardPhoto::handle)
+                .register(3, PacketClientRequestPhoto::new, PacketPhotoData::read, (PacketHandler.WithResponse<PacketClientRequestPhoto, PacketPhotoData>) PacketClientRequestPhoto::handle)
                 .register(4, PacketPrintJobs::new, PacketPrintJobs::handle)
                 .register(5, PacketPaint::new, PacketPaint::handle)
                 .register(6, PacketGuiPenButton::new, PacketGuiPenButton::handle)

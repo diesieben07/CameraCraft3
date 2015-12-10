@@ -1,4 +1,4 @@
-package de.take_weiland.mods.cameracraft.photo;
+package de.take_weiland.mods.cameracraft.db;
 
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
@@ -9,6 +9,7 @@ import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.Photo;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
+import de.take_weiland.mods.cameracraft.photo.PhotoImpl;
 import gnu.trove.TCollections;
 import gnu.trove.iterator.TLongIterator;
 import gnu.trove.set.TLongSet;
@@ -35,7 +36,7 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
 
     private final File root;
 
-    private final LoadingCache<Long, PhotoImpl> cache = CacheBuilder.newBuilder()
+    private final LoadingCache<Long, PhotoImpl> dataCache = CacheBuilder.newBuilder()
             .concurrencyLevel(2)
             .expireAfterAccess(60, TimeUnit.SECONDS)
             .build(new DataLoader());
@@ -186,7 +187,7 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo> {
 
     @Override
     public Photo getPhoto(long id) {
-        return cache.getUnchecked(id);
+        return dataCache.getUnchecked(id);
     }
 
     @Override

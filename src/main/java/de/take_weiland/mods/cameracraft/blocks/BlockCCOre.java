@@ -11,7 +11,7 @@ import net.minecraft.world.World;
 
 import java.util.ArrayList;
 
-public class BlockCCOre extends CCMultitypeBlock<OreType> {
+public class BlockCCOre extends CCSubtypeBlock<OreType> {
 
 	private static final MetadataProperty<OreType> subtypeProp = MetadataProperty.newProperty(0, OreType.class);
 

@@ -2,7 +2,7 @@ package de.take_weiland.mods.cameracraft.img;
 
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
-import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
+import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import net.minecraft.util.MathHelper;
 
 import java.awt.image.BufferedImage;

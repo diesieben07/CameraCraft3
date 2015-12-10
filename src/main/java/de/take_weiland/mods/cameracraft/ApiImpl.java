@@ -7,7 +7,7 @@ import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.network.PacketRequestStandardPhoto;
-import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
+import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;

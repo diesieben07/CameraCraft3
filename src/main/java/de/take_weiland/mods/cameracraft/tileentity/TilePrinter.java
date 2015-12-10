@@ -10,12 +10,12 @@ import de.take_weiland.mods.cameracraft.api.printer.PrintJob;
 import de.take_weiland.mods.cameracraft.api.printer.Printer;
 import de.take_weiland.mods.cameracraft.api.printer.QueuedPrintJob;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.blocks.MachineType;
 import de.take_weiland.mods.cameracraft.gui.ContainerPrinter;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.PhotoType;
 import de.take_weiland.mods.cameracraft.photo.SimplePrintJob;
 import de.take_weiland.mods.commons.inv.Inventories;
-import de.take_weiland.mods.commons.meta.HasSubtypes;
 import de.take_weiland.mods.commons.nbt.NBT;
 import de.take_weiland.mods.commons.net.Packets;
 import de.take_weiland.mods.commons.sync.Sync;
@@ -184,7 +184,7 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 
 	@Override
 	public String getDefaultName() {
-        return HasSubtypes.name(CCBlock.machines, CCBlock.machines.getType(getBlockMetadata()));
+		return CCBlock.machines.get(MachineType.PRINTER).getUnlocalizedName();
 	}
 	
 	static NBTTagCompound encodeJob(SimplePrintJob.Queued job) {

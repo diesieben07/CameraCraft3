@@ -9,6 +9,7 @@ import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
 import de.take_weiland.mods.cameracraft.client.gui.GuiViewPhoto;
 import de.take_weiland.mods.cameracraft.client.render.RenderPoster;
+import de.take_weiland.mods.cameracraft.client.render.RenderProcessor;
 import de.take_weiland.mods.cameracraft.client.render.RenderScreen;
 import de.take_weiland.mods.cameracraft.entity.EntityPaintable;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
@@ -36,6 +37,8 @@ public class ClientProxy implements CCProxy {
 
     private Minecraft mc = Minecraft.getMinecraft();
 
+    static int processorRenderId;
+
     @Override
     public void preInit() {
         photoTicker = new PhotoTicker();
@@ -45,6 +48,14 @@ public class ClientProxy implements CCProxy {
 
         RenderingRegistry.registerEntityRenderingHandler(EntityPoster.class, new RenderPoster());
         RenderingRegistry.registerEntityRenderingHandler(EntityScreen.class, new RenderScreen());
+
+        processorRenderId = RenderingRegistry.getNextAvailableRenderId();
+        RenderingRegistry.registerBlockHandler(processorRenderId, new RenderProcessor());
+    }
+
+    @Override
+    public int getProcessorRenderId() {
+        return processorRenderId;
     }
 
     @Override

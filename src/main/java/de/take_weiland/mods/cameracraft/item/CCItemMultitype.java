@@ -1,6 +1,6 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import de.take_weiland.mods.commons.client.Icons;
+import de.take_weiland.mods.commons.client.icon.Icons;
 import de.take_weiland.mods.commons.meta.HasSubtypes;
 import de.take_weiland.mods.commons.meta.Subtype;
 import net.minecraft.client.renderer.texture.IIconRegister;
@@ -20,6 +20,7 @@ public abstract class CCItemMultitype<T extends Subtype> extends CCItem implemen
 		super(name);
 	}
 	
+	@SuppressWarnings({"rawtypes", "unchecked"})
 	@Override
 	public final void getSubItems(Item item, CreativeTabs tab, List list) {
 		HasSubtypes.getSubItemsImpl(this, list);

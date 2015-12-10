@@ -4,10 +4,10 @@ import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
+import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.img.ImageFilters;
-import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
-import de.take_weiland.mods.commons.meta.HasSubtypes;
 import de.take_weiland.mods.commons.nbt.ToNbt;
+import de.take_weiland.mods.commons.sync.Sync;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import net.minecraft.item.Item;
@@ -37,6 +37,7 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 	private int processProgress;
 
     @ToNbt
+	@Sync
 	public final FluidTank tank = new FluidTank(TANK_CAPACITY);
 	
 	@Override
@@ -95,7 +96,7 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 			return false;
 		}
 		FluidStack f = tank.getFluid();
-		return f != null && f.fluid == CCBlock.alkalineFluid && f.amount > FLUID_PER_PROCESS;
+		return f != null && f.getFluid() == CCBlock.alkalineFluid && f.amount > FLUID_PER_PROCESS;
 	}
 
 	private void processFluidInput() {
@@ -103,23 +104,38 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 			fillCountdown = INVALID_ITEM;
 			return;
 		}
-		
-		ItemStack origContainer = storage[0].copy();
-		ItemStack container = storage[0].splitStack(1);
-		ItemStack emptied = FluidContainerRegistry.drainFluidContainer(container);
-		FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(container);
-		
-		if (ItemStacks.fitsInto(emptied, storage[1]) && FluidContainerRegistry.isFilledContainer(container) && tank.fill(fluid, false) == fluid.amount) {
-			storage[0] = ItemStacks.emptyToNull(storage[0]);
-			storage[1] = ItemStacks.merge(emptied, storage[1], true);
-			
-			tank.fill(fluid, true);
-			
-			fillCountdown = CHECKING_SCHEDULED;
-		} else {
-			storage[0] = origContainer;
-			fillCountdown = INVALID_ITEM;
-		}
+
+        ItemStack container = storage[0].copy();
+        container.stackSize = 1;
+
+        ItemStack processed = null;
+        Runnable performAction = null;
+        if (FluidContainerRegistry.isFilledContainer(container)) {
+            FluidStack fluid = FluidContainerRegistry.getFluidForFilledItem(container);
+            int filled = tank.fill(fluid, false);
+            if (filled == fluid.amount) {
+                processed = FluidContainerRegistry.drainFluidContainer(container);
+                performAction = () -> tank.fill(fluid, true);
+            }
+        } else if (tank.getFluidAmount() != 0 && FluidContainerRegistry.isEmptyContainer(container)) {
+            FluidStack fluid = tank.getFluid();
+            ItemStack filled = FluidContainerRegistry.fillFluidContainer(fluid, container);
+            if (filled != null) {
+                processed = filled;
+                performAction = () -> tank.drain(FluidContainerRegistry.getFluidForFilledItem(filled).amount, true);
+            }
+        }
+
+        if (processed != null && ItemStacks.fitsInto(processed, storage[1])) {
+            storage[0].stackSize--;
+            storage[0] = ItemStacks.emptyToNull(storage[0]);
+            storage[1] = ItemStacks.merge(processed, storage[1], true);
+
+            fillCountdown = CHECKING_SCHEDULED;
+            performAction.run();
+        } else {
+            fillCountdown = INVALID_ITEM;
+        }
 	}
 
     @Override
@@ -129,12 +145,12 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
     }
 
 	@Override
-	public boolean isItemValidForSlot(int slot, ItemStack item) {
+	public boolean isItemValidForSlot(int slot, ItemStack stack) {
 		switch (slot) {
 		case 0:
-			return FluidContainerRegistry.isFilledContainer(item);
+			return FluidContainerRegistry.isContainer(stack);
 		case 2:
-			return isValidPhotoStorage(item);
+			return isValidPhotoStorage(stack);
 		default:
 			return false;
 		}
@@ -192,7 +208,7 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 
 	@Override
 	public String getDefaultName() {
-		return HasSubtypes.name(CCBlock.machines, MachineType.PHOTO_PROCESSOR);
+		return CCBlock.machines.get(MachineType.PHOTO_PROCESSOR).getUnlocalizedName();
 
 	}
 

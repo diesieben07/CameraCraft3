@@ -1,6 +1,6 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import de.take_weiland.mods.cameracraft.photo.DatabaseImpl;
+import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.commons.net.MCDataInput;
 import de.take_weiland.mods.commons.net.MCDataOutput;
 import de.take_weiland.mods.commons.net.Packet;

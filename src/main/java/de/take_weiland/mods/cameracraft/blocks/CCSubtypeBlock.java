@@ -2,7 +2,7 @@ package de.take_weiland.mods.cameracraft.blocks;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import de.take_weiland.mods.commons.client.Icons;
+import de.take_weiland.mods.commons.client.icon.Icons;
 import de.take_weiland.mods.commons.meta.HasSubtypes;
 import de.take_weiland.mods.commons.meta.Subtype;
 import net.minecraft.block.material.Material;
@@ -12,11 +12,11 @@ import net.minecraft.world.World;
 
 import java.util.Map;
 
-public abstract class CCMultitypeBlock<TYPE extends Subtype> extends CCBlock implements HasSubtypes<TYPE> {
+public abstract class CCSubtypeBlock<TYPE extends Subtype> extends CCBlock implements HasSubtypes<TYPE> {
 
 	protected Map<TYPE, IIcon> icons;
 
-	public CCMultitypeBlock(String name, Material material) {
+	public CCSubtypeBlock(String name, Material material) {
 		super(name, material);
 	}
 	

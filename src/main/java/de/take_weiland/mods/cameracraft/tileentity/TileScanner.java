@@ -5,7 +5,6 @@ import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
-import de.take_weiland.mods.commons.meta.HasSubtypes;
 import de.take_weiland.mods.commons.sync.Sync;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import net.minecraft.item.Item;
@@ -121,7 +120,7 @@ public class TileScanner extends TileEntityInventory implements PhotoStorageProv
 
 	@Override
 	public String getDefaultName() {
-		return HasSubtypes.name(CCBlock.machines, MachineType.SCANNER);
+        return CCBlock.machines.get(MachineType.SCANNER).getUnlocalizedName();
 	}
 
 	@Override

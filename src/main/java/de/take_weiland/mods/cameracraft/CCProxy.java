@@ -29,5 +29,9 @@ public interface CCProxy {
 		throw new IllegalStateException();
 	}
 
+	default int getProcessorRenderId() {
+		throw new IllegalStateException();
+	}
+
 
 }

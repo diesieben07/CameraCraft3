@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.photo;
 
 import de.take_weiland.mods.cameracraft.api.photo.Photo;
+import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 
 import java.awt.image.BufferedImage;
 import java.io.DataInput;

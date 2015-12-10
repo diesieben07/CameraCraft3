@@ -3,15 +3,13 @@ package de.take_weiland.mods.cameracraft.blocks;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.tileentity.*;
-import de.take_weiland.mods.commons.meta.Subtype;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
-public enum MachineType implements Subtype {
+public enum MachineType {
 	
 	PHOTO_PROCESSOR("processor", TilePhotoProcessor.class, CCGuis.PHOTO_PROCESSOR),
 	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER),
-	PRINTER_ADVANCED("printerAdvanced", TilePrinter.class, CCGuis.PRINTER_ADVANCED),
 	CAMERA("camera", TileCamera.class, CCGuis.CAMERA_PLACED),
 	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER),
 	DRAWING_BOARD("drawing.board", TileDrawingBoard.class, CCGuis.DRAWING_BOARD),
@@ -31,7 +29,6 @@ public enum MachineType implements Subtype {
 		this.gui = gui;
 	}
 	
-	@Override
 	public String subtypeName() {
 		return name;
 	}
