@@ -2,24 +2,25 @@ package de.take_weiland.mods.cameracraft.client.gui.memory.handler;
 
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageRenamable;
+import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.client.gui.FolderGui;
 import de.take_weiland.mods.cameracraft.client.gui.state.GuiStateContainer;
 import de.take_weiland.mods.cameracraft.gui.ContainerMemoryHandler;
-import de.take_weiland.mods.cameracraft.item.ItemPhotoStorages;
 import de.take_weiland.mods.cameracraft.network.PacketMemoryHandlerDeletePicture;
 import de.take_weiland.mods.cameracraft.network.PacketMemoryHandlerRename;
 import de.take_weiland.mods.commons.client.Guis;
+import de.take_weiland.mods.commons.client.Rendering;
 import de.take_weiland.mods.commons.inv.SimpleGuiButton;
 import de.take_weiland.mods.commons.inv.SimpleSlot;
 import de.take_weiland.mods.commons.util.ItemStacks;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiTextField;
-import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,7 +33,7 @@ public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
 
     private ItemStack[] prevStack = new ItemStack[2];
     private int requestedSide;
-    private int showingPhotoFile;
+    private int showingPhotoFile = -1;
 
     private List<Folder> helpFolders = new ArrayList<>();
 
@@ -125,6 +126,30 @@ public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
     }
 
     @Override
+    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+        super.drawGuiContainerBackgroundLayer(partialTicks, mouseX, mouseY);
+
+        if (activeGuiState == 3) {
+
+            int size = computePhotoDim();
+
+            int x = (width - size) / 2;
+            int y = (height - size) / 2;
+
+            drawRect(x, y, x + size, y + size, 0xffffff00);
+
+            if (showingPhotoFile != -1) {
+                PhotoDataCache.bindTexture(folders.get(0).getFileAt(showingPhotoFile).photoID);
+                GL11.glColor3f(1, 1, 1);
+                Rendering.drawTexturedQuadFit(x + 2, y + 2, size - 4, size - 4);
+                drawCenteredString(fontRendererObj, folders.get(0).getFileAt(showingPhotoFile).getPhotoName(container.getSlot(0).getStack()), width / 2, 4, Color.red.getRGB());
+            } else {
+                setGuiState(1);
+            }
+        }
+    }
+
+    @Override
     protected void buttonPressed(int activeGuiState, GuiButton button) {
         updateFolders();
         if (activeGuiState == 0) {
@@ -136,11 +161,6 @@ public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
                 }
             }
         } else if (activeGuiState == 1) {
-            System.out.println(button.id);
-            Slot slot = (Slot) container.inventorySlots.get(0);
-            ItemStack stack = slot.getStack();
-            ItemPhotoStorages itemStorage = (ItemPhotoStorages) stack.getItem();
-            PhotoStorageRenamable storage = (PhotoStorageRenamable) itemStorage.getPhotoStorage(stack);
             switch (button.id) {
                 case 0:
                     if (getStartFileID(0) > 0) {
@@ -167,7 +187,7 @@ public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
                     getCurrentGuiState().hideButton(6, false);
                     break;
                 case 5:
-                    new PacketMemoryHandlerDeletePicture(getSelectedFile(0).getIndex(), container.windowId, 1).sendToServer();
+                    new PacketMemoryHandlerDeletePicture(getSelectedFile(0).getIndex(), container.windowId, 0).sendToServer();
                     getCurrentGuiState().hideButton(5, true);
                     getCurrentGuiState().hideButton(6, true);
                     allowClicks(true);
@@ -180,10 +200,9 @@ public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
                 case 7:
                     getCurrentGuiState().hideButton(7, true);
                     allowClicks(true);
-                    new PacketMemoryHandlerRename(getSelectedFile(0).getIndex(), renameField.getText(), container.windowId, 1).sendToServer();
+                    new PacketMemoryHandlerRename(getSelectedFile(0).getIndex(), renameField.getText(), container.windowId, 0).sendToServer();
                     break;
             }
-            storage.orderName();
         } else if (activeGuiState == 2) {
             switch (button.id) {
                 case 0:
@@ -296,9 +315,11 @@ public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
 
     @Override
     protected void initState(int state) {
-        folders.clear();
-        if (state == 0) {
+        if(state != 3) {
+            folders.clear();
+        }
 
+        if (state == 0) {
         } else if (state == 1) {
             folders.add(new Folder(width/2 - 176/2, height/2 - 160/2, 176, 160, 20, container.getSlot(0).getStack(), 8).setFiles(helpFolders.get(0).getFiles()));
             SimpleSlot slot0 = (SimpleSlot) container.getSlot(0);
@@ -331,7 +352,6 @@ public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
     @Override
     public void updateScreen() {
         super.updateScreen();
-
         renameField.xPosition = -10000;
         renameField.yPosition = -10000;
 

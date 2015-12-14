@@ -14,10 +14,10 @@ import net.minecraft.item.ItemStack;
  */
 public class PacketMemoryHandlerRename implements Packet {
 
-    public String name;
-    public int index;
-    public int containerID;
-    public int side;
+    public final String name;
+    public final int index;
+    public final int containerID;
+    public final int side;
 
     public PacketMemoryHandlerRename(int index, String name, int containerID, int side) {
         this.name = name;
@@ -43,7 +43,7 @@ public class PacketMemoryHandlerRename implements Packet {
 
     public void handle(EntityPlayer player) {
         if(player.openContainer.windowId == containerID) {
-            Slot slot = (Slot)player.openContainer.inventorySlots.get(side - 1);
+            Slot slot = (Slot)player.openContainer.inventorySlots.get(side);
             ItemStack stack = slot.getStack();
             ItemPhotoStorages itemStorage = (ItemPhotoStorages) stack.getItem();
             PhotoStorageRenamable storage = (PhotoStorageRenamable) itemStorage.getPhotoStorage(stack);

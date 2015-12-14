@@ -25,8 +25,10 @@ public class Folder implements Iterable<ImageFile> {
 
     /**
      * The id of the file that gets rendered as first position
+     * The position on the screen selected
+     * The index of the selected file
      */
-    protected int startFile = 0, selectedPosition;
+    protected int startFile = 0, selectedPosition, selectedIndex;
 
     protected ItemStack stack;
 
@@ -51,7 +53,8 @@ public class Folder implements Iterable<ImageFile> {
             int y2 = 0;
             for (int z = startFile; z < startFile + showingPhotos && z < files.size(); z++) {
                 if (Guis.isPointInRegion(awayLeft, awayTop + y2 * imageSize, width, imageSize, mouseX, mouseY)) {
-                    selectedPosition = z;
+                    selectedPosition = y2;
+                    selectedIndex = z;
                     break;
                 }
                 y2++;
@@ -60,7 +63,7 @@ public class Folder implements Iterable<ImageFile> {
     }
 
     public ImageFile getSelectedFile() {
-        return files.get(selectedPosition);
+        return files.get(selectedIndex);
     }
 
     public void renderFolder() {
@@ -68,7 +71,7 @@ public class Folder implements Iterable<ImageFile> {
             Rendering.drawColoredQuad(awayLeft, awayTop, width, height, Color.GRAY.getRGB());
             int y = 0;
             for (int z = startFile; z < startFile + showingPhotos && z < files.size(); z++) {
-                if (z == selectedPosition) {
+                if (z == selectedIndex) {
                     Rendering.drawColoredQuad(awayLeft, y * imageSize + awayTop, width, imageSize, Color.blue.getRGB());
                 }
                 PhotoDataCache.bindTexture(files.get(z).photoID);
