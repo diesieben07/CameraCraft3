@@ -38,7 +38,27 @@ public class BlockCCMachine extends CCRotatedBlock {
 		return true;
 	}
 
-	@Override
+    @Override
+    public boolean getUseNeighborBrightness() {
+        return type == MachineType.PHOTO_PROCESSOR;
+    }
+
+    //    @Override
+//    public boolean renderAsNormalBlock() {
+//        return type != MachineType.PHOTO_PROCESSOR;
+//    }
+//
+//    @Override
+//    public boolean isNormalCube() {
+//        return type != MachineType.PHOTO_PROCESSOR;
+//    }
+//
+//    @Override
+//    public boolean isOpaqueCube() {
+//        return type != MachineType.PHOTO_PROCESSOR;
+//    }
+
+    @Override
 	public void onNeighborBlockChange(World world, int x, int y, int z, Block block) {
 		if (type == MachineType.CAMERA) {
 			boolean isPowered = world.isBlockIndirectlyGettingPowered(x, y, z);
