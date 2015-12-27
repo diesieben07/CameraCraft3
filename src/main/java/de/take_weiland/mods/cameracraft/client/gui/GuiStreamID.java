@@ -38,6 +38,7 @@ public class GuiStreamID extends GuiScreen {
         Entity entity = mc.theWorld.getEntityByID(CCPlayerData.get(mc.thePlayer).getLastClickedEntityID());
         entity.writeToNBT(nbt);
         channel.setText(nbt.getString("StreamID"));
+
     }
 
     @Override
@@ -59,7 +60,7 @@ public class GuiStreamID extends GuiScreen {
     public void handleKeyboardInput() {
         super.handleKeyboardInput();
         if(Keyboard.isCreated()) {
-            if(Keyboard.isKeyDown(Keyboard.KEY_SPACE)) {
+            if(Keyboard.isKeyDown(Keyboard.KEY_RETURN)) {
                 mc.setIngameFocus();
             }
         }

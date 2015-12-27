@@ -39,7 +39,7 @@ public class PacketMemoryHandlerDeletePicture implements Packet {
 
     public void handle(EntityPlayer player) {
         if(player.openContainer.windowId == containerID) {
-            Slot slot = (Slot)player.openContainer.inventorySlots.get(side - 1);
+            Slot slot = (Slot)player.openContainer.inventorySlots.get(side);
             ItemStack stack = slot.getStack();
             ItemPhotoStorages itemStorage = (ItemPhotoStorages) stack.getItem();
             PhotoStorage storage = itemStorage.getPhotoStorage(stack);

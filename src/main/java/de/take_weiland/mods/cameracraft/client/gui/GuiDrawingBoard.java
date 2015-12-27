@@ -272,11 +272,10 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                     color = overlay.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
                     ccolor = new CColor(new Color(color));
                 } else {
-                    //TODO: Allow import of background picture
-//                    ItemPhoto photo = (ItemPhoto) container.getSlot(0).getStack().getItem();
-//                    DynamicTexture text = PhotoDataCache.photo.getPhotoId(container.getSlot(0).getStack()));
-//                    BufferedImage copy = ClientUtil.getBufferedImagefromDynamicTexture(text);
-//                    color = copy.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
+                    ItemPhoto photo = (ItemPhoto) container.getSlot(0).getStack().getItem();
+                    DynamicTexture text = PhotoDataCache.get(photo.getPhotoId(container.getSlot(0).getStack())).getTexture();
+                    BufferedImage copy = ClientUtil.getBufferedImagefromDynamicTexture(text);
+                    color = copy.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
                 }
             }
         }

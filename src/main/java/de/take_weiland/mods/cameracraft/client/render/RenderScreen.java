@@ -1,6 +1,10 @@
 package de.take_weiland.mods.cameracraft.client.render;
 
+import com.xcompwiz.lookingglass.api.view.IWorldView;
+import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.entity.EntityScreen;
+import de.take_weiland.mods.cameracraft.video.camera.StreamHandler;
+import de.take_weiland.mods.cameracraft.video.camera.VideoStream;
 import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
@@ -106,8 +110,19 @@ public class RenderScreen extends Render {
 
                 t.draw();
 
-                //TODO: TEXTURE
-
+                if (StreamHandler.getStreamByID(screen.getStreamID()) != null) {
+                    VideoStream stream = StreamHandler.getStreamByID(screen.getStreamID());
+                    if (stream != null) {
+                        Entity viewer = stream.getViewer();
+                        if (stream.getView() == null) {
+                            IWorldView view = CameraCraft.worldView.createWorldView(viewer.dimension, null, 64, 64);
+                            stream.setView(view);
+                        }
+                        if (stream.getView() != null) {
+                            //            GL11.glBindTexture(GL_TEXTURE_2D, stream.getView().getCamera());
+                        }
+                    }
+                }
                 t.startDrawingQuads();
 
                 // front

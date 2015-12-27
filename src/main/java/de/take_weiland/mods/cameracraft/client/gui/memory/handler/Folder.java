@@ -35,6 +35,7 @@ public class Folder implements Iterable<ImageFile> {
     protected boolean shouldRender = true, allowClicks = true;
 
     public Folder(int awayLeft, int awayTop, int width, int height, int imageSize, ItemStack stack, int showingPhotos) {
+        System.out.println("new foldrr");
         this.awayLeft = awayLeft;
         this.awayTop = awayTop;
         this.width = width;
@@ -63,6 +64,10 @@ public class Folder implements Iterable<ImageFile> {
     }
 
     public ImageFile getSelectedFile() {
+        if (selectedIndex >= files.size()) {
+
+            return null;
+        }
         return files.get(selectedIndex);
     }
 

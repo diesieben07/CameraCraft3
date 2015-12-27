@@ -8,12 +8,14 @@ import de.take_weiland.mods.cameracraft.CCProxy;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
 import de.take_weiland.mods.cameracraft.client.gui.GuiViewPhoto;
+import de.take_weiland.mods.cameracraft.client.render.RenderInventoryPhoto;
 import de.take_weiland.mods.cameracraft.client.render.RenderPoster;
 import de.take_weiland.mods.cameracraft.client.render.RenderProcessor;
 import de.take_weiland.mods.cameracraft.client.render.RenderScreen;
 import de.take_weiland.mods.cameracraft.entity.EntityPaintable;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.cameracraft.entity.EntityScreen;
+import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.ItemDraw;
 import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
 import net.minecraft.client.Minecraft;
@@ -21,6 +23,7 @@ import net.minecraft.crash.CrashReport;
 import net.minecraft.util.MovingObjectPosition;
 import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -48,6 +51,8 @@ public class ClientProxy implements CCProxy {
 
         RenderingRegistry.registerEntityRenderingHandler(EntityPoster.class, new RenderPoster());
         RenderingRegistry.registerEntityRenderingHandler(EntityScreen.class, new RenderScreen());
+
+        MinecraftForgeClient.registerItemRenderer(CCItem.photo, new RenderInventoryPhoto());
 
         processorRenderId = RenderingRegistry.getNextAvailableRenderId();
         RenderingRegistry.registerBlockHandler(processorRenderId, new RenderProcessor());

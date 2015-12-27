@@ -315,6 +315,7 @@ public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
 
     @Override
     protected void initState(int state) {
+        System.out.println("init state");
         if(state != 3) {
             folders.clear();
         }
@@ -358,12 +359,13 @@ public class FolderGuiMemoryHandler extends FolderGui<ContainerMemoryHandler> {
         if (!ItemStacks.identical(prevStack[0], container.getSlot(0).getStack())) {
             prevStack[0] = container.getSlot(0).getStack();
             updateScreenCard();
+            folders.get(0).setFiles(helpFolders.get(0).getFiles());
         }
         if (!ItemStacks.identical(prevStack[1], container.getSlot(1).getStack())) {
             prevStack[1] = container.getSlot(1).getStack();
             updateScreenCard();
+            folders.get(1).setFiles(helpFolders.get(1).getFiles());
         }
-
 
         if (activeGuiState == 0) {
             guiStates.get(0).buttonList.get(0).enabled = prevStack[0] != null || prevStack[1] != null;

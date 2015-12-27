@@ -3,9 +3,9 @@ package de.take_weiland.mods.cameracraft;
 import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.MiscItemType;
-import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.commons.SaveWorldsEvent;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -46,5 +46,4 @@ public final class CCEventHandler {
 			CCPlayerData.get(event.entityPlayer).setLastClickedEntityID(entity.getEntityId());
 		}
 	}
-
 }
