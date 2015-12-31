@@ -8,12 +8,13 @@ import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityHanging;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
 
 /**
  * @author Intektor
  */
-public class EntityScreen extends EntityHanging implements IEntityAdditionalSpawnData{
+public class EntityScreen extends EntityHanging implements IEntityAdditionalSpawnData {
 
     private String streamID = "cam";
 
@@ -51,11 +52,12 @@ public class EntityScreen extends EntityHanging implements IEntityAdditionalSpaw
 
     @Override
     protected void entityInit() {
-        super.entityInit();
+
     }
 
     @Override
     public boolean interactFirst(EntityPlayer player) {
+        System.out.println("open");
         CCGuis.SET_STREAM_ID.open(player, (int) player.posX, (int) player.posY, (int) player.posZ);
         return true;
     }
@@ -68,5 +70,15 @@ public class EntityScreen extends EntityHanging implements IEntityAdditionalSpaw
     @Override
     public void readSpawnData(ByteBuf buffer) {
         streamID = ByteBufUtils.readUTF8String(buffer);
+    }
+
+    @Override
+    public void readEntityFromNBT(NBTTagCompound nbt) {
+        streamID = nbt.getString("StreamID");
+    }
+
+    @Override
+    public void writeEntityToNBT(NBTTagCompound nbt) {
+        nbt.setString("StreamID", streamID + "");
     }
 }

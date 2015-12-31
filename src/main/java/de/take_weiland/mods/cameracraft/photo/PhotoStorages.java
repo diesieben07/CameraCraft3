@@ -185,9 +185,9 @@ public final class PhotoStorages {
          * Used to check for duplicated names
          * @param index
          * @param name
-         * @param duplID
+         * @param renameTry
          */
-        public void setName(int index, String name, int duplID) {
+        public void setName(int index, String name, int renameTry) {
             checkPositionIndex(index, size());
             if (index >= nameList.tagCount()) {
                 for (int i = nameList.tagCount(); i <= index; i++) {
@@ -196,13 +196,13 @@ public final class PhotoStorages {
             }
 
             for (int i = 0; i < nameList.tagCount(); i++) {
-                if ((name + (duplID > 0 ? "(" + (duplID) + ")" : "")).equals(nameList.getStringTagAt(i))) {
-                    setName(index, name, duplID+1);
+                if ((name + (renameTry > 0 ? "(" + (renameTry) + ")" : "")).equals(nameList.getStringTagAt(i))) {
+                    setName(index, name, renameTry+1);
                     return;
                 }
             }
 
-            nameList.setTag(index, new NBTTagString(name + (duplID > 0 ? "(" + duplID + ")" : "")));
+            nameList.setTag(index, new NBTTagString(name + (renameTry > 0 ? "(" + renameTry + ")" : "")));
         }
 
         @Override

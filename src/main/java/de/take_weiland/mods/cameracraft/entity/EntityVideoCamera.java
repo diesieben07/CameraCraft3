@@ -3,6 +3,8 @@ package de.take_weiland.mods.cameracraft.entity;
 import cpw.mods.fml.common.network.ByteBufUtils;
 import cpw.mods.fml.common.registry.IEntityAdditionalSpawnData;
 import de.take_weiland.mods.cameracraft.gui.CCGuis;
+import de.take_weiland.mods.cameracraft.video.camera.StreamHandler;
+import de.take_weiland.mods.cameracraft.video.camera.VideoStream;
 import io.netty.buffer.ByteBuf;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
@@ -28,6 +30,7 @@ public class EntityVideoCamera extends Entity implements IEntityAdditionalSpawnD
         this.posY = posY + 1;
         this.posZ = posZ + 0.5;
         this.setSize(1, 1);
+        StreamHandler.addVideoStream(new VideoStream(streamID == null ? "cam" : streamID, this));
     }
 
     public EntityVideoCamera(World world, double posX, double posY, double posZ, float yaw, float pitch) {
@@ -37,6 +40,7 @@ public class EntityVideoCamera extends Entity implements IEntityAdditionalSpawnD
         this.posZ = posZ + 0.5;
         this.setSize(1, 1);
         this.setRotation(yaw, pitch);
+        StreamHandler.addVideoStream(new VideoStream(streamID == null ? "cam" : streamID, this));
     }
 
     @Override
@@ -51,7 +55,7 @@ public class EntityVideoCamera extends Entity implements IEntityAdditionalSpawnD
 
     @Override
     protected void writeEntityToNBT(NBTTagCompound nbt) {
-        nbt.setString("StreamID", streamID + "");
+        nbt.setString("StreamID", streamID);
     }
 
     @Override
@@ -73,6 +77,7 @@ public class EntityVideoCamera extends Entity implements IEntityAdditionalSpawnD
     @Override
     public boolean interactFirst(EntityPlayer player) {
 
+        System.out.println("hi");
         CCGuis.SET_STREAM_ID.open(player, (int)player.posX, (int)player.posY, (int)player.posZ);
 
         return true;
@@ -84,11 +89,12 @@ public class EntityVideoCamera extends Entity implements IEntityAdditionalSpawnD
 
     public void setStreamID(String id) {
         streamID = id;
+        StreamHandler.addVideoStream(new VideoStream(streamID, this));
     }
 
     @Override
     public void writeSpawnData(ByteBuf buffer) {
-        ByteBufUtils.writeUTF8String(buffer, streamID + "");
+        ByteBufUtils.writeUTF8String(buffer, streamID);
     }
 
     @Override

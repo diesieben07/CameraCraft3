@@ -11,7 +11,6 @@ import net.minecraft.world.World;
  */
 public class ItemVideoCamera extends CCItem {
 
-    public static WorldViewAPI2 view2;
 
     public ItemVideoCamera() {
         super("ItemVideoCamera");

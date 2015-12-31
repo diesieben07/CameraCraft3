@@ -69,7 +69,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                 new GuiButton(7, width - 40, height - 20, 40, 20, "Clear"),
         };
 
-        guiStates.add(new GuiStateContainer(1, container, this, null, new int[]{1}, buttons1, false, 0, 0));
+        guiStates.add(new GuiStateContainer(1, container, this, null, new int[]{0}, buttons1, false, 0, 0));
 
         GuiButton[] buttons2 = new GuiButton[]{
                 new GuiButton(0, width / 2 - 170, height / 2 - 10, 20, 20, EnumChatFormatting.GREEN + "OK"),
@@ -108,7 +108,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
 
             drawRect(x, y, x + size, y + size, Color.black.getRGB());
 
-            ItemStack stack = container.getSlot(1).getStack();
+            ItemStack stack = container.getSlot(0).getStack();
             ItemPhoto photo = (ItemPhoto) stack.getItem();
             PhotoDataCache.bindTexture(photo.getPhotoId(stack));
 
@@ -129,7 +129,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
 
             drawRect(x, y, x + size, y + size, Color.black.getRGB());
 
-            ItemStack stack = container.getSlot(1).getStack();
+            ItemStack stack = container.getSlot(0).getStack();
             ItemPhoto photo = (ItemPhoto) stack.getItem();
             PhotoDataCache.bindTexture(photo.getPhotoId(stack));
 
@@ -214,7 +214,7 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
     public void updateScreen() {
         super.updateScreen();
         if (activeGuiState == 0) {
-            Slot slot = (Slot) (container.inventorySlots.get(0));
+            Slot slot = container.getSlot(0);
             getCurrentGuiState().buttonList.get(0).enabled = slot.getStack() != null;
         }
     }
@@ -272,10 +272,10 @@ public class GuiDrawingBoard extends GuiContainerGuiState<ContainerDrawingBoard>
                     color = overlay.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
                     ccolor = new CColor(new Color(color));
                 } else {
-//                    ItemPhoto photo = (ItemPhoto) container.getSlot(1).getStack().getItem();
-//                    DynamicTexture text = PhotoDataCache.getDynTexture(photo.getPhotoId(container.getSlot(1).getStack()));
-//                    BufferedImage copy = ClientUtil.getBufferedImagefromDynamicTexture(text);
-//                    color = copy.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
+                    ItemPhoto photo = (ItemPhoto) container.getSlot(0).getStack().getItem();
+                    DynamicTexture text = PhotoDataCache.get(photo.getPhotoId(container.getSlot(0).getStack())).getTexture();
+                    BufferedImage copy = ClientUtil.getBufferedImagefromDynamicTexture(text);
+                    color = copy.getRGB(getMouseXinImage(256, mouseX), getMouseYinImage(256, mouseY));
                 }
             }
         }

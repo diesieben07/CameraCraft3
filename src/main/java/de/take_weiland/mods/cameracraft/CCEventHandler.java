@@ -86,5 +86,4 @@ public final class CCEventHandler implements Scheduler.Task {
 			CCPlayerData.get(event.entityPlayer).setLastClickedEntityID(entity.getEntityId());
 		}
 	}
-
 }

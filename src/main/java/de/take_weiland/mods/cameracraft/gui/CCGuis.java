@@ -6,6 +6,7 @@ import de.take_weiland.mods.cameracraft.client.gui.*;
 import de.take_weiland.mods.cameracraft.client.gui.memory.handler.FolderGuiMemoryHandler;
 import de.take_weiland.mods.cameracraft.client.gui.printer.GuiPrinter;
 import de.take_weiland.mods.cameracraft.inv.InventoryCameraImpl;
+import de.take_weiland.mods.cameracraft.inv.InventoryDrawingBoard;
 import de.take_weiland.mods.cameracraft.inv.InventoryMemoryHandler;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.commons.util.EnumUtils;
@@ -68,7 +69,7 @@ public enum CCGuis {
                 case SET_STREAM_ID:
                     return null;
                 case DRAWING_BOARD:
-                    return new ContainerDrawingBoard(world, x, y, z, player);
+                    return new ContainerDrawingBoard(new InventoryDrawingBoard(), x, y, z, player);
                 case MEMORY_HANDLER:
                     return new ContainerMemoryHandler(new InventoryMemoryHandler(), x, y, z, player);
                 default:

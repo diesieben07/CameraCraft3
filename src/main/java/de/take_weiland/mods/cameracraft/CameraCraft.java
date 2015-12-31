@@ -28,7 +28,6 @@ import de.take_weiland.mods.cameracraft.gui.CCGuis;
 import de.take_weiland.mods.cameracraft.item.CCArmor;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.CameraType;
-import de.take_weiland.mods.cameracraft.item.ItemVideoCamera;
 import de.take_weiland.mods.cameracraft.network.*;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.net.Network;
@@ -207,11 +206,13 @@ public final class CameraCraft {
         }
     }
 
+    public static WorldViewAPI2 worldView;
+
     public static void register(APIInstanceProvider provider) {
         try {
             Object inst = provider.getAPIInstance("view-2");
             WorldViewAPI2 api = (WorldViewAPI2) inst;
-            ItemVideoCamera.view2 = api;
+            worldView = api;
         } catch (APIUndefined e) {
             e.printStackTrace();
         } catch (APIVersionUndefined e) {

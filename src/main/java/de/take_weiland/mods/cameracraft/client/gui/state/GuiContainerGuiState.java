@@ -119,4 +119,8 @@ public abstract class GuiContainerGuiState<C extends Container> extends Abstract
     }
 
     protected abstract boolean shouldExitOnKeyboardType(char typedChar, int keyCode);
+
+    protected void reInitCurrentState() {
+        initState(getActiveGuiStateNumber());
+    }
 }
