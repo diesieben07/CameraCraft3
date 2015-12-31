@@ -1,37 +1,35 @@
 package de.take_weiland.mods.cameracraft.api.photo;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.UUID;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.CompletionStage;
 
 /**
- * 
- * Represents fixed information about a Photo.<br>
- * that includes it's unique id, the UUID of it's owner, and possibly a location and time based on the type of camera used.
- * 
- * @author diesieben07
+ * <p>Represents a Photo.</p>
  *
+ * @author diesieben07
  */
-public interface Photo {
+public interface Photo extends PhotoData {
 
+    /**
+     * <p>The Photo ID.</p>
+     *
+     * @return the ID
+     */
     long getId();
 
     /**
-     * <p>Get this photo as a BufferedImage. This method might need to load data from disk in which case it will block.</p>
+     * <p>Get the associated image. This is equivalent to {@link PhotoDatabase#getImage(long)}.</p>
+     *
      * @return the BufferedImage
      */
-    BufferedImage getImage() throws IOException;
+    BufferedImage getImage() throws CompletionException;
 
-    UUID getOwner();
+    /**
+     * <p>Get the associated image asynchronously. This method is equivalent to {@link PhotoDatabase#getImageAsync(long)}.</p>
+     *
+     * @return a CompletionStage
+     */
+    CompletionStage<BufferedImage> getImageAsync();
 
-    int getX();
-	
-	int getY();
-	
-	int getZ();
-	
-	int getDimension();
-
-    long getTime();
-	
 }

@@ -84,8 +84,4 @@ public class ItemCamera extends CCItemMultitype<CameraType> implements CameraIte
         return new InventoryCameraImpl(getType(stack), stack, stackSetter, world, Vec3.createVectorHelper(x, y, z));
     }
 
-	public boolean isCamera(ItemStack stack) {
-		return stack != null && stack.getItem() == this;
-	}
-
 }

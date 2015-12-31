@@ -16,6 +16,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.concurrent.CompletionStage;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
@@ -61,7 +62,7 @@ public class PhotoDataCache {
         return cache.getUnchecked(photoID);
     }
 
-    public static class CacheElement implements Consumer<PacketPhotoData> {
+    public static class CacheElement implements Consumer<BufferedImage> {
 
 		private static final ResourceLocation DUMMY = new ResourceLocation("cameracraft", "textures/gui/loadingPhoto.png");
 
@@ -85,8 +86,8 @@ public class PhotoDataCache {
 		}
 
         @Override
-        public void accept(PacketPhotoData packet) {
-            img = packet.getImage();
+        public void accept(BufferedImage image) {
+            img = image;
         }
 
         public boolean isLoaded() {
@@ -114,8 +115,18 @@ public class PhotoDataCache {
 		@Override
 		public CacheElement load(Long photoId) throws Exception {
 			CacheElement element = new CacheElement();
-            new PacketClientRequestPhoto(photoId).sendToServer()
-                    .thenAcceptAsync(element, Scheduler.client());
+            CompletionStage<BufferedImage> stage;
+
+			if (Minecraft.getMinecraft().isIntegratedServerRunning()) {
+                // if we are in SP we can directly access the (threadsafe) DB
+                stage = CameraCraft.currentDatabase().getImageAsync(photoId);
+            } else {
+                // on a dedi server (or lan) need to use the packet
+                stage = new PacketClientRequestPhoto(photoId).sendToServer()
+                        .thenApply(PacketPhotoData::getImage);
+            }
+
+            stage.thenAcceptAsync(element, Scheduler.client());
 			return element;
 		}
 
@@ -125,7 +136,7 @@ public class PhotoDataCache {
             if (element != null) {
                 Scheduler.client().execute(element::unload);
             } else {
-                CameraCraft.logger.warn("Tried to unload null client overDynText cache");
+                CameraCraft.logger.warn("Tried to unload null client image CacheElement!");
             }
         }
     }

@@ -12,22 +12,28 @@ import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable;
 import java.util.concurrent.CompletionStage;
 
 public interface CameraCraftApi {
-	
-	GenerateMinable.EventType getTinMinableType();
 
-	GenerateMinable.EventType getAlkalineMinableType();
+    GenerateMinable.EventType getTinMinableType();
 
-	GenerateMinable.EventType getPhotonicMinableType();
-	
-	boolean isCamera(ItemStack stack);
+    GenerateMinable.EventType getAlkalineMinableType();
+
+    GenerateMinable.EventType getPhotonicMinableType();
 
     CompletionStage<Long> defaultTakePhoto(EntityPlayer player, ImageFilter filter);
 
-	BatteryHandler findBatteryHandler(ItemStack stack);
-	
-	void registerBatteryHandler(Item battery, BatteryHandler handler);
+    BatteryHandler findBatteryHandler(ItemStack stack);
 
-    PhotoDatabase getCurrentPhotoDatabase();
+    void registerBatteryHandler(Item battery, BatteryHandler handler);
+
+    /**
+     * <p>Obtain the current {@code PhotoDatabase}. The database is valid until a server restart. The database is
+     * initialized during the initial load of the overworld.</p>
+     * <p>This method will return null if no server is active, but this is not a guarantee, the database should only be
+     * accessed when it is known that a server is active.</p>
+     *
+     * @return the current PhotoDatabase
+     */
+    PhotoDatabase getDatabase();
 
     static CameraCraftApi get() {
         return CameraCraft.api;

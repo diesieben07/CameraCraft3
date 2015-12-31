@@ -1,13 +1,13 @@
 package de.take_weiland.mods.cameracraft.img;
 
+import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
-import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import net.minecraft.util.MathHelper;
 
 import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.io.UncheckedIOException;
+import java.awt.image.ColorModel;
+import java.awt.image.WritableRaster;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -41,13 +41,8 @@ public final class ImageUtil {
 
         for (int i = 0; i < len; i++) {
             long photoId = storage.get(i);
-            futures[i] = CompletableFuture.runAsync(() -> {
-                try {
-                    DatabaseImpl.current.applyFilter(photoId, filter);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
-            });
+            // TODO no need for async here!
+            futures[i] = CompletableFuture.runAsync(() -> CameraCraft.currentDatabase().applyFilter(photoId, filter));
         }
 
         return futures;
@@ -56,5 +51,13 @@ public final class ImageUtil {
     public static void resetImage(BufferedImage image) {
         int[] nullnull = new int[image.getHeight() * image.getWidth()];
         image.setRGB(0, 0, image.getWidth(), image.getHeight(), nullnull, 0, image.getWidth());
+    }
+
+    // http://stackoverflow.com/a/3514297
+    public static BufferedImage clone(BufferedImage img) {
+        ColorModel cm = img.getColorModel();
+        boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
+        WritableRaster raster = img.copyData(null);
+        return new BufferedImage(cm, raster, isAlphaPremultiplied, null);
     }
 }

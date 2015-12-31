@@ -13,6 +13,16 @@ import java.util.function.Consumer;
 public interface CameraItem {
 
     /**
+     * <p>Whether the given stack actually is a camera, defaults to true.</p>
+     *
+     * @param stack the ItemStack
+     * @return true if the given ItemStack is actually a camera
+     */
+    default boolean isCamera(ItemStack stack) {
+        return true;
+    }
+
+    /**
      * <p>Create a new camera for the player's current item.</p>
      *
      * @param player the player
@@ -25,10 +35,10 @@ public interface CameraItem {
     /**
      * <p>Create a new camera for the given slot in the given inventory.</p>
      * <p>The players's position is used as the camera's position.</p>
-     * @param player the player using the Camera
-     * @param inventory the inventory
-     * @param slot the slot
      *
+     * @param player    the player using the Camera
+     * @param inventory the inventory
+     * @param slot      the slot
      * @return a new camera
      */
     default Camera createCamera(EntityPlayer player, IInventory inventory, int slot) {
@@ -38,14 +48,13 @@ public interface CameraItem {
     /**
      * <p>Create a new camera for the given slot in the given inventory at the given position.</p>
      *
-     * @param player the the player using the Camera
+     * @param player    the the player using the Camera
      * @param inventory the inventory
-     * @param slot the slot
-     * @param world the World of the camera
-     * @param x the x position of the camera
-     * @param y the y position of the camera
-     * @param z the z position of the camera
-     *
+     * @param slot      the slot
+     * @param world     the World of the camera
+     * @param x         the x position of the camera
+     * @param y         the y position of the camera
+     * @param z         the z position of the camera
      * @return a new camera
      */
     default Camera createCamera(EntityPlayer player, IInventory inventory, int slot, World world, double x, double y, double z) {
@@ -57,13 +66,14 @@ public interface CameraItem {
      * <p>The {@code Consumer} will be called back with a possibly new ItemStack when it changes.</p>
      * <p>If no player is interacting with the camera, use {@link #createCamera(ItemStack, Consumer, World, double, double, double)} instead of
      * supplying a FakePlayer!</p>
-     * @param player the player using the Camera
-     * @param stack the ItemStack
+     *
+     * @param player      the player using the Camera
+     * @param stack       the ItemStack
      * @param stackSetter a listener for changes
-     * @param world the World of the camera
-     * @param x the x position of the camera
-     * @param y the y position of the camera
-     * @param z the z position of the camera
+     * @param world       the World of the camera
+     * @param x           the x position of the camera
+     * @param y           the y position of the camera
+     * @param z           the z position of the camera
      * @return a new camera
      */
     Camera createCamera(EntityPlayer player, ItemStack stack, Consumer<ItemStack> stackSetter, World world, double x, double y, double z);
@@ -71,14 +81,15 @@ public interface CameraItem {
     /**
      * <p>Create a new camera for the given ItemStack.</p>
      * <p>The {@code Consumer} will be called back with a possibly new ItemStack when it changes.</p>
-     * @param stack the ItemStack
+     *
+     * @param stack       the ItemStack
      * @param stackSetter a listener for changes
-     * @param world the World of the camera
-     * @param x the x position of the camera
-     * @param y the y position of the camera
-     * @param z the z position of the camera
+     * @param world       the World of the camera
+     * @param x           the x position of the camera
+     * @param y           the y position of the camera
+     * @param z           the z position of the camera
      * @return a new camera
      */
     Camera createCamera(ItemStack stack, Consumer<ItemStack> stackSetter, World world, double x, double y, double z);
-	
+
 }

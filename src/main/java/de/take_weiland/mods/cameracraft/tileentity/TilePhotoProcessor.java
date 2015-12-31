@@ -1,10 +1,10 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
+import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.blocks.MachineType;
-import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.img.ImageFilters;
 import de.take_weiland.mods.commons.nbt.ToNbt;
 import de.take_weiland.mods.commons.sync.Sync;
@@ -15,9 +15,6 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.common.util.ForgeDirection;
 import net.minecraftforge.fluids.*;
-
-import java.io.IOException;
-import java.io.UncheckedIOException;
 
 import static de.take_weiland.mods.commons.util.Sides.sideOf;
 
@@ -86,11 +83,7 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
         if (!isInDarkness()) {
             PhotoStorage photoStorage = item.getPhotoStorage(storage[2]);
             for (long photoId : photoStorage) {
-                try {
-                    DatabaseImpl.current.applyFilter(photoId, ImageFilters.OVEREXPOSE);
-                } catch (IOException e) {
-                    throw new UncheckedIOException(e);
-                }
+				CameraCraft.currentDatabase().applyFilter(photoId, ImageFilters.OVEREXPOSE);
             }
         }
 	}

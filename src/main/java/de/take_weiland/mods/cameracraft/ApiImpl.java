@@ -5,17 +5,13 @@ import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
-import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.network.PacketRequestStandardPhoto;
-import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.terraingen.OreGenEvent.GenerateMinable.EventType;
 
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.util.Map;
 import java.util.concurrent.CompletionStage;
 
@@ -39,27 +35,14 @@ public final class ApiImpl implements CameraCraftApi {
 	}
 
 	@Override
-	public boolean isCamera(ItemStack stack) {
-		return CCItem.camera.isCamera(stack);
-	}
-
-	@Override
 	public CompletionStage<Long> defaultTakePhoto(EntityPlayer player, ImageFilter filter) {
 		return new PacketRequestStandardPhoto().sendTo(player)
-				.thenApplyAsync(packet -> {
-                    long id = DatabaseImpl.current.nextId();
-                    try {
-                        DatabaseImpl.current.saveImage(id, packet.image, filter);
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    }
-                    return id;
-                });
+				.thenCompose(packet -> CameraCraft.currentDatabase().saveNewImage(packet.image, filter));
 	}
 
 	@Override
-	public PhotoDatabase getCurrentPhotoDatabase() {
-		return DatabaseImpl.current; // TODO?
+	public PhotoDatabase getDatabase() {
+		return CameraCraft.currentDatabase();
 	}
 
 	@Override

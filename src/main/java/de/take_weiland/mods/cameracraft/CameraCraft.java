@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.xcompwiz.lookingglass.api.APIInstanceProvider;
 import com.xcompwiz.lookingglass.api.APIUndefined;
 import com.xcompwiz.lookingglass.api.APIVersionRemoved;
@@ -10,11 +11,9 @@ import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInterModComms;
+import cpw.mods.fml.common.event.*;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
 import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
@@ -34,6 +33,8 @@ import de.take_weiland.mods.cameracraft.network.*;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.net.Network;
 import de.take_weiland.mods.commons.net.PacketHandler;
+import de.take_weiland.mods.commons.util.Scheduler;
+import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -43,17 +44,17 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
-import java.util.concurrent.Executor;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 public final class CameraCraft {
 
-    public static final String MOD_ID = CameraCraftApiHandler.CAMERACRAFT_MODID;
-    public static final String modid = CameraCraftApiHandler.CAMERACRAFT_MODID;
-    public static final String MODID = modid;
-    static final String MOD_NAME = "CameraCraft";
-    static final String VERSION = "@VERSION@";
+    public static final  String MOD_ID     = CameraCraftApiHandler.CAMERACRAFT_MODID;
+    public static final  String modid      = CameraCraftApiHandler.CAMERACRAFT_MODID;
+    public static final  String MODID      = modid;
+    static final         String MOD_NAME   = "CameraCraft";
+    static final         String VERSION    = "@VERSION@";
     private static final String CLIENT_ENV = "de.take_weiland.mods.cameracraft.client.ClientProxy";
     private static final String SERVER_ENV = "de.take_weiland.mods.cameracraft.server.ServerProxy";
 
@@ -69,7 +70,7 @@ public final class CameraCraft {
 
     public static CameraCraftApi api;
 
-    public static Executor executor;
+    public static ScheduledExecutorService executor;
 
     public static CreativeTabs tab = new CreativeTabs("cameracraft") {
 
@@ -105,7 +106,7 @@ public final class CameraCraft {
                 .register(1, PacketPhotoName::new, PacketPhotoName::handle)
                 // TODO WAT
                 .registerWithAsyncResponse(2, PacketRequestStandardPhoto::new, PacketTakenPhoto::new, (PacketHandler.WithAsyncResponse<PacketRequestStandardPhoto, PacketTakenPhoto>) PacketRequestStandardPhoto::handle)
-                .register(3, PacketClientRequestPhoto::new, PacketPhotoData::read, (PacketHandler.WithResponse<PacketClientRequestPhoto, PacketPhotoData>) PacketClientRequestPhoto::handle)
+                .registerWithAsyncResponse(3, PacketClientRequestPhoto::new, PacketPhotoData::new, (PacketHandler.WithAsyncResponse<PacketClientRequestPhoto, PacketPhotoData>) PacketClientRequestPhoto::handle)
                 .register(4, PacketPrintJobs::new, PacketPrintJobs::handle)
                 .register(5, PacketPaint::new, PacketPaint::handle)
                 .register(6, PacketGuiPenButton::new, PacketGuiPenButton::handle)
@@ -133,7 +134,8 @@ public final class CameraCraft {
         CCRegistry.addRecipes();
         CCRegistry.doMiscRegistering();
 
-        MinecraftForge.EVENT_BUS.register(new CCEventHandler());
+        MinecraftForge.EVENT_BUS.register(CCEventHandler.INSTANCE);
+        Scheduler.forSide(Sides.environment()).execute(CCEventHandler.INSTANCE);
 
         if (config.hasChanged()) {
             config.save();
@@ -146,8 +148,10 @@ public final class CameraCraft {
     }
 
     private static void setupThreads() {
-        // TODO
-        executor = ForkJoinPool.commonPool();
+        int numThreads = config.get(Configuration.CATEGORY_GENERAL, "maxThreads", 4, "Maximum number of threads CameraCraft uses for asynchronous tasks").getInt();
+        executor = Executors.newScheduledThreadPool(numThreads, new ThreadFactoryBuilder()
+                .setNameFormat("CameraCraft-%1")
+                .build());
     }
 
     public static void printErrorMessage(EntityPlayer player, String msg, Throwable x) {
@@ -157,9 +161,25 @@ public final class CameraCraft {
         player.addChatComponentMessage(chatComponent);
     }
 
+    static boolean serverStartingUp = false;
+
     @EventHandler
-    public void onServerStarting(FMLServerStartingEvent event) {
-        DatabaseImpl.onServerStart();
+    public void serverAboutToStart(FMLServerAboutToStartEvent event) {
+        serverStartingUp = true;
+    }
+
+    @EventHandler
+    public void serverStarting(FMLServerStartingEvent event) {
+        serverStartingUp = false;
+    }
+
+    @EventHandler
+    public void serverStopping(FMLServerStoppingEvent event) {
+        CCEventHandler.setDatabase(null);
+    }
+
+    public static DatabaseImpl currentDatabase() {
+        return CCEventHandler.currentDb;
     }
 
     @EventHandler
