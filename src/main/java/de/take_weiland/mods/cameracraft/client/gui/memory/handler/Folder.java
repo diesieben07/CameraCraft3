@@ -1,6 +1,6 @@
 package de.take_weiland.mods.cameracraft.client.gui.memory.handler;
 
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageRenamable;
+import de.take_weiland.mods.cameracraft.api.photo.NamedPhotoStorage;
 import de.take_weiland.mods.cameracraft.client.PhotoDataCache;
 import de.take_weiland.mods.cameracraft.item.ItemPhotoStorages;
 import de.take_weiland.mods.commons.client.Guis;
@@ -83,7 +83,7 @@ public class Folder implements Iterable<ImageFile> {
                 GL11.glColor3f(1, 1, 1);
                 Rendering.drawTexturedQuadFit(awayLeft, y * imageSize + awayTop, imageSize, imageSize);
                 ItemPhotoStorages itemStorage = (ItemPhotoStorages) stack.getItem();
-                PhotoStorageRenamable storage = (PhotoStorageRenamable) itemStorage.getPhotoStorage(stack);
+                NamedPhotoStorage storage = (NamedPhotoStorage) itemStorage.getPhotoStorage(stack);
                 Minecraft.getMinecraft().fontRendererObj.drawString(storage.getName(files.get(z).getIndex()), awayLeft + imageSize + 2, y * imageSize + 6 + awayTop, 0);
                 y++;
             }

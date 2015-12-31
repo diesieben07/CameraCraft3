@@ -5,7 +5,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.network.FMLNetworkEvent;
 import de.take_weiland.mods.cameracraft.CCProxy;
-import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.client.gui.GuiPhotoName;
 import de.take_weiland.mods.cameracraft.client.gui.GuiViewPhoto;
 import de.take_weiland.mods.cameracraft.client.render.RenderInventoryPhoto;
@@ -18,6 +17,7 @@ import de.take_weiland.mods.cameracraft.entity.EntityScreen;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.ItemDraw;
 import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
+import de.take_weiland.mods.commons.util.Async;
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.MovingObjectPosition;
@@ -72,7 +72,7 @@ public class ClientProxy implements CCProxy {
 
     @Override
     public void handleClientPhotoData(final long photoId, final InputStream in) {
-        CameraCraft.executor.execute(() -> {
+        Async.commonExecutor().execute(() -> {
             try {
                 PhotoDataCache.injectReceivedPhoto(photoId, in);
             } catch (IOException e) {

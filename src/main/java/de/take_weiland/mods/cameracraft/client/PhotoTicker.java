@@ -3,8 +3,8 @@ package de.take_weiland.mods.cameracraft.client;
 import com.google.common.collect.Queues;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
+import de.take_weiland.mods.commons.util.Async;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
 
@@ -43,7 +43,7 @@ public class PhotoTicker {
             mc.entityRenderer.renderWorld(0, 0);
 
             byte[] rawImage = ClientUtil.rawScreenshot(mc);
-            CameraCraft.executor.execute(new ScreenshotPostProcess(future, mc.displayWidth, mc.displayHeight, rawImage));
+            Async.commonExecutor().execute(new ScreenshotPostProcess(future, mc.displayWidth, mc.displayHeight, rawImage));
 
             gs.hideGUI = hideGuiState;
             gs.thirdPersonView = thirdPersonState;

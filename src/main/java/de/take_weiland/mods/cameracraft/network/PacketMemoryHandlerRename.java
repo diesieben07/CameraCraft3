@@ -1,6 +1,6 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageRenamable;
+import de.take_weiland.mods.cameracraft.api.photo.NamedPhotoStorage;
 import de.take_weiland.mods.cameracraft.item.ItemPhotoStorages;
 import de.take_weiland.mods.commons.net.MCDataInput;
 import de.take_weiland.mods.commons.net.MCDataOutput;
@@ -46,7 +46,7 @@ public class PacketMemoryHandlerRename implements Packet {
             Slot slot = (Slot)player.openContainer.inventorySlots.get(side);
             ItemStack stack = slot.getStack();
             ItemPhotoStorages itemStorage = (ItemPhotoStorages) stack.getItem();
-            PhotoStorageRenamable storage = (PhotoStorageRenamable) itemStorage.getPhotoStorage(stack);
+            NamedPhotoStorage storage = (NamedPhotoStorage) itemStorage.getPhotoStorage(stack);
             storage.setName(index, name);
         }
     }

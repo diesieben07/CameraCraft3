@@ -1,11 +1,10 @@
 package de.take_weiland.mods.cameracraft.photo;
 
 import com.google.common.base.Throwables;
-import com.google.common.primitives.Bytes;
 import com.google.common.primitives.Longs;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
+import de.take_weiland.mods.cameracraft.api.photo.NamedPhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageRenamable;
 import de.take_weiland.mods.commons.asm.MCPNames;
 import de.take_weiland.mods.commons.nbt.NBT;
 import de.take_weiland.mods.commons.util.ItemStacks;
@@ -21,11 +20,12 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 
 import static com.google.common.base.Preconditions.checkPositionIndex;
+import static com.google.common.primitives.Bytes.concat;
 
 public final class PhotoStorages {
 
     private static final String NBT_KEY_PHOTO_ID = "cameracraft.photos";
-    private static final String NBT_KEY_NAMES = "cameracraft.photo_names";
+    private static final String NBT_KEY_NAMES    = "cameracraft.photo_names";
 
     private PhotoStorages() {
     }
@@ -59,10 +59,10 @@ public final class PhotoStorages {
 
     private static class ItemStackPhotoStorage extends AbstractPhotoStorage {
 
-        private final boolean isSealed;
-        private final int cap;
+        private final boolean         isSealed;
+        private final int             cap;
         private final NBTTagByteArray nbt;
-        private final ImageFilter filter;
+        private final ImageFilter     filter;
 
         ItemStackPhotoStorage(boolean isSealed, int cap, NBTTagByteArray nbt, ImageFilter filter) {
             super();
@@ -85,18 +85,14 @@ public final class PhotoStorages {
         @Override
         protected void removeImpl(int index) {
             int newLen = size() - 1;
-            if (newLen == 0) {
-                clearImpl();
-            } else {
-                byte[] newArr = new byte[toArrayIndex(newLen)];
-                byte[] oldArr = nbt.getByteArray();
+            byte[] newArr = new byte[toArrayIndex(newLen)];
+            byte[] oldArr = nbt.getByteArray();
 
-                System.arraycopy(oldArr, 0, newArr, 0, toArrayIndex(index));
-                if (index != newLen) { // not last was removed
-                    System.arraycopy(oldArr, toArrayIndex(index + 1), newArr, toArrayIndex(index), toArrayIndex(newLen - index));
-                }
-                setNbtByteArray(nbt, newArr);
+            System.arraycopy(oldArr, 0, newArr, 0, toArrayIndex(index));
+            if (index != newLen) { // not last was removed
+                System.arraycopy(oldArr, toArrayIndex(index + 1), newArr, toArrayIndex(index), toArrayIndex(newLen - index));
             }
+            setNbtByteArray(nbt, newArr);
         }
 
         private static int toArrayIndex(int i) {
@@ -115,10 +111,6 @@ public final class PhotoStorages {
         protected void storeImpl(long photoId) {
             byte[] newArr = concat(nbt.getByteArray(), Longs.toByteArray(photoId));
             setNbtByteArray(nbt, newArr);
-        }
-
-        private static byte[] concat(byte[] a, byte[] b) {
-            return Bytes.concat(a, b);
         }
 
         @Override
@@ -158,7 +150,7 @@ public final class PhotoStorages {
 
     }
 
-    private static class ItemStackPhotStorageRenameable extends ItemStackPhotoStorage implements PhotoStorageRenamable {
+    private static class ItemStackPhotStorageRenameable extends ItemStackPhotoStorage implements NamedPhotoStorage {
 
         private final NBTTagList nameList;
 
@@ -176,6 +168,7 @@ public final class PhotoStorages {
             return getDefaultName(index);
 
         }
+
         @Override
         public void setName(int index, String name) {
             setName(index, name, 0);
@@ -183,6 +176,7 @@ public final class PhotoStorages {
 
         /**
          * Used to check for duplicated names
+         *
          * @param index
          * @param name
          * @param renameTry
@@ -197,17 +191,12 @@ public final class PhotoStorages {
 
             for (int i = 0; i < nameList.tagCount(); i++) {
                 if ((name + (renameTry > 0 ? "(" + (renameTry) + ")" : "")).equals(nameList.getStringTagAt(i))) {
-                    setName(index, name, renameTry+1);
+                    setName(index, name, renameTry + 1);
                     return;
                 }
             }
 
             nameList.setTag(index, new NBTTagString(name + (renameTry > 0 ? "(" + renameTry + ")" : "")));
-        }
-
-        @Override
-        public void orderName() {
-
         }
 
         public String getDefaultName(int index) {

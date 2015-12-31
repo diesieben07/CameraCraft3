@@ -1,7 +1,6 @@
 package de.take_weiland.mods.cameracraft;
 
 import com.google.common.base.Throwables;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.xcompwiz.lookingglass.api.APIInstanceProvider;
 import com.xcompwiz.lookingglass.api.APIUndefined;
 import com.xcompwiz.lookingglass.api.APIVersionRemoved;
@@ -43,9 +42,6 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 public final class CameraCraft {
 
@@ -68,8 +64,6 @@ public final class CameraCraft {
     public static org.apache.logging.log4j.Logger logger;
 
     public static CameraCraftApi api;
-
-    public static ScheduledExecutorService executor;
 
     public static CreativeTabs tab = new CreativeTabs("cameracraft") {
 
@@ -97,8 +91,6 @@ public final class CameraCraft {
         api = new ApiImpl();
 
         logger = event.getModLog();
-
-        setupThreads();
 
         Network.newSimpleChannel("CameraCraft")
                 .register(0, PacketClientAction::new, PacketClientAction::handle)
@@ -144,13 +136,6 @@ public final class CameraCraft {
 
         FMLInterModComms.sendMessage("LookingGlass", "API", "de.take_weiland.mods.cameracraft.CameraCraft.register");
 
-    }
-
-    private static void setupThreads() {
-        int numThreads = config.get(Configuration.CATEGORY_GENERAL, "maxThreads", 4, "Maximum number of threads CameraCraft uses for asynchronous tasks").getInt();
-        executor = Executors.newScheduledThreadPool(numThreads, new ThreadFactoryBuilder()
-                .setNameFormat("CameraCraft-%1")
-                .build());
     }
 
     public static void printErrorMessage(EntityPlayer player, String msg, Throwable x) {

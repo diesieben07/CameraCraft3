@@ -215,8 +215,9 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo>, Runna
         LongBuffer longBuf = buf.asLongBuffer();
 
         while (channel.read(buf) != -1) {
+            buf.limit(buf.position());
             longBuf.position(0);
-            longBuf.limit(buf.position() * 8);
+            longBuf.limit(buf.position() >> 3);
             while (longBuf.hasRemaining()) {
                 long id = longBuf.get();
                 if (id >= next) {
@@ -225,12 +226,12 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo>, Runna
                 ids.add(id);
             }
 
-            buf.position(longBuf.position() * 8);
+            buf.position(longBuf.position() << 3);
             buf.compact();
         }
 
-        if (buf.hasRemaining()) {
-            throw new IOException(String.format("%s remaining bytes in IDs file, file length should be multiple of 8 only", buf.remaining()));
+        if (buf.position() != 0) {
+            throw new IOException(String.format("%s remaining bytes in IDs file, file length should be multiple of 8 only", buf.position()));
         }
 
         return next;
@@ -296,7 +297,7 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo>, Runna
 
         future = future
                 .whenCompleteAsync((img, x) -> {
-                    if (x != null) {
+                    if (img != null) {
                         writeImageUnchecked(img, path);
                     }
                 });
@@ -351,7 +352,7 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo>, Runna
 
     @Override
     public long nextId() {
-        long next = U.getAndAddLong(this, NEXT_ID_OFFSET, 1) + 1;
+        long next = U.getAndAddLong(this, NEXT_ID_OFFSET, 1);
 
         long[] idsOld;
         long[] idsNew;

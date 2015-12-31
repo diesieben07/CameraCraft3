@@ -1,6 +1,6 @@
 package de.take_weiland.mods.cameracraft.client.gui.memory.handler;
 
-import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageRenamable;
+import de.take_weiland.mods.cameracraft.api.photo.NamedPhotoStorage;
 import de.take_weiland.mods.cameracraft.item.ItemPhotoStorages;
 import net.minecraft.item.ItemStack;
 
@@ -28,7 +28,7 @@ public class ImageFile {
 
     public String getPhotoName(ItemStack stack) {
         ItemPhotoStorages itemStorage = (ItemPhotoStorages) stack.getItem();
-        PhotoStorageRenamable storage = (PhotoStorageRenamable) itemStorage.getPhotoStorage(stack);
+        NamedPhotoStorage storage = (NamedPhotoStorage) itemStorage.getPhotoStorage(stack);
         return storage.getName(getIndex());
     }
 }

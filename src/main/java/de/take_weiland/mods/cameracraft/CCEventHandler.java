@@ -43,7 +43,10 @@ public final class CCEventHandler implements Scheduler.Task {
 
     @Override
     public boolean execute() {
-        CameraCraft.currentDatabase().requestCleanup();
+        DatabaseImpl db = CameraCraft.currentDatabase();
+        if (db != null) {
+            db.requestCleanup();
+        }
         return true;
     }
 
@@ -73,11 +76,6 @@ public final class CCEventHandler implements Scheduler.Task {
 			event.result = CCItem.misc.getStack(MiscItemType.ALKALINE_BUCKET);
 		}
 	}
-
-    @SubscribeEvent
-    public void onWorldSave(SaveWorldsEvent event) {
-        CameraCraft.currentDatabase().save();
-    }
 
 	@SubscribeEvent
 	public void onEntityInteract(EntityInteractEvent event) {

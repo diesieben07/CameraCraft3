@@ -46,16 +46,21 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 	protected abstract void storeImpl(long photoId);
 
 	@Override
-	public void remove(int index) {
+	public final void remove(int index) {
 		checkNotSealed();
-		removeImpl(index);
+		if (size() == 1) {
+            clearImpl();
+        } else {
+            removeImpl(index);
+        }
 	}
 	
 	protected abstract void removeImpl(int index);
 	
 	@Override
-	public void clear() {
-		clearImpl();
+	public final void clear() {
+		checkNotSealed();
+        clearImpl();
 	}
 
 	@Override
@@ -98,10 +103,10 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 
     private static abstract class IteratorImpl {
 
-		final PhotoStorage storage;
+		final AbstractPhotoStorage storage;
 		int idx;
 
-		IteratorImpl(PhotoStorage storage) {
+		IteratorImpl(AbstractPhotoStorage storage) {
 			this.storage = storage;
 		}
 
@@ -116,7 +121,7 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 
 	private static final class BoxedIterator extends IteratorImpl implements Iterator<Long> {
 
-		BoxedIterator(PhotoStorage storage) {
+		BoxedIterator(AbstractPhotoStorage storage) {
 			super(storage);
 		}
 
@@ -125,13 +130,13 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
-			return storage.get(idx++);
+			return storage.getImpl(idx++);
 		}
 	}
 
 	private static final class UnboxedIterator extends IteratorImpl implements TLongIterator {
 
-		UnboxedIterator(PhotoStorage storage) {
+		UnboxedIterator(AbstractPhotoStorage storage) {
 			super(storage);
 		}
 
@@ -140,7 +145,7 @@ public abstract class AbstractPhotoStorage implements PhotoStorage {
 			if (!hasNext()) {
 				throw new NoSuchElementException();
 			}
-			return storage.get(idx++);
+			return storage.getImpl(idx++);
 		}
 
 	}
