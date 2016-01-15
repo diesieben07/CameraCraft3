@@ -1,6 +1,6 @@
 package de.take_weiland.mods.cameracraft.api;
 
-import de.take_weiland.mods.cameracraft.CameraCraft;
+import com.google.common.base.Throwables;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
@@ -36,7 +36,11 @@ public interface CameraCraftApi {
     PhotoDatabase getDatabase();
 
     static CameraCraftApi get() {
-        return CameraCraft.api;
+        try {
+            return (CameraCraftApi) ApiAccessor.apiGet.invokeExact();
+        } catch (Throwable x) {
+            throw Throwables.propagate(x);
+        }
     }
 
 }
