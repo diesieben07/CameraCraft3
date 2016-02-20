@@ -62,7 +62,7 @@ public class PhotoDataCache {
         return cache.getUnchecked(photoID);
     }
 
-    public static class CacheElement implements Consumer<BufferedImage> {
+    public static class CacheElement implements Consumer<BufferedImage>, Runnable {
 
 		private static final ResourceLocation DUMMY = new ResourceLocation("cameracraft", "textures/gui/loadingPhoto.png");
 
@@ -102,6 +102,11 @@ public class PhotoDataCache {
             return img;
         }
 
+        @Override
+        public void run() {
+            unload();
+        }
+
         void unload() {
             if (loc != null) {
                 Rendering.unloadTexture(loc);
@@ -134,7 +139,7 @@ public class PhotoDataCache {
         public void onRemoval(RemovalNotification<Long, CacheElement> notification) {
             CacheElement element = notification.getValue();
             if (element != null) {
-                Scheduler.client().execute(element::unload);
+                Scheduler.client().execute(element);
             } else {
                 CameraCraft.logger.warn("Tried to unload null client image CacheElement!");
             }

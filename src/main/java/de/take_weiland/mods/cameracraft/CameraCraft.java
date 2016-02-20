@@ -1,23 +1,14 @@
 package de.take_weiland.mods.cameracraft;
 
-import com.google.common.base.Throwables;
-import com.xcompwiz.lookingglass.api.APIInstanceProvider;
-import com.xcompwiz.lookingglass.api.APIUndefined;
-import com.xcompwiz.lookingglass.api.APIVersionRemoved;
-import com.xcompwiz.lookingglass.api.APIVersionUndefined;
-import com.xcompwiz.lookingglass.api.hook.WorldViewAPI2;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCEvent;
-import cpw.mods.fml.common.event.FMLInterModComms.IMCMessage;
 import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
-import de.take_weiland.mods.cameracraft.api.CameraCraftApiHandler;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
@@ -30,7 +21,6 @@ import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.network.*;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.net.Network;
-import de.take_weiland.mods.commons.net.PacketHandler;
 import de.take_weiland.mods.commons.util.Scheduler;
 import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.creativetab.CreativeTabs;
@@ -45,8 +35,8 @@ import net.minecraftforge.common.config.Configuration;
 @Mod(modid = CameraCraft.MOD_ID, name = CameraCraft.MOD_NAME, version = CameraCraft.VERSION)
 public final class CameraCraft {
 
-    public static final  String MOD_ID     = CameraCraftApiHandler.CAMERACRAFT_MODID;
-    public static final  String modid      = CameraCraftApiHandler.CAMERACRAFT_MODID;
+    public static final  String MOD_ID     = "cameracraft";
+    public static final  String modid      = "cameracraft";
     public static final  String MODID      = modid;
     static final         String MOD_NAME   = "CameraCraft";
     static final         String VERSION    = "@VERSION@";
@@ -95,9 +85,8 @@ public final class CameraCraft {
         Network.newSimpleChannel("CameraCraft")
                 .register(0, PacketClientAction::new, PacketClientAction::handle)
                 .register(1, PacketPhotoName::new, PacketPhotoName::handle)
-                // TODO WAT
-                .registerWithAsyncResponse(2, PacketRequestStandardPhoto::new, PacketTakenPhoto::new, (PacketHandler.WithAsyncResponse<PacketRequestStandardPhoto, PacketTakenPhoto>) PacketRequestStandardPhoto::handle)
-                .registerWithAsyncResponse(3, PacketClientRequestPhoto::new, PacketPhotoData::new, (PacketHandler.WithAsyncResponse<PacketClientRequestPhoto, PacketPhotoData>) PacketClientRequestPhoto::handle)
+                .register(2, PacketRequestStandardPhoto::new, PacketTakenPhoto::new, PacketRequestStandardPhoto::handle)
+                .register(3, PacketClientRequestPhoto::new, PacketPhotoData::new, PacketClientRequestPhoto::handle)
                 .register(4, PacketPrintJobs::new, PacketPrintJobs::handle)
                 .register(5, PacketPaint::new, PacketPaint::handle)
                 .register(6, PacketGuiPenButton::new, PacketGuiPenButton::handle)
@@ -164,47 +153,6 @@ public final class CameraCraft {
 
     public static DatabaseImpl currentDatabase() {
         return CCEventHandler.currentDb;
-    }
-
-    @EventHandler
-    public void handleModComms(IMCEvent event) {
-        for (IMCMessage message : event.getMessages()) {
-            if (message.key.equals(CameraCraftApiHandler.IMC_REQUEST_KEY)) {
-                try {
-                    if (message.isStringMessage()) {
-                        Class<?> handlerClass = Class.forName(message.getStringValue());
-                        CameraCraftApiHandler handler = (CameraCraftApiHandler) handlerClass.newInstance();
-                        handler.injectApi(api);
-                    } else {
-                        logger.warn(String.format("Invalid RequestApi message from %s. Must be a String message", message.getSender()));
-                    }
-                } catch (ClassCastException e) {
-                    logger.warn(String.format("Class %s must implement CameraCraftApiHandler.", message.getStringValue()));
-                } catch (ReflectiveOperationException e) {
-                    logger.warn(String.format("ReflectiveOperationException during RequestApi processing from %s", message.getSender()));
-                    e.printStackTrace();
-                } catch (Throwable t) {
-                    logger.error(String.format("Unexpected Exception during RequestApi processing from %s", message.getSender()));
-                    Throwables.propagate(t);
-                }
-            }
-        }
-    }
-
-    public static WorldViewAPI2 worldView;
-
-    public static void register(APIInstanceProvider provider) {
-        try {
-            Object inst = provider.getAPIInstance("view-2");
-            WorldViewAPI2 api = (WorldViewAPI2) inst;
-            worldView = api;
-        } catch (APIUndefined e) {
-            e.printStackTrace();
-        } catch (APIVersionUndefined e) {
-            e.printStackTrace();
-        } catch (APIVersionRemoved e) {
-            e.printStackTrace();
-        }
     }
 
 }

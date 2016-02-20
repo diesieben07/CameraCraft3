@@ -1,6 +1,5 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import com.xcompwiz.lookingglass.api.hook.WorldViewAPI2;
 import de.take_weiland.mods.cameracraft.entity.EntityVideoCamera;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;

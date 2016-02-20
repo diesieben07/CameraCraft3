@@ -1,6 +1,5 @@
 package de.take_weiland.mods.cameracraft.video.camera;
 
-import com.xcompwiz.lookingglass.api.view.IWorldView;
 import net.minecraft.entity.Entity;
 
 /**
@@ -10,7 +9,7 @@ public class VideoStream {
 
     private Entity viewer;
     private String streamID;
-    private IWorldView view;
+//    private IWorldView view;
 
     public VideoStream(String streamID, Entity viewer) {
         this.streamID = streamID;
@@ -25,11 +24,11 @@ public class VideoStream {
         return viewer;
     }
 
-    public void setView(IWorldView view) {
-        this.view = view;
-    }
-
-    public IWorldView getView() {
-        return view;
-    }
+//    public void setView(IWorldView view) {
+//        this.view = view;
+//    }
+//
+//    public IWorldView getView() {
+//        return view;
+//    }
 }

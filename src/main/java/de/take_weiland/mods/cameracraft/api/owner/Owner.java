@@ -1,7 +1,9 @@
 package de.take_weiland.mods.cameracraft.api.owner;
 
+import com.mojang.authlib.GameProfile;
 import cpw.mods.fml.common.registry.GameData;
 import net.minecraft.block.Block;
+import net.minecraft.entity.player.EntityPlayer;
 
 import javax.annotation.Nullable;
 import java.io.DataInput;
@@ -172,6 +174,30 @@ public interface Owner {
             int dim = in.readInt();
             return new MachineOwner(parent, block, meta, dim, x, y, z);
         }
+    }
+
+    static Owner of(Owner parent, UUID uuid, String name) {
+        return new PlayerOwner(parent, uuid, name);
+    }
+
+    static Owner of(UUID uuid, String name) {
+        return of(null, uuid, name);
+    }
+
+    static Owner of(Owner parent, GameProfile profile) {
+        return of(parent, profile.getId(), profile.getName());
+    }
+
+    static Owner of(GameProfile profile) {
+        return of(null, profile);
+    }
+
+    static Owner of(Owner parent, EntityPlayer player) {
+        return of(parent, player.getGameProfile());
+    }
+
+    static Owner of(EntityPlayer player) {
+        return of(null, player);
     }
 
 }

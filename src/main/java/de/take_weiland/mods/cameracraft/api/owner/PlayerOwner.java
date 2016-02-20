@@ -9,7 +9,7 @@ import java.util.UUID;
  *
  * @author diesieben07
  */
-public final class PlayerOwner extends AbstractOwner {
+final class PlayerOwner extends AbstractOwner {
 
     private final UUID   id;
     private final String name;
@@ -18,10 +18,6 @@ public final class PlayerOwner extends AbstractOwner {
         super(owner);
         this.id = id;
         this.name = name;
-    }
-
-    public PlayerOwner(UUID id, String name) {
-        this(null, id, name);
     }
 
     @Override
