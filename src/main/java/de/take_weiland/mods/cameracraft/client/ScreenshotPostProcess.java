@@ -1,19 +1,19 @@
 package de.take_weiland.mods.cameracraft.client;
 
 import de.take_weiland.mods.cameracraft.img.ImageUtil;
-import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
+import de.take_weiland.mods.cameracraft.network.PacketImageResponse;
 
 import java.awt.image.BufferedImage;
 import java.util.concurrent.CompletableFuture;
 
 public final class ScreenshotPostProcess implements Runnable {
 
-    private final CompletableFuture<PacketTakenPhoto> future;
-    private byte[] data;
-	private final int width;
-	private final int height;
+    private final CompletableFuture<PacketImageResponse> future;
+    private byte[]                                       data;
+	private final int                                    width;
+	private final int                                    height;
 	
-	public ScreenshotPostProcess(CompletableFuture<PacketTakenPhoto> future, int width, int height, byte[] data) {
+	public ScreenshotPostProcess(CompletableFuture<PacketImageResponse> future, int width, int height, byte[] data) {
         this.future = future;
         this.data = data;
 		this.width = width;
@@ -27,7 +27,7 @@ public final class ScreenshotPostProcess implements Runnable {
 		BufferedImage image = ImageUtil.fromRawRotatedRgb(width, height, data);
 		data = null; // for GC
 
-		future.complete(new PacketTakenPhoto(image));
+		future.complete(new PacketImageResponse(image));
 	}
 
 }

@@ -15,6 +15,7 @@ apply plugin: 'forge'
 apply plugin: 'maven'
 
 repositories {
+	mavenLocal()
 	maven {
 		name = 'SevenCommons'
 		url = "http://maven.take-weiland.de"
@@ -22,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    compile 'de.take_weiland.mods.commons:SevenCommons:0.1.130:deobf'
+    compile 'de.take_weiland.mods.commons:SevenCommons:0.1-SNAPSHOT:deobf'
 }
 
 

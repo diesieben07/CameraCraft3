@@ -11,15 +11,15 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 @Packet.Receiver(Side.SERVER)
-public class PacketTakenPhoto implements Packet.Response {
+public class PacketImageResponse implements Packet.Response {
 
-	public final BufferedImage image;
+	private final BufferedImage image;
 
-	public PacketTakenPhoto(BufferedImage image) {
+	public PacketImageResponse(BufferedImage image) {
 		this.image = image;
 	}
 
-	public PacketTakenPhoto(MCDataInput in) {
+	public PacketImageResponse(MCDataInput in) {
 		try {
 			this.image = ImageIO.read(in.asInputStream());
 		} catch (IOException e) {
@@ -41,4 +41,7 @@ public class PacketTakenPhoto implements Packet.Response {
 		return 50000; // roughly 50KB, maybe change later
 	}
 
+	public BufferedImage getImage() {
+		return image;
+	}
 }

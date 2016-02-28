@@ -1,5 +1,6 @@
 package de.take_weiland.mods.cameracraft;
 
+import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
 import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
@@ -21,12 +22,14 @@ import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.network.*;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.net.Network;
+import de.take_weiland.mods.commons.util.Players;
 import de.take_weiland.mods.commons.util.Scheduler;
 import de.take_weiland.mods.commons.util.Sides;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.common.MinecraftForge;
@@ -85,7 +88,7 @@ public final class CameraCraft {
         Network.newSimpleChannel("CameraCraft")
                 .register(0, PacketClientAction::new, PacketClientAction::handle)
                 .register(1, PacketPhotoName::new, PacketPhotoName::handle)
-                .register(2, PacketRequestStandardPhoto::new, PacketTakenPhoto::new, PacketRequestStandardPhoto::handle)
+                .register(2, PacketRequestStandardPhoto::new, PacketImageResponse::new, PacketRequestStandardPhoto::handle)
                 .register(3, PacketClientRequestPhoto::new, PacketPhotoData::new, PacketClientRequestPhoto::handle)
                 .register(4, PacketPrintJobs::new, PacketPrintJobs::handle)
                 .register(5, PacketPaint::new, PacketPaint::handle)
@@ -94,7 +97,10 @@ public final class CameraCraft {
                 .register(8, PacketStreamID::new, PacketStreamID::handle)
                 .register(9, PacketDrawingBoard::new, PacketDrawingBoard::handle)
                 .register(10, PacketMemoryHandlerDeletePicture::new, PacketMemoryHandlerDeletePicture::handle)
-                .register(11, PacketMemoryHandlerRename::new, PacketMemoryHandlerRename::handle);
+                .register(11, PacketMemoryHandlerRename::new, PacketMemoryHandlerRename::handle)
+                .register(12, PacketNewViewport::new, PacketNewViewport::handle)
+                .register(13, PacketKillViewport::new, PacketKillViewport::handle)
+                .register(14, PacketRequestViewportPhoto::new, PacketImageResponse::new, PacketRequestViewportPhoto::handle);
 
 
         CCBlock.createBlocks();
@@ -114,17 +120,16 @@ public final class CameraCraft {
         CCRegistry.addRecipes();
         CCRegistry.doMiscRegistering();
 
-        MinecraftForge.EVENT_BUS.register(CCEventHandler.INSTANCE);
-        Scheduler.forSide(Sides.environment()).execute(CCEventHandler.INSTANCE);
+        ForgeEventHandler eventHandler = new ForgeEventHandler();
+        Scheduler.forSide(Sides.environment()).execute(eventHandler);
+        MinecraftForge.EVENT_BUS.register(eventHandler);
+        FMLCommonHandler.instance().bus().register(new FMLEventHandler());
 
         if (config.hasChanged()) {
             config.save();
         }
 
         proxy.preInit();
-
-        FMLInterModComms.sendMessage("LookingGlass", "API", "de.take_weiland.mods.cameracraft.CameraCraft.register");
-
     }
 
     public static void printErrorMessage(EntityPlayer player, String msg, Throwable x) {
@@ -148,11 +153,15 @@ public final class CameraCraft {
 
     @EventHandler
     public void serverStopping(FMLServerStoppingEvent event) {
-        CCEventHandler.setDatabase(null);
+        ForgeEventHandler.setDatabase(null);
+        if (!MinecraftServer.getServer().isDedicatedServer()) {
+            // fix logout event not firing in SP, not needed in 1.8
+            Players.getAll().forEach(FMLEventHandler::handleLogout);
+        }
     }
 
     public static DatabaseImpl currentDatabase() {
-        return CCEventHandler.currentDb;
+        return ForgeEventHandler.currentDb;
     }
 
 }

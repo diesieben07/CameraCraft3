@@ -127,5 +127,5 @@ public interface Camera {
      * <p>Dispose this inventory.</p>
 	 */
 	void dispose();
-	
+
 }

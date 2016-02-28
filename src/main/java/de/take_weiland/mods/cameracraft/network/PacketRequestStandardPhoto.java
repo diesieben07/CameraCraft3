@@ -5,12 +5,11 @@ import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.commons.net.MCDataInput;
 import de.take_weiland.mods.commons.net.MCDataOutput;
 import de.take_weiland.mods.commons.net.Packet;
-import net.minecraft.entity.player.EntityPlayer;
 
 import java.util.concurrent.CompletionStage;
 
 @Packet.Receiver(Side.CLIENT)
-public class PacketRequestStandardPhoto implements Packet.WithResponse<PacketTakenPhoto> {
+public class PacketRequestStandardPhoto implements Packet.WithResponse<PacketImageResponse> {
 
 	public PacketRequestStandardPhoto() {}
 
@@ -20,7 +19,7 @@ public class PacketRequestStandardPhoto implements Packet.WithResponse<PacketTak
 	public void writeTo(MCDataOutput out) {
 	}
 
-	public CompletionStage<PacketTakenPhoto> handle(EntityPlayer player) {
+	public CompletionStage<PacketImageResponse> handle() {
 		return CameraCraft.proxy.handleStandardPhotoRequest();
 	}
 	

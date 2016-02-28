@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.api;
 
 import cpw.mods.fml.common.Loader;
+import de.take_weiland.mods.cameracraft.api.camera.Viewport;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
@@ -81,6 +82,11 @@ final class ApiAccessor {
         @Override
         public PhotoDatabase getDatabase() {
             return null;
+        }
+
+        @Override
+        public CompletionStage<Long> takePhoto(Viewport viewport, ImageFilter filter) {
+            return defaultTakePhoto(null, null);
         }
     }
 

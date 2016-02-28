@@ -1,6 +1,7 @@
 package de.take_weiland.mods.cameracraft.api;
 
 import com.google.common.base.Throwables;
+import de.take_weiland.mods.cameracraft.api.camera.Viewport;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
@@ -24,6 +25,12 @@ public interface CameraCraftApi {
     BatteryHandler findBatteryHandler(ItemStack stack);
 
     void registerBatteryHandler(Item battery, BatteryHandler handler);
+
+    default CompletionStage<Long> takePhoto(Viewport viewport) {
+        return takePhoto(viewport, null);
+    }
+
+    CompletionStage<Long> takePhoto(Viewport viewport, ImageFilter filter);
 
     /**
      * <p>Obtain the current {@code PhotoDatabase}. The database is valid until a server restart. The database is

@@ -17,13 +17,11 @@ import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
-public final class CCEventHandler implements Scheduler.Task {
+public final class ForgeEventHandler implements Scheduler.Task {
 
-    public static final CCEventHandler INSTANCE = new CCEventHandler();
+    public static final ForgeEventHandler INSTANCE = new ForgeEventHandler();
 
     static volatile DatabaseImpl currentDb;
-
-    private CCEventHandler() {}
 
     @SubscribeEvent(priority = EventPriority.HIGHEST) // highest so that DB is available during normal world load handlers
     public void onWorldLoad(WorldEvent.Load event) {

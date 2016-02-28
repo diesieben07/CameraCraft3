@@ -3,7 +3,7 @@ package de.take_weiland.mods.cameracraft.client;
 import com.google.common.collect.Queues;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
 import cpw.mods.fml.common.gameevent.TickEvent;
-import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
+import de.take_weiland.mods.cameracraft.network.PacketImageResponse;
 import de.take_weiland.mods.commons.util.Async;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.settings.GameSettings;
@@ -13,10 +13,10 @@ import java.util.concurrent.CompletableFuture;
 
 public class PhotoTicker {
 
-    public static final int PHOTO_SIZE = 256;
-    private final Queue<CompletableFuture<PacketTakenPhoto>> photoQueue = Queues.newArrayDeque();
+    public static final int                                     PHOTO_SIZE = 256;
+    private final Queue<CompletableFuture<PacketImageResponse>> photoQueue = Queues.newArrayDeque();
 	
-	public void schedulePhoto(CompletableFuture<PacketTakenPhoto> future) {
+	public void schedulePhoto(CompletableFuture<PacketImageResponse> future) {
 		photoQueue.offer(future);
 	}
 
@@ -28,7 +28,7 @@ public class PhotoTicker {
 
         if (!photoQueue.isEmpty()) {
             Minecraft mc = Minecraft.getMinecraft();
-            CompletableFuture<PacketTakenPhoto> future = photoQueue.poll();
+            CompletableFuture<PacketImageResponse> future = photoQueue.poll();
             GameSettings gs = mc.gameSettings;
             boolean hideGuiState = gs.hideGUI;
             int thirdPersonState = gs.thirdPersonView;

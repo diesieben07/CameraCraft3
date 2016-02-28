@@ -24,7 +24,7 @@ public final class ImageUtil {
                 int r = data[i] & 0xFF;
                 int g = data[i + 1] & 0xFF;
                 int b = data[i + 2] & 0xFF;
-                image.setRGB(x, height - y - 1, 0xFF << 24 | r << 16 | g << 8 | b);
+                    image.setRGB(x, height - y - 1, 0xFF << 24 | r << 16 | g << 8 | b);
             }
         }
         return image;

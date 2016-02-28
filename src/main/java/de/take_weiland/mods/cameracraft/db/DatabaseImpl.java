@@ -8,7 +8,9 @@ import de.take_weiland.mods.cameracraft.api.photo.Photo;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoData;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
 import de.take_weiland.mods.cameracraft.img.ImageUtil;
-import de.take_weiland.mods.commons.util.*;
+import de.take_weiland.mods.commons.util.Async;
+import de.take_weiland.mods.commons.util.JavaUtils;
+import de.take_weiland.mods.commons.util.Logging;
 import gnu.trove.TCollections;
 import gnu.trove.TLongCollection;
 import gnu.trove.iterator.TLongIterator;
@@ -25,10 +27,6 @@ import javax.annotation.ParametersAreNonnullByDefault;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.nio.ByteBuffer;
-import java.nio.ByteOrder;
-import java.nio.LongBuffer;
-import java.nio.channels.SeekableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -41,7 +39,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.BiFunction;
 import java.util.function.Function;
-import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 
@@ -117,18 +114,21 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo>, Runna
 
             TLongList idList = new TLongArrayList();
 
-            if (Files.exists(idFile)) {
-                try (Stream<Path> stream = Files.walk(idFile).filter(Predicate.isEqual(idFile).negate())) {
-                    Iterator<Path> it = stream.iterator();
-
-                    while (it.hasNext()) {
-                        Files.delete(it.next());
-                    }
-                }
-
+            boolean exists = Files.exists(idFile);
+            if (exists && Files.isRegularFile(idFile)) {
                 nextId = readIds(idList, idFile);
                 ids = idList.toArray();
             } else {
+                if (exists) {
+                    try (Stream<Path> stream = Files.walk(idFile)) {
+                        Iterator<Path> it = stream.iterator();
+
+                        while (it.hasNext()) {
+                            Files.delete(it.next());
+                        }
+                    }
+                }
+
                 nextId = SMALLEST_ID;
                 ids = ArrayUtils.EMPTY_LONG_ARRAY;
             }
@@ -197,12 +197,12 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo>, Runna
     }
 
     private static void saveIds(long[] ids, Path path) throws IOException {
-        ByteBuffer buf = ByteBuffer.allocate(ids.length << 3).order(ByteOrder.LITTLE_ENDIAN);
-        buf.asLongBuffer().put(ids);
+        // todo NIO solution?
+        try (DataOutputStream out = new DataOutputStream(Files.newOutputStream(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING))) {
+            out.writeInt(ids.length);
 
-        try (SeekableByteChannel channel = Files.newByteChannel(path, StandardOpenOption.WRITE, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING)) {
-            while (buf.hasRemaining()) {
-                channel.write(buf);
+            for (long id : ids) {
+                out.writeLong(id);
             }
         }
     }
@@ -210,28 +210,14 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo>, Runna
     private long readIds(TLongCollection ids, Path file) throws IOException {
         long next = SMALLEST_ID;
 
-        SeekableByteChannel channel = Files.newByteChannel(file);
-        ByteBuffer buf = ByteBuffer.allocate(32);
-        LongBuffer longBuf = buf.asLongBuffer();
-
-        while (channel.read(buf) != -1) {
-            buf.limit(buf.position());
-            longBuf.position(0);
-            longBuf.limit(buf.position() >> 3);
-            while (longBuf.hasRemaining()) {
-                long id = longBuf.get();
-                if (id >= next) {
-                    next = id + 1;
-                }
+        // todo: proper NIO solution? idk.
+        try (DataInputStream in = new DataInputStream(Files.newInputStream(file))) {
+            int n = in.readInt();
+            for (int i = 0; i < n; i++) {
+                long id = in.readLong();
                 ids.add(id);
+                if (id > next) next = id;
             }
-
-            buf.position(longBuf.position() << 3);
-            buf.compact();
-        }
-
-        if (buf.position() != 0) {
-            throw new IOException(String.format("%s remaining bytes in IDs file, file length should be multiple of 8 only", buf.position()));
         }
 
         return next;

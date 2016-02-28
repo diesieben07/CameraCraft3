@@ -2,10 +2,10 @@ package de.take_weiland.mods.cameracraft;
 
 import com.google.common.collect.Maps;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
+import de.take_weiland.mods.cameracraft.api.camera.Viewport;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
-import de.take_weiland.mods.cameracraft.network.PacketRequestStandardPhoto;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -36,9 +36,14 @@ public final class ApiImpl implements CameraCraftApi {
 
 	@Override
 	public CompletionStage<Long> defaultTakePhoto(EntityPlayer player, ImageFilter filter) {
-		return new PacketRequestStandardPhoto().sendTo(player)
-				.thenCompose(packet -> CameraCraft.currentDatabase().saveNewImage(packet.image, filter));
+        CCPlayerData playerData = CCPlayerData.get(player);
+        return takePhoto(playerData, filter);
 	}
+
+	@Override
+    public CompletionStage<Long> takePhoto(Viewport viewport, ImageFilter filter) {
+        return viewport.getProvider().grabImage(viewport).thenCompose(image -> CameraCraft.currentDatabase().saveNewImage(image, filter));
+    }
 
 	@Override
 	public PhotoDatabase getDatabase() {

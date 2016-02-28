@@ -16,8 +16,11 @@ import de.take_weiland.mods.cameracraft.entity.EntityPoster;
 import de.take_weiland.mods.cameracraft.entity.EntityScreen;
 import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.ItemDraw;
-import de.take_weiland.mods.cameracraft.network.PacketTakenPhoto;
+import de.take_weiland.mods.cameracraft.network.PacketImageResponse;
+import de.take_weiland.mods.commons.client.worldview.WorldView;
 import de.take_weiland.mods.commons.util.Async;
+import gnu.trove.map.TIntObjectMap;
+import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.Minecraft;
 import net.minecraft.crash.CrashReport;
 import net.minecraft.util.MovingObjectPosition;
@@ -64,9 +67,32 @@ public class ClientProxy implements CCProxy {
     }
 
     @Override
-    public CompletionStage<PacketTakenPhoto> handleStandardPhotoRequest() {
-        CompletableFuture<PacketTakenPhoto> future = new CompletableFuture<>();
+    public CompletionStage<PacketImageResponse> handleStandardPhotoRequest() {
+        CompletableFuture<PacketImageResponse> future = new CompletableFuture<>();
         photoTicker.schedulePhoto(future);
+        return future;
+    }
+
+    private TIntObjectMap<WorldView> viewports = new TIntObjectHashMap<>();
+
+    @Override
+    public void newViewport(int id, int dimension, double x, double y, double z, float pitch, float yaw) {
+        viewports.put(id, WorldView.create(256, 256, dimension, x, y, z, pitch, yaw, WorldView.ON_DEMAND_RENDERING));
+    }
+
+    @Override
+    public void killViewport(int id) {
+        WorldView view = viewports.remove(id);
+        if (view != null) {
+            view.dispose();
+        }
+    }
+
+    @Override
+    public CompletionStage<PacketImageResponse> handleViewportPhoto(int viewportId) {
+        CompletableFuture<PacketImageResponse> future = new CompletableFuture<>();
+        WorldView view = viewports.get(viewportId);
+        view.requestRender(v -> future.complete(new PacketImageResponse(v.grabScreenshot())));
         return future;
     }
 
