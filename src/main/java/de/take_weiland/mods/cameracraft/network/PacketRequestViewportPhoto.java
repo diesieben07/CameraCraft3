@@ -1,6 +1,5 @@
 package de.take_weiland.mods.cameracraft.network;
 
-import com.google.common.base.Throwables;
 import de.take_weiland.mods.cameracraft.CameraCraft;
 import de.take_weiland.mods.commons.net.MCDataInput;
 import de.take_weiland.mods.commons.net.MCDataOutput;
@@ -29,12 +28,7 @@ public class PacketRequestViewportPhoto implements Packet.WithResponse<PacketIma
     }
 
     public CompletionStage<PacketImageResponse> handle() {
-        try {
-            return CameraCraft.proxy.handleViewportPhoto(viewportId);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw Throwables.propagate(e);
-        }
+        return CameraCraft.proxy.handleViewportPhoto(viewportId);
     }
 
 }

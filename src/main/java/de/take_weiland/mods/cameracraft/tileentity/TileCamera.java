@@ -1,20 +1,14 @@
 package de.take_weiland.mods.cameracraft.tileentity;
 
-import de.take_weiland.mods.cameracraft.CCPlayerData;
 import de.take_weiland.mods.cameracraft.CCSounds;
 import de.take_weiland.mods.cameracraft.CameraCraft;
-import de.take_weiland.mods.cameracraft.api.camera.ViewportProvider;
 import de.take_weiland.mods.cameracraft.api.camera.Viewport;
+import de.take_weiland.mods.cameracraft.api.camera.ViewportProvider;
 import de.take_weiland.mods.commons.nbt.ToNbt;
-import de.take_weiland.mods.commons.util.Players;
 import de.take_weiland.mods.commons.util.Scheduler;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.tileentity.TileEntity;
 
-import java.util.Comparator;
-import java.util.Optional;
 import java.util.concurrent.CompletionStage;
-import java.util.function.Predicate;
 
 /**
  * @author diesieben07
@@ -41,16 +35,7 @@ public class TileCamera extends TileEntity implements Viewport {
     }
 
     private void chooseProvider() {
-        Optional<EntityPlayerMP> newPlayer = Players.getAll().stream()
-                .filter(Predicate.isEqual(viewportProvider).negate())
-                .min(Comparator.comparingInt(player -> CCPlayerData.get(player).getViewports().size()));
-
-        if (!newPlayer.isPresent()) {
-            throw new RuntimeException("No Player available to provide Camera viewport, TODO!");
-        }
-
-        viewportProvider = CCPlayerData.get(newPlayer.get());
-
+        viewportProvider = CameraCraft.api.getProvider(this);
         viewportProvider.attach(this);
     }
 

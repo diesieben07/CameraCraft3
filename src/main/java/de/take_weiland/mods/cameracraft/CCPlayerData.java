@@ -28,8 +28,8 @@ public class CCPlayerData implements IExtendedEntityProperties, ViewportProvider
     private long cooldownEnd = 0;
     private int lastClickedEntityID;
 
-    private       int                     nextViewportId = 0;
-    private final TIntObjectMap<Viewport> viewports      = new TIntObjectHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
+    private       int                         nextViewportId = 0;
+    private final TIntObjectMap<Viewport>     viewports      = new TIntObjectHashMap<>(Constants.DEFAULT_CAPACITY, Constants.DEFAULT_LOAD_FACTOR, -1);
     private final TObjectIntHashMap<Viewport> viewportIds    = new TObjectIntHashMap<>();
 
     CCPlayerData(EntityPlayer player) {

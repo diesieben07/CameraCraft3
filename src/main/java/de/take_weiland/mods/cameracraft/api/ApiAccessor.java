@@ -2,13 +2,14 @@ package de.take_weiland.mods.cameracraft.api;
 
 import cpw.mods.fml.common.Loader;
 import de.take_weiland.mods.cameracraft.api.camera.Viewport;
+import de.take_weiland.mods.cameracraft.api.camera.ViewportProvider;
+import de.take_weiland.mods.cameracraft.api.camera.ViewportProviderFactory;
 import de.take_weiland.mods.cameracraft.api.energy.BatteryHandler;
 import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoDatabase;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.terraingen.OreGenEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,21 +49,6 @@ final class ApiAccessor {
     private static final class DummyApi implements CameraCraftApi {
 
         @Override
-        public OreGenEvent.GenerateMinable.EventType getTinMinableType() {
-            return null;
-        }
-
-        @Override
-        public OreGenEvent.GenerateMinable.EventType getAlkalineMinableType() {
-            return null;
-        }
-
-        @Override
-        public OreGenEvent.GenerateMinable.EventType getPhotonicMinableType() {
-            return null;
-        }
-
-        @Override
         public CompletionStage<Long> defaultTakePhoto(EntityPlayer player, ImageFilter filter) {
             CompletableFuture<Long> future = new CompletableFuture<>();
             future.completeExceptionally(new Exception("CameraCraft not loaded"));
@@ -82,6 +68,16 @@ final class ApiAccessor {
         @Override
         public PhotoDatabase getDatabase() {
             return null;
+        }
+
+        @Override
+        public ViewportProvider getProvider(Viewport viewport) {
+            return null;
+        }
+
+        @Override
+        public void registerViewportProviderFactory(String name, ViewportProviderFactory factory) {
+
         }
 
         @Override

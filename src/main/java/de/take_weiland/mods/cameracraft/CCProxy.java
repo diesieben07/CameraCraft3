@@ -17,10 +17,6 @@ public interface CCProxy {
         throw new IllegalStateException();
     }
 
-	default void handleClientPhotoData(long photoId, InputStream in) {
-		throw new IllegalStateException();
-	}
-
 	default void displayNamePhotoGui(String oldName) {
 		throw new IllegalStateException();
 	}

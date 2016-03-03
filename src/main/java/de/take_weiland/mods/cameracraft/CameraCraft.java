@@ -56,7 +56,8 @@ public final class CameraCraft {
 
     public static org.apache.logging.log4j.Logger logger;
 
-    public static CameraCraftApi api;
+    public static final ApiImpl apiInternal = new ApiImpl();
+    public static final CameraCraftApi api = apiInternal;
 
     public static CreativeTabs tab = new CreativeTabs("cameracraft") {
 
@@ -80,8 +81,6 @@ public final class CameraCraft {
         config.load();
 
         enableOreGeneration = config.getBoolean("enableOreGen", Configuration.CATEGORY_GENERAL, true, "Whether to enable ore generation");
-
-        api = new ApiImpl();
 
         logger = event.getModLog();
 
@@ -125,11 +124,19 @@ public final class CameraCraft {
         MinecraftForge.EVENT_BUS.register(eventHandler);
         FMLCommonHandler.instance().bus().register(new FMLEventHandler());
 
+        proxy.preInit();
+
+        api.registerViewportProviderFactory(PlayerViewportFactory.IDENTIFIER, new PlayerViewportFactory());
+        api.registerViewportProviderFactory("test123", viewport -> null);
+    }
+
+    @EventHandler
+    public void postInit(FMLPostInitializationEvent event) {
+        apiInternal.bake();
+
         if (config.hasChanged()) {
             config.save();
         }
-
-        proxy.preInit();
     }
 
     public static void printErrorMessage(EntityPlayer player, String msg, Throwable x) {

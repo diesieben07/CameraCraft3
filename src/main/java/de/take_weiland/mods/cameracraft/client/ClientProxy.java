@@ -18,20 +18,15 @@ import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.ItemDraw;
 import de.take_weiland.mods.cameracraft.network.PacketImageResponse;
 import de.take_weiland.mods.commons.client.worldview.WorldView;
-import de.take_weiland.mods.commons.util.Async;
 import gnu.trove.map.TIntObjectMap;
 import gnu.trove.map.hash.TIntObjectHashMap;
 import net.minecraft.client.Minecraft;
-import net.minecraft.crash.CrashReport;
 import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.util.ReportedException;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.MinecraftForgeClient;
 import net.minecraftforge.client.event.MouseEvent;
 import net.minecraftforge.common.MinecraftForge;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -76,7 +71,8 @@ public class ClientProxy implements CCProxy {
     private TIntObjectMap<WorldView> viewports = new TIntObjectHashMap<>();
 
     @Override
-    public void newViewport(int id, int dimension, double x, double y, double z, float pitch, float yaw) {
+    public void
+    newViewport(int id, int dimension, double x, double y, double z, float pitch, float yaw) {
         viewports.put(id, WorldView.create(256, 256, dimension, x, y, z, pitch, yaw, WorldView.ON_DEMAND_RENDERING));
     }
 
@@ -94,19 +90,6 @@ public class ClientProxy implements CCProxy {
         WorldView view = viewports.get(viewportId);
         view.requestRender(v -> future.complete(new PacketImageResponse(v.grabScreenshot())));
         return future;
-    }
-
-    @Override
-    public void handleClientPhotoData(final long photoId, final InputStream in) {
-        Async.commonExecutor().execute(() -> {
-            try {
-                PhotoDataCache.injectReceivedPhoto(photoId, in);
-            } catch (IOException e) {
-                CrashReport cr = new CrashReport("Receiving CameraCraft photodata", e);
-                cr.makeCategory("Photo being received").addCrashSection("photoId", photoId);
-                throw new ReportedException(cr);
-            }
-        });
     }
 
     @Override
