@@ -6,9 +6,9 @@ public interface InkItem {
 
 	boolean isInk(ItemStack stack);
 	
-	int getAmount(ItemStack stack);
+	int getInkAmount(ItemStack stack);
 	
-	void setAmount(ItemStack stack, int newAmount);
+	ItemStack setInkAmount(ItemStack stack, int newAmount);
 	
 	InkItem.Color getColor(ItemStack stack);
 	
@@ -17,8 +17,8 @@ public interface InkItem {
 		CYAN,
 		MAGENTA,
 		YELLOW,
-		BLACK
-		
+		BLACK;
+
 	}
 	
 }

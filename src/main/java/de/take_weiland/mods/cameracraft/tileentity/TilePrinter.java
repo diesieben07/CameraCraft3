@@ -111,7 +111,7 @@ public class TilePrinter extends TileEntityInventory implements ISidedInventory,
 		for (int slot : inkSlots) {
 			ItemStack stack = getStackInSlot(slot);
 			InkItem ink = (InkItem) stack.getItem();
-			ink.setAmount(stack, ink.getAmount(stack) - 10);
+			setSlotNoMark(slot, ink.setInkAmount(stack, ink.getInkAmount(stack) - 10));
 		}
 		decrStackSize(SLOT_PAPER, 1);
 	}

@@ -19,7 +19,6 @@ public class CCWorldGen implements IWorldGenerator {
 	private enum OreInternal {
 
 		TIN(OreGenerator.Ore.TIN, OreType.TIN, 20, 0, 64, 8),
-		ALKALINE(OreGenerator.Ore.ALKALINE, OreType.ALKALINE, 10, 0, 30, 8),
 		PHOTONIC(OreGenerator.Ore.PHOTONIC, OreType.PHOTONIC, 10, 0, 128, 5, Blocks.netherrack);
 
 		final OreGenerator.Ore type;
@@ -47,7 +46,6 @@ public class CCWorldGen implements IWorldGenerator {
 		switch (world.provider.dimensionId) {
 		case 0:
 			generate(OreInternal.TIN, world, chunkX, chunkZ, random);
-			generate(OreInternal.ALKALINE, world, chunkX, chunkZ, random);
 			break;
 		case -1:
 			generate(OreInternal.PHOTONIC, world, chunkX, chunkZ, random);

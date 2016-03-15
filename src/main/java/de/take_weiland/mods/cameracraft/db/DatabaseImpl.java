@@ -400,7 +400,11 @@ public final class DatabaseImpl implements PhotoDatabase, Iterable<Photo>, Runna
      * @return computed value
      */
     private static <K, V> CacheEntry<V> getFromCache(ConcurrentMap<K, CacheEntry<V>> cache, K key, Function<K, CacheEntry<V>> loader) {
-        return cache.computeIfAbsent(key, loader).accessed();
+        CacheEntry<V> entry = cache.get(key);
+        if (entry == null) {
+            entry = cache.computeIfAbsent(key, loader);
+        }
+        return entry.accessed();
     }
 
     /**

@@ -13,8 +13,8 @@ public class ContainerDrawingBoard extends AbstractContainer<InventoryDrawingBoa
 
     private int x, y, z;
 
-    public ContainerDrawingBoard(InventoryDrawingBoard inventory, int x, int y, int z, EntityPlayer player) {
-        super(inventory, player);
+    public ContainerDrawingBoard(EntityPlayer player, InventoryDrawingBoard inventory, int x, int y, int z) {
+        super(player, inventory);
         this.x = x;
         this.y = y;
         this.z = z;

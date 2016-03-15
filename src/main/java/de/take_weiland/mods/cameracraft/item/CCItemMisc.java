@@ -1,32 +1,52 @@
 package de.take_weiland.mods.cameracraft.item;
 
-import de.take_weiland.mods.cameracraft.CameraCraft;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
+import de.take_weiland.mods.cameracraft.api.*;
 import de.take_weiland.mods.cameracraft.api.printer.InkItem;
-import de.take_weiland.mods.cameracraft.blocks.CCBlock;
+import de.take_weiland.mods.commons.client.I18n;
 import de.take_weiland.mods.commons.meta.MetadataProperty;
+import de.take_weiland.mods.commons.nbt.NBT;
 import de.take_weiland.mods.commons.util.ItemStacks;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTBase;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.MovingObjectPosition;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
 
-import static de.take_weiland.mods.commons.util.Sides.sideOf;
+import java.util.List;
 
-public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem {
+public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem, TrayItem, ChemicalItem {
 
-    private static final MetadataProperty<MiscItemType> type = MetadataProperty.newProperty(0, MiscItemType.class);
-    public static final int MAX_AMOUNT = 100;
+    private static final MetadataProperty<MiscItemType> type           = MetadataProperty.newProperty(0, MiscItemType.class);
+    public static final  int                            MAX_INK_AMOUNT = 100;
 
     public CCItemMisc() {
-		super("misc");
-	}
+        super("misc");
+    }
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    @Override
+    @SideOnly(Side.CLIENT)
+    public void addInformation(ItemStack stack, EntityPlayer player, List list, boolean advancedTooltips) {
+        if (isTray(stack)) {
+            ItemStack chemical = getContainedChemical(stack);
+            ItemStack film = getContainedFilm(stack);
+            ChemicalItem chemicalItem = ChemicalItem.get(chemical);
+            FilmItem filmItem = FilmItem.get(film);
+
+            if (chemicalItem == null && filmItem == null) {
+                list.add(I18n.translate("cameracraft.tray.empty"));
+            } else {
+                if (chemicalItem != null) {
+                    list.add(I18n.translate("cameracraft.tray.contains", chemicalItem.getDisplayInTray(chemical)));
+                }
+                if (filmItem != null) {
+                    list.add(I18n.translate("cameracraft.tray.contains", filmItem.getDisplayInTray(film)));
+                }
+            }
+        }
+    }
 
     @Override
     public MetadataProperty<MiscItemType> subtypeProperty() {
@@ -34,172 +54,155 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
     }
 
     @Override
-	public boolean showDurabilityBar(ItemStack stack) {
-		return isInk(stack);
-	}
-
-	@Override
-	public double getDurabilityForDisplay(ItemStack stack) {
-		return isInk(stack) ? getAmount0(stack) / (float) MAX_AMOUNT : 0;
-	}
-
-	@Override
-	public ItemStack onItemRightClick(ItemStack stack, World world, EntityPlayer player) {
-		if (getType(stack) == MiscItemType.ALKALINE_BUCKET) {
-			MovingObjectPosition hit = getMovingObjectPositionFromPlayer(world, player, false);
-
-			if (hit != null && hit.typeOfHit == MovingObjectPosition.MovingObjectType.BLOCK) {
-				int x = hit.blockX;
-				int y = hit.blockY;
-				int z = hit.blockZ;
-
-				if (!world.canMineBlock(player, x, y, z)) {
-					return stack;
-				}
-
-                ForgeDirection dir = ForgeDirection.getOrientation(hit.sideHit);
-                x += dir.offsetX;
-                y += dir.offsetY;
-                z += dir.offsetZ;
-
-				if (!player.canPlayerEdit(x, y, z, hit.sideHit, stack)) {
-					return stack;
-				}
-
-				if (placeAlkaline(world, x, y, z) && !player.capabilities.isCreativeMode) {
-					return new ItemStack(Items.bucket);
-				}
-			}
-		}
-		return stack;
-	}
-	
-	private static boolean placeAlkaline(World world, int x, int y, int z) {
-		Material material = world.getBlock(x, y, z).getMaterial();
-		boolean isSolid = material.isSolid();
-
-		if (!world.isAirBlock(x, y, z) && isSolid) {
-			return false;
-		} else {
-			if (sideOf(world).isServer() && !isSolid && !material.isLiquid()) {
-				world.breakBlock(x, y, z, true);
-			}
-
-			world.setBlock(x, y, z, CCBlock.alkaline, 0, 3);
-			return true;
-		}
-	}
-
-    @Override
-    public boolean hasContainerItem(ItemStack stack) {
-        return getType(stack) == MiscItemType.ALKALINE_BUCKET;
+    public boolean showDurabilityBar(ItemStack stack) {
+        return isInk(stack) || isChemical(stack);
     }
 
     @Override
-	public ItemStack getContainerItem(ItemStack stack) {
-		return new ItemStack(Items.bucket);
-	}
-	
-	@Override
-	public int getItemStackLimit(ItemStack stack) {
-		MiscItemType type = getType(stack);
-		return type == MiscItemType.ALKALINE_BUCKET || type.isInk() ? 1 : 64;
-	}
+    public double getDurabilityForDisplay(ItemStack stack) {
+        if (isInk(stack)) {
+            return getInkAmount0(stack) / (float) MAX_INK_AMOUNT;
+        } else if (isChemical(stack)) {
+            return chemicalUsesLeft(stack) / (float) CHEM_MAX_USES;
+        } else {
+            return 0;
+        }
+    }
 
-	@Override
-	public boolean hasCustomEntity(ItemStack stack) {
-		return getType(stack) == MiscItemType.ALKALINE_DUST;
-	}
+    @Override
+    public int getItemStackLimit(ItemStack stack) {
+        return getType(stack).getStackSize(stack);
+    }
 
-	@Override
-	public Entity createEntity(World world, Entity loc, ItemStack stack) {
-		return new AlkalineItemEntity(world, loc.posX, loc.posY, loc.posZ, ((EntityItem)loc).delayBeforeCanPickup, loc.motionX, loc.motionY, loc.motionZ, stack);
-	}
-	
-	@Override
-	public boolean onEntityItemUpdate(EntityItem entity) { // can't do this in our custom entity class, because custom item entities don't work on the client
-		if (sideOf(entity).isClient()) {
-			int x = MathHelper.floor_double(entity.posX);
-			int y = MathHelper.floor_double(entity.posY);
-			int z = MathHelper.floor_double(entity.posZ);
-			
-			if (entity.worldObj.getBlock(x, y, z) == Blocks.water && itemRand.nextInt(5) == 0) {
-				float xRand = (itemRand.nextFloat() - 0.5f) * 0.6f;
-				float yRand = itemRand.nextFloat() * 0.5f;
-				float zRand = (itemRand.nextFloat() - 0.5f) * 0.6f;
-				double motionX = (itemRand.nextDouble() - 0.5) * 0.3;
-				double motionY = itemRand.nextDouble() * 0.05;
-				double motionZ = (itemRand.nextDouble() - 0.5) * 0.3;
-				CameraCraft.proxy.spawnAlkalineBubbleFX(x + 0.5 + xRand, y + 1 + yRand, z + 0.5 + zRand, motionX, motionY, motionZ);
-			}
-		}
-		return false;
-	}
+    // InkItem
+    @Override
+    public boolean isInk(ItemStack stack) {
+        return getType(stack).isInk();
+    }
 
-	public static class AlkalineItemEntity extends EntityItem {
+    @Override
+    public int getInkAmount(ItemStack stack) {
+        if (isInk(stack)) {
+            return MAX_INK_AMOUNT - getInkAmount0(stack);
+        } else {
+            return -1;
+        }
+    }
 
-		private int inWaterTimer = 0;
-		
-		AlkalineItemEntity(World world, double x, double y, double z, int pickupDelay, double motionX, double motionY, double motionZ, ItemStack stack) {
-			super(world, x, y, z, stack);
-			this.motionX = motionX;
-			this.motionY = motionY;
-			this.motionZ = motionZ;
-			delayBeforeCanPickup = pickupDelay;
-		}
+    private int getInkAmount0(ItemStack stack) {
+        return ItemStacks.getNbt(stack).getInteger("cameracraft_ink");
+    }
 
-		public AlkalineItemEntity(World world) {
-			super(world);
-		}
+    @Override
+    public ItemStack setInkAmount(ItemStack stack, int newAmount) {
+        if (isInk(stack)) {
+            ItemStacks.getNbt(stack).setInteger("cameracraft_ink", MAX_INK_AMOUNT - newAmount);
+        }
+        return stack;
+    }
 
-		@Override
-		public void onUpdate() {
-			super.onUpdate();
-			if (sideOf(this).isServer()) {
-				int x = MathHelper.floor_double(posX);
-				int y = MathHelper.floor_double(posY);
-				int z = MathHelper.floor_double(posZ);
-				
-				if (worldObj.getBlock(x, y, z) == Blocks.water) {
-					if (inWaterTimer++ > 200) {
-						setDead();
-						worldObj.setBlock(x, y, z, CCBlock.alkaline);
-					}
-				}
-			}
-		}
-		
-	}
+    @Override
+    public InkItem.Color getColor(ItemStack stack) {
+        return getType(stack).getInkColor();
+    }
 
-	// InkItem
-	@Override
-	public boolean isInk(ItemStack stack) {
-		return getType(stack).isInk();
-	}
+    @Override
+    public boolean isTray(ItemStack stack) {
+        return getType(stack) == MiscItemType.TRAY;
+    }
 
-	@Override
-	public int getAmount(ItemStack stack) {
-		if (isInk(stack)) {
-			return MAX_AMOUNT - getAmount0(stack);
-		} else {
-			return -1;
-		}
-	}
+    private static final String TRAY_FILM_KEY = "cameracraft.trayFilm";
 
-	private int getAmount0(ItemStack stack) {
-		return ItemStacks.getNbt(stack).getInteger("cameracraft_ink");
-	}
+    @Override
+    public ItemStack getContainedFilm(ItemStack stack) {
+        NBTBase nbt = ItemStacks.getNbt(stack).getTag(TRAY_FILM_KEY);
+        if (nbt == null || nbt.getId() != NBT.TAG_COMPOUND) {
+            return null;
+        } else {
+            return ItemStack.loadItemStackFromNBT((NBTTagCompound) nbt);
+        }
+    }
 
-	@Override
-	public void setAmount(ItemStack stack, int newAmount) {
-		if (isInk(stack)) {
-			ItemStacks.getNbt(stack).setInteger("cameracraft_ink", MAX_AMOUNT - newAmount);
-		}
-	}
+    @Override
+    public ItemStack setContainedFilm(ItemStack stack, ItemStack film) {
+        if (film == null) {
+            ItemStacks.getNbt(stack).removeTag(TRAY_FILM_KEY);
+        } else {
+            NBTTagCompound nbt = film.writeToNBT(new NBTTagCompound());
+            ItemStacks.getNbt(stack).setTag(TRAY_FILM_KEY, nbt);
+        }
+        return stack;
+    }
 
-	@Override
-	public InkItem.Color getColor(ItemStack stack) {
-		return getType(stack).getInkColor();
-	}
+    // ChemicalItem
 
+
+    private static final String TRAY_CHEM_KEY = "cameracraft.trayChem";
+    private static final String CHEM_USES_KEY = "cameracraft.chem.use";
+    private static final int    CHEM_MAX_USES = 10;
+
+    @Override
+    public boolean isChemical(ItemStack stack) {
+        return getType(stack).isChemical();
+    }
+
+    @Override
+    public ItemStack getContainedChemical(ItemStack stack) {
+        NBTBase tag = ItemStacks.getNbt(stack).getTag(TRAY_CHEM_KEY);
+        if (tag == null || tag.getId() != NBT.TAG_COMPOUND) {
+            return null;
+        } else {
+            return ItemStack.loadItemStackFromNBT((NBTTagCompound) tag);
+        }
+    }
+
+    @Override
+    public ItemStack setContainedChemical(ItemStack stack, ItemStack chemical) {
+        NBTTagCompound nbt = ItemStacks.getNbt(stack);
+        if (chemical == null) {
+            nbt.removeTag(TRAY_CHEM_KEY);
+        } else {
+            nbt.setTag(TRAY_CHEM_KEY, chemical.writeToNBT(new NBTTagCompound()));
+        }
+        return stack;
+    }
+
+    private static int chemicalUsesLeft(ItemStack stack) {
+        NBTBase tag = ItemStacks.getNbt(stack).getTag(CHEM_USES_KEY);
+        if (tag != null && tag instanceof NBTBase.NBTPrimitive) {
+            return CHEM_MAX_USES - MathHelper.clamp_int(((NBTBase.NBTPrimitive) tag).getInt(), 0, CHEM_MAX_USES);
+        }
+        return CHEM_MAX_USES;
+    }
+
+    @Override
+    public ItemStack onChemicalUsed(ItemStack stack) {
+        int uses = chemicalUsesLeft(stack);
+        if (uses != 0) {
+            ItemStacks.getNbt(stack).setInteger(CHEM_USES_KEY, uses - 1);
+        }
+        return stack;
+    }
+
+    @Override
+    public ItemStack applyToFilm(ItemStack stack, ItemStack film) {
+        FilmItem filmItem = FilmItem.get(film);
+        if (filmItem == null || filmItem.getFilmState(film) != FilmState.READY_TO_PROCESS) {
+            return film;
+        } else {
+            MiscItemType type = getType(stack);
+            if (type == MiscItemType.DEVELOPER) {
+                // TODO
+                return stack;
+            } else { // fixer
+                // TODO
+                return stack;
+            }
+        }
+    }
+
+    @Override
+    public int applicationTime(ItemStack stack, ItemStack film) {
+        return 100;
+    }
 }

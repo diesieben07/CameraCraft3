@@ -6,7 +6,6 @@ import de.take_weiland.mods.commons.inv.AbstractContainer;
 import de.take_weiland.mods.commons.inv.ButtonContainer;
 import de.take_weiland.mods.commons.inv.SimpleSlot;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.world.World;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -16,8 +15,8 @@ import javax.annotation.ParametersAreNonnullByDefault;
 @ParametersAreNonnullByDefault
 public class ContainerScanner extends AbstractContainer<TileScanner> implements ButtonContainer {
 
-    public ContainerScanner(World world, int x, int y, int z, EntityPlayer player) {
-        super(world, x, y, z, player);
+    public ContainerScanner(EntityPlayer player, TileScanner inventory) {
+        super(player, inventory);
     }
 
     @Override

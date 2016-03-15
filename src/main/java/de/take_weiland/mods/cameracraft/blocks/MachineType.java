@@ -6,30 +6,43 @@ import de.take_weiland.mods.cameracraft.tileentity.*;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.tileentity.TileEntity;
 
+import java.util.function.Supplier;
+
 public enum MachineType {
 	
-	PHOTO_PROCESSOR("processor", TilePhotoProcessor.class, CCGuis.PHOTO_PROCESSOR),
-	PRINTER("printer", TilePrinter.class, CCGuis.PRINTER),
-	CAMERA("camera", TileCamera.class, CCGuis.CAMERA_PLACED),
-	SCANNER("scanner", TileScanner.class, CCGuis.SCANNER),
-	DRAWING_BOARD("drawing.board", TileDrawingBoard.class, CCGuis.DRAWING_BOARD),
+	PHOTO_PROCESSOR("processor", TilePhotoProcessor.class, TilePhotoProcessor::new, CCGuis.PHOTO_PROCESSOR),
+	PRINTER("printer", TilePrinter.class, TilePrinter::new, CCGuis.PRINTER),
+	CAMERA("camera", TileCamera.class, TileCamera::new, CCGuis.CAMERA_PLACED),
+	SCANNER("scanner", TileScanner.class, TileScanner::new, CCGuis.SCANNER),
+	DARKROOM_TABLE("darkroomTable", TileDarkroomTable.class, TileDarkroomTable::new, CCGuis.DARKROOM_TABLE),
+	DRAWING_BOARD("drawing.board", TileDrawingBoard.class, TileDrawingBoard::new, CCGuis.DRAWING_BOARD),
 	MEMORY_HANDLER("memory.handler", CCGuis.MEMORY_HANDLER);
 
-	private final String name;
+	private final String                      name;
 	private final Class<? extends TileEntity> teClass;
-	private final CCGuis gui;
-	
+	private final Supplier<? extends TileEntity> teCstr;
+	private final CCGuis                      gui;
+
+    MachineType(String name) {
+        this(name, null, null, null);
+    }
+
 	MachineType(String name, CCGuis gui) {
-		this(name, null, gui);
+		this(name, null, null, gui);
 	}
 	
-	MachineType(String name, Class<? extends TileEntity> teClass, CCGuis gui) {
+	<T extends TileEntity> MachineType(String name, Class<T> teClass, Supplier<T> teCstr, CCGuis gui) {
 		this.name = name;
 		this.teClass = teClass;
 		this.gui = gui;
+        this.teCstr = teCstr;
 	}
-	
-	public String subtypeName() {
+
+    public static void main(String[] args) {
+        System.out.println(PHOTO_PROCESSOR.createTileEntity());
+    }
+
+    public String subtypeName() {
 		return name;
 	}
 
@@ -44,12 +57,8 @@ public enum MachineType {
 	}
 	
 	public TileEntity createTileEntity() {
-		try {
-			return teClass.newInstance();
-		} catch (ReflectiveOperationException e) {
-			throw new RuntimeException("Failed to create TileEntity instance for " + this + "!", e);
-		}
-	}
+        return teCstr.get();
+    }
 	
 	public static void registerTileEntities() {
 		for (MachineType type : values()) {

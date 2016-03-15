@@ -12,6 +12,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 
 import java.util.concurrent.CompletionStage;
+import java.util.function.BiPredicate;
 
 /**
  * <p>Main access interface into the CameraCraft API.</p>
@@ -19,6 +20,10 @@ import java.util.concurrent.CompletionStage;
  * before post init.</p>
  */
 public interface CameraCraftApi {
+
+    <T> T getCapability(ItemStack stack, Class<T> clazz, BiPredicate<T, ItemStack> test);
+
+    <T> void registerCapability(Item item, Class<T> clazz, T instance);
 
     CompletionStage<Long> defaultTakePhoto(EntityPlayer player, ImageFilter filter);
 

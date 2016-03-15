@@ -2,6 +2,9 @@ package de.take_weiland.mods.cameracraft.item;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
+import de.take_weiland.mods.cameracraft.api.FilmItem;
+import de.take_weiland.mods.cameracraft.api.FilmState;
+import de.take_weiland.mods.cameracraft.api.img.ImageFilter;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorage;
 import de.take_weiland.mods.cameracraft.api.photo.PhotoStorageItem;
 import de.take_weiland.mods.cameracraft.photo.PhotoStorages;
@@ -12,7 +15,7 @@ import net.minecraft.item.ItemStack;
 
 import java.util.List;
 
-public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> implements PhotoStorageItem {
+public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> implements PhotoStorageItem, FilmItem {
 
     private static final MetadataProperty<PhotoStorageType> typeProp = MetadataProperty.newProperty(0, PhotoStorageType.class);
 
@@ -39,7 +42,27 @@ public class ItemPhotoStorages extends CCItemMultitype<PhotoStorageType> impleme
 		text.add(I18n.translate(key, size, type.getCapacity()));
 	}
 
-	@Override
+    @Override
+    public boolean isFilm(ItemStack stack) {
+        return getType(stack) != PhotoStorageType.MEMORY_CARD;
+    }
+
+    @Override
+    public FilmState getFilmState(ItemStack stack) {
+        return getType(stack).getFilmState();
+    }
+
+    @Override
+    public ItemStack setFilmState(ItemStack stack, FilmState state) {
+        return setType(stack, getType(stack).applyFilmState(state));
+    }
+
+    @Override
+    public ImageFilter getFilmFilter(ItemStack film) {
+        return getType(film).getFilter();
+    }
+
+    @Override
 	public PhotoStorage getPhotoStorage(ItemStack stack) {
 		return getType(stack).getStorage(stack);
 	}

@@ -1,17 +1,16 @@
 itemGroup.cameracraft=CameraCraft
 
-tile.cameracraft.ores.tin.name=Tin Ore
-tile.cameracraft.ores.blockTin.name=Block of Tin
-tile.cameracraft.ores.alkaline.name=Alkaline Ore
-
-tile.cameracraft.cable.power.name=Power Cable
-tile.cameracraft.cable.data.name=Data Cable
+tile.cameracraft.ores.photonic.name=Photonic Ore
+tile.cameracraft.ores.sulfur.name=Sulfur Ore
 
 tile.cameracraft.machines.processor.name=Photo Processor
 tile.cameracraft.machines.cardReader.name=Card Reader
 tile.cameracraft.machines.printer.name=Printer
-tile.cameracraft.machines.printerAdvanced.name=Advanced Printer
 tile.cameracraft.machines.scanner.name=Scanner
+tile.cameracraft.machines.darkroomTable.name=Darkroom Table
+
+tile.cameracraft.safetyLight.name=Safety Light
+
 
 item.cameracraft.camera.film.name=Film Camera
 item.cameracraft.camera.digital.name=Digital Camera
@@ -19,14 +18,23 @@ item.cameracraft.camera.digital.name=Digital Camera
 item.cameracraft.battery.name=Battery
 
 item.cameracraft.misc.ingotTin.name=Tin Ingot
-item.cameracraft.misc.inkYellow.name=Yellow Ink
-item.cameracraft.misc.inkCyan.name=Cyan Ink
-item.cameracraft.misc.inkMagenta.name=Magenta Ink
-item.cameracraft.misc.inkBlack.name=Black Ink
+
+item.cameracraft.misc.inkYellow.name=Yellow Ink Cartridge
+item.cameracraft.misc.inkCyan.name=Cyan Ink Cartridge
+item.cameracraft.misc.inkMagenta.name=Magenta Ink Cartridge
+item.cameracraft.misc.inkBlack.name=Black Ink Cartridge
+
 item.cameracraft.misc.alkalineBucket.name=Alkaline Bucket
 item.cameracraft.misc.photonicDust.name=Photonic Dust
 item.cameracraft.misc.photoelectricDust.name=Photoelectric Dust
-item.cameracraft.misc.alkalineDust.name=Alkaline Dust
+item.cameracraft.misc.sulfurDust.name=Sulfur Dust
+item.cameracraft.misc.photoPaper.name=Photo Paper
+item.cameracraft.misc.developer.name=Developer
+item.cameracraft.misc.fixer.name=Fixer
+item.cameracraft.misc.developmentTank.name=Development Tank
+
+item.cameracraft.misc.tray.name=Tray
+cameracraft.tray.contains=Contains %s
 
 item.cameracraft.lens.red.name=Red Lens
 item.cameracraft.lens.green.name=Green Lens
@@ -38,11 +46,18 @@ item.cameracraft.photo.poster.name=Unnamed Poster
 
 item.cameracraft.photoStorage.filmBw.name=Black & White Film
 item.cameracraft.photoStorage.filmColor.name=Color Film
-item.cameracraft.photoStorage.filmBwSealed.name=Sealed Black & White Film
-item.cameracraft.photoStorage.filmColorSealed.name=Sealed Color Film
+
+item.cameracraft.photoStorage.filmBwExposed.name=Exposed Black & White Film
+item.cameracraft.photoStorage.filmColorExposed.name=Exposed Color Film
+
+item.cameracraft.photoStorage.filmBwReady.name=Exposed Black & White Film
+item.cameracraft.photoStorage.filmColorReady.name=Exposed Color Film
+
 item.cameracraft.photoStorage.filmBwProcessed.name=Processed Black & White Film
 item.cameracraft.photoStorage.filmColorProcessed.name=Processed Color Film
+
 item.cameracraft.photoStorage.memoryCard.name=Memory Card
+
 item.cameracraft.photoStorage.subtext=%1$d / %2$d Photos
 item.cameracraft.photoStorage.subtext.sealed=%1$d Photos
 
@@ -50,3 +65,8 @@ item.cameracraft.photoStorage.subtext.single=%1$d / %2$d Photo
 item.cameracraft.photoStorage.subtext.sealed.single=%1$d Photo
 
 fluid.cameracraft.alkaline=Alkaline
+
+cameracraft.tray.empty=Empty
+cameracraft.chemical.developer=Developer
+cameracraft.chemical.fixer=Fixer
+cameracraft.chemical.water=Water

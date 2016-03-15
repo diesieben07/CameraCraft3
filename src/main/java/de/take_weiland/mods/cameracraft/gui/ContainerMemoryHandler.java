@@ -19,8 +19,8 @@ public class ContainerMemoryHandler extends AbstractContainer<InventoryMemoryHan
 
     private int x, y, z;
 
-    public ContainerMemoryHandler(InventoryMemoryHandler inventory, int x, int y, int z, EntityPlayer player) {
-        super(inventory, player);
+    public ContainerMemoryHandler(EntityPlayer player, InventoryMemoryHandler inventory, int x, int y, int z) {
+        super(player, inventory);
         this.x = x;
         this.y = y;
         this.z = z;

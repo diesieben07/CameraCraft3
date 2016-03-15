@@ -69,6 +69,7 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 				processProgress = -1;
 			}
 		} else {
+			// refresh render if needed
             if (!Fluids.identical(oldTankFluid, tank.getFluid())) {
                 oldTankFluid = Fluids.clone(tank.getFluid());
                 worldObj.markBlockForRenderUpdate(xCoord, yCoord, zCoord);
@@ -97,7 +98,8 @@ public class TilePhotoProcessor extends TileEntityInventory implements IFluidHan
 			return false;
 		}
 		FluidStack f = tank.getFluid();
-		return f != null && f.getFluid() == CCBlock.alkalineFluid && f.amount > FLUID_PER_PROCESS;
+//		return f != null && f.getFluid() == CCBlock.alkalineFluid && f.amount > FLUID_PER_PROCESS;
+		return false;
 	}
 
 	private void processFluidInput() {

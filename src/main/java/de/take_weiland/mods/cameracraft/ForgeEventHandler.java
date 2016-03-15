@@ -1,12 +1,8 @@
 package de.take_weiland.mods.cameracraft;
 
-import cpw.mods.fml.common.eventhandler.Event;
 import cpw.mods.fml.common.eventhandler.EventPriority;
 import cpw.mods.fml.common.eventhandler.SubscribeEvent;
-import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
-import de.take_weiland.mods.cameracraft.item.CCItem;
-import de.take_weiland.mods.cameracraft.item.MiscItemType;
 import de.take_weiland.mods.commons.SaveWorldsEvent;
 import de.take_weiland.mods.commons.util.Scheduler;
 import net.minecraft.entity.Entity;
@@ -14,7 +10,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.DimensionManager;
 import net.minecraftforge.event.entity.EntityEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
-import net.minecraftforge.event.entity.player.FillBucketEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 public final class ForgeEventHandler implements Scheduler.Task {
@@ -63,18 +58,6 @@ public final class ForgeEventHandler implements Scheduler.Task {
 		}
 	}
 	
-	@SubscribeEvent
-	public void onBucketUse(FillBucketEvent event) {
-		int x = event.target.blockX;
-		int y = event.target.blockY;
-		int z = event.target.blockZ;
-		if (event.world.getBlock(x, y, z) == CCBlock.alkaline && event.world.getBlockMetadata(x, y, z) == 0) {
-			event.world.setBlockToAir(x, y, z);
-			event.setResult(Event.Result.ALLOW);
-			event.result = CCItem.misc.getStack(MiscItemType.ALKALINE_BUCKET);
-		}
-	}
-
 	@SubscribeEvent
 	public void onEntityInteract(EntityInteractEvent event) {
 		Entity entity = event.target;

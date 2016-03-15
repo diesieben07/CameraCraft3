@@ -8,23 +8,20 @@ import de.take_weiland.mods.commons.util.Blocks;
 import net.minecraft.block.Block;
 import net.minecraft.block.material.Material;
 import net.minecraft.world.World;
-import net.minecraftforge.fluids.Fluid;
-import net.minecraftforge.fluids.FluidRegistry;
 
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.Map;
 
 public class CCBlock extends Block implements CCBlockName {
 
-    public static final Fluid alkalineFluid                       = new Fluid("cameracraft.alkaline").setLuminosity(7);
-
-    public static final BlockCCOre ores                           = new BlockCCOre();
-    public static final Map<MachineType, BlockCCMachine> machines = Maps.toMap(Arrays.asList(MachineType.values()), BlockCCMachine::new);
-    public static final BlockAlkaline alkaline = new BlockAlkaline();
+    public static final BlockCCOre                       ores        = new BlockCCOre();
+    public static final BlockSafetyLight                 safetyLight = new BlockSafetyLight();
+    public static final Map<MachineType, BlockCCMachine> machines    = new EnumMap<>(Maps.toMap(Arrays.asList(MachineType.values()), BlockCCMachine::new));
 
     public static void createBlocks() {
         Blocks.initAll((Block block) -> ((CCBlockName) block).getBaseName(), CameraCraft.tab,
-                Iterables.concat(Arrays.asList(ores, alkaline), machines.values()));
+                Iterables.concat(Arrays.asList(ores, safetyLight), machines.values()));
     }
 
     private final String baseName;
@@ -32,13 +29,6 @@ public class CCBlock extends Block implements CCBlockName {
     protected CCBlock(String name, Material material) {
         super(material);
         this.baseName = name;
-    }
-
-    static Fluid getAlkaline() {
-        if (!FluidRegistry.isFluidRegistered(alkalineFluid)) {
-            FluidRegistry.registerFluid(alkalineFluid);
-        }
-        return alkalineFluid;
     }
 
     @Override

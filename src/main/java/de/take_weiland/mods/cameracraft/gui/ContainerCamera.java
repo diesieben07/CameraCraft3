@@ -22,7 +22,7 @@ public class ContainerCamera extends AbstractContainer<InventoryCameraImpl> impl
     private final int closedSlot;
 
     public ContainerCamera(InventoryCameraImpl upper, EntityPlayer player, int closedSlot) {
-        super(upper, player);
+        super(player, upper);
         this.closedSlot = closedSlot;
     }
 

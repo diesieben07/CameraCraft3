@@ -6,10 +6,10 @@ import cpw.mods.fml.common.Mod.EventHandler;
 import cpw.mods.fml.common.Mod.Instance;
 import cpw.mods.fml.common.SidedProxy;
 import cpw.mods.fml.common.event.*;
-import cpw.mods.fml.common.network.NetworkRegistry;
 import cpw.mods.fml.common.registry.EntityRegistry;
 import cpw.mods.fml.common.registry.GameRegistry;
 import de.take_weiland.mods.cameracraft.api.CameraCraftApi;
+import de.take_weiland.mods.cameracraft.api.ChemicalItem;
 import de.take_weiland.mods.cameracraft.blocks.CCBlock;
 import de.take_weiland.mods.cameracraft.db.DatabaseImpl;
 import de.take_weiland.mods.cameracraft.entity.EntityPoster;
@@ -22,6 +22,7 @@ import de.take_weiland.mods.cameracraft.item.CameraType;
 import de.take_weiland.mods.cameracraft.network.*;
 import de.take_weiland.mods.cameracraft.worldgen.CCWorldGen;
 import de.take_weiland.mods.commons.net.Network;
+import de.take_weiland.mods.commons.util.Items;
 import de.take_weiland.mods.commons.util.Players;
 import de.take_weiland.mods.commons.util.Scheduler;
 import de.take_weiland.mods.commons.util.Sides;
@@ -114,7 +115,7 @@ public final class CameraCraft {
             GameRegistry.registerWorldGenerator(new CCWorldGen(), 0);
         }
 
-        NetworkRegistry.INSTANCE.registerGuiHandler(this, new CCGuis.Handler());
+        CCGuis.register();
 
         CCRegistry.addRecipes();
         CCRegistry.doMiscRegistering();
@@ -127,7 +128,8 @@ public final class CameraCraft {
         proxy.preInit();
 
         api.registerViewportProviderFactory(PlayerViewportFactory.IDENTIFIER, new PlayerViewportFactory());
-        api.registerViewportProviderFactory("test123", viewport -> null);
+
+        api.registerCapability(Items.potionitem, ChemicalItem.class, new PotionChemicalCapability());
     }
 
     @EventHandler

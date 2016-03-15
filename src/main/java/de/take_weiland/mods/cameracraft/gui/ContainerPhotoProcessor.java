@@ -8,7 +8,6 @@ import de.take_weiland.mods.commons.inv.SpecialShiftClick;
 import de.take_weiland.mods.commons.sync.Sync;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 import net.minecraftforge.fluids.FluidContainerRegistry;
 import net.minecraftforge.fluids.FluidTank;
 
@@ -16,10 +15,10 @@ import javax.annotation.Nonnull;
 
 public class ContainerPhotoProcessor extends AbstractContainer<TilePhotoProcessor> implements SpecialShiftClick {
 
-	public ContainerPhotoProcessor(World world, int x, int y, int z, EntityPlayer player) {
-		super(world, x, y, z, player);
+	public ContainerPhotoProcessor(EntityPlayer player, TilePhotoProcessor inventory) {
+		super(player, inventory);
 	}
-	
+
 	@Override
 	protected void addSlots() {
 		addSlotToContainer(new SimpleSlot(inventory, 0, 128, 14));

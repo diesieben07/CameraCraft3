@@ -18,6 +18,7 @@ import java.lang.invoke.MethodHandles;
 import java.lang.reflect.Field;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.function.BiPredicate;
 
 import static java.lang.invoke.MethodType.methodType;
 
@@ -47,6 +48,16 @@ final class ApiAccessor {
     }
 
     private static final class DummyApi implements CameraCraftApi {
+
+        @Override
+        public <T> T getCapability(ItemStack stack, Class<T> clazz, BiPredicate<T, ItemStack> test) {
+            return null;
+        }
+
+        @Override
+        public <T> void registerCapability(Item item, Class<T> clazz, T instance) {
+
+        }
 
         @Override
         public CompletionStage<Long> defaultTakePhoto(EntityPlayer player, ImageFilter filter) {

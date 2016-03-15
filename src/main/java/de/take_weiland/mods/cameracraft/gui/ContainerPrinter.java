@@ -12,7 +12,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 
@@ -21,9 +20,9 @@ public class ContainerPrinter extends AbstractContainer<TilePrinter> implements 
 
     public static final int PROGRESSBAR_WIDTH = 100;
 
-	protected ContainerPrinter(World world, int x, int y, int z, EntityPlayer player) {
-		super(world, x, y, z, player, 8, 118);
-	}
+    public ContainerPrinter(EntityPlayer player, TilePrinter te) {
+        super(player, 8, 118, te);
+    }
 
 	@Override
     public ShiftClickTarget getShiftClickTarget(ItemStack stack, EntityPlayer player) {
