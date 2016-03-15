@@ -14,6 +14,7 @@ import de.take_weiland.mods.cameracraft.item.CCItem;
 import de.take_weiland.mods.cameracraft.item.MiscItemType;
 import de.take_weiland.mods.commons.tileentity.TileEntityInventory;
 import de.take_weiland.mods.commons.util.ItemStacks;
+import de.take_weiland.mods.commons.util.Items;
 import net.minecraft.inventory.ISidedInventory;
 import net.minecraft.item.ItemStack;
 
@@ -69,12 +70,14 @@ public class TileDarkroomTable extends TileEntityInventory implements ISidedInve
 
     private boolean doTransfer(int traySlot) {
         int inputSlot = getInputSlot(traySlot);
+        int outputSlot = getOutputSlot(traySlot);
         ItemStack input = getStackInSlot(inputSlot);
         ItemStack tray = getStackInSlot(traySlot);
+        ItemStack output = getStackInSlot(outputSlot);
         ItemStack origTray = tray;
 
         TrayItem trayItem = TrayItem.get(tray);
-        if (trayItem == null) {
+        if (trayItem == null || input == null) {
             return false;
         }
 
@@ -93,11 +96,12 @@ public class TileDarkroomTable extends TileEntityInventory implements ISidedInve
         ItemStack filmStack;
 
         // try to transfer a chemical
-        if (inputChemicalItem != null && existingChemicalStack == null) {
+        if (inputChemicalItem != null && existingChemicalStack == null && output == null) {
             tray = trayItem.setContainedChemical(tray, input);
             didTransfer = true;
             chemicalStack = input;
             chemicalItem = inputChemicalItem;
+            setSlotNoMark(outputSlot, new ItemStack(Items.glass_bottle));
         } else {
             chemicalStack = existingChemicalStack;
             chemicalItem = ChemicalItem.get(chemicalStack);
@@ -112,6 +116,12 @@ public class TileDarkroomTable extends TileEntityInventory implements ISidedInve
         } else {
             filmStack = existingFilmStack;
             filmItem = FilmItem.get(filmStack);
+        }
+
+        if (input.getItem() == Items.glass_bottle && existingChemicalStack != null && output == null) {
+            setSlotNoMark(outputSlot, existingChemicalStack);
+            tray = trayItem.setContainedChemical(tray, null);
+            didTransfer = true;
         }
 
         if (tray != origTray) {
@@ -178,7 +188,7 @@ public class TileDarkroomTable extends TileEntityInventory implements ISidedInve
             return stack.getItem() == CCItem.misc && CCItem.misc.getType(stack) == MiscItemType.TRAY;
         } else if (isInputSlot(slot)) {
             FilmItem filmItem;
-            return ChemicalItem.get(stack) != null || (filmItem = FilmItem.get(stack)) != null && filmItem.getFilmState(stack) == FilmState.EXPOSED;
+            return stack.getItem() == Items.glass_bottle || ChemicalItem.get(stack) != null || (filmItem = FilmItem.get(stack)) != null && filmItem.getFilmState(stack) == FilmState.EXPOSED;
         } else if (isOutputSlot(slot)) {
             return false;
         } else {

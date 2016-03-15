@@ -2,7 +2,10 @@ package de.take_weiland.mods.cameracraft.item;
 
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import de.take_weiland.mods.cameracraft.api.*;
+import de.take_weiland.mods.cameracraft.api.ChemicalItem;
+import de.take_weiland.mods.cameracraft.api.FilmItem;
+import de.take_weiland.mods.cameracraft.api.FilmState;
+import de.take_weiland.mods.cameracraft.api.TrayItem;
 import de.take_weiland.mods.cameracraft.api.printer.InkItem;
 import de.take_weiland.mods.commons.client.I18n;
 import de.take_weiland.mods.commons.meta.MetadataProperty;
@@ -18,8 +21,7 @@ import java.util.List;
 
 public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem, TrayItem, ChemicalItem {
 
-    private static final MetadataProperty<MiscItemType> type           = MetadataProperty.newProperty(0, MiscItemType.class);
-    public static final  int                            MAX_INK_AMOUNT = 100;
+    private static final MetadataProperty<MiscItemType> type = MetadataProperty.newProperty(0, MiscItemType.class);
 
     public CCItemMisc() {
         super("misc");
@@ -55,7 +57,7 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
 
     @Override
     public boolean showDurabilityBar(ItemStack stack) {
-        return isInk(stack) || isChemical(stack);
+        return isInk(stack) || isChemical(stack) && chemicalUses(stack) != 0;
     }
 
     @Override
@@ -63,7 +65,7 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
         if (isInk(stack)) {
             return getInkAmount0(stack) / (float) MAX_INK_AMOUNT;
         } else if (isChemical(stack)) {
-            return chemicalUsesLeft(stack) / (float) CHEM_MAX_USES;
+            return chemicalUses(stack) / (float) CHEM_MAX_USES;
         } else {
             return 0;
         }
@@ -75,6 +77,10 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
     }
 
     // InkItem
+
+    public static final  int    MAX_INK_AMOUNT = 100;
+    private static final String INK_AMNT_KEY   = "cameracraft.ink";
+
     @Override
     public boolean isInk(ItemStack stack) {
         return getType(stack).isInk();
@@ -90,13 +96,13 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
     }
 
     private int getInkAmount0(ItemStack stack) {
-        return ItemStacks.getNbt(stack).getInteger("cameracraft_ink");
+        return ItemStacks.getNbt(stack).getInteger(INK_AMNT_KEY);
     }
 
     @Override
     public ItemStack setInkAmount(ItemStack stack, int newAmount) {
         if (isInk(stack)) {
-            ItemStacks.getNbt(stack).setInteger("cameracraft_ink", MAX_INK_AMOUNT - newAmount);
+            ItemStacks.getNbt(stack).setInteger(INK_AMNT_KEY, MAX_INK_AMOUNT - newAmount);
         }
         return stack;
     }
@@ -106,12 +112,15 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
         return getType(stack).getInkColor();
     }
 
+    // TrayItem
+
+    private static final String TRAY_FILM_KEY = "cameracraft.trayFilm";
+    private static final String TRAY_CHEM_KEY = "cameracraft.trayChem";
+
     @Override
     public boolean isTray(ItemStack stack) {
         return getType(stack) == MiscItemType.TRAY;
     }
-
-    private static final String TRAY_FILM_KEY = "cameracraft.trayFilm";
 
     @Override
     public ItemStack getContainedFilm(ItemStack stack) {
@@ -134,17 +143,6 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
         return stack;
     }
 
-    // ChemicalItem
-
-
-    private static final String TRAY_CHEM_KEY = "cameracraft.trayChem";
-    private static final String CHEM_USES_KEY = "cameracraft.chem.use";
-    private static final int    CHEM_MAX_USES = 10;
-
-    @Override
-    public boolean isChemical(ItemStack stack) {
-        return getType(stack).isChemical();
-    }
 
     @Override
     public ItemStack getContainedChemical(ItemStack stack) {
@@ -167,19 +165,29 @@ public class CCItemMisc extends CCItemMultitype<MiscItemType> implements InkItem
         return stack;
     }
 
-    private static int chemicalUsesLeft(ItemStack stack) {
+    // ChemicalItem
+
+    private static final String CHEM_USES_KEY = "cameracraft.chem.use";
+    private static final int    CHEM_MAX_USES = 10;
+
+    @Override
+    public boolean isChemical(ItemStack stack) {
+        return getType(stack).isChemical();
+    }
+
+    private static int chemicalUses(ItemStack stack) {
         NBTBase tag = ItemStacks.getNbt(stack).getTag(CHEM_USES_KEY);
         if (tag != null && tag instanceof NBTBase.NBTPrimitive) {
-            return CHEM_MAX_USES - MathHelper.clamp_int(((NBTBase.NBTPrimitive) tag).getInt(), 0, CHEM_MAX_USES);
+            return MathHelper.clamp_int(((NBTBase.NBTPrimitive) tag).getInt(), 0, CHEM_MAX_USES);
         }
-        return CHEM_MAX_USES;
+        return 0;
     }
 
     @Override
     public ItemStack onChemicalUsed(ItemStack stack) {
-        int uses = chemicalUsesLeft(stack);
-        if (uses != 0) {
-            ItemStacks.getNbt(stack).setInteger(CHEM_USES_KEY, uses - 1);
+        int uses = chemicalUses(stack);
+        if (uses != CHEM_MAX_USES) {
+            ItemStacks.getNbt(stack).setInteger(CHEM_USES_KEY, uses + 1);
         }
         return stack;
     }

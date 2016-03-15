@@ -82,7 +82,7 @@ public enum MiscItemType implements Subtype {
     }
 
     public boolean isChemical() {
-        return this == FIXER || this == DEVELOPER;
+        return this == FIXER || this == DEVELOPER || this == DIRTY_WATER;
     }
 
 }
