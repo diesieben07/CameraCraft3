@@ -31,6 +31,7 @@ internal fun registerItems(event: RegistryEvent.Register<Item>) {
 }
 
 @SideOnly(Side.CLIENT)
+@SubscribeEvent
 internal fun registerModels(event: ModelRegistryEvent) {
-    ModelLoader.setCustomModelResourceLocation(CAMERA, 0, ModelResourceLocation(CAMERA.registryName, "inventory"))
+    ModelLoader.setCustomModelResourceLocation(CAMERA, 0, ModelResourceLocation(CAMERA.registryName!!, "inventory"))
 }
