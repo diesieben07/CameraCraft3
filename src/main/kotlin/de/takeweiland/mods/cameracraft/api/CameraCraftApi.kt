@@ -1,6 +1,9 @@
 package de.takeweiland.mods.cameracraft.api
 
+import de.takeweiland.mods.cameracraft.api.io.ImageIO
 import de.takeweiland.mods.cameracraft.api.photography.PhotographyEngine
+import de.takeweiland.mods.cameracraft.api.store.PhotoStore
+import net.minecraft.world.World
 import net.minecraftforge.fml.common.Loader
 
 /**
@@ -12,11 +15,23 @@ interface CameraCraftApi {
 
     val photographyEngine: PhotographyEngine
 
+    val imageIO: ImageIO
+
+    fun getPhotoStore(world: World): PhotoStore
+
     companion object INSTANCE : CameraCraftApi by getApiImpl()
 
 }
 
 private object DummyImpl : CameraCraftApi {
+    override val imageIO: ImageIO
+        get() {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+    override fun getPhotoStore(world: World): PhotoStore {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
 
     override val isReal: Boolean
         get() = false

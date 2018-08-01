@@ -1,13 +1,18 @@
 package de.takeweiland.mods.cameracraft
 
 import de.takeweiland.mods.cameracraft.api.CameraCraftApi
+import de.takeweiland.mods.cameracraft.api.io.ImageIO
 import de.takeweiland.mods.cameracraft.api.photography.PhotographyEngine
+import de.takeweiland.mods.cameracraft.api.store.PhotoStore
+import de.takeweiland.mods.cameracraft.io.DefaultImageIO
 import de.takeweiland.mods.cameracraft.items.CAMERA
 import de.takeweiland.mods.cameracraft.net.PacketPhotoRequest
 import de.takeweiland.mods.commons.fml.KOTLIN_LANGUAGE_ADAPTER
 import de.takeweiland.mods.commons.net.register.networkChannel
+import kotlinx.coroutines.experimental.newSingleThreadContext
 import net.minecraft.creativetab.CreativeTabs
 import net.minecraft.item.ItemStack
+import net.minecraft.world.World
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import org.apache.logging.log4j.Logger
@@ -27,6 +32,8 @@ internal val CC_CREATIVE_TAB = object : CreativeTabs("cameracraft") {
         return ItemStack(CAMERA)
     }
 }
+
+internal val CC_IO_THREAD = newSingleThreadContext("CameraCraft IO")
 
 @Mod(modid = CC_MODID, name = NAME, version = VERSION, modLanguageAdapter = KOTLIN_LANGUAGE_ADAPTER, dependencies = "required-after:sevencommons")
 internal object CameraCraft : CameraCraftApi {
@@ -49,4 +56,11 @@ internal object CameraCraft : CameraCraftApi {
 
     override val photographyEngine: PhotographyEngine
         get() = TODO("not implemented") //To change initializer of created properties use File | Settings | File Templates.
+
+    override val imageIO: ImageIO
+        get() = DefaultImageIO
+
+    override fun getPhotoStore(world: World): PhotoStore {
+        return WorldPhotoStore.get(world)
+    }
 }
