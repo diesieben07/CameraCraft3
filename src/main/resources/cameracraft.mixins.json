@@ -4,6 +4,7 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "cameracraft.refmap.json",
   "mixins": [
+    "MixinWorldRenderer"
   ],
   "minVersion": "0.8"
 }

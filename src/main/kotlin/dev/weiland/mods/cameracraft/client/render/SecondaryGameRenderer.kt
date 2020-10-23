@@ -8,12 +8,14 @@ import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.ActiveRenderInfo
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
+import net.minecraft.client.settings.PointOfView
 import net.minecraft.client.shader.Framebuffer
 import net.minecraft.entity.LivingEntity
 import net.minecraft.util.Util
 import net.minecraft.util.math.vector.Matrix4f
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityViewRenderEvent
+import net.minecraftforge.client.event.GuiScreenEvent
 import net.minecraftforge.event.TickEvent
 import net.minecraftforge.eventbus.api.EventPriority
 import net.minecraftforge.eventbus.api.SubscribeEvent
@@ -32,15 +34,17 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
     fun preRender() {
         val prevHUDState = mc.gameSettings.hideGUI
         val prevBobState = mc.gameSettings.viewBobbing
+        val prevPointOfView = mc.gameSettings.pointOfView
         val prevViewport = mc.renderViewEntity
         val prevMainFBWidth = mc.mainWindow.framebufferWidth
         val prevMainFBHeight = mc.mainWindow.framebufferHeight
 
         mc.gameSettings.hideGUI = true
         mc.gameSettings.viewBobbing = false
+        mc.gameSettings.pointOfView = PointOfView.FIRST_PERSON
         mc.renderViewEntity = entity
-        mc.mainWindow.framebufferWidth = imageWidth
-        mc.mainWindow.framebufferHeight = imageHeight
+//        mc.mainWindow.framebufferWidth = imageWidth
+//        mc.mainWindow.framebufferHeight = imageHeight
 
         RenderSystem.pushMatrix()
         inFakeRender = true
@@ -50,14 +54,15 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
 
         mc.gameSettings.hideGUI = prevHUDState
         mc.gameSettings.viewBobbing = prevBobState
+        mc.gameSettings.pointOfView = prevPointOfView
         mc.renderViewEntity = prevViewport
-        mc.mainWindow.framebufferWidth = prevMainFBWidth
-        mc.mainWindow.framebufferHeight = prevMainFBHeight
+//        mc.mainWindow.framebufferWidth = prevMainFBWidth
+//        mc.mainWindow.framebufferHeight = prevMainFBHeight
 
         GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, mc.framebuffer.framebufferObject)
         GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, frameBuffer.framebufferObject)
         GL30.glBlitFramebuffer(
-            0, 0, imageWidth, imageHeight,
+            0, 0, mc.framebuffer.framebufferWidth, mc.framebuffer.framebufferHeight,
             0, 0, imageWidth, imageHeight,
             GL30.GL_COLOR_BUFFER_BIT or GL30.GL_DEPTH_BUFFER_BIT or GL30.GL_STENCIL_BUFFER_BIT,
             GL30.GL_NEAREST
@@ -96,6 +101,14 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
             // Force FOV to default when in a camera render
             if (inFakeRender) {
                 evt.fov = 70.0
+            }
+        }
+
+        @JvmStatic
+        @SubscribeEvent(priority = EventPriority.LOWEST)
+        fun preScreenRender(evt: GuiScreenEvent.DrawScreenEvent.Pre) {
+            if (inFakeRender) {
+                evt.isCanceled = true
             }
         }
 

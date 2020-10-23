@@ -16,7 +16,7 @@ import net.minecraft.world.World
 import net.minecraftforge.fml.network.PacketDistributor
 import java.util.*
 
-class CCTestEntity(type: EntityType<out CCTestEntity>, worldIn: World) : LivingEntity(type, worldIn) {
+class CCViewportEntity(type: EntityType<out CCViewportEntity>, worldIn: World) : LivingEntity(type, worldIn) {
 
     private val armor = Collections.nCopies(4, ItemStack.EMPTY).toMutableList()
     private val hands = Collections.nCopies(2, ItemStack.EMPTY).toMutableList()

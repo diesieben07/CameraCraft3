@@ -1,6 +1,6 @@
 package dev.weiland.mods.cameracraft
 
-import dev.weiland.mods.cameracraft.entity.CCTestEntity
+import dev.weiland.mods.cameracraft.entity.CCViewportEntity
 import net.minecraft.entity.EntityClassification
 import net.minecraft.entity.EntityType
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext
@@ -12,7 +12,7 @@ internal object CCEntities {
     private val ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, CameraCraft.MOD_ID)
     val TEST_ENTITY = ENTITIES.register("test_entity") {
         EntityType.Builder.create(
-            EntityType.IFactory<CCTestEntity> { type, world -> CCTestEntity(type, world) },
+            EntityType.IFactory<CCViewportEntity> { type, world -> CCViewportEntity(type, world) },
             EntityClassification.AMBIENT
         )
             .setShouldReceiveVelocityUpdates(true)
