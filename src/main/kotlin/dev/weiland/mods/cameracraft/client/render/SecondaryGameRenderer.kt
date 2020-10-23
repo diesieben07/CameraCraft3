@@ -24,16 +24,23 @@ import org.lwjgl.opengl.GL30
 @Mod.EventBusSubscriber(Dist.CLIENT, modid = CameraCraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.FORGE)
 internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: LivingEntity) {
 
-    val frameBuffer: Framebuffer = Framebuffer(256, 256, true, Minecraft.IS_RUNNING_ON_MAC)
+    val imageWidth = 256
+    val imageHeight = 256
+
+    val frameBuffer: Framebuffer = Framebuffer(imageWidth, imageHeight, true, Minecraft.IS_RUNNING_ON_MAC)
 
     fun preRender() {
         val prevHUDState = mc.gameSettings.hideGUI
         val prevBobState = mc.gameSettings.viewBobbing
         val prevViewport = mc.renderViewEntity
+        val prevMainFBWidth = mc.mainWindow.framebufferWidth
+        val prevMainFBHeight = mc.mainWindow.framebufferHeight
 
         mc.gameSettings.hideGUI = true
         mc.gameSettings.viewBobbing = false
         mc.renderViewEntity = entity
+        mc.mainWindow.framebufferWidth = imageWidth
+        mc.mainWindow.framebufferHeight = imageHeight
 
         RenderSystem.pushMatrix()
         inFakeRender = true
@@ -44,12 +51,14 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         mc.gameSettings.hideGUI = prevHUDState
         mc.gameSettings.viewBobbing = prevBobState
         mc.renderViewEntity = prevViewport
+        mc.mainWindow.framebufferWidth = prevMainFBWidth
+        mc.mainWindow.framebufferHeight = prevMainFBHeight
 
         GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, mc.framebuffer.framebufferObject)
         GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, frameBuffer.framebufferObject)
         GL30.glBlitFramebuffer(
-            0, 0, mc.framebuffer.framebufferWidth, mc.framebuffer.framebufferHeight,
-            0, 0, frameBuffer.framebufferWidth, frameBuffer.framebufferHeight,
+            0, 0, imageWidth, imageHeight,
+            0, 0, imageWidth, imageHeight,
             GL30.GL_COLOR_BUFFER_BIT or GL30.GL_DEPTH_BUFFER_BIT or GL30.GL_STENCIL_BUFFER_BIT,
             GL30.GL_NEAREST
         )
@@ -59,7 +68,7 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
 
     fun render() {
         RenderSystem.pushMatrix()
-        frameBuffer.framebufferRender(256, 256)
+        frameBuffer.framebufferRender(imageWidth, imageHeight)
         RenderSystem.popMatrix()
     }
 
@@ -90,31 +99,13 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
             }
         }
 
-        fun doRender() {
-            current?.render()
-        }
-
-        fun fakeRenderProjectionMatrix(gameRenderer: GameRenderer, activeRenderInfoIn: ActiveRenderInfo?, partialTicks: Float, useFovSetting: Boolean): Matrix4f {
-            with (gameRenderer) {
-                val matrixstack = MatrixStack()
-                matrixstack.last.matrix.setIdentity()
-
-                matrixstack.last.matrix.mul(
-                    Matrix4f.perspective(
-                        70.0 + (System.currentTimeMillis() % 10_000L).toFloat() / (10_000f / 70f),
-                        256f / 256f, 0.05f,
-                        this.farPlaneDistance * 4.0f
-                    )
-                )
-                return matrixstack.last.matrix
-            }
-        }
-
         fun createOverlayForEntity(entity: LivingEntity) {
-            current = SecondaryGameRenderer(
-                Minecraft.getInstance(),
-                entity
-            )
+            if (current == null) {
+                current = SecondaryGameRenderer(
+                    Minecraft.getInstance(),
+                    entity
+                )
+            }
         }
 
     }
