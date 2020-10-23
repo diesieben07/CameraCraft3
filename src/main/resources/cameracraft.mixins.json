@@ -1,0 +1,9 @@
+{
+  "required": true,
+  "package": "dev.weiland.mods.cameracraft.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "refmap": "cameracraft.refmap.json",
+  "mixins": [
+  ],
+  "minVersion": "0.8"
+}
