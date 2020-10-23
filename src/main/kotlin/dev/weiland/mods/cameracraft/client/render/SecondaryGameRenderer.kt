@@ -43,8 +43,8 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         mc.gameSettings.viewBobbing = false
         mc.gameSettings.pointOfView = PointOfView.FIRST_PERSON
         mc.renderViewEntity = entity
-//        mc.mainWindow.framebufferWidth = imageWidth
-//        mc.mainWindow.framebufferHeight = imageHeight
+        mc.mainWindow.framebufferWidth = imageWidth
+        mc.mainWindow.framebufferHeight = imageHeight
 
         RenderSystem.pushMatrix()
         inFakeRender = true
@@ -56,8 +56,6 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         mc.gameSettings.viewBobbing = prevBobState
         mc.gameSettings.pointOfView = prevPointOfView
         mc.renderViewEntity = prevViewport
-//        mc.mainWindow.framebufferWidth = prevMainFBWidth
-//        mc.mainWindow.framebufferHeight = prevMainFBHeight
 
         GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, mc.framebuffer.framebufferObject)
         GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, frameBuffer.framebufferObject)
@@ -67,6 +65,9 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
             GL30.GL_COLOR_BUFFER_BIT or GL30.GL_DEPTH_BUFFER_BIT or GL30.GL_STENCIL_BUFFER_BIT,
             GL30.GL_NEAREST
         )
+
+        mc.mainWindow.framebufferWidth = prevMainFBWidth
+        mc.mainWindow.framebufferHeight = prevMainFBHeight
 
         mc.framebuffer.bindFramebuffer(true)
     }
