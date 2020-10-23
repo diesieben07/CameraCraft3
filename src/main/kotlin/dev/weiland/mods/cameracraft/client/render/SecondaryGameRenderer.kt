@@ -38,6 +38,7 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         val prevViewport = mc.renderViewEntity
         val prevMainFBWidth = mc.mainWindow.framebufferWidth
         val prevMainFBHeight = mc.mainWindow.framebufferHeight
+        val fbBackup = mc.framebuffer
 
         mc.gameSettings.hideGUI = true
         mc.gameSettings.viewBobbing = false
@@ -45,6 +46,9 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         mc.renderViewEntity = entity
         mc.mainWindow.framebufferWidth = imageWidth
         mc.mainWindow.framebufferHeight = imageHeight
+        mc.framebuffer = frameBuffer
+
+        mc.framebuffer.bindFramebuffer(true)
 
         RenderSystem.pushMatrix()
         inFakeRender = true
@@ -57,18 +61,18 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         mc.gameSettings.pointOfView = prevPointOfView
         mc.renderViewEntity = prevViewport
 
-        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, mc.framebuffer.framebufferObject)
-        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, frameBuffer.framebufferObject)
-        GL30.glBlitFramebuffer(
-            0, 0, mc.framebuffer.framebufferWidth, mc.framebuffer.framebufferHeight,
-            0, 0, imageWidth, imageHeight,
-            GL30.GL_COLOR_BUFFER_BIT or GL30.GL_DEPTH_BUFFER_BIT or GL30.GL_STENCIL_BUFFER_BIT,
-            GL30.GL_NEAREST
-        )
+//        GL30.glBindFramebuffer(GL30.GL_READ_FRAMEBUFFER, mc.framebuffer.framebufferObject)
+//        GL30.glBindFramebuffer(GL30.GL_DRAW_FRAMEBUFFER, frameBuffer.framebufferObject)
+//        GL30.glBlitFramebuffer(
+//            0, 0, mc.framebuffer.framebufferWidth, mc.framebuffer.framebufferHeight,
+//            0, 0, imageWidth, imageHeight,
+//            GL30.GL_COLOR_BUFFER_BIT or GL30.GL_DEPTH_BUFFER_BIT or GL30.GL_STENCIL_BUFFER_BIT,
+//            GL30.GL_NEAREST
+//        )
 
         mc.mainWindow.framebufferWidth = prevMainFBWidth
         mc.mainWindow.framebufferHeight = prevMainFBHeight
-
+        mc.framebuffer = fbBackup
         mc.framebuffer.bindFramebuffer(true)
     }
 
