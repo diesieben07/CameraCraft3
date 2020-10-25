@@ -5,6 +5,8 @@ import dev.weiland.mods.cameracraft.util.msg
 import dev.weiland.mods.cameracraft.util.syncHandler
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes
+import net.minecraft.item.ItemGroup
+import net.minecraft.item.ItemStack
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
@@ -20,6 +22,7 @@ internal class CameraCraft {
 
     init {
         CCEntities.init()
+        CCBlocks.init()
         System.setProperty("java.awt.headless", "false")
     }
 
@@ -31,6 +34,9 @@ internal class CameraCraft {
         const val PROTOCOL_VERSION = "1"
         lateinit var NETWORK: SimpleChannel
 
+        val ITEM_GROUP = object : ItemGroup("cameracraft") {
+            override fun createIcon(): ItemStack = ItemStack(CCBlocks.TRIPOD)
+        }
 
         @JvmStatic
         @SubscribeEvent

@@ -35,7 +35,11 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         activeRenderHeight = entity.eyeHeight
     )
 
-    fun preRender() {
+    fun preRender(): Boolean {
+        if (!entity.isAlive) {
+            return false
+        }
+
         val savedRenderState = GlobalRenderState.capture(mc)
 
         globalRenderState.restore(mc)
@@ -51,6 +55,8 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         savedRenderState.restore(mc)
 
         mc.framebuffer.bindFramebuffer(true)
+
+        return true
     }
 
     fun render() {
@@ -63,6 +69,9 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
 
         @JvmField
         var inFakeRender = false
+
+        private var active: Array<SecondaryGameRenderer> = emptyArray()
+
         private var current: SecondaryGameRenderer? = null
 
         @JvmStatic
