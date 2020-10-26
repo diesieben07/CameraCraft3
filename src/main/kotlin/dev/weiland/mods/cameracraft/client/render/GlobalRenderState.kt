@@ -6,7 +6,6 @@ import net.minecraft.client.shader.Framebuffer
 import net.minecraft.entity.Entity
 
 internal class GlobalRenderState(
-    private val hideHUD: Boolean,
     private val viewBobbing: Boolean,
     private val pointOfView: PointOfView,
     private val viewportEntity: Entity?,
@@ -18,7 +17,6 @@ internal class GlobalRenderState(
 ) : GlobalState {
 
     override fun restore(mc: Minecraft) {
-        mc.gameSettings.hideGUI = hideHUD
         mc.gameSettings.viewBobbing = viewBobbing
         mc.gameSettings.pointOfView = pointOfView
         mc.renderViewEntity = viewportEntity
@@ -32,7 +30,6 @@ internal class GlobalRenderState(
     companion object {
         fun capture(mc: Minecraft): GlobalRenderState {
             return GlobalRenderState(
-                hideHUD = mc.gameSettings.hideGUI,
                 viewBobbing = mc.gameSettings.viewBobbing,
                 pointOfView = mc.gameSettings.pointOfView,
                 viewportEntity = mc.renderViewEntity,

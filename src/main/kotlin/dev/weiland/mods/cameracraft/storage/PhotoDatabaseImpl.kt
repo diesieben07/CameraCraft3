@@ -56,7 +56,7 @@ class PhotoDatabaseImpl(private val path: Path) : Closeable {
     private fun String.readBoundType(): BoundType {
         return when (this) {
             "open" -> BoundType.OPEN
-            else ->
+            else -> BoundType.CLOSED
         }
     }
 
