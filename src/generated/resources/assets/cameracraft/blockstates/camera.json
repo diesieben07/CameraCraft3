@@ -1,0 +1,112 @@
+{
+  "variants": {
+    "rotation=0": {
+      "model": "cameracraft:block/camera_0"
+    },
+    "rotation=1": {
+      "model": "cameracraft:block/camera_1"
+    },
+    "rotation=2": {
+      "model": "cameracraft:block/camera_2"
+    },
+    "rotation=3": {
+      "model": "cameracraft:block/camera_3"
+    },
+    "rotation=4": {
+      "model": "cameracraft:block/camera_4"
+    },
+    "rotation=5": {
+      "model": "cameracraft:block/camera_5"
+    },
+    "rotation=6": {
+      "model": "cameracraft:block/camera_6"
+    },
+    "rotation=7": {
+      "model": "cameracraft:block/camera_7"
+    },
+    "rotation=8": {
+      "model": "cameracraft:block/camera_8"
+    },
+    "rotation=9": {
+      "model": "cameracraft:block/camera_9"
+    },
+    "rotation=10": {
+      "model": "cameracraft:block/camera_10"
+    },
+    "rotation=11": {
+      "model": "cameracraft:block/camera_11"
+    },
+    "rotation=12": {
+      "model": "cameracraft:block/camera_12"
+    },
+    "rotation=13": {
+      "model": "cameracraft:block/camera_13"
+    },
+    "rotation=14": {
+      "model": "cameracraft:block/camera_14"
+    },
+    "rotation=15": {
+      "model": "cameracraft:block/camera_15"
+    },
+    "rotation=16": {
+      "model": "cameracraft:block/camera_16"
+    },
+    "rotation=17": {
+      "model": "cameracraft:block/camera_17"
+    },
+    "rotation=18": {
+      "model": "cameracraft:block/camera_18"
+    },
+    "rotation=19": {
+      "model": "cameracraft:block/camera_19"
+    },
+    "rotation=20": {
+      "model": "cameracraft:block/camera_20"
+    },
+    "rotation=21": {
+      "model": "cameracraft:block/camera_21"
+    },
+    "rotation=22": {
+      "model": "cameracraft:block/camera_22"
+    },
+    "rotation=23": {
+      "model": "cameracraft:block/camera_23"
+    },
+    "rotation=24": {
+      "model": "cameracraft:block/camera_24"
+    },
+    "rotation=25": {
+      "model": "cameracraft:block/camera_25"
+    },
+    "rotation=26": {
+      "model": "cameracraft:block/camera_26"
+    },
+    "rotation=27": {
+      "model": "cameracraft:block/camera_27"
+    },
+    "rotation=28": {
+      "model": "cameracraft:block/camera_28"
+    },
+    "rotation=29": {
+      "model": "cameracraft:block/camera_29"
+    },
+    "rotation=30": {
+      "model": "cameracraft:block/camera_30"
+    },
+    "rotation=31": {
+      "model": "cameracraft:block/camera_31"
+    },
+    "rotation=32": {
+      "model": "cameracraft:block/camera_32"
+    },
+    "rotation=33": {
+      "model": "cameracraft:block/camera_33"
+    },
+    "rotation=34": {
+      "model": "cameracraft:block/camera_34"
+    },
+    "rotation=35": {
+      "model": "cameracraft:block/camera_35"
+    }
+  }
+}

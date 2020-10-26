@@ -1,0 +1,12 @@
+{
+  "parent": "cameracraft:block/camera",
+  "transform": {
+    "origin": "center",
+    "rotation": [
+      0.0,
+      0.90630776,
+      0.0,
+      -0.42261833
+    ]
+  }
+}
