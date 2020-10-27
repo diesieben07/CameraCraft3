@@ -12,7 +12,8 @@ import java.util.function.Supplier
 internal class FakeClientWorld(
     netHandler: ClientPlayNetHandler, worldInfo: ClientWorldInfo, registryKey: RegistryKey<World>, dimensionType: DimensionType, viewDistance: Int,
     profiler: Supplier<IProfiler>, worldRenderer: WorldRenderer, debug: Boolean, seed: Long
-) : ClientWorld(netHandler, worldInfo, registryKey, dimensionType, viewDistance, profiler, worldRenderer, debug, seed) {
+) : ClientWorld(netHandler, worldInfo, registryKey, dimensionType, viewDistance, profiler, worldRenderer, debug, seed), ClientWorldInterface {
 
-
+    override val cameracraftIsFakeWorld: Boolean
+        get() = true
 }
