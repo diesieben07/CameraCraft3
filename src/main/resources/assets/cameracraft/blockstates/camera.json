@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "cameracraft:block/real_camera"
+    }
+  }
+}

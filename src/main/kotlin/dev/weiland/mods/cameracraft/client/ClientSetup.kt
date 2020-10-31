@@ -3,6 +3,7 @@ package dev.weiland.mods.cameracraft.client
 import dev.weiland.mods.cameracraft.CCBlocks
 import dev.weiland.mods.cameracraft.CCEntities
 import dev.weiland.mods.cameracraft.CameraCraft
+import dev.weiland.mods.cameracraft.client.model.CameraModelLoader
 import dev.weiland.mods.cameracraft.client.model.RotationModelLoader
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.RenderTypeLookup
@@ -29,6 +30,7 @@ internal object ClientSetup {
     @SubscribeEvent
     fun modelRegistry(event: ModelRegistryEvent) {
         ModelLoaderRegistry.registerLoader(RotationModelLoader.ID, RotationModelLoader)
+        ModelLoaderRegistry.registerLoader(CameraModelLoader.ID, CameraModelLoader)
     }
 
 }

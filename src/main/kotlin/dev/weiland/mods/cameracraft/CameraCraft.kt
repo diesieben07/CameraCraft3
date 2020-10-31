@@ -23,6 +23,7 @@ internal class CameraCraft {
     init {
         CCEntities.init()
         CCBlocks.init()
+        CCTEs.init()
         System.setProperty("java.awt.headless", "false")
     }
 

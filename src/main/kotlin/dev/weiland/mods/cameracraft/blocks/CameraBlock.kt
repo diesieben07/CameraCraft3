@@ -10,6 +10,7 @@ import net.minecraft.entity.player.PlayerEntity
 import net.minecraft.item.BlockItemUseContext
 import net.minecraft.state.IntegerProperty
 import net.minecraft.state.StateContainer
+import net.minecraft.tileentity.TileEntity
 import net.minecraft.util.ActionResultType
 import net.minecraft.util.Direction
 import net.minecraft.util.Hand
@@ -26,7 +27,7 @@ import kotlin.math.roundToInt
 internal class CameraBlock : Block(Properties.create(Material.IRON).notSolid()) {
 
     companion object {
-        val ROTATION = IntegerProperty.create("rotation", 0, 35)
+//        val ROTATION = IntegerProperty.create("rotation", 0, 35)
 
         private fun makeShape(degrees: Int) {
 
@@ -35,6 +36,14 @@ internal class CameraBlock : Block(Properties.create(Material.IRON).notSolid()) 
 
         val SHAPE = makeCuboidShape(1.0, 0.0, 1.0, 15.0, 10.0, 15.0)
 
+    }
+
+    override fun hasTileEntity(state: BlockState?): Boolean {
+        return true
+    }
+
+    override fun createTileEntity(state: BlockState?, world: IBlockReader?): TileEntity? {
+        return CameraTile()
     }
 
     override fun getShape(state: BlockState, worldIn: IBlockReader, pos: BlockPos, context: ISelectionContext): VoxelShape {
@@ -46,7 +55,7 @@ internal class CameraBlock : Block(Properties.create(Material.IRON).notSolid()) 
     }
 
     override fun fillStateContainer(builder: StateContainer.Builder<Block, BlockState>) {
-        builder.add(ROTATION)
+//        builder.add(ROTATION)
     }
 
     override fun updatePostPlacement(
@@ -65,14 +74,15 @@ internal class CameraBlock : Block(Properties.create(Material.IRON).notSolid()) 
 
     override fun getStateForPlacement(context: BlockItemUseContext): BlockState {
         val rotation = ((360 - context.placementYaw) / 10f).roundToInt().modulus(36)
-        return defaultState.with(ROTATION, rotation)
+//        return defaultState.with(ROTATION, rotation)
+        return defaultState
     }
 
     override fun onBlockActivated(
         state: BlockState, world: World, pos: BlockPos, player: PlayerEntity, handIn: Hand, hit: BlockRayTraceResult
     ): ActionResultType {
         if (!world.isRemote) {
-            world.setBlockState(pos, state.with(ROTATION, (state[ROTATION] + 1).rem(36)))
+            (world.getTileEntity(pos) as? CameraTile)?.let { it.rotation = (it.rotation + 1).rem(CameraTile.ROTATION_STEPS) }
         }
         return ActionResultType.SUCCESS
     }

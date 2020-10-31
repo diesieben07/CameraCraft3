@@ -1,7 +1,0 @@
-{
-  "parent": "minecraft:block/cross",
-  "ambientocclusion": false,
-  "textures": {
-    "cross": "cameracraft:block/tripod"
-  }
-}

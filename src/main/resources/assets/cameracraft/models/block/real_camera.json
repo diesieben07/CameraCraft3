@@ -1,0 +1,6 @@
+{
+  "loader": "cameracraft:camera_model",
+  "model": {
+    "parent": "cameracraft:block/camera"
+  }
+}

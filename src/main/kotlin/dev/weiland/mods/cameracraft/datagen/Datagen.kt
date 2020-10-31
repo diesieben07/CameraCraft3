@@ -6,6 +6,7 @@ import com.mojang.datafixers.util.Pair
 import dev.weiland.mods.cameracraft.CCBlocks
 import dev.weiland.mods.cameracraft.CameraCraft
 import dev.weiland.mods.cameracraft.blocks.CameraBlock
+import dev.weiland.mods.cameracraft.client.model.CameraModelLoader
 import net.minecraft.block.Block
 import net.minecraft.data.DataGenerator
 import net.minecraft.data.LootTableProvider
@@ -15,10 +16,7 @@ import net.minecraft.loot.LootTable
 import net.minecraft.loot.ValidationTracker
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.math.vector.Quaternion
-import net.minecraftforge.client.model.generators.BlockModelBuilder
-import net.minecraftforge.client.model.generators.BlockStateProvider
-import net.minecraftforge.client.model.generators.ConfiguredModel
-import net.minecraftforge.client.model.generators.ItemModelProvider
+import net.minecraftforge.client.model.generators.*
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.common.data.LanguageProvider
 import net.minecraftforge.eventbus.api.SubscribeEvent
@@ -90,32 +88,44 @@ internal object Datagen {
                     .cross(CCBlocks.TRIPOD.registryName!!.path, blockTexture(CCBlocks.TRIPOD))
                     .ao(false)
             )
-
+//
 //            val baseModel = models().withExistingParent("camera_temp", modLoc("camera"))
-//                .transforms().transform()
 //            models().generatedModels.remove(baseModel.location)
 //            val baseModelJson = baseModel.toJson()
-
-            getVariantBuilder(CCBlocks.CAMERA)
-                .forAllStates { state ->
-                    val rotation = state[CameraBlock.ROTATION]
-
-//                    val modelJson = JsonObject()
-//                    modelJson.addProperty("loader", RotationModelLoader.ID.toString())
-//                    modelJson.addProperty("rotation_y", rotation.toFloat() * 10f)
-//                    modelJson.add("model", baseModelJson)
 //
+//            val modelJson = JsonObject()
+//            modelJson.addProperty("loader", CameraModelLoader.ID.toString())
+//            modelJson.add("model", baseModelJson)
 //
-//                    val modelLocation = ResourceLocation(CameraCraft.MOD_ID, "${ModelProvider.BLOCK_FOLDER}/camera_${rotation}")
-//                    val model = FixedBlockModelBuilder(modelJson, modelLocation, exFileHelper)
-//                    models().generatedModels[modelLocation] = model
+//            val modelLocation = ResourceLocation(CameraCraft.MOD_ID, "${ModelProvider.BLOCK_FOLDER}/real_camera")
+//            val model = FixedBlockModelBuilder(modelJson, modelLocation, exFileHelper)
+//            models().generatedModels[modelLocation] = model
+//
+//            simpleBlock(
+//                    CCBlocks.CAMERA,
+//
+//            )
 
-                    val model = models().withExistingParent("camera_$rotation", modLoc("camera"))
-                    val realModel = TransformBlockModelBuilder(model.location, exFileHelper, model, rotation.toFloat() * 10f)
-                    models().generatedModels[realModel.location] = realModel
-
-                    ConfiguredModel.builder().modelFile(realModel).build()
-                }
+//            getVariantBuilder(CCBlocks.CAMERA)
+//                .forAllStates { state ->
+//                    val rotation = state[CameraBlock.ROTATION]
+//
+////                    val modelJson = JsonObject()
+////                    modelJson.addProperty("loader", RotationModelLoader.ID.toString())
+////                    modelJson.addProperty("rotation_y", rotation.toFloat() * 10f)
+////                    modelJson.add("model", baseModelJson)
+////
+////
+////                    val modelLocation = ResourceLocation(CameraCraft.MOD_ID, "${ModelProvider.BLOCK_FOLDER}/camera_${rotation}")
+////                    val model = FixedBlockModelBuilder(modelJson, modelLocation, exFileHelper)
+////                    models().generatedModels[modelLocation] = model
+//
+//                    val model = models().withExistingParent("camera_$rotation", modLoc("camera"))
+//                    val realModel = TransformBlockModelBuilder(model.location, exFileHelper, model, rotation.toFloat() * 10f)
+//                    models().generatedModels[realModel.location] = realModel
+//
+//                    ConfiguredModel.builder().modelFile(realModel).build()
+//                }
 
 //            simpleBlock(
 //                CCBlocks.CAMERA,
