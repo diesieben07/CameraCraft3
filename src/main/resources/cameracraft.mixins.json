@@ -5,7 +5,9 @@
   "refmap": "cameracraft.refmap.json",
   "mixins": [
     "MixinClientWorld",
-    "MixinMinecraft"
+    "MixinMinecraft",
+    "MixinChunkHolder",
+    "MixinEntityTracker"
   ],
   "minVersion": "0.8"
 }

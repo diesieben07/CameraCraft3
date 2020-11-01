@@ -70,19 +70,16 @@ internal class TripodMinecartRenderer(rendererManager: EntityRendererManager) : 
             renderBlockState(entityIn, partialTicks, blockstate, matrixStackIn, bufferIn, packedLightIn)
             matrixStackIn.pop()
         }
-        val cameraStack = entityIn.cameraStack
-        val cameraItem = cameraStack.item
-        if (cameraItem is BlockItem) {
-            val cameraBlockState = cameraItem.block.defaultState
-            if (cameraBlockState.renderType != BlockRenderType.INVISIBLE) {
-                matrixStackIn.push()
-                val f4 = 0.75f
-                matrixStackIn.scale(0.75f, 0.75f, 0.75f)
-                matrixStackIn.translate(-0.5, ((j + 8).toFloat() / 16.0f).toDouble(), 0.5)
-                matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90.0f))
-                renderBlockState(entityIn, partialTicks, cameraBlockState, matrixStackIn, bufferIn, packedLightIn)
-                matrixStackIn.pop()
-            }
+        val cameraBlockState = entityIn.cameraBlock
+        if (!cameraBlockState.isAir && cameraBlockState.renderType != BlockRenderType.INVISIBLE) {
+            matrixStackIn.push()
+            val f4 = 0.75f
+            matrixStackIn.scale(0.75f, 0.75f, 0.75f)
+            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(entityIn.cameraRotation.toFloat() * 10f))
+            matrixStackIn.translate(-0.5, ((j + 8).toFloat() / 16.0f).toDouble(), 0.5)
+            matrixStackIn.rotate(Vector3f.YP.rotationDegrees(90.0f))
+            renderBlockState(entityIn, partialTicks, cameraBlockState, matrixStackIn, bufferIn, packedLightIn)
+            matrixStackIn.pop()
         }
         matrixStackIn.scale(-1.0f, -1.0f, 1.0f)
         modelMinecart.setRotationAngles(entityIn, 0.0f, 0.0f, -0.1f, 0.0f, 0.0f)

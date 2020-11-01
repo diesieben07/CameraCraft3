@@ -26,7 +26,7 @@ internal object CCEntities {
         EntityType.Builder.create<TripodMinecartEntity>(
                 { type, world -> TripodMinecartEntity(type, world) },
                 EntityClassification.MISC
-        ).size(0.98f, 0.7f).trackingRange(8).build("${CameraCraft.MOD_ID}:tripod_minecart")
+        ).size(0.98f, 1f).trackingRange(8).build("${CameraCraft.MOD_ID}:tripod_minecart")
     }
 
     fun init() {

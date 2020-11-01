@@ -1,20 +1,27 @@
 package dev.weiland.mods.cameracraft
 
 import dev.weiland.mods.cameracraft.network.CreateViewportPacket
+import dev.weiland.mods.cameracraft.network.RedirectedPacket
 import dev.weiland.mods.cameracraft.util.msg
 import dev.weiland.mods.cameracraft.util.syncHandler
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.ai.attributes.GlobalEntityTypeAttributes
 import net.minecraft.item.ItemGroup
 import net.minecraft.item.ItemStack
+import net.minecraft.network.IPacket
 import net.minecraft.util.ResourceLocation
+import net.minecraft.world.chunk.Chunk
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
 import net.minecraftforge.fml.network.NetworkDirection
 import net.minecraftforge.fml.network.NetworkRegistry
+import net.minecraftforge.fml.network.PacketDistributor
 import net.minecraftforge.fml.network.simple.SimpleChannel
 import org.apache.logging.log4j.LogManager
+import java.util.function.BiFunction
+import java.util.function.Consumer
+import java.util.function.Supplier
 
 @Mod(CameraCraft.MOD_ID)
 @Mod.EventBusSubscriber(modid = CameraCraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -25,6 +32,9 @@ internal class CameraCraft {
         CCItems.init()
         CCTEs.init()
         CCEntities.init()
+
+        FMLNetworkHacks.init()
+
         System.setProperty("java.awt.headless", "false")
     }
 
@@ -40,6 +50,8 @@ internal class CameraCraft {
             override fun createIcon(): ItemStack = ItemStack(CCBlocks.TRIPOD)
         }
 
+
+
         @JvmStatic
         @SubscribeEvent
         fun setup(event: FMLCommonSetupEvent) {
@@ -54,6 +66,12 @@ internal class CameraCraft {
                     .encoder(CreateViewportPacket::write)
                     .syncHandler(CreateViewportPacket::handle)
                     .add()
+
+                msg<RedirectedPacket>(1, NetworkDirection.PLAY_TO_CLIENT)
+                        .decoder(RedirectedPacket.Companion::read)
+                        .encoder(RedirectedPacket::write)
+                        .syncHandler(RedirectedPacket::handle)
+                        .add()
             }
 
             event.enqueueWork {

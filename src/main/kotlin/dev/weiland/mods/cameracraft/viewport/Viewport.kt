@@ -7,8 +7,9 @@ import java.lang.ref.WeakReference
 import kotlin.concurrent.thread
 
 internal class Viewport(
-        owningObject: Any
-): PhantomReference<Any>(owningObject, ownerQueue) {
+) {
+
+
 
     private fun cleanup() {
 
@@ -16,20 +17,20 @@ internal class Viewport(
 
     companion object {
 
-        private val ownerQueue = ReferenceQueue<Any>()
-
-        init {
-            thread(isDaemon = true) {
-                while (true) {
-                    val ref = ownerQueue.remove()
-                    (ref as Viewport).cleanup()
-                }
-            }
-        }
-
-        fun createForEntity(entity: Entity): Viewport {
-            TODO()
-        }
+//        private val ownerQueue = ReferenceQueue<Any>()
+//
+//        init {
+//            thread(isDaemon = true) {
+//                while (true) {
+//                    val ref = ownerQueue.remove()
+//                    (ref as Viewport).cleanup()
+//                }
+//            }
+//        }
+//
+//        fun createForEntity(entity: Entity): Viewport {
+//            TODO()
+//        }
     }
 
 }

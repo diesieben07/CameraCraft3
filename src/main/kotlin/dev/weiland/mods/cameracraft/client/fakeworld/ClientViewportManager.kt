@@ -40,6 +40,27 @@ internal object ClientViewportManager {
         TODO()
     }
 
+    private fun applyContext(dimension: RegistryKey<World>): Boolean {
+        // TODO
+        return true
+    }
+
+    private fun unapplyContext() {
+
+    }
+
+    inline fun <R : Any> runWithContext(dimension: RegistryKey<World>, handler: () -> R): R? {
+        return try {
+            if (applyContext(dimension)) {
+                handler()
+            } else {
+                null
+            }
+        } finally {
+            unapplyContext()
+        }
+    }
+
     @SubscribeEvent
     @JvmStatic
     fun clientLogout(event: ClientPlayerNetworkEvent.LoggedOutEvent) {
