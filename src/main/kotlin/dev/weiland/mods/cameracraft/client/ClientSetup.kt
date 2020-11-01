@@ -3,10 +3,13 @@ package dev.weiland.mods.cameracraft.client
 import dev.weiland.mods.cameracraft.CCBlocks
 import dev.weiland.mods.cameracraft.CCEntities
 import dev.weiland.mods.cameracraft.CameraCraft
+import dev.weiland.mods.cameracraft.client.entity.TripodMinecartRenderer
 import dev.weiland.mods.cameracraft.client.model.CameraModelLoader
 import dev.weiland.mods.cameracraft.client.model.RotationModelLoader
+import dev.weiland.mods.cameracraft.entity.TripodMinecartEntity
 import net.minecraft.client.renderer.RenderType
 import net.minecraft.client.renderer.RenderTypeLookup
+import net.minecraft.client.renderer.entity.MinecartRenderer
 import net.minecraft.util.ResourceLocation
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.ModelRegistryEvent
@@ -22,8 +25,10 @@ internal object ClientSetup {
     @JvmStatic
     @SubscribeEvent
     fun clientSetup(event: FMLClientSetupEvent) {
-        RenderingRegistry.registerEntityRenderingHandler(CCEntities.TEST_ENTITY.get(), ::CCTestEntityRenderer)
         RenderTypeLookup.setRenderLayer(CCBlocks.TRIPOD, RenderType.getCutout())
+
+        RenderingRegistry.registerEntityRenderingHandler(CCEntities.TEST_ENTITY.get(), ::CCTestEntityRenderer)
+        RenderingRegistry.registerEntityRenderingHandler(CCEntities.TRIPOD_MINECART) { TripodMinecartRenderer(it) }
     }
 
     @JvmStatic

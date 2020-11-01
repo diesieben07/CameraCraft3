@@ -1,18 +1,14 @@
-package dev.weiland.mods.cameracraft.client.render
+package dev.weiland.mods.cameracraft.client.fakeworld.render
 
 import com.mojang.blaze3d.matrix.MatrixStack
-import com.mojang.blaze3d.systems.RenderSystem
 import net.minecraft.client.Minecraft
 import net.minecraft.client.renderer.ActiveRenderInfo
 import net.minecraft.client.renderer.GameRenderer
 import net.minecraft.client.renderer.RenderTypeBuffers
 import net.minecraft.entity.LivingEntity
-import net.minecraft.potion.Effects
 import net.minecraft.resources.IResourceManager
-import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.vector.Matrix4f
 import net.minecraft.util.math.vector.Vector3f
-import net.minecraftforge.client.ForgeHooksClient
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper
 
 internal class FakeGameRenderer(

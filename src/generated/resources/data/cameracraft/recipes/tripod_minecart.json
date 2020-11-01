@@ -1,0 +1,18 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "T",
+    "M"
+  ],
+  "key": {
+    "T": {
+      "item": "cameracraft:tripod"
+    },
+    "M": {
+      "item": "minecraft:minecart"
+    }
+  },
+  "result": {
+    "item": "cameracraft:tripod_minecart"
+  }
+}

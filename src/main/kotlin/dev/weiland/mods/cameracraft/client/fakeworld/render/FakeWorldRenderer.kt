@@ -1,6 +1,5 @@
-package dev.weiland.mods.cameracraft.client.render
+package dev.weiland.mods.cameracraft.client.fakeworld.render
 
-import com.google.gson.JsonSyntaxException
 import com.mojang.blaze3d.matrix.MatrixStack
 import com.mojang.blaze3d.systems.RenderSystem
 import com.mojang.blaze3d.vertex.IVertexBuilder
@@ -14,19 +13,12 @@ import net.minecraft.client.renderer.model.ModelBakery
 import net.minecraft.client.renderer.texture.AtlasTexture
 import net.minecraft.client.renderer.tileentity.TileEntityRendererDispatcher
 import net.minecraft.client.settings.CloudOption
-import net.minecraft.client.settings.GraphicsFanciness
 import net.minecraft.client.shader.Framebuffer
-import net.minecraft.client.shader.ShaderGroup
-import net.minecraft.crash.CrashReport
-import net.minecraft.util.ResourceLocation
 import net.minecraft.util.Util
 import net.minecraft.util.math.BlockPos
 import net.minecraft.util.math.MathHelper
 import net.minecraft.util.math.vector.Matrix4f
-import net.minecraft.util.text.ITextComponent
-import net.minecraft.util.text.StringTextComponent
 import org.apache.logging.log4j.LogManager
-import java.io.IOException
 
 internal class FakeWorldRenderer(
         mc: Minecraft,

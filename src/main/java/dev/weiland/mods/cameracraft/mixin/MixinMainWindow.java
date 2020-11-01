@@ -1,6 +1,6 @@
 package dev.weiland.mods.cameracraft.mixin;
 
-import dev.weiland.mods.cameracraft.client.render.SecondaryGameRenderer;
+import dev.weiland.mods.cameracraft.client.fakeworld.render.SecondaryGameRenderer;
 import net.minecraft.client.MainWindow;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;

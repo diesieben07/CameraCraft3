@@ -4,12 +4,13 @@ import com.google.gson.JsonArray
 import com.google.gson.JsonObject
 import com.mojang.datafixers.util.Pair
 import dev.weiland.mods.cameracraft.CCBlocks
+import dev.weiland.mods.cameracraft.CCItems
 import dev.weiland.mods.cameracraft.CameraCraft
 import dev.weiland.mods.cameracraft.blocks.CameraBlock
 import dev.weiland.mods.cameracraft.client.model.CameraModelLoader
 import net.minecraft.block.Block
-import net.minecraft.data.DataGenerator
-import net.minecraft.data.LootTableProvider
+import net.minecraft.data.*
+import net.minecraft.item.Items
 import net.minecraft.loot.LootParameterSet
 import net.minecraft.loot.LootParameterSets
 import net.minecraft.loot.LootTable
@@ -17,6 +18,8 @@ import net.minecraft.loot.ValidationTracker
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.math.vector.Quaternion
 import net.minecraftforge.client.model.generators.*
+import net.minecraftforge.client.model.generators.BlockStateProvider
+import net.minecraftforge.client.model.generators.ItemModelProvider
 import net.minecraftforge.common.data.ExistingFileHelper
 import net.minecraftforge.common.data.LanguageProvider
 import net.minecraftforge.eventbus.api.SubscribeEvent
@@ -39,15 +42,16 @@ internal object Datagen {
 
         if (evt.includeServer()) {
             evt.generator.addProvider(LootTables(evt.generator))
+            evt.generator.addProvider(Recipes(evt.generator))
         }
 
         evt.generator.addProvider(Language(evt.generator, "en_us"))
     }
 
     private class FixedBlockModelBuilder(
-        private val json: JsonObject,
-        outputLocation: ResourceLocation?,
-        existingFileHelper: ExistingFileHelper?
+            private val json: JsonObject,
+            outputLocation: ResourceLocation?,
+            existingFileHelper: ExistingFileHelper?
     ) : BlockModelBuilder(outputLocation, existingFileHelper) {
         override fun toJson(): JsonObject {
             return json
@@ -55,10 +59,10 @@ internal object Datagen {
     }
 
     private class TransformBlockModelBuilder(
-        outputLocation: ResourceLocation?,
-        existingFileHelper: ExistingFileHelper?,
-        val delegate: BlockModelBuilder,
-        val degrees: Float,
+            outputLocation: ResourceLocation?,
+            existingFileHelper: ExistingFileHelper?,
+            val delegate: BlockModelBuilder,
+            val degrees: Float,
     ) : BlockModelBuilder(outputLocation, existingFileHelper) {
 
 
@@ -83,10 +87,10 @@ internal object Datagen {
     private class BlockStates(gen: DataGenerator?, val exFileHelper: ExistingFileHelper?) : BlockStateProvider(gen, CameraCraft.MOD_ID, exFileHelper) {
         override fun registerStatesAndModels() {
             simpleBlock(
-                CCBlocks.TRIPOD,
-                models()
-                    .cross(CCBlocks.TRIPOD.registryName!!.path, blockTexture(CCBlocks.TRIPOD))
-                    .ao(false)
+                    CCBlocks.TRIPOD,
+                    models()
+                            .cross(CCBlocks.TRIPOD.registryName!!.path, blockTexture(CCBlocks.TRIPOD))
+                            .ao(false)
             )
 //
 //            val baseModel = models().withExistingParent("camera_temp", modLoc("camera"))
@@ -136,17 +140,21 @@ internal object Datagen {
     }
 
     private class ItemModels(generator: DataGenerator?, existingFileHelper: ExistingFileHelper?) : ItemModelProvider(
-        generator, CameraCraft.MOD_ID, existingFileHelper
+            generator, CameraCraft.MOD_ID, existingFileHelper
     ) {
 
         override fun registerModels() {
             singleTexture(
-                CCBlocks.TRIPOD.registryName!!.path, mcLoc("item/generated"),
-                "layer0", modLoc("${BLOCK_FOLDER}/${CCBlocks.TRIPOD.registryName!!.path}")
+                    CCBlocks.TRIPOD.registryName!!.path, mcLoc("item/generated"),
+                    "layer0", modLoc("${BLOCK_FOLDER}/${CCBlocks.TRIPOD.registryName!!.path}")
             )
             singleTexture(
-                CCBlocks.CAMERA.registryName!!.path, mcLoc("item/generated"),
-                "layer0", modLoc("${BLOCK_FOLDER}/${CCBlocks.CAMERA.registryName!!.path}")
+                    CCBlocks.CAMERA.registryName!!.path, mcLoc("item/generated"),
+                    "layer0", modLoc("${BLOCK_FOLDER}/${CCBlocks.CAMERA.registryName!!.path}")
+            )
+            singleTexture(
+                    CCItems.TRIPOD_MINECART.registryName!!.path, mcLoc("item/generated"),
+                    "layer0", modLoc("${ITEM_FOLDER}/${CCItems.TRIPOD_MINECART.registryName!!.path}")
             )
         }
     }
@@ -155,12 +163,12 @@ internal object Datagen {
 
         override fun getTables(): List<Pair<Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>>, LootParameterSet>> {
             return listOf(
-                Pair.of(
-                    Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>> {
-                        BlockLootTables()
-                    },
-                    LootParameterSets.BLOCK
-                )
+                    Pair.of(
+                            Supplier<Consumer<BiConsumer<ResourceLocation, LootTable.Builder>>> {
+                                BlockLootTables()
+                            },
+                            LootParameterSets.BLOCK
+                    )
             )
         }
 
@@ -178,6 +186,20 @@ internal object Datagen {
         override fun addTables() {
             registerDropSelfLootTable(CCBlocks.CAMERA)
             registerDropSelfLootTable(CCBlocks.TRIPOD)
+        }
+    }
+
+    private class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
+
+        override fun registerRecipes(consumer: Consumer<IFinishedRecipe>) {
+            ShapedRecipeBuilder.shapedRecipe(CCItems.TRIPOD_MINECART)
+                    .key('T', CCBlocks.TRIPOD)
+                    .key('M', Items.MINECART)
+                    .patternLine("T")
+                    .patternLine("M")
+                    .addCriterion("has_minecart", hasItem(Items.MINECART))
+                    .addCriterion("has_tripod", hasItem(CCBlocks.TRIPOD))
+                    .build(consumer)
         }
     }
 

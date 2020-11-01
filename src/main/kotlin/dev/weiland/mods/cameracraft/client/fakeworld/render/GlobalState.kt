@@ -1,4 +1,4 @@
-package dev.weiland.mods.cameracraft.client.render
+package dev.weiland.mods.cameracraft.client.fakeworld.render
 
 import net.minecraft.client.Minecraft
 

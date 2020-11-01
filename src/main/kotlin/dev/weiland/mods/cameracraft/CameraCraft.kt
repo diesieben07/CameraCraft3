@@ -21,9 +21,10 @@ import org.apache.logging.log4j.LogManager
 internal class CameraCraft {
 
     init {
-        CCEntities.init()
         CCBlocks.init()
+        CCItems.init()
         CCTEs.init()
+        CCEntities.init()
         System.setProperty("java.awt.headless", "false")
     }
 

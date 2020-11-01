@@ -1,0 +1,43 @@
+{
+  "parent": "minecraft:recipes/root",
+  "rewards": {
+    "recipes": [
+      "cameracraft:tripod_minecart"
+    ]
+  },
+  "criteria": {
+    "has_minecart": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "minecraft:minecart"
+          }
+        ]
+      }
+    },
+    "has_tripod": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "item": "cameracraft:tripod"
+          }
+        ]
+      }
+    },
+    "has_the_recipe": {
+      "trigger": "minecraft:recipe_unlocked",
+      "conditions": {
+        "recipe": "cameracraft:tripod_minecart"
+      }
+    }
+  },
+  "requirements": [
+    [
+      "has_minecart",
+      "has_tripod",
+      "has_the_recipe"
+    ]
+  ]
+}

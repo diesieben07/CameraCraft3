@@ -1,4 +1,4 @@
-package dev.weiland.mods.cameracraft.client.render
+package dev.weiland.mods.cameracraft.client.fakeworld.render
 
 import com.mojang.blaze3d.matrix.MatrixStack
 import com.mojang.blaze3d.systems.RenderSystem
@@ -6,8 +6,6 @@ import dev.weiland.mods.cameracraft.CameraCraft
 import dev.weiland.mods.cameracraft.client.fakeworld.FakeClientWorld
 import net.minecraft.block.Blocks
 import net.minecraft.client.Minecraft
-import net.minecraft.client.renderer.LightTexture
-import net.minecraft.client.renderer.WorldRenderer
 import net.minecraft.client.settings.PointOfView
 import net.minecraft.client.shader.Framebuffer
 import net.minecraft.client.world.ClientWorld
@@ -18,14 +16,11 @@ import net.minecraft.util.math.ChunkPos
 import net.minecraft.util.palette.UpgradeData
 import net.minecraft.util.registry.Registry
 import net.minecraft.world.Difficulty
-import net.minecraft.world.biome.Biome
 import net.minecraft.world.biome.BiomeContainer
 import net.minecraft.world.biome.Biomes
-import net.minecraft.world.biome.provider.BiomeProvider
 import net.minecraft.world.biome.provider.SingleBiomeProvider
 import net.minecraft.world.chunk.Chunk
 import net.minecraft.world.chunk.ChunkPrimer
-import net.minecraft.world.chunk.EmptyChunk
 import net.minecraftforge.api.distmarker.Dist
 import net.minecraftforge.client.event.EntityViewRenderEvent
 import net.minecraftforge.client.event.GuiScreenEvent

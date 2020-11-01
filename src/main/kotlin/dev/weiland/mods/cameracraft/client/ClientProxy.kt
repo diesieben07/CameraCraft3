@@ -2,7 +2,7 @@ package dev.weiland.mods.cameracraft.client
 
 import dev.weiland.mods.cameracraft.CCProxy
 import dev.weiland.mods.cameracraft.CameraCraft
-import dev.weiland.mods.cameracraft.client.render.SecondaryGameRenderer
+import dev.weiland.mods.cameracraft.client.fakeworld.render.SecondaryGameRenderer
 import net.minecraft.client.Minecraft
 import net.minecraft.entity.LivingEntity
 

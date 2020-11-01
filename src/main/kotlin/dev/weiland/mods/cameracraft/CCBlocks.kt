@@ -2,6 +2,7 @@ package dev.weiland.mods.cameracraft
 
 import dev.weiland.mods.cameracraft.blocks.CameraBlock
 import dev.weiland.mods.cameracraft.blocks.TripodBlock
+import dev.weiland.mods.cameracraft.items.CameraItem
 import dev.weiland.mods.cameracraft.util.getValue
 import net.minecraft.block.Block
 import net.minecraft.item.BlockItem
@@ -28,14 +29,18 @@ internal object CCBlocks {
         evt.registerItemBlock(TRIPOD) {
             maxStackSize(16)
         }
-        evt.registerItemBlock(CAMERA) {
+        evt.registerItemBlock(CAMERA, itemFactory = ::CameraItem) {
             maxStackSize(1)
         }
     }
 
-    private fun RegistryEvent.Register<Item>.registerItemBlock(block: Block, propertyBuilder: Item.Properties.() -> Unit = { }) {
+    private fun RegistryEvent.Register<Item>.registerItemBlock(
+            block: Block,
+            itemFactory: (Block, Item.Properties) -> BlockItem = ::BlockItem,
+            propertyBuilder: Item.Properties.() -> Unit = { },
+    ) {
         registry.register(
-            BlockItem(
+            itemFactory(
                 block,
                 Item.Properties().also { it.group(CameraCraft.ITEM_GROUP) }.also { it.propertyBuilder() }
             ).also { it.registryName = block.registryName }

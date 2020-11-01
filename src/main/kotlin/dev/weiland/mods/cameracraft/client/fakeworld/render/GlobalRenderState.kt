@@ -1,8 +1,7 @@
-package dev.weiland.mods.cameracraft.client.render
+package dev.weiland.mods.cameracraft.client.fakeworld.render
 
 import net.minecraft.client.Minecraft
 import net.minecraft.client.settings.PointOfView
-import net.minecraft.client.shader.Framebuffer
 import net.minecraft.entity.Entity
 
 internal class GlobalRenderState(
