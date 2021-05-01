@@ -21,34 +21,34 @@ class CCViewportEntity(type: EntityType<out CCViewportEntity>, worldIn: World) :
     private val armor = Collections.nCopies(4, ItemStack.EMPTY).toMutableList()
     private val hands = Collections.nCopies(2, ItemStack.EMPTY).toMutableList()
 
-    override fun getArmorInventoryList(): MutableIterable<ItemStack> {
+    override fun getArmorSlots(): MutableIterable<ItemStack> {
         return armor
     }
 
-    override fun setItemStackToSlot(slotIn: EquipmentSlotType, stack: ItemStack) {
-        when (checkNotNull(slotIn.slotType)) {
+    override fun setItemSlot(slotIn: EquipmentSlotType, stack: ItemStack) {
+        when (checkNotNull(slotIn.type)) {
             EquipmentSlotType.Group.HAND -> hands[slotIn.index] = stack
             EquipmentSlotType.Group.ARMOR -> armor[slotIn.index] = stack
         }
     }
 
-    override fun getItemStackFromSlot(slotIn: EquipmentSlotType): ItemStack {
-        return when (checkNotNull(slotIn.slotType)) {
+    override fun getItemBySlot(slotIn: EquipmentSlotType): ItemStack {
+        return when (checkNotNull(slotIn.type)) {
             EquipmentSlotType.Group.HAND -> hands[slotIn.index]
             EquipmentSlotType.Group.ARMOR -> armor[slotIn.index]
         }
     }
 
-    override fun getPrimaryHand(): HandSide {
+    override fun getMainArm(): HandSide {
         return HandSide.RIGHT
     }
 
-    override fun applyPlayerInteraction(player: PlayerEntity, vec: Vector3d, hand: Hand): ActionResultType {
+    override fun interactAt(player: PlayerEntity, vec: Vector3d, hand: Hand): ActionResultType {
         return if (hand == Hand.MAIN_HAND) {
             if (player.isServer()) {
                 CameraCraft.NETWORK.send(
                     PacketDistributor.PLAYER.with { player },
-                    CreateViewportPacket(entityId)
+                    CreateViewportPacket(id)
                 )
             }
             ActionResultType.SUCCESS

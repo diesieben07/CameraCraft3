@@ -72,10 +72,10 @@ internal object Datagen {
             transform.addProperty("origin", "center")
             val rotation = Quaternion(0f, degrees, 0f, true)
             transform.add("rotation", JsonArray().also { array ->
-                array.add(rotation.x)
-                array.add(rotation.y)
-                array.add(rotation.z)
-                array.add(rotation.w)
+                array.add(rotation.i())
+                array.add(rotation.j())
+                array.add(rotation.k())
+                array.add(rotation.r())
             })
             json.add("transform", transform)
             return json
@@ -184,22 +184,22 @@ internal object Datagen {
         }
 
         override fun addTables() {
-            registerDropSelfLootTable(CCBlocks.CAMERA)
-            registerDropSelfLootTable(CCBlocks.TRIPOD)
+            dropSelf(CCBlocks.CAMERA)
+            dropSelf(CCBlocks.TRIPOD)
         }
     }
 
     private class Recipes(generatorIn: DataGenerator) : RecipeProvider(generatorIn) {
 
-        override fun registerRecipes(consumer: Consumer<IFinishedRecipe>) {
-            ShapedRecipeBuilder.shapedRecipe(CCItems.TRIPOD_MINECART)
-                    .key('T', CCBlocks.TRIPOD)
-                    .key('M', Items.MINECART)
-                    .patternLine("T")
-                    .patternLine("M")
-                    .addCriterion("has_minecart", hasItem(Items.MINECART))
-                    .addCriterion("has_tripod", hasItem(CCBlocks.TRIPOD))
-                    .build(consumer)
+        override fun buildShapelessRecipes(consumer: Consumer<IFinishedRecipe>) {
+            ShapedRecipeBuilder.shaped(CCItems.TRIPOD_MINECART)
+                    .define('T', CCBlocks.TRIPOD)
+                    .define('M', Items.MINECART)
+                    .pattern("T")
+                    .pattern("M")
+                    .unlockedBy("has_minecart", has(Items.MINECART))
+                    .unlockedBy("has_tripod", has(CCBlocks.TRIPOD))
+                    .save(consumer)
         }
     }
 

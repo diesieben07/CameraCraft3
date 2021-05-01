@@ -14,8 +14,8 @@ internal class GlobalRenderState(
 
     override fun restore(mc: Minecraft) {
 //        mc.gameSettings.viewBobbing = viewBobbing
-        mc.gameSettings.pointOfView = pointOfView
-        mc.renderViewEntity = viewportEntity
+        mc.options.cameraType = pointOfView
+        mc.cameraEntity = viewportEntity
 //        mc.mainWindow.framebufferWidth = mainFramebufferWidth
 //        mc.mainWindow.framebufferHeight = mainFramebufferHeight
     }
@@ -24,8 +24,8 @@ internal class GlobalRenderState(
         fun capture(mc: Minecraft): GlobalRenderState {
             return GlobalRenderState(
 //                viewBobbing = mc.gameSettings.viewBobbing,
-                pointOfView = mc.gameSettings.pointOfView,
-                viewportEntity = mc.renderViewEntity,
+                pointOfView = mc.options.cameraType,
+                viewportEntity = mc.cameraEntity,
 //                mainFramebufferWidth = mc.mainWindow.framebufferWidth,
 //                mainFramebufferHeight = mc.mainWindow.framebufferHeight,
             )

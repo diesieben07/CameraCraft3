@@ -13,7 +13,7 @@ internal object CCEntities {
 
     private val ENTITIES = DeferredRegister.create(ForgeRegistries.ENTITIES, CameraCraft.MOD_ID)
     val TEST_ENTITY = ENTITIES.register("test_entity") {
-        EntityType.Builder.create(
+        EntityType.Builder.of(
             EntityType.IFactory<CCViewportEntity> { type, world -> CCViewportEntity(type, world) },
             EntityClassification.AMBIENT
         )
@@ -23,10 +23,10 @@ internal object CCEntities {
             .build("${CameraCraft.MOD_ID}:test_entity")
     }
     val TRIPOD_MINECART: EntityType<TripodMinecartEntity> by ENTITIES.register("tripod_minecart") {
-        EntityType.Builder.create<TripodMinecartEntity>(
+        EntityType.Builder.of<TripodMinecartEntity>(
                 { type, world -> TripodMinecartEntity(type, world) },
                 EntityClassification.MISC
-        ).size(0.98f, 1f).trackingRange(8).build("${CameraCraft.MOD_ID}:tripod_minecart")
+        ).sized(0.98f, 1f).clientTrackingRange(8).build("${CameraCraft.MOD_ID}:tripod_minecart")
     }
 
     fun init() {

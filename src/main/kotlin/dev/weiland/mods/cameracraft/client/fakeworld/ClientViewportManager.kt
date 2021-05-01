@@ -23,7 +23,7 @@ internal object ClientViewportManager {
     fun load(dimension: RegistryKey<World>, dimensionType: DimensionType) {
 
         val worldRenderer = FakeWorldRenderer(
-                mc, mc.renderTypeBuffers, TODO()
+                mc, mc.renderBuffers(), TODO()
         )
         FakeClientWorld(
                 mc.connection!!, ClientWorld.ClientWorldInfo(Difficulty.EASY, false, false),

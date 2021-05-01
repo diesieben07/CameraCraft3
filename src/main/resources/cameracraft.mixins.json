@@ -7,7 +7,10 @@
     "MixinClientWorld",
     "MixinMinecraft",
     "MixinChunkHolder",
-    "MixinEntityTracker"
+    "MixinEntityTracker",
+    "ChunkManagerAccessor",
+    "WorldRendererAccessor",
+    "GameRendererAccessor"
   ],
   "minVersion": "0.8"
 }

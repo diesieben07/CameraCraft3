@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinMainWindow {
 
     @Inject(
-            method = "getFramebufferHeight()I",
+            method = "getHeight()I",
             at = @At("HEAD"),
             cancellable = true
     )
@@ -23,7 +23,7 @@ public abstract class MixinMainWindow {
     }
 
     @Inject(
-            method = "getFramebufferWidth()I",
+            method = "getWidth()I",
             at = @At("HEAD"),
             cancellable = true
     )

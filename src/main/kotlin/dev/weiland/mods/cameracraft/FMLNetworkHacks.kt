@@ -30,7 +30,7 @@ internal object FMLNetworkHacks {
             val existingConsumer = existingFunctor.apply(self, chunkSupplier)
             val chunk = chunkSupplier.get()
             existingConsumer.andThen { packet ->
-                ServerViewportManager.get().sendToTracking(chunk.pos, packet, false)
+//                ServerViewportManager.get().sendToTracking(chunk.pos, packet, false)
             }
         }
         PacketDistributor.TRACKING_CHUNK.setFunctor(newFunctor)

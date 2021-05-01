@@ -5,9 +5,9 @@ import net.minecraft.network.datasync.DataParameter
 import kotlin.reflect.KProperty
 
 internal operator fun <T> DataParameter<T>.getValue(entity: Entity, prop: KProperty<*>): T {
-    return entity.dataManager[this]
+    return entity.entityData[this]
 }
 
 internal operator fun <T> DataParameter<T>.setValue(entity: Entity, prop: KProperty<*>, newValue: T) {
-    entity.dataManager.set(this, newValue)
+    entity.entityData.set(this, newValue)
 }

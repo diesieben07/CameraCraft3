@@ -44,7 +44,7 @@ internal object CameraModelLoader : IModelLoader<CameraModelLoader.Geometry> {
         }
 
         override fun getTextures(owner: IModelConfiguration, modelGetter: Function<ResourceLocation, IUnbakedModel>, missingTextureErrors: MutableSet<Pair<String, String>>): MutableCollection<RenderMaterial> {
-            return delegate.getTextures(modelGetter, missingTextureErrors)
+            return delegate.getMaterials(modelGetter, missingTextureErrors)
         }
     }
 
@@ -70,7 +70,7 @@ internal object CameraModelLoader : IModelLoader<CameraModelLoader.Geometry> {
                 return cached
             }
             val fullTransform = baseTransform.rotation.compose(TransformationMatrix(null, Quaternion(0f, rotation.toFloat() * 10f, 0f, true), null, null))
-            val baked = base.bakeModel(bakery, base, spriteGetter, SimpleModelTransform(fullTransform), modelLocation, true)
+            val baked = base.bake(bakery, base, spriteGetter, SimpleModelTransform(fullTransform), modelLocation, true)
             cache[rotation] = baked
             return baked
         }
@@ -83,15 +83,15 @@ internal object CameraModelLoader : IModelLoader<CameraModelLoader.Geometry> {
             return getModel(extraData).getQuads(state, side, rand, extraData)
         }
 
-        override fun isAmbientOcclusion(): Boolean {
-            return getModel(0).isAmbientOcclusion
+        override fun useAmbientOcclusion(): Boolean {
+            return getModel(0).useAmbientOcclusion()
         }
 
         override fun isAmbientOcclusion(state: BlockState?): Boolean {
             return getModel(0).isAmbientOcclusion(state)
         }
 
-        override fun getParticleTexture(): TextureAtlasSprite {
+        override fun getParticleIcon(): TextureAtlasSprite {
             return getModel(0).getParticleTexture(EmptyModelData.INSTANCE)
         }
 
@@ -103,11 +103,11 @@ internal object CameraModelLoader : IModelLoader<CameraModelLoader.Geometry> {
             return getModel(0).isGui3d
         }
 
-        override fun isSideLit(): Boolean {
-            return getModel(0).isSideLit
+        override fun usesBlockLight(): Boolean {
+            return getModel(0).usesBlockLight()
         }
 
-        override fun isBuiltInRenderer(): Boolean {
+        override fun isCustomRenderer(): Boolean {
             return false
         }
 

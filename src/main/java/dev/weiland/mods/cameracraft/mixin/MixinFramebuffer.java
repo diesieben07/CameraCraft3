@@ -12,15 +12,15 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 abstract class MixinFramebuffer {
 
     @Redirect(
-        method = "bindFramebufferRaw",
-        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/GlStateManager;viewport(IIII)V")
+        method = "_bindWrite",
+        at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/platform/GlStateManager;_viewport(IIII)V")
     )
     private void hookViewport(int x, int y, int w, int h) {
         SecondaryGameRenderer current = SecondaryGameRenderer.current;
         if (current != null) {
-            GlStateManager.viewport(x, y, current.getImageWidth(), current.getImageHeight());
+            GlStateManager._viewport(x, y, current.getImageWidth(), current.getImageHeight());
         } else {
-            GlStateManager.viewport(x, y, w, h);
+            GlStateManager._viewport(x, y, w, h);
         }
     }
 

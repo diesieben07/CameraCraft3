@@ -10,29 +10,29 @@ import net.minecraft.util.ActionResultType
 
 internal class TripodMinecartItem(properties: Properties) : Item(properties) {
 
-    override fun onItemUse(context: ItemUseContext): ActionResultType? {
-        val world = context.world
-        val pos = context.pos
-        val blockState = world.getBlockState(pos)
+    override fun useOn(context: ItemUseContext): ActionResultType? {
+        val level = context.level
+        val pos = context.clickedPos
+        val blockState = level.getBlockState(pos)
 
-        return if (!blockState.isIn(BlockTags.RAILS)) {
+        return if (!blockState.`is`(BlockTags.RAILS)) {
             ActionResultType.FAIL
         } else {
-            val itemStack = context.item
-            if (!world.isRemote) {
-                val railShape = if (blockState.block is AbstractRailBlock) (blockState.block as AbstractRailBlock).getRailDirection(blockState, world, pos, null) else RailShape.NORTH_SOUTH
+            val itemStack = context.itemInHand
+            if (!level.isClientSide) {
+                val railShape = if (blockState.block is AbstractRailBlock) (blockState.block as AbstractRailBlock).getRailDirection(blockState, level, pos, null) else RailShape.NORTH_SOUTH
                 var yOffset = 0.0
                 if (railShape.isAscending) {
                     yOffset = 0.5
                 }
-                val entity = TripodMinecartEntity(world, pos.x.toDouble() + 0.5, pos.y.toDouble() + 0.0625 + yOffset, pos.z.toDouble() + 0.5)
-                if (itemStack.hasDisplayName()) {
-                    entity.customName = itemStack.displayName
+                val entity = TripodMinecartEntity(level, pos.x.toDouble() + 0.5, pos.y.toDouble() + 0.0625 + yOffset, pos.z.toDouble() + 0.5)
+                if (itemStack.hasCustomHoverName()) {
+                    entity.customName = itemStack.hoverName
                 }
-                world.addEntity(entity)
+                level.addFreshEntity(entity)
             }
             itemStack.shrink(1)
-            ActionResultType.func_233537_a_(world.isRemote)
+            ActionResultType.sidedSuccess(level.isClientSide)
         }
     }
 

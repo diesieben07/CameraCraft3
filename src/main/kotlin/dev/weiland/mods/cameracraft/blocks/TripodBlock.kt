@@ -11,7 +11,7 @@ import net.minecraft.util.math.shapes.VoxelShapes
 import net.minecraft.world.IBlockReader
 import net.minecraft.world.IWorldReader
 
-internal class TripodBlock : Block(Properties.create(Material.IRON).notSolid()) {
+internal class TripodBlock : Block(Properties.of(Material.METAL).noOcclusion()) {
 
     private companion object {
         val SHAPE: VoxelShape = run {
@@ -19,7 +19,7 @@ internal class TripodBlock : Block(Properties.create(Material.IRON).notSolid()) 
                 .runningFold(0, Int::plus)
                 .zipWithNext()
                 .mapIndexed { index, (fromHeight, toHeight) ->
-                    makeCuboidShape(
+                    box(
                         index.toDouble(), fromHeight.toDouble(), index.toDouble(),
                         (16 - index).toDouble(), toHeight.toDouble(), (16 - index).toDouble()
                     )
@@ -32,9 +32,9 @@ internal class TripodBlock : Block(Properties.create(Material.IRON).notSolid()) 
         return SHAPE
     }
 
-    override fun isValidPosition(state: BlockState, world: IWorldReader, pos: BlockPos): Boolean {
-        val down = pos.down()
-        return world.getBlockState(down).isSolidSide(world, down, Direction.UP)
+    override fun canSurvive(state: BlockState, world: IWorldReader, pos: BlockPos): Boolean {
+        val down = pos.below()
+        return world.getBlockState(down).isFaceSturdy(world, down, Direction.UP)
     }
 
 
@@ -42,7 +42,7 @@ internal class TripodBlock : Block(Properties.create(Material.IRON).notSolid()) 
         return true
     }
 
-    override fun getAmbientOcclusionLightValue(state: BlockState, worldIn: IBlockReader, pos: BlockPos): Float {
+    override fun getShadeBrightness(state: BlockState, worldIn: IBlockReader, pos: BlockPos): Float {
         return 1f
     }
 }

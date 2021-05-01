@@ -25,7 +25,7 @@ internal object ClientSetup {
     @JvmStatic
     @SubscribeEvent
     fun clientSetup(event: FMLClientSetupEvent) {
-        RenderTypeLookup.setRenderLayer(CCBlocks.TRIPOD, RenderType.getCutout())
+        RenderTypeLookup.setRenderLayer(CCBlocks.TRIPOD, RenderType.cutout())
 
         RenderingRegistry.registerEntityRenderingHandler(CCEntities.TEST_ENTITY.get(), ::CCTestEntityRenderer)
         RenderingRegistry.registerEntityRenderingHandler(CCEntities.TRIPOD_MINECART) { TripodMinecartRenderer(it) }

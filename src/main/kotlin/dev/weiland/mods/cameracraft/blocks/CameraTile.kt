@@ -1,5 +1,7 @@
 package dev.weiland.mods.cameracraft.blocks
 
+import com.mojang.serialization.Codec
+import com.mojang.serialization.codecs.RecordCodecBuilder
 import dev.weiland.mods.cameracraft.CCTEs
 import dev.weiland.mods.cameracraft.client.DummyModelData
 import dev.weiland.mods.cameracraft.network.sendToAllTracking
@@ -16,6 +18,20 @@ internal class CameraTile(tileEntityTypeIn: TileEntityType<*> = CCTEs.CAMERA) : 
 
     companion object {
         val ROTATION_STEPS = 36
+//
+//        private val c = run<Codec<CameraTile>> {
+//            RecordCodecBuilder.create { builder ->
+//                builder.group(
+//                        Codec.BYTE.xmap(Byte::toInt, Int::toByte).fieldOf("rotation").forGetter(CameraTile::rotation)
+//                ).appl
+//            }
+//        }
+
+//        private val CODEC = Codec.BYTE.xmap(
+//                { byte -> byte.toInt() },
+//                { int -> int.toByte() }
+//        ).fieldOf("rotation").forGetter(CameraTile::rotation).
+
     }
 
     private var _rotation: Int = 0
@@ -27,7 +43,7 @@ internal class CameraTile(tileEntityTypeIn: TileEntityType<*> = CCTEs.CAMERA) : 
             require(newValue in 0 until ROTATION_STEPS)
 
             _rotation = newValue
-            markDirty()
+            setChanged()
             updatePacket.sendToAllTracking(this)
         }
 
@@ -35,17 +51,17 @@ internal class CameraTile(tileEntityTypeIn: TileEntityType<*> = CCTEs.CAMERA) : 
         _rotation = rotation.coerceIn(0 until ROTATION_STEPS)
         modelData = ModelData(rotation)
         requestModelDataUpdate()
-        world?.notifyBlockUpdate(pos, blockState, blockState, Constants.BlockFlags.DEFAULT)
+        level?.sendBlockUpdated(blockPos, blockState, blockState, Constants.BlockFlags.DEFAULT)
     }
 
-    override fun write(compound: CompoundNBT): CompoundNBT {
-        val nbt = super.write(compound)
+    override fun save(compound: CompoundNBT): CompoundNBT {
+        val nbt = super.save(compound)
         nbt.putByte("rotation", rotation.toByte())
         return nbt
     }
 
-    override fun read(state: BlockState, nbt: CompoundNBT) {
-        super.read(state, nbt)
+    override fun load(state: BlockState, nbt: CompoundNBT) {
+        super.load(state, nbt)
         _rotation = nbt.getByte("rotation").toInt()
     }
 
@@ -61,11 +77,11 @@ internal class CameraTile(tileEntityTypeIn: TileEntityType<*> = CCTEs.CAMERA) : 
     }
 
     override fun getUpdatePacket(): SUpdateTileEntityPacket {
-        return SUpdateTileEntityPacket(pos, _rotation, CompoundNBT())
+        return SUpdateTileEntityPacket(blockPos, _rotation, CompoundNBT())
     }
 
     override fun onDataPacket(net: NetworkManager?, pkt: SUpdateTileEntityPacket) {
-        clientSetRotation(pkt.tileEntityType)
+        clientSetRotation(pkt.type)
     }
 
     data class ModelData(val rotation: Int) : DummyModelData

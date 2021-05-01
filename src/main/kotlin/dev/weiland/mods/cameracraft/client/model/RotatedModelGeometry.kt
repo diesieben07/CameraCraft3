@@ -42,7 +42,7 @@ internal class RotatedModelGeometry(
             )
         )
 
-        return delegate.bakeModel(
+        return delegate.bake(
             bakery, delegate, spriteGetter, transform, modelLocation, true
         )
 
@@ -54,6 +54,6 @@ internal class RotatedModelGeometry(
     override fun getTextures(
         owner: IModelConfiguration?, modelGetter: Function<ResourceLocation, IUnbakedModel>, missingTextureErrors: MutableSet<Pair<String, String>>
     ): MutableCollection<RenderMaterial> {
-        return delegate.getTextures(modelGetter, missingTextureErrors)
+        return delegate.getMaterials(modelGetter, missingTextureErrors)
     }
 }

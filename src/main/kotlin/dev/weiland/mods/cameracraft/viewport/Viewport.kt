@@ -1,14 +1,18 @@
 package dev.weiland.mods.cameracraft.viewport
 
 import net.minecraft.entity.Entity
-import java.lang.ref.PhantomReference
-import java.lang.ref.ReferenceQueue
-import java.lang.ref.WeakReference
-import kotlin.concurrent.thread
+import net.minecraft.network.IPacket
+import net.minecraft.util.RegistryKey
+import net.minecraft.world.World
 
 internal class Viewport(
+    val dimension: RegistryKey<World>,
+    val entity: Entity
 ) {
 
+    fun sendPacket(packet: IPacket<*>) {
+        // TODO
+    }
 
 
     private fun cleanup() {

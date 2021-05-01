@@ -12,11 +12,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MixinMinecraft {
 
     @Inject(
-            method = "getFramebuffer()Lnet/minecraft/client/shader/Framebuffer;",
+            method = "getMainRenderTarget()Lnet/minecraft/client/shader/Framebuffer;",
             at = @At("HEAD"),
             cancellable = true
     )
-    private void getFramebufferHook(CallbackInfoReturnable<Framebuffer> ci) {
+    private void getMainRenderTargetHook(CallbackInfoReturnable<Framebuffer> ci) {
         SecondaryGameRenderer currentRender = SecondaryGameRenderer.current;
         if (currentRender != null) {
             ci.setReturnValue(currentRender.getFrameBuffer());

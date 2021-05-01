@@ -6,10 +6,10 @@ import net.minecraft.util.math.ChunkPos
 import net.minecraft.world.server.ServerWorld
 
 internal fun IPacket<*>.sendToAllTracking(te: TileEntity) {
-    val pos = te.pos ?: return
-    val world = te.world as? ServerWorld ?: return
-    val players = world.chunkProvider.chunkManager.getTrackingPlayers(ChunkPos(pos), false)
+    val pos = te.blockPos ?: return
+    val world = te.level as? ServerWorld ?: return
+    val players = world.chunkSource.chunkMap.getPlayers(ChunkPos(pos), false)
     for (player in players) {
-        player.connection.sendPacket(this)
+        player.connection.send(this)
     }
 }

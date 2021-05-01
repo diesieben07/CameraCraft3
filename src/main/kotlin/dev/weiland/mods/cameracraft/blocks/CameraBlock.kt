@@ -24,7 +24,7 @@ import net.minecraft.world.IWorldReader
 import net.minecraft.world.World
 import kotlin.math.roundToInt
 
-internal class CameraBlock : Block(Properties.create(Material.IRON).notSolid()) {
+internal class CameraBlock : Block(Properties.of(Material.METAL).noOcclusion()) {
 
     companion object {
 //        val ROTATION = IntegerProperty.create("rotation", 0, 35)
@@ -34,7 +34,7 @@ internal class CameraBlock : Block(Properties.create(Material.IRON).notSolid()) 
         }
 
 
-        val SHAPE = makeCuboidShape(1.0, 0.0, 1.0, 15.0, 10.0, 15.0)
+        val SHAPE = box(1.0, 0.0, 1.0, 15.0, 10.0, 15.0)
 
     }
 
@@ -54,35 +54,35 @@ internal class CameraBlock : Block(Properties.create(Material.IRON).notSolid()) 
         return SHAPE
     }
 
-    override fun fillStateContainer(builder: StateContainer.Builder<Block, BlockState>) {
+    override fun createBlockStateDefinition(builder: StateContainer.Builder<Block, BlockState>) {
 //        builder.add(ROTATION)
     }
 
-    override fun updatePostPlacement(
+    override fun updateShape(
         state: BlockState, facing: Direction, facingState: BlockState, world: IWorld, currentPos: BlockPos, facingPos: BlockPos
     ): BlockState {
-        return if (!isValidPosition(state, world, currentPos)) {
-            Blocks.AIR.defaultState
+        return if (!canSurvive(state, world, currentPos)) {
+            Blocks.AIR.defaultBlockState()
         } else {
-            super.updatePostPlacement(state, facing, facingState, world, currentPos, facingPos)
+            super.updateShape(state, facing, facingState, world, currentPos, facingPos)
         }
     }
 
-    override fun isValidPosition(state: BlockState, world: IWorldReader, pos: BlockPos): Boolean {
-        return world.getBlockState(pos.down()).block == CCBlocks.TRIPOD
+    override fun canSurvive(state: BlockState, world: IWorldReader, pos: BlockPos): Boolean {
+        return world.getBlockState(pos.below()).block == CCBlocks.TRIPOD
     }
 
     override fun getStateForPlacement(context: BlockItemUseContext): BlockState {
-        val rotation = ((360 - context.placementYaw) / 10f).roundToInt().modulus(36)
+        val rotation = ((360 - context.rotation) / 10f).roundToInt().modulus(36)
 //        return defaultState.with(ROTATION, rotation)
-        return defaultState
+        return defaultBlockState()
     }
 
-    override fun onBlockActivated(
+    override fun use(
         state: BlockState, world: World, pos: BlockPos, player: PlayerEntity, handIn: Hand, hit: BlockRayTraceResult
     ): ActionResultType {
-        if (!world.isRemote) {
-            (world.getTileEntity(pos) as? CameraTile)?.let { it.rotation = (it.rotation + 1).rem(CameraTile.ROTATION_STEPS) }
+        if (!world.isClientSide) {
+            (world.getBlockEntity(pos) as? CameraTile)?.let { it.rotation = (it.rotation + 1).rem(CameraTile.ROTATION_STEPS) }
         }
         return ActionResultType.SUCCESS
     }

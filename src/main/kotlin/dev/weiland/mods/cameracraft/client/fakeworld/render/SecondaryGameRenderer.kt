@@ -35,7 +35,7 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
     val imageWidth = /*mc.mainWindow.framebufferWidth*/ 256
     val imageHeight = /*mc.mainWindow.framebufferHeight*/ 256
 
-    val frameBuffer: Framebuffer = Framebuffer(imageWidth, imageHeight, true, Minecraft.IS_RUNNING_ON_MAC)
+    val frameBuffer: Framebuffer = Framebuffer(imageWidth, imageHeight, true, Minecraft.ON_OSX)
 
     val globalRenderState = GlobalRenderState(
 //            viewBobbing = false,
@@ -45,8 +45,8 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
 //            mainFramebufferHeight = imageHeight,
     )
 
-    val gameRenderer = FakeGameRenderer(mc, mc.resourceManager, mc.renderTypeBuffers, imageWidth.toFloat(), imageHeight.toFloat(), entity)
-    val worldRenderer = FakeWorldRenderer(mc, mc.renderTypeBuffers, frameBuffer)
+    val gameRenderer = FakeGameRenderer(mc, mc.resourceManager, mc.renderBuffers(), imageWidth.toFloat(), imageHeight.toFloat(), entity)
+    val worldRenderer = FakeWorldRenderer(mc, mc.renderBuffers(), frameBuffer)
     var fakeWorld: FakeClientWorld? = null
     var first = true
 
@@ -56,73 +56,73 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         }
 
         val savedRenderState = GlobalRenderState.capture(mc)
-        val savedWR = mc.worldRenderer
-        val savedWorld = mc.world
+        val savedWR = mc.levelRenderer
+        val savedWorld = mc.level
         val savedGameRenderer = mc.gameRenderer
 
         globalRenderState.restore(mc)
-        mc.worldRenderer = worldRenderer
+        mc.levelRenderer = worldRenderer
         mc.gameRenderer = gameRenderer
 
         if (fakeWorld == null) {
             fakeWorld = FakeClientWorld(
                     mc.connection!!, ClientWorld.ClientWorldInfo(Difficulty.EASY, false, false),
-                    mc.world!!.dimensionKey, mc.world!!.dimensionType,
+                    mc.level!!.dimension(), mc.level!!.dimensionType(),
                     3, // TODO,
                     { mc.profiler },
                     worldRenderer,
                     false,
                     0L
             ).also { fw ->
-                fw.worldInfo.dayTime = 6000L
+                fw.levelData.dayTime = 6000L
 
 
-                mc.worldRenderer.setWorldAndLoadRenderers(fw)
+                mc.levelRenderer.setLevel(fw)
 
-                val pos = entity.position.up().south(5)
+                val pos = entity.blockPosition().above().south(5)
 
                 val chunkPos = ChunkPos(pos)
-                fw.chunkProvider.setCenter(chunkPos.x, chunkPos.z)
+                fw.chunkSource.updateViewCenter(chunkPos.x, chunkPos.z)
 
                 val chunkPrimer = ChunkPrimer(chunkPos, UpgradeData.EMPTY)
-                chunkPrimer.setBlockState(pos, Blocks.REDSTONE_BLOCK.defaultState, false)
+                chunkPrimer.setBlockState(pos, Blocks.REDSTONE_BLOCK.defaultBlockState(), false)
                 chunkPrimer.biomes = BiomeContainer(
-                        fw.func_241828_r().getRegistry(Registry.BIOME_KEY),
+                        fw.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY),
                         chunkPos,
-                        SingleBiomeProvider(fw.func_241828_r().getRegistry(Registry.BIOME_KEY).getValueForKey(Biomes.PLAINS))
+                        SingleBiomeProvider(fw.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.PLAINS))
                 )
 
                 val chunk = Chunk(fw, chunkPrimer)
                 val packet = SChunkDataPacket(chunk, 65535)
-                fw.chunkProvider.loadChunk(
+                fw.chunkSource.replaceWithPacketData(
                         chunkPos.x, chunkPos.z, chunk.biomes,
-                        packet.readBuffer, packet.heightmapTags, packet.availableSections, packet.isFullChunk
+                        packet.readBuffer, packet.heightmaps, packet.availableSections, packet.isFullChunk
                 )
             }
         }
-        mc.world = fakeWorld
+        mc.level = fakeWorld
 
-        frameBuffer.bindFramebuffer(true)
+        frameBuffer.bindWrite(true)
 
         RenderSystem.pushMatrix()
         current = this
-        mc.gameRenderer.renderWorld(if (mc.isGamePaused) mc.renderPartialTicksPaused else mc.renderPartialTicks, Util.nanoTime(), MatrixStack())
+        mc.gameRenderer.renderLevel(if (mc.isPaused) mc.pausePartialTick else mc.frameTime, Util.getNanos(), MatrixStack())
         current = null
         RenderSystem.popMatrix()
 
         savedRenderState.restore(mc)
-        mc.worldRenderer = savedWR
-        mc.world = savedWorld
+        mc.levelRenderer = savedWR
+        mc.level = savedWorld
         mc.gameRenderer = savedGameRenderer
 
-        mc.framebuffer.bindFramebuffer(true)
+        mc.mainRenderTarget.bindWrite(true)
 
         return true
     }
 
     fun render() {
         RenderSystem.pushMatrix()
-        frameBuffer.framebufferRender(256, 256)
+        frameBuffer.blitToScreen(256, 256)
         RenderSystem.popMatrix()
     }
 
@@ -137,9 +137,9 @@ internal class SecondaryGameRenderer(private val mc: Minecraft, val entity: Livi
         @SubscribeEvent
         fun renderTick(evt: TickEvent.RenderTickEvent) {
             if (evt.phase == TickEvent.Phase.START) {
-                if (Minecraft.getInstance().world == null || Minecraft.getInstance().playerController == null) {
+                if (Minecraft.getInstance().level == null || Minecraft.getInstance().gameMode == null) {
                     for (r in active) {
-                        r.frameBuffer.deleteFramebuffer()
+                        r.frameBuffer.destroyBuffers()
                     }
                     active.clear()
                 }

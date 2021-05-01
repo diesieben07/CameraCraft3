@@ -13,7 +13,7 @@ internal object CCTEs {
 
     @Suppress("NULLABILITY_MISMATCH_BASED_ON_JAVA_ANNOTATIONS")
     val CAMERA: TileEntityType<CameraTile> by TILE_ENTITIES.register("camera") {
-        TileEntityType.Builder.create({ CameraTile() }, CCBlocks.CAMERA)
+        TileEntityType.Builder.of({ CameraTile() }, CCBlocks.CAMERA)
                 .build(null)
     }
 

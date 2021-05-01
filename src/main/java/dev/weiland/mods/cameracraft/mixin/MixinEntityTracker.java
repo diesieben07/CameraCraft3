@@ -3,6 +3,8 @@ package dev.weiland.mods.cameracraft.mixin;
 import dev.weiland.mods.cameracraft.viewport.ServerViewportManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.IPacket;
+import net.minecraft.world.World;
+import net.minecraft.world.server.ServerWorld;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -18,11 +20,14 @@ public abstract class MixinEntityTracker {
     private Entity entity;
 
     @Inject(
-            method = "sendToAllTracking(Lnet/minecraft/network/IPacket;)V",
+            method = "broadcast(Lnet/minecraft/network/IPacket;)V",
             at = @At("HEAD")
     )
-    private void sendToAllTrackingHook(IPacket<?> packet, CallbackInfo ci) {
-        ServerViewportManager.get().sendToTracking(this.entity, packet);
+    private void broadcastHook(IPacket<?> packet, CallbackInfo ci) {
+        World level = entity.level;
+        if (level instanceof ServerWorld) {
+            ServerViewportManager.get((ServerWorld) level).sendToTracking(this.entity, packet);
+        }
     }
 
 }

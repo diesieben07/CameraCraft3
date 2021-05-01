@@ -18,13 +18,19 @@ public abstract class MixinChunkHolder {
     @Final
     private ChunkPos pos;
 
+    @Shadow
+    @Final
+    private ChunkHolder.IPlayerProvider playerProvider;
+
     @Inject(
-            method = "sendToTracking(Lnet/minecraft/network/IPacket;Z)V",
+            method = "broadcast(Lnet/minecraft/network/IPacket;Z)V",
             at = @At("HEAD")
     )
     private void sendToTracking(IPacket<?> packetIn, boolean boundaryOnly, CallbackInfo ci) {
-        ServerViewportManager manager = ServerViewportManager.get();
-        manager.sendToTracking(this.pos, packetIn, boundaryOnly);
+        if (playerProvider instanceof ChunkManagerAccessor) {
+            ServerViewportManager manager = ServerViewportManager.get(((ChunkManagerAccessor) playerProvider).cameraCraftGetLevel());
+            manager.sendToTracking(this.pos, packetIn, boundaryOnly);
+        }
     }
 
 }

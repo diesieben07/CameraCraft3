@@ -10,7 +10,7 @@ import net.minecraft.entity.LivingEntity
 internal class ClientProxy : CCProxy {
 
     override fun createOverlayForEntity(entityId: Int) {
-        val entity = Minecraft.getInstance().world?.getEntityByID(entityId) as? LivingEntity
+        val entity = Minecraft.getInstance().level?.getEntity(entityId) as? LivingEntity
         if (entity == null) {
            CameraCraft.LOGGER.warn("Invalid overlay entityId received")
         } else {

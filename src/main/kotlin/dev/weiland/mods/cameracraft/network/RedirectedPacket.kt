@@ -25,18 +25,18 @@ internal class RedirectedPacket private constructor(
         private val LOGGER = LogManager.getLogger()
 
         fun read(buf: PacketBuffer): RedirectedPacket {
-            val dimensionKey: RegistryKey<World> = RegistryKey.getOrCreateKey(Registry.WORLD_KEY, buf.readResourceLocation())
+            val dimensionKey: RegistryKey<World> = RegistryKey.create(Registry.DIMENSION_REGISTRY, buf.readResourceLocation())
             val vanillaPacketId = buf.readVarInt()
-            val vanillaPacket = ProtocolType.PLAY.getPacket(PacketDirection.CLIENTBOUND, vanillaPacketId)
-            vanillaPacket?.readPacketData(buf)
+            val vanillaPacket = ProtocolType.PLAY.createPacket(PacketDirection.CLIENTBOUND, vanillaPacketId)
+            vanillaPacket?.read(buf)
             @Suppress("UNCHECKED_CAST")
             return RedirectedPacket(vanillaPacket as IPacket<IClientPlayNetHandler>?, dimensionKey)
         }
     }
 
     fun write(buf: PacketBuffer) {
-        buf.writeResourceLocation(dimensionKey.location)
-        checkNotNull(packet).writePacketData(buf)
+        buf.writeResourceLocation(dimensionKey.location())
+        checkNotNull(packet).write(buf)
     }
 
     fun handle() {
@@ -48,7 +48,7 @@ internal class RedirectedPacket private constructor(
             "Received a packet when Minecraft.connection was null. ???!!!"
         }
         ClientViewportManager.runWithContext(dimensionKey) {
-            vanillaPacket.processPacket(connection)
+            vanillaPacket.handle(connection)
         }
     }
 

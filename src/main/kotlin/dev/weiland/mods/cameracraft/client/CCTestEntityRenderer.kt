@@ -10,7 +10,7 @@ internal class CCTestEntityRenderer(renderManager: EntityRendererManager) : Livi
     renderManager, CreeperModel(), 1F
 ) {
 
-    override fun getEntityTexture(entity: CCViewportEntity): ResourceLocation {
+    override fun getTextureLocation(entity: CCViewportEntity): ResourceLocation {
         return ResourceLocation("textures/entity/creeper/creeper.png")
     }
 

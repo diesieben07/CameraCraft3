@@ -11,6 +11,7 @@ import net.minecraft.item.ItemStack
 import net.minecraft.network.IPacket
 import net.minecraft.util.ResourceLocation
 import net.minecraft.world.chunk.Chunk
+import net.minecraftforge.event.entity.EntityAttributeCreationEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
@@ -47,14 +48,13 @@ internal class CameraCraft {
         lateinit var NETWORK: SimpleChannel
 
         val ITEM_GROUP = object : ItemGroup("cameracraft") {
-            override fun createIcon(): ItemStack = ItemStack(CCBlocks.TRIPOD)
+            override fun makeIcon(): ItemStack = ItemStack(CCBlocks.TRIPOD)
         }
-
-
 
         @JvmStatic
         @SubscribeEvent
         fun setup(event: FMLCommonSetupEvent) {
+            println("hi")
             NETWORK = NetworkRegistry.newSimpleChannel(
                 ResourceLocation(MOD_ID, "main"),
                 { PROTOCOL_VERSION },
@@ -73,13 +73,12 @@ internal class CameraCraft {
                         .syncHandler(RedirectedPacket::handle)
                         .add()
             }
+        }
 
-            event.enqueueWork {
-                GlobalEntityTypeAttributes.put(
-                    CCEntities.TEST_ENTITY.get(),
-                    LivingEntity.registerAttributes().create()
-                )
-            }
+        @JvmStatic
+        @SubscribeEvent
+        fun attributeCreation(event: EntityAttributeCreationEvent) {
+            event.put(CCEntities.TEST_ENTITY.get(), LivingEntity.createLivingAttributes().build())
         }
 
     }

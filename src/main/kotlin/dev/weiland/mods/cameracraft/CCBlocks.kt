@@ -27,10 +27,10 @@ internal object CCBlocks {
     @SubscribeEvent
     fun registerItems(evt: RegistryEvent.Register<Item>) {
         evt.registerItemBlock(TRIPOD) {
-            maxStackSize(16)
+            stacksTo(16)
         }
         evt.registerItemBlock(CAMERA, itemFactory = ::CameraItem) {
-            maxStackSize(1)
+            stacksTo(1)
         }
     }
 
@@ -42,7 +42,7 @@ internal object CCBlocks {
         registry.register(
             itemFactory(
                 block,
-                Item.Properties().also { it.group(CameraCraft.ITEM_GROUP) }.also { it.propertyBuilder() }
+                Item.Properties().also { it.tab(CameraCraft.ITEM_GROUP) }.also { it.propertyBuilder() }
             ).also { it.registryName = block.registryName }
         )
     }

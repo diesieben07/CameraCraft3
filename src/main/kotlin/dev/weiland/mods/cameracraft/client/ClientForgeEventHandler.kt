@@ -38,7 +38,7 @@ object ClientForgeEventHandler {
     @JvmStatic
     @SubscribeEvent
     fun onScreenshot(evt: ScreenshotEvent) {
-        val pngBytes = evt.image.bytes
+        val pngBytes = evt.image.asByteArray()
         val bufferedImage = ByteArrayInputStream(pngBytes).use { pngInput ->
             ImageIO.read(pngInput)
         }

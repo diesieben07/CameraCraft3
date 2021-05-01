@@ -11,7 +11,7 @@ internal object CCItems {
 
     val ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CameraCraft.MOD_ID)
     val TRIPOD_MINECART by ITEMS.register("tripod_minecart") {
-        TripodMinecartItem(Item.Properties().group(CameraCraft.ITEM_GROUP))
+        TripodMinecartItem(Item.Properties().tab(CameraCraft.ITEM_GROUP))
     }
 
     fun init() {
