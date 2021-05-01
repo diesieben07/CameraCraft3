@@ -9,6 +9,6 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface ChunkManagerAccessor {
 
     @Accessor("level")
-    ServerWorld cameraCraftGetLevel();
+    ServerWorld getLevel();
 
 }

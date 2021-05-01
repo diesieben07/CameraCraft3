@@ -28,7 +28,7 @@ public abstract class MixinChunkHolder {
     )
     private void sendToTracking(IPacket<?> packetIn, boolean boundaryOnly, CallbackInfo ci) {
         if (playerProvider instanceof ChunkManagerAccessor) {
-            ServerViewportManager manager = ServerViewportManager.get(((ChunkManagerAccessor) playerProvider).cameraCraftGetLevel());
+            ServerViewportManager manager = ServerViewportManager.get(((ChunkManagerAccessor) playerProvider).getLevel());
             manager.sendToTracking(this.pos, packetIn, boundaryOnly);
         }
     }

@@ -353,8 +353,7 @@ public class FakeWorldRenderer extends WorldRenderer {
             RenderSystem.depthMask(true);
         }
 
-        // changed: use accessor
-        ((WorldRendererAccessor) this).invokeRenderDebug(p_228426_6_);
+        // changed: remove debug render
         RenderSystem.shadeModel(7424);
         RenderSystem.depthMask(true);
         RenderSystem.disableBlend();
