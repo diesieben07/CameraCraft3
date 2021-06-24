@@ -8,6 +8,7 @@
     "MixinChunkHolder",
     "MixinEntityTracker",
     "ChunkManagerEntityTrackerAccessor",
+    "ClientPlayNetHandlerAccessor",
     "ChunkManagerAccessor",
     "WorldRendererAccessor",
     "GameRendererAccessor"

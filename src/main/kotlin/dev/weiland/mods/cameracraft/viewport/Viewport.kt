@@ -17,11 +17,11 @@ internal class Viewport(
     val managingPlayer: ServerPlayerEntity
 ) {
 
-    fun sendPacket(packet: IPacket<*>) {
+    fun sendWrappedPacket(packet: IPacket<*>) {
         println("VIEWPORT $this receives $packet")
-//        managingPlayer.connection.send(
-//                CameraCraft.NETWORK.toVanillaPacket(RedirectedPacket(dimension, packet), NetworkDirection.PLAY_TO_CLIENT)
-//        )
+        managingPlayer.connection.send(
+                CameraCraft.NETWORK.toVanillaPacket(RedirectedPacket(entity.level.dimension(), packet), NetworkDirection.PLAY_TO_CLIENT)
+        )
     }
 
 

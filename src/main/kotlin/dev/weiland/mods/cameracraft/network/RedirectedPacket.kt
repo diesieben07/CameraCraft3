@@ -14,11 +14,11 @@ import net.minecraft.world.World
 import org.apache.logging.log4j.LogManager
 
 internal class RedirectedPacket private constructor(
-        private val packet: IPacket<IClientPlayNetHandler>?,
+        private val packet: IPacket<*>?,
         private val dimensionKey: RegistryKey<World>
 ) {
 
-    constructor(dimensionKey: RegistryKey<World>, packet: IPacket<IClientPlayNetHandler>) : this(packet, dimensionKey)
+    constructor(dimensionKey: RegistryKey<World>, packet: IPacket<*>) : this(packet, dimensionKey)
 
     companion object {
 
@@ -36,7 +36,8 @@ internal class RedirectedPacket private constructor(
 
     fun write(buf: PacketBuffer) {
         buf.writeResourceLocation(dimensionKey.location())
-        checkNotNull(packet).write(buf)
+        buf.writeVarInt(checkNotNull(ProtocolType.PLAY.getPacketId(PacketDirection.CLIENTBOUND, checkNotNull(packet))))
+        packet.write(buf)
     }
 
     fun handle() {
@@ -48,7 +49,9 @@ internal class RedirectedPacket private constructor(
             "Received a packet when Minecraft.connection was null. ???!!!"
         }
         ClientViewportManager.runWithContext(dimensionKey) {
-            vanillaPacket.handle(connection)
+            println("handle wrapped vanilla pkt $vanillaPacket")
+            @Suppress("UNCHECKED_CAST")
+            (vanillaPacket as IPacket<IClientPlayNetHandler>).handle(connection)
         }
     }
 

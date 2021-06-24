@@ -12,7 +12,7 @@ internal class CreateViewportPacket(
     }
 
     fun handle() {
-        CCProxy.createOverlayForEntity(entityId)
+        CCProxy.createViewport(entityId)
     }
 
     companion object {

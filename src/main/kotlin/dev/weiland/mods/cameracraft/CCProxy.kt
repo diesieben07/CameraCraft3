@@ -5,7 +5,7 @@ import net.minecraftforge.fml.loading.FMLEnvironment
 
 internal interface CCProxy {
 
-    fun createOverlayForEntity(entityId: Int)
+    fun createViewport(entityId: Int)
 
     companion object : CCProxy by createProxyInstance()
 

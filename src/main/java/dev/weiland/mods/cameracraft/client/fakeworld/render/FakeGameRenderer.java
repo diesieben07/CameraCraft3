@@ -19,9 +19,9 @@ public class FakeGameRenderer extends GameRenderer {
 
     private final float width;
     private final float height;
-    private final LivingEntity entity;
+    private final Entity entity;
 
-    public FakeGameRenderer(Minecraft p_i225966_1_, IResourceManager p_i225966_2_, RenderTypeBuffers p_i225966_3_, float width, float height, LivingEntity entity) {
+    public FakeGameRenderer(Minecraft p_i225966_1_, IResourceManager p_i225966_2_, RenderTypeBuffers p_i225966_3_, float width, float height, Entity entity) {
         super(p_i225966_1_, p_i225966_2_, p_i225966_3_);
         this.width = width;
         this.height = height;

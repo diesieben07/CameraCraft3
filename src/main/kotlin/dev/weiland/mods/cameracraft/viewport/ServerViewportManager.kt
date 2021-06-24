@@ -3,7 +3,9 @@ package dev.weiland.mods.cameracraft.viewport
 import dev.weiland.mods.cameracraft.CameraCraft
 import dev.weiland.mods.cameracraft.mixin.ChunkManagerAccessor
 import dev.weiland.mods.cameracraft.mixin.ChunkManagerEntityTrackerAccessor
+import dev.weiland.mods.cameracraft.network.CreateViewportPacket
 import dev.weiland.mods.cameracraft.util.registerInternalCapability
+import net.minecraft.block.Blocks
 import net.minecraft.client.network.play.IClientPlayNetHandler
 import net.minecraft.entity.Entity
 import net.minecraft.entity.MobEntity
@@ -16,7 +18,14 @@ import net.minecraft.network.play.server.SUpdateLightPacket
 import net.minecraft.util.Direction
 import net.minecraft.util.ResourceLocation
 import net.minecraft.util.math.ChunkPos
+import net.minecraft.util.palette.UpgradeData
+import net.minecraft.util.registry.Registry
 import net.minecraft.world.World
+import net.minecraft.world.biome.BiomeContainer
+import net.minecraft.world.biome.Biomes
+import net.minecraft.world.biome.provider.SingleBiomeProvider
+import net.minecraft.world.chunk.Chunk
+import net.minecraft.world.chunk.ChunkPrimer
 import net.minecraft.world.server.ServerWorld
 import net.minecraftforge.common.capabilities.Capability
 import net.minecraftforge.common.capabilities.CapabilityInject
@@ -26,6 +35,7 @@ import net.minecraftforge.event.AttachCapabilitiesEvent
 import net.minecraftforge.eventbus.api.SubscribeEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent
+import net.minecraftforge.fml.network.PacketDistributor
 import org.apache.logging.log4j.LogManager
 
 @Mod.EventBusSubscriber(modid = CameraCraft.MOD_ID, bus = Mod.EventBusSubscriber.Bus.MOD)
@@ -51,9 +61,28 @@ internal class ServerViewportManager(private val world: ServerWorld) : ICapabili
         val serverWorld = vp.entity.level as ServerWorld
         val chunk = serverWorld.getChunk(vp.entity.xChunk, vp.entity.zChunk)
 
+        CameraCraft.NETWORK.send(
+            PacketDistributor.PLAYER.with { vp.managingPlayer },
+            CreateViewportPacket(vp.entity.id)
+        )
 
-        vp.sendPacket(SChunkDataPacket(chunk, 65535))
-        vp.sendPacket(SUpdateLightPacket(chunk.pos, serverWorld.lightEngine, true))
+//        val pos = vp.entity.blockPosition().above().south(5)
+//        val chunkPos = ChunkPos(pos)
+//
+//        val chunkPrimer = ChunkPrimer(chunkPos, UpgradeData.EMPTY)
+//        chunkPrimer.setBlockState(pos, Blocks.REDSTONE_BLOCK.defaultBlockState(), false)
+//        chunkPrimer.biomes = BiomeContainer(
+//                vp.entity.level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY),
+//                chunkPos,
+//                SingleBiomeProvider(vp.entity.level.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).get(Biomes.PLAINS)!!)
+//        )
+//
+//        val fakeChunk = Chunk(vp.entity.level, chunkPrimer)
+//        val packet = SChunkDataPacket(fakeChunk, 65535)
+//        vp.sendWrappedPacket(packet)
+
+        vp.sendWrappedPacket(SChunkDataPacket(chunk, 65535))
+        vp.sendWrappedPacket(SUpdateLightPacket(chunk.pos, serverWorld.lightEngine, true))
 
         val entitiesToLink = mutableListOf<MobEntity>()
         val entitiesWithPassengers = mutableListOf<Entity>()
@@ -66,7 +95,7 @@ internal class ServerViewportManager(private val world: ServerWorld) : ICapabili
                     continue
                 }
                 val serverEntity = (entityTracker as ChunkManagerEntityTrackerAccessor).serverEntity
-                serverEntity.sendPairingData(vp::sendPacket)
+                serverEntity.sendPairingData(vp::sendWrappedPacket)
                 if (entity is MobEntity && entity.leashHolder != null) {
                     entitiesToLink += entity
                 }
@@ -76,17 +105,17 @@ internal class ServerViewportManager(private val world: ServerWorld) : ICapabili
             }
         }
         for (entity in entitiesToLink) {
-            vp.sendPacket(SMountEntityPacket(entity, entity.leashHolder))
+            vp.sendWrappedPacket(SMountEntityPacket(entity, entity.leashHolder))
         }
         for (entity in entitiesWithPassengers) {
-            vp.sendPacket(SSetPassengersPacket(entity))
+            vp.sendWrappedPacket(SSetPassengersPacket(entity))
         }
     }
 
     fun sendToTracking(chunk: ChunkPos, packet: IPacket<IClientPlayNetHandler>, boundaryOnly: Boolean) {
         val instance = instances[chunk] ?: return
         for (vp in instance.viewports) {
-            vp.sendPacket(packet)
+            vp.sendWrappedPacket(packet)
         }
     }
 
