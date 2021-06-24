@@ -1,6 +1,7 @@
 package dev.weiland.mods.cameracraft.mixin;
 
 import dev.weiland.mods.cameracraft.viewport.ServerViewportManager;
+import net.minecraft.client.network.play.IClientPlayNetHandler;
 import net.minecraft.entity.Entity;
 import net.minecraft.network.IPacket;
 import net.minecraft.world.World;
@@ -26,7 +27,8 @@ public abstract class MixinEntityTracker {
     private void broadcastHook(IPacket<?> packet, CallbackInfo ci) {
         World level = entity.level;
         if (level instanceof ServerWorld) {
-            ServerViewportManager.get((ServerWorld) level).sendToTracking(this.entity, packet);
+            //noinspection unchecked
+            ServerViewportManager.get((ServerWorld) level).sendToTracking(this.entity, (IPacket<IClientPlayNetHandler>) packet);
         }
     }
 

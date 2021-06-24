@@ -1,6 +1,7 @@
 package dev.weiland.mods.cameracraft.mixin;
 
 import dev.weiland.mods.cameracraft.viewport.ServerViewportManager;
+import net.minecraft.client.network.play.IClientPlayNetHandler;
 import net.minecraft.network.IPacket;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.server.ChunkHolder;
@@ -29,7 +30,8 @@ public abstract class MixinChunkHolder {
     private void sendToTracking(IPacket<?> packetIn, boolean boundaryOnly, CallbackInfo ci) {
         if (playerProvider instanceof ChunkManagerAccessor) {
             ServerViewportManager manager = ServerViewportManager.get(((ChunkManagerAccessor) playerProvider).getLevel());
-            manager.sendToTracking(this.pos, packetIn, boundaryOnly);
+            //noinspection unchecked
+            manager.sendToTracking(this.pos, (IPacket<IClientPlayNetHandler>) packetIn, boundaryOnly);
         }
     }
 

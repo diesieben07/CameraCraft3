@@ -13,15 +13,15 @@ import net.minecraftforge.fml.network.NetworkDirection
 import net.minecraftforge.fml.network.PacketDistributor
 
 internal class Viewport(
-    val dimension: RegistryKey<World>,
     val entity: Entity,
     val managingPlayer: ServerPlayerEntity
 ) {
 
-    fun sendPacket(packet: IPacket<IClientPlayNetHandler>) {
-        managingPlayer.connection.send(
-                CameraCraft.NETWORK.toVanillaPacket(RedirectedPacket(dimension, packet), NetworkDirection.PLAY_TO_CLIENT)
-        )
+    fun sendPacket(packet: IPacket<*>) {
+        println("VIEWPORT $this receives $packet")
+//        managingPlayer.connection.send(
+//                CameraCraft.NETWORK.toVanillaPacket(RedirectedPacket(dimension, packet), NetworkDirection.PLAY_TO_CLIENT)
+//        )
     }
 
 

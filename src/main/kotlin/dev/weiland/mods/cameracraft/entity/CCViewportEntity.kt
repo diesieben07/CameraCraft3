@@ -3,9 +3,11 @@ package dev.weiland.mods.cameracraft.entity
 import dev.weiland.mods.cameracraft.CameraCraft
 import dev.weiland.mods.cameracraft.network.CreateViewportPacket
 import dev.weiland.mods.cameracraft.util.isServer
+import dev.weiland.mods.cameracraft.viewport.ServerViewportManager
 import net.minecraft.entity.EntityType
 import net.minecraft.entity.LivingEntity
 import net.minecraft.entity.player.PlayerEntity
+import net.minecraft.entity.player.ServerPlayerEntity
 import net.minecraft.inventory.EquipmentSlotType
 import net.minecraft.item.ItemStack
 import net.minecraft.util.ActionResultType
@@ -13,6 +15,7 @@ import net.minecraft.util.Hand
 import net.minecraft.util.HandSide
 import net.minecraft.util.math.vector.Vector3d
 import net.minecraft.world.World
+import net.minecraft.world.server.ServerWorld
 import net.minecraftforge.fml.network.PacketDistributor
 import java.util.*
 
@@ -46,10 +49,13 @@ class CCViewportEntity(type: EntityType<out CCViewportEntity>, worldIn: World) :
     override fun interactAt(player: PlayerEntity, vec: Vector3d, hand: Hand): ActionResultType {
         return if (hand == Hand.MAIN_HAND) {
             if (player.isServer()) {
-                CameraCraft.NETWORK.send(
-                    PacketDistributor.PLAYER.with { player },
-                    CreateViewportPacket(id)
+                ServerViewportManager.get(player.level as ServerWorld).createViewport(
+                    this, player
                 )
+//                CameraCraft.NETWORK.send(
+//                    PacketDistributor.PLAYER.with { player },
+//                    CreateViewportPacket(id)
+//                )
             }
             ActionResultType.SUCCESS
         } else {
